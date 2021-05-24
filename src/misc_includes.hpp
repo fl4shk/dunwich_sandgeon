@@ -26,15 +26,27 @@
 #include "liborangepower_src/misc/misc_defines.hpp"
 #include "liborangepower_src/gen_class_innards_defines.hpp"
 #include "liborangepower_src/strings/string_conversion_stuff.hpp"
+#include "liborangepower_src/containers/vec2_classes.hpp"
 
 #include "liborangepower_src/sdl2/sdl.hpp"
+#include "liborangepower_src/sdl2/dpi_stuff.hpp"
+#include "liborangepower_src/sdl2/sdl_video.hpp"
 #include "liborangepower_src/sdl2/sdl_render.hpp"
+#include "liborangepower_src/sdl2/sdl_surface.hpp"
+#include <SDL_events.h>
 
 using namespace liborangepower::misc_output;
 using namespace liborangepower::integer_types;
 using namespace liborangepower::misc_util;
 using namespace liborangepower::bitwise;
 using namespace liborangepower::strings;
+using namespace liborangepower::containers;
+namespace sdl = liborangepower::sdl;
+
+#include <cstdio>
+#include <cstdlib>
+
+#include <map>
 
 
 #endif		// src_misc_includes_hpp

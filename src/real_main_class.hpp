@@ -25,8 +25,44 @@ namespace dungwich_sandeon
 
 class RealMain final
 {
-private:		// variables
+public:		// types
+	enum class Color: u32
+	{
+		White,
+
+		Red,
+		Green,
+		Brown,
+		Yellow,
+
+		Blue,
+		Purple,
+		Cyan,
+		Gray,
+
+		Lim,
+	};
 public:		// functions
+	static inline Color color_add(Color color, u32 amount)
+	{
+		u32 ret_u32 = static_cast<u32>(color);
+		ret_u32 += amount;
+		return static_cast<Color>(ret_u32);
+	}
+public:		// constants
+	static constexpr int SCREEN_WIDTH = 640, SCREEN_HEIGHT = 480;
+	static const std::map<Color, std::string> COLOR_TO_STR_MAP;
+private:		// variables
+	sdl::Window _window;
+	sdl::Renderer _renderer;
+	std::map<Color, sdl::Texture> _font_texture_map;
+public:		// functions
+	RealMain() = default;
+	~RealMain() = default;
+
+	int run();
+
+private:		// functions
 };
 
 } // namespace dungwich_sandeon
