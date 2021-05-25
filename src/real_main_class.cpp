@@ -121,7 +121,13 @@ int RealMain::run()
 			"Couldn't color the font gray: %s", SDL_GetError());
 	}
 	//--------
-
+	// Draw a green background
+	SDL_SetRenderDrawColor(_renderer, 0x00, 0xcc, 0x00, 0xff);
+	SDL_RenderFillRect(_renderer, sdl::Rect(0, 0, SCREEN_SIZE_2D.x,
+		SCREEN_SIZE_2D.y));
+	SDL_RenderPresent(_renderer);
+	SDL_Delay(2000);
+	//--------
 	return 0;
 }
 void RealMain::_draw_char(int c, FontColor color,
@@ -140,7 +146,8 @@ void RealMain::_draw_char(int c, FontColor color,
 		TILE_SIZE_2D.y),
 		dst_rect(draw_real_pos.x, draw_real_pos.y, TILE_SIZE_2D.x,
 			TILE_SIZE_2D.y);
-	//SDL_RenderCopy(_renderer, )
+	SDL_RenderCopy(_renderer, _font_texture_map.at(color), src_rect,
+		dst_rect);
 }
 
 } // namespace dungwich_sandeon
