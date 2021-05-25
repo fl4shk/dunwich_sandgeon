@@ -84,7 +84,7 @@ int RealMain::run()
 			"Couldn't color the font green: %s", SDL_GetError());
 	}
 	if (SDL_SetTextureColorMod(_font_texture_map[FontColor::Brown],
-		0xdd, 0x66, 0x00) < 0)
+		0xc0, 0x66, 0x20) < 0)
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
 			"Couldn't color the font brown: %s", SDL_GetError());
@@ -97,7 +97,7 @@ int RealMain::run()
 	}
 	//--------
 	if (SDL_SetTextureColorMod(_font_texture_map[FontColor::Blue],
-		0x00, 0x00, 0xdd) < 0)
+		0x64, 0x64, 0xff) < 0)
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
 			"Couldn't color the font blue: %s", SDL_GetError());
@@ -115,7 +115,7 @@ int RealMain::run()
 			"Couldn't color the font cyan: %s", SDL_GetError());
 	}
 	if (SDL_SetTextureColorMod(_font_texture_map[FontColor::Gray],
-		0xdd, 0xdd, 0xdd) < 0)
+		0x90, 0x90, 0x90) < 0)
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
 			"Couldn't color the font gray: %s", SDL_GetError());
