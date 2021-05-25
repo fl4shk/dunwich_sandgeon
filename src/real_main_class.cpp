@@ -46,19 +46,57 @@ int RealMain::run()
 
 	sdl::prevent_dpi_scaling_issues();
 
-	if (SDL_CreateWindowAndRenderer(SCREEN_SIZE_2D.x, SCREEN_SIZE_2D.y,
-		SDL_WINDOW_RESIZABLE, &_window.self(), &_renderer.self()))
+	_window = SDL_CreateWindow("Dungwich Sandeon",
+		SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_SIZE_2D.x,
+		SCREEN_SIZE_2D.y, SDL_WINDOW_RESIZABLE);
+	if (!_window)
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
-			"Couldn't create window and renderer: %s", SDL_GetError());
+			"Couldn't create window: %s", SDL_GetError());
 		return 1;
 	}
 
-	_font_surface.self() = SDL_LoadBMP("gfx/font.bmp");
-	if (!_font_surface.self())
+	_renderer = SDL_CreateRenderer(_window, -1, SDL_RENDERER_ACCELERATED);
+	if (!_renderer)
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
-			"Couldn't create window and renderer: %s", SDL_GetError());
+			"Couldn't create renderer: %s", SDL_GetError());
+		return 1;
+	}
+
+	_font_surface = SDL_LoadBMP("gfx/font.bmp");
+	if (!_font_surface)
+	{
+		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+			"Couldn't load the bitmap font: %s", SDL_GetError());
+		return 1;
+	}
+
+	// Change the magenta pixels to black
+	if (auto pixels = reinterpret_cast<u8*>(_font_surface->pixels); true)
+	{
+		//printf("%i %i %i\n", _font_surface->h, _font_surface->w,
+		//	(_font_surface->pitch / _font_surface->w));
+		for (int j=0; j<_font_surface->h; ++j)
+		{
+			for (int i=0; i<_font_surface->w; ++i)
+			{
+				if ((pixels[0] != 0xff) || (pixels[1] != 0xff)
+					|| (pixels[2] != 0xff))
+				{
+					pixels[0] = 0x00;
+					pixels[1] = 0x00;
+					pixels[2] = 0x00;
+				}
+				pixels += 3;
+			}
+		}
+	}
+	// Use black pixels for alpha blending
+	if (SDL_SetColorKey(_font_surface, SDL_TRUE, 0xff00ffff) < 0)
+	{
+		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+			"Couldn't set the color key of the font: %s", SDL_GetError());
 		return 1;
 	}
 
@@ -71,6 +109,7 @@ int RealMain::run()
 				_font_surface));
 	}
 	//--------
+	// Color the font textures
 	if (SDL_SetTextureColorMod(_font_texture_map[FontColor::Red],
 		0xdd, 0x00, 0x00) < 0)
 	{
