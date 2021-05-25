@@ -77,50 +77,50 @@ int RealMain::run()
 		0xcc, 0x00, 0x00) < 0)
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
-			"Couldn't font_color the font red: %s", SDL_GetError());
+			"Couldn't color the font red: %s", SDL_GetError());
 	}
 	if (SDL_SetTextureColorMod(_font_texture_map[FontColor::Green],
 		0x00, 0xcc, 0x00) < 0)
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
-			"Couldn't font_color the font green: %s", SDL_GetError());
+			"Couldn't color the font green: %s", SDL_GetError());
 	}
 	if (SDL_SetTextureColorMod(_font_texture_map[FontColor::Brown],
 		0xaa, 0x55, 0x00) < 0)
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
-			"Couldn't font_color the font brown: %s", SDL_GetError());
+			"Couldn't color the font brown: %s", SDL_GetError());
 	}
 	if (SDL_SetTextureColorMod(_font_texture_map[FontColor::Yellow],
 		0xcc, 0xcc, 0x00) < 0)
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
-			"Couldn't font_color the font yellow: %s", SDL_GetError());
+			"Couldn't color the font yellow: %s", SDL_GetError());
 	}
 	//--------
 	if (SDL_SetTextureColorMod(_font_texture_map[FontColor::Blue],
 		0x00, 0x00, 0xcc) < 0)
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
-			"Couldn't font_color the font blue: %s", SDL_GetError());
+			"Couldn't color the font blue: %s", SDL_GetError());
 	}
 	if (SDL_SetTextureColorMod(_font_texture_map[FontColor::Purple],
 		0xcc, 0x00, 0xcc) < 0)
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
-			"Couldn't font_color the font purple: %s", SDL_GetError());
+			"Couldn't color the font purple: %s", SDL_GetError());
 	}
 	if (SDL_SetTextureColorMod(_font_texture_map[FontColor::Cyan],
 		0x00, 0xcc, 0xcc) < 0)
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
-			"Couldn't font_color the font cyan: %s", SDL_GetError());
+			"Couldn't color the font cyan: %s", SDL_GetError());
 	}
 	if (SDL_SetTextureColorMod(_font_texture_map[FontColor::Gray],
 		0xaa, 0xaa, 0xaa) < 0)
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
-			"Couldn't font_color the font gray: %s", SDL_GetError());
+			"Couldn't color the font gray: %s", SDL_GetError());
 	}
 	//--------
 
