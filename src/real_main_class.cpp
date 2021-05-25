@@ -19,7 +19,7 @@ namespace dungwich_sandeon
 {
 
 const Vec2<int> RealMain::SCREEN_SIZE_2D(Vec2<int>(640, 480)),
-	RealMain::TILE_SIZE_2D(Vec2<int>(8, 8));
+	RealMain::TILE_SIZE_2D(Vec2<int>(16, 16));
 const std::map<RealMain::FontColor, std::string> RealMain::COLOR_TO_STR_MAP
 = {
 	{RealMain::FontColor::White, "White"},
@@ -72,61 +72,72 @@ int RealMain::run()
 	}
 	//--------
 	if (SDL_SetTextureColorMod(_font_texture_map[FontColor::Red],
-		0xcc, 0x00, 0x00) < 0)
+		0xdd, 0x00, 0x00) < 0)
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
 			"Couldn't color the font red: %s", SDL_GetError());
 	}
 	if (SDL_SetTextureColorMod(_font_texture_map[FontColor::Green],
-		0x00, 0xcc, 0x00) < 0)
+		0x00, 0xdd, 0x00) < 0)
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
 			"Couldn't color the font green: %s", SDL_GetError());
 	}
 	if (SDL_SetTextureColorMod(_font_texture_map[FontColor::Brown],
-		0xaa, 0x55, 0x00) < 0)
+		0xdd, 0x66, 0x00) < 0)
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
 			"Couldn't color the font brown: %s", SDL_GetError());
 	}
 	if (SDL_SetTextureColorMod(_font_texture_map[FontColor::Yellow],
-		0xcc, 0xcc, 0x00) < 0)
+		0xdd, 0xdd, 0x00) < 0)
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
 			"Couldn't color the font yellow: %s", SDL_GetError());
 	}
 	//--------
 	if (SDL_SetTextureColorMod(_font_texture_map[FontColor::Blue],
-		0x00, 0x00, 0xcc) < 0)
+		0x00, 0x00, 0xdd) < 0)
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
 			"Couldn't color the font blue: %s", SDL_GetError());
 	}
 	if (SDL_SetTextureColorMod(_font_texture_map[FontColor::Purple],
-		0xcc, 0x00, 0xcc) < 0)
+		0xdd, 0x00, 0xdd) < 0)
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
 			"Couldn't color the font purple: %s", SDL_GetError());
 	}
 	if (SDL_SetTextureColorMod(_font_texture_map[FontColor::Cyan],
-		0x00, 0xcc, 0xcc) < 0)
+		0x00, 0xdd, 0xdd) < 0)
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
 			"Couldn't color the font cyan: %s", SDL_GetError());
 	}
 	if (SDL_SetTextureColorMod(_font_texture_map[FontColor::Gray],
-		0xaa, 0xaa, 0xaa) < 0)
+		0xdd, 0xdd, 0xdd) < 0)
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
 			"Couldn't color the font gray: %s", SDL_GetError());
 	}
 	//--------
 	// Draw a green background
-	SDL_SetRenderDrawColor(_renderer, 0x00, 0xcc, 0x00, 0xff);
+	SDL_SetRenderDrawColor(_renderer, 0x00, 0x00, 0x00, 0xff);
 	SDL_RenderFillRect(_renderer, sdl::Rect(0, 0, SCREEN_SIZE_2D.x,
 		SCREEN_SIZE_2D.y));
+	_draw_char('@', FontColor::White, Vec2<int>(0, 0));
+
+	_draw_char('@', FontColor::Red, Vec2<int>(1, 0));
+	_draw_char('@', FontColor::Green, Vec2<int>(2, 0));
+	_draw_char('@', FontColor::Brown, Vec2<int>(3, 0));
+	_draw_char('@', FontColor::Yellow, Vec2<int>(4, 0));
+
+	_draw_char('@', FontColor::Blue, Vec2<int>(5, 0));
+	_draw_char('@', FontColor::Purple, Vec2<int>(6, 0));
+	_draw_char('@', FontColor::Cyan, Vec2<int>(7, 0));
+	_draw_char('@', FontColor::Gray, Vec2<int>(8, 0));
 	SDL_RenderPresent(_renderer);
-	SDL_Delay(2000);
+	SDL_Delay(10'000);
 	//--------
 	return 0;
 }
