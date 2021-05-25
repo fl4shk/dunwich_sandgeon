@@ -33,6 +33,7 @@
 #include "liborangepower_src/sdl2/sdl_video.hpp"
 #include "liborangepower_src/sdl2/sdl_render.hpp"
 #include "liborangepower_src/sdl2/sdl_surface.hpp"
+#include "liborangepower_src/sdl2/sdl_rect.hpp"
 #include <SDL_events.h>
 
 using namespace liborangepower::misc_output;

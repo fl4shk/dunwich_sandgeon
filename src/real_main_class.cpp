@@ -35,6 +35,7 @@ const std::map<RealMain::FontColor, std::string> RealMain::COLOR_TO_STR_MAP
 };
 int RealMain::run()
 {
+	//--------
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) < 0)
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
@@ -53,25 +54,22 @@ int RealMain::run()
 		return 1;
 	}
 
+	_font_surface.self() = SDL_LoadBMP("gfx/font.bmp");
+	if (!_font_surface.self())
 	{
-		_font_surface.self() = SDL_LoadBMP("gfx/font.bmp");
-		if (!_font_surface.self())
-		{
-			SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
-				"Couldn't create window and renderer: %s", SDL_GetError());
-			return 1;
-		}
-
-		for (auto font_color=FontColor::White;
-			font_color!=FontColor::Lim;
-			font_color=font_color_add(font_color, 1u))
-		{
-			_font_texture_map[font_color]
-				= sdl::Texture(SDL_CreateTextureFromSurface(_renderer,
-					_font_surface));
-		}
+		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+			"Couldn't create window and renderer: %s", SDL_GetError());
+		return 1;
 	}
 
+	for (auto font_color=FontColor::White;
+		font_color!=FontColor::Lim;
+		font_color=font_color_add(font_color, 1u))
+	{
+		_font_texture_map[font_color]
+			= sdl::Texture(SDL_CreateTextureFromSurface(_renderer,
+				_font_surface));
+	}
 	//--------
 	if (SDL_SetTextureColorMod(_font_texture_map[FontColor::Red],
 		0xcc, 0x00, 0x00) < 0)
@@ -135,8 +133,13 @@ void RealMain::_draw_char(int c, FontColor color,
 		c / draw_char_font_surface_size_2d.x);
 	const Vec2<int> c_real_pos(c_tilemap_pos.x * TILE_SIZE_2D.x,
 		c_tilemap_pos.y * TILE_SIZE_2D.y);
+	const Vec2<int> draw_real_pos(draw_pos.x * TILE_SIZE_2D.x,
+		draw_pos.y * TILE_SIZE_2D.y);
 
-	//const SDL_Rect 
+	const sdl::Rect src_rect(c_real_pos.x, c_real_pos.y, TILE_SIZE_2D.x,
+		TILE_SIZE_2D.y),
+		dst_rect(draw_real_pos.x, draw_real_pos.y, TILE_SIZE_2D.x,
+			TILE_SIZE_2D.y);
 	//SDL_RenderCopy(_renderer, )
 }
 
