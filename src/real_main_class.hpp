@@ -26,7 +26,7 @@ namespace dungwich_sandeon
 class RealMain final
 {
 public:		// types
-	enum class Color: u32
+	enum class FontColor: u32
 	{
 		White,
 
@@ -40,22 +40,25 @@ public:		// types
 		Cyan,
 		Gray,
 
+		// The limit, which is not a real font_color 
 		Lim,
 	};
 public:		// functions
-	static inline Color color_add(Color color, u32 amount)
+	static inline FontColor font_color_add(FontColor font_color,
+		u32 amount)
 	{
-		u32 ret_u32 = static_cast<u32>(color);
+		u32 ret_u32 = static_cast<u32>(font_color);
 		ret_u32 += amount;
-		return static_cast<Color>(ret_u32);
+		return static_cast<FontColor>(ret_u32);
 	}
 public:		// constants
-	static constexpr int SCREEN_WIDTH = 640, SCREEN_HEIGHT = 480;
-	static const std::map<Color, std::string> COLOR_TO_STR_MAP;
+	static const Vec2<int> SCREEN_SIZE_2D, TILE_SIZE_2D;
+	static const std::map<FontColor, std::string> COLOR_TO_STR_MAP;
 private:		// variables
 	sdl::Window _window;
 	sdl::Renderer _renderer;
-	std::map<Color, sdl::Texture> _font_texture_map;
+	sdl::Surface _font_surface;
+	std::map<FontColor, sdl::Texture> _font_texture_map;
 public:		// functions
 	RealMain() = default;
 	~RealMain() = default;
@@ -63,6 +66,12 @@ public:		// functions
 	int run();
 
 private:		// functions
+	inline Vec2<int> _get_draw_char_font_surface_size_2d()
+	{
+		return Vec2<int>(_font_surface->w / TILE_SIZE_2D.x,
+			_font_surface->h / TILE_SIZE_2D.y);
+	}
+	void _draw_char(int c, FontColor color, const Vec2<int>& draw_pos);
 };
 
 } // namespace dungwich_sandeon
