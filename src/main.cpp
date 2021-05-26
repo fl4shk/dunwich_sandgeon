@@ -14,9 +14,9 @@
 // with Dungwich Sandeon.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "misc_includes.hpp"
-#include "real_main_class.hpp"
+#include "real_main_sdl_class.hpp"
 
 int main(int argc, char* argv[])
 {
-	return dungwich_sandeon::RealMain().run();
+	return dungwich_sandeon::RealMainSdl().run();
 }

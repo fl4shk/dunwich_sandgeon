@@ -1,7 +1,7 @@
-#ifndef src_real_main_class_hpp
-#define src_real_main_class_hpp
+#ifndef src_real_main_sdl_class_hpp
+#define src_real_main_sdl_class_hpp
 
-// src/real_main_class.hpp
+// src/real_main_sdl_class.hpp
 
 // This file is part of Dungwich Sandeon.
 // 
@@ -23,7 +23,7 @@
 namespace dungwich_sandeon
 {
 
-class RealMain final
+class RealMainSdl final
 {
 public:		// types
 	enum class FontColor: u32
@@ -52,16 +52,46 @@ public:		// functions
 		return static_cast<FontColor>(ret_u32);
 	}
 public:		// constants
-	static const Vec2<int> SCREEN_SIZE_2D, TILE_SIZE_2D;
+	static const Vec2<int> TILE_SIZE_2D;
+	// These constants have values in amount of tilemap entries
+	static const Vec2<int> SCREEN_TM_SIZE_2D, PLAYFIELD_TM_POS,
+		PLAYFIELD_TM_SIZE_2D;
+	// Default values for some member variables
+	static const Vec2<int> DEF_SCREEN_SIZE_2D;
+	static constexpr int DEF_ZOOM = 2;
 	static const std::map<FontColor, std::string> COLOR_TO_STR_MAP;
+public:		// types
+	enum class InputKind
+	{
+		MoveLeft,
+		MoveUp,
+		MoveRight,
+		MoveDown,
+
+		TargetEnemy,
+		TargetItem,
+
+		ExitMenu,
+		OpenInvMenu,
+		OpenSaveMenu,
+
+		ZoomIn,
+		ZoomOut,
+	};
+
 private:		// variables
+	Vec2<int> _screen_size_2d;
+	int _zoom = DEF_ZOOM;
 	sdl::Window _window;
 	sdl::Renderer _renderer;
 	sdl::Surface _font_surface;
 	std::map<FontColor, sdl::Texture> _font_texture_map;
+	std::map<sdl::KeycModPair, PrevCurrPair<sdl::KeyStatus>>
+		_key_status_map;
+	InputKind _input_kind;
 public:		// functions
-	RealMain() = default;
-	~RealMain() = default;
+	RealMainSdl() = default;
+	~RealMainSdl() = default;
 
 	int run();
 
@@ -76,4 +106,4 @@ private:		// functions
 
 } // namespace dungwich_sandeon
 
-#endif		// src_real_main_class_hpp
+#endif		// src_real_main_sdl_class_hpp
