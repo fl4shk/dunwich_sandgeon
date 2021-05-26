@@ -86,7 +86,7 @@ private:		// variables
 	sdl::Renderer _renderer;
 	sdl::Surface _font_surface;
 	std::map<FontColor, sdl::Texture> _font_texture_map;
-	std::map<sdl::KeycModPair, PrevCurrPair<sdl::KeyStatus>>
+	std::map<KeycModPair, PrevCurrPair<KeyStatus>>
 		_key_status_map;
 	InputKind _input_kind;
 public:		// functions
@@ -96,6 +96,10 @@ public:		// functions
 	int run();
 
 private:		// functions
+	inline KeyStatus& _key_stat(const KeycModPair& kmp)
+	{
+		return _key_status_map[kmp]();
+	}
 	inline Vec2<int> _get_draw_char_font_surface_size_2d()
 	{
 		return Vec2<int>(_font_surface->w / TILE_SIZE_2D.x,

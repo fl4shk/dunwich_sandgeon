@@ -45,6 +45,7 @@ using namespace liborangepower::bitwise;
 using namespace liborangepower::strings;
 using namespace liborangepower::containers;
 namespace sdl = liborangepower::sdl;
+using sdl::KeycModPair, sdl::KeyStatus;
 
 #include <cstdio>
 #include <cstdlib>
