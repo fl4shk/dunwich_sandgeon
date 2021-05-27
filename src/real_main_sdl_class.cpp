@@ -172,22 +172,8 @@ int RealMainSdl::run()
 			{
 				quit = true;
 			}
-			else if ((e.type == SDL_KEYDOWN) || (e.type == SDL_KEYUP))
+			else if (handle_key_events(e, _key_status_map))
 			{
-				const auto& keysym = e.key.keysym;
-				const KeycModPair kmp(keysym.sym, keysym.mod);
-
-				if (!_key_status_map.contains(kmp))
-				{
-					_key_status_map[kmp] = PrevCurrPair<KeyStatus>();
-				}
-				else
-				{
-					_key_status_map[kmp].back_up();
-				}
-
-				_key_stat(kmp).set_kmp(kmp);
-				_key_stat(kmp).set_down(e.type == SDL_KEYDOWN);
 			}
 		}
 
