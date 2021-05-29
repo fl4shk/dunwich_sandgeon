@@ -1,8 +1,3 @@
-#ifndef src_misc_includes_hpp
-#define src_misc_includes_hpp
-
-// src/misc_includes.hpp
-
 // This file is part of Dungwich Sandeon.
 // 
 // Dungwich Sandeon is free software: you can redistribute it and/or modify
@@ -18,6 +13,11 @@
 // You should have received a copy of the GNU General Public License along
 // with Dungwich Sandeon.  If not, see <https://www.gnu.org/licenses/>.
 
+#ifndef src_misc_includes_hpp
+#define src_misc_includes_hpp
+
+// src/misc_includes.hpp
+
 #include "liborangepower_src/misc/misc_includes.hpp"
 #include "liborangepower_src/misc/misc_output_classes.hpp"
 #include "liborangepower_src/misc/misc_types.hpp"
@@ -31,7 +31,7 @@
 
 #include "liborangepower_src/sdl2/sdl.hpp"
 #include "liborangepower_src/sdl2/dpi_stuff.hpp"
-#include "liborangepower_src/sdl2/keyboard_classes.hpp"
+#include "liborangepower_src/sdl2/keyboard_stuff.hpp"
 #include "liborangepower_src/sdl2/sdl_video.hpp"
 #include "liborangepower_src/sdl2/sdl_render.hpp"
 #include "liborangepower_src/sdl2/sdl_surface.hpp"

@@ -13,10 +13,27 @@
 // You should have received a copy of the GNU General Public License along
 // with Dungwich Sandeon.  If not, see <https://www.gnu.org/licenses/>.
 
-#include "misc_includes.hpp"
-#include "sdl/real_main_sdl_class.hpp"
+#ifndef src_ticker_base_class_hpp
+#define src_ticker_base_class_hpp
 
-int main(int argc, char* argv[])
+// src/ticker_base_class.hpp
+
+#include "misc_includes.hpp"
+
+namespace dungwich_sandeon
 {
-	return dungwich_sandeon::RealMainSdl().run();
-}
+
+// A base class for a class that has its `tick()` function run on every
+// iteration of the main loop.
+class TickerBase
+{
+public:		// functions
+	TickerBase() = default;
+	virtual ~TickerBase() = default;
+
+	virtual void tick() = 0;
+};
+
+} // namespace dungwich_sandeon
+
+#endif		// src_ticker_base_class_hpp

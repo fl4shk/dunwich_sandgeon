@@ -4,6 +4,7 @@
 
 
 SHARED_SRC_DIRS:=src \
+	src/sdl \
 	src/liborangepower_src/json_stuff \
 
 CXX_DIRS:=$(SHARED_SRC_DIRS)

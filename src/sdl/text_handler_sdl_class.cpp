@@ -13,75 +13,37 @@
 // You should have received a copy of the GNU General Public License along
 // with Dungwich Sandeon.  If not, see <https://www.gnu.org/licenses/>.
 
-#include "real_main_sdl_class.hpp"
+#include "text_handler_sdl_class.hpp"
 
 namespace dungwich_sandeon
 {
-const Vec2<int> RealMainSdl::TILE_SIZE_2D(8, 8),
-	RealMainSdl::SCREEN_TM_SIZE_2D(80, 60),
-	RealMainSdl::PLAYFIELD_TM_POS(1, 1),
-	RealMainSdl::PLAYFIELD_TM_SIZE_2D(78, 18),
-	RealMainSdl::DEF_SCREEN_SIZE_2D
-		(RealMainSdl::SCREEN_TM_SIZE_2D.x * RealMainSdl::TILE_SIZE_2D.x
-			* RealMainSdl::DEF_ZOOM,
-		RealMainSdl::SCREEN_TM_SIZE_2D.y * RealMainSdl::TILE_SIZE_2D.y
-			* RealMainSdl::DEF_ZOOM);
 
-const std::map<RealMainSdl::FontColor, std::string>
-	RealMainSdl::COLOR_TO_STR_MAP
+const Vec2<int> TextHandlerSdl::TILE_SIZE_2D(8, 8);
+const std::map<TextHandlerSdl::FontColor, std::string>
+	TextHandlerSdl::COLOR_TO_STR_MAP
 = {
-	{RealMainSdl::FontColor::White, "White"},
-	{RealMainSdl::FontColor::Red, "Red"},
-	{RealMainSdl::FontColor::Green, "Green"},
-	{RealMainSdl::FontColor::Brown, "Brown"},
-	{RealMainSdl::FontColor::Yellow, "Yellow"},
-	{RealMainSdl::FontColor::Blue, "Blue"},
-	{RealMainSdl::FontColor::Purple, "Purple"},
-	{RealMainSdl::FontColor::Cyan, "Cyan"},
-	{RealMainSdl::FontColor::Gray, "Gray"},
-	{RealMainSdl::FontColor::Lim, "Lim"},
+	{TextHandlerSdl::FontColor::White, "White"},
+	{TextHandlerSdl::FontColor::Red, "Red"},
+	{TextHandlerSdl::FontColor::Green, "Green"},
+	{TextHandlerSdl::FontColor::Brown, "Brown"},
+	{TextHandlerSdl::FontColor::Yellow, "Yellow"},
+	{TextHandlerSdl::FontColor::Blue, "Blue"},
+	{TextHandlerSdl::FontColor::Purple, "Purple"},
+	{TextHandlerSdl::FontColor::Cyan, "Cyan"},
+	{TextHandlerSdl::FontColor::Gray, "Gray"},
+	{TextHandlerSdl::FontColor::Lim, "Lim"},
 };
-int RealMainSdl::run()
+
+bool TextHandlerSdl::init(sdl::Renderer& s_renderer, int& s_zoom)
 {
-	//--------
-	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) < 0)
-	{
-		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
-			"Couldn't initialize SDL: %s", SDL_GetError());
-		return 1;
-	}
-	sdl::QuitUponDtor quit_upon_dtor;
-
-	sdl::prevent_dpi_scaling_issues();
-
-	_zoom = DEF_ZOOM;
-
-	_screen_size_2d = DEF_SCREEN_SIZE_2D;
-
-	_window = SDL_CreateWindow("Dungwich Sandeon",
-		SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-		_screen_size_2d.x, _screen_size_2d.y, SDL_WINDOW_RESIZABLE);
-	if (!_window)
-	{
-		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
-			"Couldn't create window: %s", SDL_GetError());
-		return 1;
-	}
-
-	_renderer = SDL_CreateRenderer(_window, -1, SDL_RENDERER_ACCELERATED);
-	if (!_renderer)
-	{
-		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
-			"Couldn't create renderer: %s", SDL_GetError());
-		return 1;
-	}
-
+	_renderer = &s_renderer;
+	_zoom = &s_zoom;
 	_font_surface = SDL_LoadBMP("gfx/font.bmp");
 	if (!_font_surface)
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
 			"Couldn't load the bitmap font: %s", SDL_GetError());
-		return 1;
+		return false;
 	}
 
 	// Use black pixels for alpha blending
@@ -89,7 +51,7 @@ int RealMainSdl::run()
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
 			"Couldn't set the color key of the font: %s", SDL_GetError());
-		return 1;
+		return false;
 	}
 
 	for (auto font_color=FontColor::White;
@@ -97,7 +59,7 @@ int RealMainSdl::run()
 		font_color=font_color_add(font_color, 1u))
 	{
 		_font_texture_map[font_color]
-			= sdl::Texture(SDL_CreateTextureFromSurface(_renderer,
+			= sdl::Texture(SDL_CreateTextureFromSurface(*_renderer,
 				_font_surface));
 	}
 	//--------
@@ -107,28 +69,28 @@ int RealMainSdl::run()
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
 			"Couldn't color the font red: %s", SDL_GetError());
-		return 1;
+		return false;
 	}
 	if (SDL_SetTextureColorMod(_font_texture_map[FontColor::Green],
 		0x00, 0xdd, 0x00) < 0)
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
 			"Couldn't color the font green: %s", SDL_GetError());
-		return 1;
+		return false;
 	}
 	if (SDL_SetTextureColorMod(_font_texture_map[FontColor::Brown],
 		0xc0, 0x66, 0x20) < 0)
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
 			"Couldn't color the font brown: %s", SDL_GetError());
-		return 1;
+		return false;
 	}
 	if (SDL_SetTextureColorMod(_font_texture_map[FontColor::Yellow],
 		0xdd, 0xdd, 0x00) < 0)
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
 			"Couldn't color the font yellow: %s", SDL_GetError());
-		return 1;
+		return false;
 	}
 	//--------
 	if (SDL_SetTextureColorMod(_font_texture_map[FontColor::Blue],
@@ -136,70 +98,34 @@ int RealMainSdl::run()
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
 			"Couldn't color the font blue: %s", SDL_GetError());
-		return 1;
+		return false;
 	}
 	if (SDL_SetTextureColorMod(_font_texture_map[FontColor::Purple],
 		0xdd, 0x00, 0xdd) < 0)
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
 			"Couldn't color the font purple: %s", SDL_GetError());
-		return 1;
+		return false;
 	}
 	if (SDL_SetTextureColorMod(_font_texture_map[FontColor::Cyan],
 		0x00, 0xdd, 0xdd) < 0)
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
 			"Couldn't color the font cyan: %s", SDL_GetError());
-		return 1;
+		return false;
 	}
 	if (SDL_SetTextureColorMod(_font_texture_map[FontColor::Gray],
 		0x90, 0x90, 0x90) < 0)
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
 			"Couldn't color the font gray: %s", SDL_GetError());
-		return 1;
+		return false;
 	}
-	//--------
-	// Draw a black background
-	bool quit = false;
-	while (!quit)
-	{
-		SDL_Event e;
 
-		while (SDL_PollEvent(&e) != 0)
-		{
-			if (e.type == SDL_QUIT)
-			{
-				quit = true;
-			}
-			else if (handle_key_events(e, _key_status_map))
-			{
-			}
-		}
-
-		SDL_SetRenderDrawColor(_renderer, 0xff, 0x00, 0x00, 0xff);
-		//SDL_RenderFillRect(_renderer, sdl::Rect(0, 0, _screen_size_2d.x,
-		//	_screen_size_2d.y));
-		SDL_RenderFillRect(_renderer, nullptr);
-		//_draw_char('@', FontColor::White, Vec2<int>(0, 0));
-
-		//_draw_char('@', FontColor::Red, Vec2<int>(1, 0));
-		//_draw_char('@', FontColor::Green, Vec2<int>(2, 0));
-		//_draw_char('@', FontColor::Brown, Vec2<int>(3, 0));
-		//_draw_char('@', FontColor::Yellow, Vec2<int>(4, 0));
-
-		//_draw_char('@', FontColor::Blue, Vec2<int>(5, 0));
-		//_draw_char('@', FontColor::Purple, Vec2<int>(6, 0));
-		//_draw_char('@', FontColor::Cyan, Vec2<int>(7, 0));
-		//_draw_char('@', FontColor::Gray, Vec2<int>(8, 0));
-		SDL_RenderPresent(_renderer);
-		//SDL_Delay(10'000);
-	}
-	//--------
-	return 0;
-	//--------
+	return true;
 }
-void RealMainSdl::_draw_char(int c, FontColor color,
+
+void TextHandlerSdl::draw_char(int c, FontColor color,
 	const Vec2<int>& draw_pos)
 {
 	const auto draw_char_font_surface_size_2d
@@ -213,10 +139,15 @@ void RealMainSdl::_draw_char(int c, FontColor color,
 
 	const sdl::Rect src_rect(c_real_pos.x, c_real_pos.y,
 		TILE_SIZE_2D.x, TILE_SIZE_2D.y),
-		dst_rect(draw_real_pos.x * _zoom, draw_real_pos.y * _zoom,
-			TILE_SIZE_2D.x * _zoom, TILE_SIZE_2D.y * _zoom);
-	SDL_RenderCopy(_renderer, _font_texture_map.at(color), src_rect,
+		dst_rect(draw_real_pos.x * (*_zoom), draw_real_pos.y * (*_zoom),
+			TILE_SIZE_2D.x * (*_zoom), TILE_SIZE_2D.y * (*_zoom));
+	SDL_RenderCopy(*_renderer, _font_texture_map.at(color), src_rect,
 		dst_rect);
+}
+Vec2<int> TextHandlerSdl::_get_draw_char_font_surface_size_2d()
+{
+	return Vec2<int>(_font_surface->w / TILE_SIZE_2D.x,
+		_font_surface->h / TILE_SIZE_2D.y);
 }
 
 } // namespace dungwich_sandeon

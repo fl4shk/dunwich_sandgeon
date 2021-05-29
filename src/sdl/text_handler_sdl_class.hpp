@@ -1,8 +1,3 @@
-#ifndef src_real_main_sdl_class_hpp
-#define src_real_main_sdl_class_hpp
-
-// src/real_main_sdl_class.hpp
-
 // This file is part of Dungwich Sandeon.
 // 
 // Dungwich Sandeon is free software: you can redistribute it and/or modify
@@ -18,12 +13,19 @@
 // You should have received a copy of the GNU General Public License along
 // with Dungwich Sandeon.  If not, see <https://www.gnu.org/licenses/>.
 
-#include "misc_includes.hpp"
+#ifndef src_sdl_text_handler_sdl_class_hpp
+#define src_sdl_text_handler_sdl_class_hpp
+
+// src/sdl/text_handler_sdl_class.hpp
+
+#include "../misc_includes.hpp"
 
 namespace dungwich_sandeon
 {
 
-class RealMainSdl final
+class RealMainSdl;
+
+class TextHandlerSdl final
 {
 public:		// types
 	enum class FontColor: u32
@@ -53,60 +55,26 @@ public:		// functions
 	}
 public:		// constants
 	static const Vec2<int> TILE_SIZE_2D;
-	// These constants have values in amount of tilemap entries
-	static const Vec2<int> SCREEN_TM_SIZE_2D, PLAYFIELD_TM_POS,
-		PLAYFIELD_TM_SIZE_2D;
-	// Default values for some member variables
-	static const Vec2<int> DEF_SCREEN_SIZE_2D;
-	static constexpr int DEF_ZOOM = 2;
 	static const std::map<FontColor, std::string> COLOR_TO_STR_MAP;
-public:		// types
-	enum class InputKind
-	{
-		MoveLeft,
-		MoveUp,
-		MoveRight,
-		MoveDown,
-
-		TargetEnemy,
-		TargetItem,
-
-		ExitMenu,
-		OpenInvMenu,
-		OpenSaveMenu,
-
-		ZoomIn,
-		ZoomOut,
-	};
-
 private:		// variables
-	Vec2<int> _screen_size_2d;
-	int _zoom = DEF_ZOOM;
-	sdl::Window _window;
-	sdl::Renderer _renderer;
 	sdl::Surface _font_surface;
 	std::map<FontColor, sdl::Texture> _font_texture_map;
-	sdl::KeyStatusMap _key_status_map;
-	InputKind _input_kind;
+	sdl::Renderer* _renderer = nullptr;
+	int* _zoom = nullptr;
 public:		// functions
-	RealMainSdl() = default;
-	~RealMainSdl() = default;
+	TextHandlerSdl() = default;
+	~TextHandlerSdl() = default;
+	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(TextHandlerSdl);
 
-	int run();
-
+	bool init(sdl::Renderer& s_renderer, int& s_zoom);
+	void draw_char(int c, FontColor color, const Vec2<int>& draw_pos);
 private:		// functions
-	inline KeyStatus& _key_stat(const KeycModPair& kmp)
-	{
-		return _key_status_map.at(kmp);
-	}
-	inline Vec2<int> _get_draw_char_font_surface_size_2d()
-	{
-		return Vec2<int>(_font_surface->w / TILE_SIZE_2D.x,
-			_font_surface->h / TILE_SIZE_2D.y);
-	}
-	void _draw_char(int c, FontColor color, const Vec2<int>& draw_pos);
+	// For some reason it's not possible to make this a `const` function
+	// due to the references to `_font_surface->w` and `_font_surface->h`.
+	Vec2<int> _get_draw_char_font_surface_size_2d();
 };
 
 } // namespace dungwich_sandeon
 
-#endif		// src_real_main_sdl_class_hpp
+
+#endif		// src_sdl_text_handler_sdl_class_hpp

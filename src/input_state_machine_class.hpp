@@ -13,10 +13,12 @@
 // You should have received a copy of the GNU General Public License along
 // with Dungwich Sandeon.  If not, see <https://www.gnu.org/licenses/>.
 
-#include "misc_includes.hpp"
-#include "sdl/real_main_sdl_class.hpp"
+#ifndef src_input_state_machine_hpp
+#define src_input_state_machine_hpp
 
-int main(int argc, char* argv[])
-{
-	return dungwich_sandeon::RealMainSdl().run();
-}
+// src/input_state_machine.hpp
+
+#include "misc_includes.hpp"
+
+
+#endif		// src_input_state_machine_hpp
