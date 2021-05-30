@@ -69,9 +69,7 @@ public:		// functions
 	bool init(sdl::Renderer& s_renderer, int& s_zoom);
 	void draw_char(int c, FontColor color, const Vec2<int>& draw_pos);
 private:		// functions
-	// For some reason it's not possible to make this a `const` function
-	// due to the references to `_font_surface->w` and `_font_surface->h`.
-	Vec2<int> _get_draw_char_font_surface_size_2d();
+	Vec2<int> _get_draw_char_font_surface_size_2d() const;
 };
 
 } // namespace dungwich_sandeon

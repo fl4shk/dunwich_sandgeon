@@ -46,13 +46,13 @@ bool TextHandlerSdl::init(sdl::Renderer& s_renderer, int& s_zoom)
 		return false;
 	}
 
-	// Use black pixels for alpha blending
-	if (SDL_SetColorKey(_font_surface, SDL_TRUE, 0xff00ffff) < 0)
-	{
-		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
-			"Couldn't set the color key of the font: %s", SDL_GetError());
-		return false;
-	}
+	//// Use black pixels for alpha blending
+	//if (SDL_SetColorKey(_font_surface, SDL_TRUE, 0x000000ff) < 0)
+	//{
+	//	SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+	//		"Couldn't set the color key of the font: %s", SDL_GetError());
+	//	return false;
+	//}
 
 	for (auto font_color=FontColor::White;
 		font_color!=FontColor::Lim;
@@ -144,7 +144,7 @@ void TextHandlerSdl::draw_char(int c, FontColor color,
 	SDL_RenderCopy(*_renderer, _font_texture_map.at(color), src_rect,
 		dst_rect);
 }
-Vec2<int> TextHandlerSdl::_get_draw_char_font_surface_size_2d()
+Vec2<int> TextHandlerSdl::_get_draw_char_font_surface_size_2d() const
 {
 	return Vec2<int>(_font_surface->w / TILE_SIZE_2D.x,
 		_font_surface->h / TILE_SIZE_2D.y);
