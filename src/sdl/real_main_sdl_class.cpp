@@ -83,21 +83,19 @@ int RealMainSdl::run()
 		}
 
 		// Draw a black background
-		SDL_SetRenderDrawColor(_renderer, 0xff, 0x00, 0x00, 0xff);
-		//SDL_RenderFillRect(_renderer, sdl::Rect(0, 0, _screen_size_2d.x,
-		//	_screen_size_2d.y));
+		SDL_SetRenderDrawColor(_renderer, 0x00, 0x00, 0x00, 0xff);
 		SDL_RenderFillRect(_renderer, nullptr);
-		_text_handler.draw_char('@', FontColor::White, Vec2<int>(0, 0));
+		//_text_handler.draw_char('@', FontColor::White, Vec2<int>(0, 0));
 
-		_text_handler.draw_char('@', FontColor::Red, Vec2<int>(1, 0));
-		_text_handler.draw_char('@', FontColor::Green, Vec2<int>(2, 0));
-		_text_handler.draw_char('@', FontColor::Brown, Vec2<int>(3, 0));
-		_text_handler.draw_char('@', FontColor::Yellow, Vec2<int>(4, 0));
+		//_text_handler.draw_char('@', FontColor::Red, Vec2<int>(1, 0));
+		//_text_handler.draw_char('@', FontColor::Green, Vec2<int>(2, 0));
+		//_text_handler.draw_char('@', FontColor::Brown, Vec2<int>(3, 0));
+		//_text_handler.draw_char('@', FontColor::Yellow, Vec2<int>(4, 0));
 
-		_text_handler.draw_char('@', FontColor::Blue, Vec2<int>(5, 0));
-		_text_handler.draw_char('@', FontColor::Purple, Vec2<int>(6, 0));
-		_text_handler.draw_char('@', FontColor::Cyan, Vec2<int>(7, 0));
-		_text_handler.draw_char('@', FontColor::Gray, Vec2<int>(8, 0));
+		//_text_handler.draw_char('@', FontColor::Blue, Vec2<int>(5, 0));
+		//_text_handler.draw_char('@', FontColor::Purple, Vec2<int>(6, 0));
+		//_text_handler.draw_char('@', FontColor::Cyan, Vec2<int>(7, 0));
+		//_text_handler.draw_char('@', FontColor::Gray, Vec2<int>(8, 0));
 		SDL_RenderPresent(_renderer);
 		//SDL_Delay(10'000);
 	}

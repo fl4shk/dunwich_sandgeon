@@ -13,40 +13,10 @@
 // You should have received a copy of the GNU General Public License along
 // with Dungwich Sandeon.  If not, see <https://www.gnu.org/licenses/>.
 
-#ifndef src_input_state_machine_class_hpp
-#define src_input_state_machine_class_hpp
-
-// src/input_state_machine_class.hpp
-
-#include "misc_includes.hpp"
+#include "menu_classes.hpp"
 
 namespace dungwich_sandeon
 {
 
-enum class InputKind
-{
-	MoveLeft,
-	MoveUp,
-	MoveRight,
-	MoveDown,
-	TargetEnemy,
-	TargetItem,
-
-	ExitMenu,
-	OpenInvMenu,
-	OpenSaveMenu,
-
-	ZoomIn,
-	ZoomOut,
-};
-
-class InputStateMachine final
-{
-private:		// variables
-public:		// functions
-};
 
 } // namespace dungwich_sandeon
-
-
-#endif		// src_input_state_machine_class_hpp

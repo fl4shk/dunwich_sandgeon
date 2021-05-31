@@ -19,6 +19,7 @@
 // src/sdl/real_main_sdl_class.hpp
 
 #include "../misc_includes.hpp"
+#include "../input_state_machine_class.hpp"
 #include "text_handler_sdl_class.hpp"
 
 namespace dungwich_sandeon
@@ -27,22 +28,6 @@ namespace dungwich_sandeon
 class RealMainSdl final
 {
 public:		// types
-	enum class InputKind
-	{
-		MoveLeft,
-		MoveUp,
-		MoveRight,
-		MoveDown,
-		TargetEnemy,
-		TargetItem,
-
-		ExitMenu,
-		OpenInvMenu,
-		OpenSaveMenu,
-
-		ZoomIn,
-		ZoomOut,
-	};
 	using FontColor = TextHandlerSdl::FontColor;
 public:		// constants
 	// These constants have values in amount of tilemap entries

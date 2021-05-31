@@ -51,6 +51,10 @@ using sdl::KeycModPair, sdl::KeyStatus;
 #include <cstdlib>
 
 #include <map>
+#include <variant>
+#include <functional>
+#include <type_traits>
+#include <concepts>
 
 
 #endif		// src_misc_includes_hpp
