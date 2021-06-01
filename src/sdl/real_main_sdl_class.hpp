@@ -48,7 +48,6 @@ public:		// functions
 	~RealMainSdl() = default;
 
 	int run();
-
 private:		// functions
 };
 
