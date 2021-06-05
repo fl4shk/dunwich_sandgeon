@@ -13,10 +13,10 @@
 // You should have received a copy of the GNU General Public License along
 // with Dungwich Sandeon.  If not, see <https://www.gnu.org/licenses/>.
 
-#ifndef src_ticker_base_class_hpp
-#define src_ticker_base_class_hpp
+#ifndef src_engine_ticker_base_class_hpp
+#define src_engine_ticker_base_class_hpp
 
-// src/ticker_base_class.hpp
+// src/engine/ticker_base_class.hpp
 
 #include "../misc_includes.hpp"
 
@@ -42,4 +42,4 @@ public:		// functions
 
 } // namespace dungwich_sandeon
 
-#endif		// src_ticker_base_class_hpp
+#endif		// src_engine_ticker_base_class_hpp

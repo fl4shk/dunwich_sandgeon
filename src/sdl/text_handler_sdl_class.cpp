@@ -39,6 +39,7 @@ const std::map<TextHandlerSdl::FontColor, std::string>
 
 bool TextHandlerSdl::init(sdl::Renderer& s_renderer, int& s_zoom)
 {
+	//--------
 	_renderer = &s_renderer;
 	_zoom = &s_zoom;
 	_font_surface = SDL_LoadBMP("gfx/font.bmp");
@@ -48,7 +49,7 @@ bool TextHandlerSdl::init(sdl::Renderer& s_renderer, int& s_zoom)
 			"Couldn't load the bitmap font: %s", SDL_GetError());
 		return false;
 	}
-
+	//--------
 	//// Use black pixels for alpha blending
 	//if (SDL_SetColorKey(_font_surface, SDL_TRUE, 0x000000ff) < 0)
 	//{
@@ -56,7 +57,7 @@ bool TextHandlerSdl::init(sdl::Renderer& s_renderer, int& s_zoom)
 	//		"Couldn't set the color key of the font: %s", SDL_GetError());
 	//	return false;
 	//}
-
+	//--------
 	for (auto font_color=FontColor::White;
 		font_color!=FontColor::Lim;
 		font_color=font_color_add(font_color, 1u))
@@ -124,8 +125,9 @@ bool TextHandlerSdl::init(sdl::Renderer& s_renderer, int& s_zoom)
 			"Couldn't color the font gray: %s", SDL_GetError());
 		return false;
 	}
-
+	//--------
 	return true;
+	//--------
 }
 
 void TextHandlerSdl::draw_char(int c, FontColor color,
