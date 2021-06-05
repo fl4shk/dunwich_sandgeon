@@ -20,6 +20,7 @@
 
 #include "../misc_includes.hpp"
 #include "../input_state_machine_class.hpp"
+#include "../screen_class.hpp"
 #include "text_handler_sdl_class.hpp"
 
 namespace dungwich_sandeon
@@ -30,14 +31,12 @@ class RealMainSdl final
 public:		// types
 	using FontColor = TextHandlerSdl::FontColor;
 public:		// constants
-	// These constants have values in amount of tilemap entries
-	static const Vec2<int> SCREEN_TM_SIZE_2D, PLAYFIELD_TM_POS,
-		PLAYFIELD_TM_SIZE_2D;
 	// Default values for some member variables
 	static constexpr int DEF_ZOOM = 2;
 private:		// variables
-	Vec2<int> _screen_size_2d;
+	Vec2<int> _window_size_2d;
 	int _zoom = DEF_ZOOM;
+	Screen _screen;
 	sdl::Window _window;
 	sdl::Renderer _renderer;
 	sdl::KeyStatusMap _key_status_map;
@@ -48,7 +47,10 @@ public:		// functions
 	~RealMainSdl() = default;
 
 	int run();
+
+	GEN_GETTER_BY_VAL(zoom);
 private:		// functions
+	void _update_window_size_2d();
 };
 
 } // namespace dungwich_sandeon

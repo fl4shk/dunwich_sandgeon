@@ -23,13 +23,13 @@
 namespace dungwich_sandeon
 {
 
-
 class Menu final
 {
 public:		// types
-	struct Node final
+	class Node final
 	{
-	public:		// types
+	public:		// everything
+		//--------
 		enum class Kind
 		{
 			// End of node list
@@ -51,6 +51,17 @@ public:		// types
 			// Pick between multiple options, but also wrap
 			HorizPickerWrap,
 		};
+
+		Kind kind;
+		//--------
+		u32 flags;
+		//--------
+		// Where to go, using keyboard or controller; "" if nowhere
+		struct 
+		{
+			std::string left, right, up, down;
+		} where;
+		//--------
 		// Value to modify for horiz pickers
 		using DataValue = int*;
 
@@ -60,35 +71,36 @@ public:		// types
 		// Button action with parameter
 		using DataActionParamFunc = std::function<void(int)>;
 
-		using VariantData = std::variant<std::monostate, DataValue,
-			DataActionFunc, DataActionParamFunc>;
-
-		using OnUpdateFunc = std::function<void()>;
-	public:		// variables
-		// Who owns us?
-		Menu* parent;
-
-		// Index into `parent->_node_map`
-		std::string self_str;
-
-		Kind kind;
-
-		u32 flags;
-
-		// Where to go, using keyboard or controller; "" if nowhere
-		std::string left, right, up, down;
-
-		VariantData data;
-
+		std::variant<std::monostate, DataValue, DataActionFunc,
+			DataActionParamFunc> data;
+		//--------
 		// Various uses
 		int variable;
-
+		//--------
 		// When it's updated
+		using OnUpdateFunc = std::function<void()>;
+
 		OnUpdateFunc on_update;
+		//--------
 	};
+
+	using NodeMap = std::map<std::string, Node>;
 private:		// variables
-	std::map<std::string, Node> _node_map;
+	NodeMap _node_map;
 public:		// functions
+	Menu() = default;
+
+	inline Menu(const NodeMap& s_node_map)
+		: _node_map(s_node_map)
+	{
+	}
+	inline Menu(NodeMap&& s_node_map)
+		: _node_map(std::move(s_node_map))
+	{
+	}
+
+	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Menu);
+	~Menu() = default;
 };
 
 } // namespace dungwich_sandeon

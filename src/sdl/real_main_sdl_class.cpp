@@ -18,10 +18,6 @@
 namespace dungwich_sandeon
 {
 
-const Vec2<int> RealMainSdl::SCREEN_TM_SIZE_2D(80, 60),
-	RealMainSdl::PLAYFIELD_TM_POS(1, 1),
-	RealMainSdl::PLAYFIELD_TM_SIZE_2D(78, 18);
-
 int RealMainSdl::run()
 {
 	//--------
@@ -36,15 +32,11 @@ int RealMainSdl::run()
 	sdl::prevent_dpi_scaling_issues();
 
 	_zoom = DEF_ZOOM;
-
-	_screen_size_2d.x = SCREEN_TM_SIZE_2D.x
-		* TextHandlerSdl::TILE_SIZE_2D.x;
-	_screen_size_2d.y = SCREEN_TM_SIZE_2D.y
-		* TextHandlerSdl::TILE_SIZE_2D.y;
+	_update_window_size_2d();
 
 	_window = SDL_CreateWindow("Dungwich Sandeon",
 		SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-		_screen_size_2d.x, _screen_size_2d.y, SDL_WINDOW_RESIZABLE);
+		_window_size_2d.x, _window_size_2d.y, SDL_WINDOW_RESIZABLE);
 	if (!_window)
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
@@ -77,9 +69,7 @@ int RealMainSdl::run()
 			{
 				quit = true;
 			}
-			else if (handle_key_events(e, _key_status_map))
-			{
-			}
+			else if (handle_key_events(e, _key_status_map));
 		}
 
 		// Draw a black background
@@ -104,5 +94,14 @@ int RealMainSdl::run()
 	//--------
 }
 
+void RealMainSdl::_update_window_size_2d()
+{
+	_window_size_2d.x = Screen::SIZE_2D.x * TextHandlerSdl::TILE_SIZE_2D.x
+		* zoom();
+	_window_size_2d.y = Screen::SIZE_2D.y * TextHandlerSdl::TILE_SIZE_2D.y
+		* zoom();
+
+	
+}
 
 } // namespace dungwich_sandeon

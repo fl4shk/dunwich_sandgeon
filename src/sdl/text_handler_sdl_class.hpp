@@ -63,8 +63,8 @@ private:		// variables
 	int* _zoom = nullptr;
 public:		// functions
 	TextHandlerSdl() = default;
-	~TextHandlerSdl() = default;
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(TextHandlerSdl);
+	~TextHandlerSdl() = default;
 
 	bool init(sdl::Renderer& s_renderer, int& s_zoom);
 	void draw_char(int c, FontColor color, const Vec2<int>& draw_pos);
