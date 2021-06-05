@@ -20,10 +20,13 @@
 
 #include "../misc_includes.hpp"
 #include "../input_state_machine_class.hpp"
-#include "../screen_class.hpp"
+#include "../engine/screen_class.hpp"
 #include "text_handler_sdl_class.hpp"
 
 namespace dungwich_sandeon
+{
+
+namespace io
 {
 
 class RealMainSdl final
@@ -36,7 +39,7 @@ public:		// constants
 private:		// variables
 	Vec2<int> _window_size_2d;
 	int _zoom = DEF_ZOOM;
-	Screen _screen;
+	engine::Screen _screen;
 	sdl::Window _window;
 	sdl::Renderer _renderer;
 	sdl::KeyStatusMap _key_status_map;
@@ -52,6 +55,8 @@ public:		// functions
 private:		// functions
 	void _update_window_size_2d();
 };
+
+} // namespace io
 
 } // namespace dungwich_sandeon
 

@@ -18,6 +18,9 @@
 namespace dungwich_sandeon
 {
 
+namespace io
+{
+
 int RealMainSdl::run()
 {
 	//--------
@@ -96,12 +99,12 @@ int RealMainSdl::run()
 
 void RealMainSdl::_update_window_size_2d()
 {
-	_window_size_2d.x = Screen::SIZE_2D.x * TextHandlerSdl::TILE_SIZE_2D.x
-		* zoom();
-	_window_size_2d.y = Screen::SIZE_2D.y * TextHandlerSdl::TILE_SIZE_2D.y
-		* zoom();
-
-	
+	_window_size_2d.x = engine::Screen::SIZE_2D.x
+		* TextHandlerSdl::TILE_SIZE_2D.x * zoom();
+	_window_size_2d.y = engine::Screen::SIZE_2D.y
+		* TextHandlerSdl::TILE_SIZE_2D.y * zoom();
 }
+
+} // namespace io
 
 } // namespace dungwich_sandeon

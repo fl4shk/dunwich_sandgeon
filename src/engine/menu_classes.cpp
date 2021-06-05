@@ -13,29 +13,15 @@
 // You should have received a copy of the GNU General Public License along
 // with Dungwich Sandeon.  If not, see <https://www.gnu.org/licenses/>.
 
-#ifndef src_screen_class_hpp
-#define src_screen_class_hpp
-
-// src/screen_class.hpp
-
-#include "misc_includes.hpp"
-#include "sdl/text_handler_sdl_class.hpp"
+#include "menu_classes.hpp"
 
 namespace dungwich_sandeon
 {
 
-class Screen final
+namespace engine
 {
-public:		// constants
-	// These constants have values in amount of tilemap entries
-	static const Vec2<int> SIZE_2D, PLAYFIELD_POS, PLAYFIELD_SIZE_2D;
-private:		// variables
-public:		// functions
-	Screen() = default;
-	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Screen);
-	~Screen() = default;
-};
+
+
+} // namespace engine
 
 } // namespace dungwich_sandeon
-
-#endif		// src_screen_class_hpp

@@ -23,6 +23,9 @@
 namespace dungwich_sandeon
 {
 
+namespace io
+{
+
 class RealMainSdl;
 
 class TextHandlerSdl final
@@ -72,7 +75,8 @@ private:		// functions
 	Vec2<int> _get_draw_char_font_surface_size_2d() const;
 };
 
-} // namespace dungwich_sandeon
+} // namespace io
 
+} // namespace dungwich_sandeon
 
 #endif		// src_sdl_text_handler_sdl_class_hpp

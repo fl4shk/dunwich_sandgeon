@@ -18,6 +18,9 @@
 namespace dungwich_sandeon
 {
 
+namespace io
+{
+
 const Vec2<int> TextHandlerSdl::TILE_SIZE_2D(8, 8);
 const std::map<TextHandlerSdl::FontColor, std::string>
 	TextHandlerSdl::COLOR_TO_STR_MAP
@@ -149,5 +152,7 @@ Vec2<int> TextHandlerSdl::_get_draw_char_font_surface_size_2d() const
 	return Vec2<int>(_font_surface->w / TILE_SIZE_2D.x,
 		_font_surface->h / TILE_SIZE_2D.y);
 }
+
+} // namespace io
 
 } // namespace dungwich_sandeon

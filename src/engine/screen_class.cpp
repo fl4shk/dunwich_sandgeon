@@ -13,10 +13,18 @@
 // You should have received a copy of the GNU General Public License along
 // with Dungwich Sandeon.  If not, see <https://www.gnu.org/licenses/>.
 
-#include "menu_classes.hpp"
+#include "screen_class.hpp"
 
 namespace dungwich_sandeon
 {
 
+namespace engine
+{
+
+const Vec2<int> Screen::SIZE_2D(80, 60),
+	Screen::PLAYFIELD_POS(0, 0),
+	Screen::PLAYFIELD_SIZE_2D(60, 60);
+
+} // namespace engine
 
 } // namespace dungwich_sandeon

@@ -18,5 +18,5 @@
 
 int main(int argc, char* argv[])
 {
-	return dungwich_sandeon::RealMainSdl().run();
+	return dungwich_sandeon::io::RealMainSdl().run();
 }

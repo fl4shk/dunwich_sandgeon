@@ -18,9 +18,12 @@
 
 // src/menu_classes.hpp
 
-#include "misc_includes.hpp"
+#include "../misc_includes.hpp"
 
 namespace dungwich_sandeon
+{
+
+namespace engine
 {
 
 class Menu final
@@ -89,7 +92,6 @@ private:		// variables
 	NodeMap _node_map;
 public:		// functions
 	Menu() = default;
-
 	inline Menu(const NodeMap& s_node_map)
 		: _node_map(s_node_map)
 	{
@@ -98,10 +100,11 @@ public:		// functions
 		: _node_map(std::move(s_node_map))
 	{
 	}
-
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Menu);
 	~Menu() = default;
 };
+
+} // namespace engine
 
 } // namespace dungwich_sandeon
 
