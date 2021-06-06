@@ -13,12 +13,7 @@
 // You should have received a copy of the GNU General Public License along
 // with Dungwich Sandeon.  If not, see <https://www.gnu.org/licenses/>.
 
-#ifndef src_engine_game_obj_class_hpp
-#define src_engine_game_obj_class_hpp
-
-// src/engine/game_obj_class.hpp
-
-#include "../misc_includes.hpp"
+#include "entity_class_etc.hpp"
 
 namespace dungwich_sandeon
 {
@@ -26,13 +21,12 @@ namespace dungwich_sandeon
 namespace engine
 {
 
-class GameObj final
+Entity::Entity(KeySet&& s_comp_key_set, KeySet&& s_sys_key_set)
+	: _comp_key_set(std::move(s_comp_key_set)),
+	_sys_key_set(std::move(s_sys_key_set))
 {
-private:		// variables
-};
+}
 
 } // namespace engine
 
 } // namespace dungwich_sandeon
-
-#endif		// src_engine_game_obj_class_hpp

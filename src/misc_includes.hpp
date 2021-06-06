@@ -51,6 +51,7 @@ using sdl::KeycModPair, sdl::KeyStatus;
 #include <cstdlib>
 
 #include <map>
+#include <set>
 #include <variant>
 #include <functional>
 #include <type_traits>
