@@ -40,13 +40,13 @@ public:		// functions
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Window);
 	virtual ~Window() = default;
 
-	inline Entity& ent_map_at(size_t outer, size_t inner)
+	inline Entity& ent_map_at(const Vec2<int>& index)
 	{
-		return _ent_map.at(outer).at(inner);
+		return _ent_map.at(index.y).at(index.x);
 	}
-	inline const Entity& ent_map_at(size_t outer, size_t inner) const
+	inline const Entity& ent_map_at(const Vec2<int>& index) const
 	{
-		return _ent_map.at(outer).at(inner);
+		return _ent_map.at(index.y).at(index.x);
 	}
 
 	GEN_GETTER_BY_CON_REF(ent_map);
