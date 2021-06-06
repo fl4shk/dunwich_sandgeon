@@ -31,19 +31,26 @@ namespace engine
 class Window
 {
 public:		// types
-	enum class Side
-	{
-		Left,
-		Top,
-		Right,
-		Bottom,
-	};
+	using EntMap = std::vector<std::vector<Entity>>;
 protected:		// variables
-	std::map<Side, bool> _filled_side_map;
-	std::vector<std::vector<Entity*>> _tilemap;
+	EntMap _ent_map;
 public:		// functions
-	GEN_GETTER_BY_CON_REF(filled_side_map);
-	GEN_GETTER_BY_CON_REF(tilemap);
+	Window() = default;
+	Window(EntMap&& s_ent_map);
+	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Window);
+	virtual ~Window() = default;
+
+	inline Entity& ent_map_at(size_t outer, size_t inner)
+	{
+		return _ent_map.at(outer).at(inner);
+	}
+	inline const Entity& ent_map_at(size_t outer, size_t inner) const
+	{
+		return _ent_map.at(outer).at(inner);
+	}
+
+	GEN_GETTER_BY_CON_REF(ent_map);
+	GEN_SETTER_BY_RVAL_REF(ent_map);
 };
 
 } // namespace engine

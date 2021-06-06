@@ -31,7 +31,7 @@ class Entity
 public:		// types
 	using KeySet = std::set<std::string>;
 protected:		// variables
-	// `Component` Key Set, `System` Key Set
+	// `Component` KeySet, `System` KeySet
 	KeySet _comp_key_set, _sys_key_set;
 public:		// functions
 	Entity() = default;

@@ -20,6 +20,12 @@ namespace dungwich_sandeon
 
 namespace engine
 {
+
+Window::Window(EntMap&& s_ent_map)
+	: _ent_map(std::move(s_ent_map))
+{
+}
+
 } // namespace engine
 
 } // namespace dungwich_sandeon
