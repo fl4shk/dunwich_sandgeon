@@ -19,45 +19,64 @@
 // src/engine/entity_class_etc.hpp
 
 #include "../misc_includes.hpp"
+#include "../misc_types.hpp"
 
 namespace dungwich_sandeon
 {
 
 namespace engine
 {
-
-class Entity
-{
-public:		// types
-	using KeySet = std::set<std::string>;
-protected:		// variables
-	// `Component` KeySet, `System` KeySet
-	KeySet _comp_key_set, _sys_key_set;
-public:		// functions
-	Entity() = default;
-	Entity(KeySet&& s_comp_key_set, KeySet&& s_sys_key_set);
-	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Entity);
-	virtual ~Entity() = default;
-
-	GEN_GETTER_BY_CON_REF(comp_key_set);
-	GEN_GETTER_BY_CON_REF(sys_key_set);
-};
+//--------
+class Window;
+class System;
 
 class Component
 {
 public:		// functions
-	
+	Component() = default;
+	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Component);
+	virtual ~Component() = default;
+
+	virtual std::string base_key() const;
 };
 
 class System
 {
 public:		// functions
-	
+	System() = default;
+	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(System);
+	virtual ~System() = default;
 };
 
-using ComponentMap = std::map<std::string, Component>;
-using SystemMap = std::map<std::string, Component>;
+using ComponentMap = std::map<std::string, std::unique_ptr<Component>>;
+using SystemMap = std::map<std::string, std::unique_ptr<System>>;
+//--------
+class Entity
+{
+	friend class Window;
+public:		// types
+protected:		// variables
+	i32 _id = 0;
+	ComponentMap _comp_map;
+	// Which `System`s affect this `Entity`?
+	StrKeySet _sys_key_set;
+public:		// functions
+	Entity() = default;
+	Entity(i32 s_id, ComponentMap&& s_comp_map, StrKeySet&& s_sys_key_set);
+	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Entity);
+	virtual ~Entity() = default;
 
+	bool insert_comp(const std::string& key, Component* comp);
+	bool insert_or_replace_comp(const std::string& key, Component* comp);
+	size_t erase_comp(const std::string& key);
+	bool insert_sys_key(const std::string& key);
+	inline size_t erase_sys_key(const std::string& key);
+
+	GEN_GETTER_AND_SETTER_BY_VAL(id);
+	GEN_GETTER_BY_CON_REF(comp_map);
+	GEN_GETTER_BY_CON_REF(sys_key_set);
+};
+//--------
 } // namespace engine
 
 } // namespace dungwich_sandeon

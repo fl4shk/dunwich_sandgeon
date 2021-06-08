@@ -27,30 +27,44 @@ namespace dungwich_sandeon
 namespace engine
 {
 
-// A window made out of tiles
+// A window made out of `Entity`s
 class Window
 {
 public:		// types
-	using EntMap = std::vector<std::vector<Entity>>;
+	using EntVec2d = std::vector<std::vector<Entity>>;
+	using EntMap = std::map<std::string, EntVec2d>;
 protected:		// variables
+	bool _active = false;
 	EntMap _ent_map;
+	SystemMap _sys_map;
 public:		// functions
 	Window() = default;
-	Window(EntMap&& s_ent_map);
+	Window(EntMap&& s_ent_map, SystemMap&& s_sys_map);
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Window);
 	virtual ~Window() = default;
 
-	inline Entity& ent_map_at(const Vec2<int>& index)
+	inline Entity& ent_map_at(const std::string& key,
+		const Vec2<int>& index)
 	{
-		return _ent_map.at(index.y).at(index.x);
+		return _ent_map.at(key).at(index.y).at(index.x);
 	}
-	inline const Entity& ent_map_at(const Vec2<int>& index) const
+	inline const Entity& ent_map_at(const std::string& key,
+		const Vec2<int>& index) const
 	{
-		return _ent_map.at(index.y).at(index.x);
+		return _ent_map.at(key).at(index.y).at(index.x);
 	}
+	//void add_comp_to_ent(const std::string& ent_key,
+	//	const Vec2<int>& ent_map_index, const std::string& comp_key);
+	//void add_sys_to_ent(const std::string& ent_key,
+	//	const Vec2<int>& ent_map_index, const std::string& sys_key);
+	//bool add_comp_to_comp_map(const std::string& key, Component&& to_add);
+	//bool add_sys_to_sys_map(const std::string& key, System&& to_add);
 
-	GEN_GETTER_BY_CON_REF(ent_map);
+	GEN_GETTER_AND_SETTER_BY_VAL(active);
+	GEN_GETTER_AND_SETTER_BY_CON_REF(ent_map);
 	GEN_SETTER_BY_RVAL_REF(ent_map);
+	GEN_GETTER_AND_SETTER_BY_CON_REF(sys_map);
+	GEN_SETTER_BY_RVAL_REF(sys_map);
 };
 
 } // namespace engine

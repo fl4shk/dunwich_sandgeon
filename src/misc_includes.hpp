@@ -49,9 +49,12 @@ using sdl::KeycModPair, sdl::KeyStatus;
 
 #include <cstdio>
 #include <cstdlib>
+#include <cstring>
 
 #include <map>
 #include <set>
+#include <unordered_map>
+#include <unordered_set>
 #include <variant>
 #include <functional>
 #include <type_traits>

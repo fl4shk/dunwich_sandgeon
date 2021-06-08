@@ -20,13 +20,54 @@ namespace dungwich_sandeon
 
 namespace engine
 {
-
-Entity::Entity(KeySet&& s_comp_key_set, KeySet&& s_sys_key_set)
-	: _comp_key_set(std::move(s_comp_key_set)),
-	_sys_key_set(std::move(s_sys_key_set))
+//--------
+std::string Component::base_key() const
 {
+	return "";
 }
+//--------
+bool Entity::insert_comp(const std::string& key, Component* comp)
+{
+	if (!_comp_map.contains(key))
+	{
+		_comp_map[key] = std::unique_ptr<Component>(comp);
+		return false;
+	}
+	return true;
+}
+bool Entity::insert_or_replace_comp(const std::string& key,
+	Component* comp)
+{
+	if (!_comp_map.contains(key))
+	{
+		_comp_map[key] = std::unique_ptr<Component>(comp);
+		return false;
+	}
+	else // if (_comp_map.contains(key))
+	{
+		_comp_map[key].reset(comp);
+		return true;
+	}
+}
+size_t Entity::erase_comp(const std::string& key)
+{
+	return _comp_map.erase(key);
+}
+bool Entity::insert_sys_key(const std::string& key)
+{
+	if (!_sys_key_set.contains(key))
+	{
+		_sys_key_set.insert(key);
 
+		return false;
+	}
+	return true;
+}
+size_t Entity::erase_sys_key(const std::string& key)
+{
+	return _sys_key_set.erase(key);
+}
+//--------
 } // namespace engine
 
 } // namespace dungwich_sandeon
