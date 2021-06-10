@@ -13,10 +13,10 @@
 // You should have received a copy of the GNU General Public License along
 // with Dungwich Sandeon.  If not, see <https://www.gnu.org/licenses/>.
 
-#ifndef src_engine_entity_class_etc_hpp
-#define src_engine_entity_class_etc_hpp
+#ifndef src_engine_entity_etc_classes_hpp
+#define src_engine_entity_etc_classes_hpp
 
-// src/engine/entity_class_etc.hpp
+// src/engine/entity_etc_classes.hpp
 
 #include "../misc_includes.hpp"
 #include "../misc_types.hpp"
@@ -76,9 +76,12 @@ public:		// functions
 	GEN_GETTER_BY_CON_REF(comp_map);
 	GEN_GETTER_BY_CON_REF(sys_key_set);
 };
+
+using EntVec2d = std::vector<std::vector<Entity*>>;
+using EntMap = std::map<std::string, EntVec2d>;
 //--------
 } // namespace engine
 
 } // namespace dungwich_sandeon
 
-#endif		// src_engine_entity_class_etc_hpp
+#endif		// src_engine_entity_etc_classes_hpp

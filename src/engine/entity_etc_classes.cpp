@@ -13,7 +13,7 @@
 // You should have received a copy of the GNU General Public License along
 // with Dungwich Sandeon.  If not, see <https://www.gnu.org/licenses/>.
 
-#include "entity_class_etc.hpp"
+#include "entity_etc_classes.hpp"
 
 namespace dungwich_sandeon
 {
@@ -61,7 +61,10 @@ bool Entity::insert_sys_key(const std::string& key)
 
 		return false;
 	}
-	return true;
+	else // if (_sys_key_set.contains(key))
+	{
+		return true;
+	}
 }
 size_t Entity::erase_sys_key(const std::string& key)
 {

@@ -19,7 +19,7 @@
 // src/engine/window_class.hpp
 
 #include "../misc_includes.hpp"
-#include "entity_class_etc.hpp"
+#include "entity_etc_classes.hpp"
 
 namespace dungwich_sandeon
 {
@@ -30,9 +30,6 @@ namespace engine
 // A window made out of `Entity`s
 class Window
 {
-public:		// types
-	using EntVec2d = std::vector<std::vector<Entity>>;
-	using EntMap = std::map<std::string, EntVec2d>;
 protected:		// variables
 	bool _active = false;
 	EntMap _ent_map;
@@ -43,13 +40,8 @@ public:		// functions
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Window);
 	virtual ~Window() = default;
 
-	inline Entity& ent_map_at(const std::string& key,
+	inline Entity* ent_map_at(const std::string& key,
 		const Vec2<int>& index)
-	{
-		return _ent_map.at(key).at(index.y).at(index.x);
-	}
-	inline const Entity& ent_map_at(const std::string& key,
-		const Vec2<int>& index) const
 	{
 		return _ent_map.at(key).at(index.y).at(index.x);
 	}
