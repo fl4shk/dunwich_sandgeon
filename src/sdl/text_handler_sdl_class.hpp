@@ -57,7 +57,7 @@ public:		// functions
 		return static_cast<FontColor>(ret_u32);
 	}
 public:		// constants
-	static const Vec2<int> TILE_SIZE_2D;
+	static const PosVec2 TILE_SIZE_2D;
 	static const std::map<FontColor, std::string> COLOR_TO_STR_MAP;
 private:		// variables
 	sdl::Surface _font_surface;
@@ -70,9 +70,9 @@ public:		// functions
 	~TextHandlerSdl() = default;
 
 	bool init(sdl::Renderer& s_renderer, int& s_zoom);
-	void draw_char(int c, FontColor color, const Vec2<int>& draw_pos);
+	void draw_char(int c, FontColor color, const PosVec2& draw_pos);
 private:		// functions
-	Vec2<int> _get_draw_char_font_surface_size_2d() const;
+	PosVec2 _get_draw_char_font_surface_size_2d() const;
 };
 
 } // namespace io

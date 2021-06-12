@@ -13,10 +13,10 @@
 // You should have received a copy of the GNU General Public License along
 // with Dungwich Sandeon.  If not, see <https://www.gnu.org/licenses/>.
 
-#ifndef src_engine_window_class_hpp
-#define src_engine_window_class_hpp
+#ifndef src_game_engine_window_class_hpp
+#define src_game_engine_window_class_hpp
 
-// src/engine/window_class.hpp
+// src/game_engine/window_class.hpp
 
 #include "../misc_includes.hpp"
 #include "entity_etc_classes.hpp"
@@ -24,7 +24,7 @@
 namespace dungwich_sandeon
 {
 
-namespace engine
+namespace game_engine
 {
 
 // A window made out of `Entity`s
@@ -32,35 +32,31 @@ class Window
 {
 protected:		// variables
 	bool _active = false;
-	EntMap _ent_map;
-	SystemMap _sys_map;
+	EntityIdMap _ent_id_map;
 public:		// functions
 	Window() = default;
-	Window(EntMap&& s_ent_map, SystemMap&& s_sys_map);
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Window);
 	virtual ~Window() = default;
 
-	inline Entity* ent_map_at(const std::string& key,
-		const Vec2<int>& index)
+	inline auto& ent_id_at(const EntityIdMapFullIndex& full_index)
 	{
-		return _ent_map.at(key).at(index.y).at(index.x);
+		return _ent_id_map.at(full_index[0]).at(full_index[1].y)
+			.at(full_index[1].x);
 	}
-	//void add_comp_to_ent(const std::string& ent_key,
-	//	const Vec2<int>& ent_map_index, const std::string& comp_key);
-	//void add_sys_to_ent(const std::string& ent_key,
-	//	const Vec2<int>& ent_map_index, const std::string& sys_key);
-	//bool add_comp_to_comp_map(const std::string& key, Component&& to_add);
-	//bool add_sys_to_sys_map(const std::string& key, System&& to_add);
+	inline const auto& ent_id_at(const EntityIdMapFullIndex& full_index)
+		const
+	{
+		return _ent_id_map.at(full_index[0]).at(full_index[1].y)
+			.at(full_index[1].x);
+	}
 
 	GEN_GETTER_AND_SETTER_BY_VAL(active);
-	GEN_GETTER_AND_SETTER_BY_CON_REF(ent_map);
-	GEN_SETTER_BY_RVAL_REF(ent_map);
-	GEN_GETTER_AND_SETTER_BY_CON_REF(sys_map);
-	GEN_SETTER_BY_RVAL_REF(sys_map);
+	GEN_GETTER_AND_SETTER_BY_CON_REF(ent_id_map);
+	GEN_SETTER_BY_RVAL_REF(ent_id_map);
 };
 
-} // namespace engine
+} // namespace game_engine
 
 } // namespace dungwich_sandeon
 
-#endif		// src_engine_window_class_hpp
+#endif		// src_game_engine_window_class_hpp

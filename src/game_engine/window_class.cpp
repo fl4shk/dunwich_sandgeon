@@ -13,15 +13,14 @@
 // You should have received a copy of the GNU General Public License along
 // with Dungwich Sandeon.  If not, see <https://www.gnu.org/licenses/>.
 
-#include "menu_classes.hpp"
+#include "window_class.hpp"
 
 namespace dungwich_sandeon
 {
 
-namespace engine
+namespace game_engine
 {
 
-
-} // namespace engine
+} // namespace game_engine
 
 } // namespace dungwich_sandeon

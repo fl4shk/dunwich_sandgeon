@@ -13,19 +13,15 @@
 // You should have received a copy of the GNU General Public License along
 // with Dungwich Sandeon.  If not, see <https://www.gnu.org/licenses/>.
 
-#ifndef src_misc_types_hpp
-#define src_misc_types_hpp
-
-// src/misc_types.hpp
-
-#include "misc_includes.hpp"
+#include "menu_classes.hpp"
 
 namespace dungwich_sandeon
 {
 
-using StrKeySet = std::set<std::string>;
-using PosVec2 = Vec2<int>;
+namespace game_engine
+{
+
+
+} // namespace game_engine
 
 } // namespace dungwich_sandeon
-
-#endif		// src_misc_types_hpp

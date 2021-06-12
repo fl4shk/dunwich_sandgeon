@@ -21,7 +21,7 @@ namespace dungwich_sandeon
 namespace io
 {
 
-const Vec2<int> TextHandlerSdl::TILE_SIZE_2D(8, 8);
+const PosVec2 TextHandlerSdl::TILE_SIZE_2D(8, 8);
 const std::map<TextHandlerSdl::FontColor, std::string>
 	TextHandlerSdl::COLOR_TO_STR_MAP
 = {
@@ -131,15 +131,15 @@ bool TextHandlerSdl::init(sdl::Renderer& s_renderer, int& s_zoom)
 }
 
 void TextHandlerSdl::draw_char(int c, FontColor color,
-	const Vec2<int>& draw_pos)
+	const PosVec2& draw_pos)
 {
 	const auto draw_char_font_surface_size_2d
 		= _get_draw_char_font_surface_size_2d();
-	const Vec2<int> c_tilemap_pos(c % draw_char_font_surface_size_2d.x,
+	const PosVec2 c_tilemap_pos(c % draw_char_font_surface_size_2d.x,
 		c / draw_char_font_surface_size_2d.x);
-	const Vec2<int> c_real_pos(c_tilemap_pos.x * TILE_SIZE_2D.x,
+	const PosVec2 c_real_pos(c_tilemap_pos.x * TILE_SIZE_2D.x,
 		c_tilemap_pos.y * TILE_SIZE_2D.y);
-	const Vec2<int> draw_real_pos(draw_pos.x * TILE_SIZE_2D.x,
+	const PosVec2 draw_real_pos(draw_pos.x * TILE_SIZE_2D.x,
 		draw_pos.y * TILE_SIZE_2D.y);
 
 	const sdl::Rect src_rect(c_real_pos.x, c_real_pos.y,
@@ -149,9 +149,9 @@ void TextHandlerSdl::draw_char(int c, FontColor color,
 	SDL_RenderCopy(*_renderer, _font_texture_map.at(color), src_rect,
 		dst_rect);
 }
-Vec2<int> TextHandlerSdl::_get_draw_char_font_surface_size_2d() const
+PosVec2 TextHandlerSdl::_get_draw_char_font_surface_size_2d() const
 {
-	return Vec2<int>(_font_surface->w / TILE_SIZE_2D.x,
+	return PosVec2(_font_surface->w / TILE_SIZE_2D.x,
 		_font_surface->h / TILE_SIZE_2D.y);
 }
 

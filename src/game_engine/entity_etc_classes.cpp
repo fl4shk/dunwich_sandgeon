@@ -14,63 +14,56 @@
 // with Dungwich Sandeon.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "entity_etc_classes.hpp"
+#include "engine_class.hpp"
 
 namespace dungwich_sandeon
 {
 
-namespace engine
+namespace game_engine
 {
 //--------
-std::string Component::base_key() const
+void Entity::destroy() const
 {
-	return "";
 }
-//--------
-bool Entity::insert_comp(const std::string& key, Component* comp)
+
+bool Entity::insert_comp(const std::string& key, ComponentUptr&& comp)
+	const
 {
-	if (!_comp_map.contains(key))
+	if (!comp_map().contains(key))
 	{
-		_comp_map[key] = std::unique_ptr<Component>(comp);
+		comp_map()[key] = std::move(comp);
 		return false;
 	}
 	return true;
 }
 bool Entity::insert_or_replace_comp(const std::string& key,
-	Component* comp)
+	ComponentUptr&& comp) const
 {
-	if (!_comp_map.contains(key))
-	{
-		_comp_map[key] = std::unique_ptr<Component>(comp);
-		return false;
-	}
-	else // if (_comp_map.contains(key))
-	{
-		_comp_map[key].reset(comp);
-		return true;
-	}
+	comp_map()[key] = std::move(comp);
 }
-size_t Entity::erase_comp(const std::string& key)
+size_t Entity::erase_comp(const std::string& key) const
 {
-	return _comp_map.erase(key);
+	return comp_map().erase(key);
 }
-bool Entity::insert_sys_key(const std::string& key)
-{
-	if (!_sys_key_set.contains(key))
-	{
-		_sys_key_set.insert(key);
 
-		return false;
-	}
-	else // if (_sys_key_set.contains(key))
-	{
-		return true;
-	}
-}
-size_t Entity::erase_sys_key(const std::string& key)
+EntityComponentMap& Entity::comp_map() const
 {
-	return _sys_key_set.erase(key);
+	return _engine->comp_map(id());
+}
+const EntityComponentMap& comp_map() const
+{
+	return _engine->comp_map(id());
 }
 //--------
-} // namespace engine
+std::string Component::base_kind_str() const
+{
+	return "";
+}
+//--------
+void System::tick(const std::vector<Entity*>& vec)
+{
+}
+//--------
+} // namespace game_engine
 
 } // namespace dungwich_sandeon

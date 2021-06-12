@@ -13,17 +13,17 @@
 // You should have received a copy of the GNU General Public License along
 // with Dungwich Sandeon.  If not, see <https://www.gnu.org/licenses/>.
 
-#ifndef src_engine_menu_classes_hpp
-#define src_engine_menu_classes_hpp
+#ifndef src_game_engine_menu_classes_hpp
+#define src_game_engine_menu_classes_hpp
 
-// src/engine/menu_classes.hpp
+// src/game_engine/menu_classes.hpp
 
 #include "../misc_includes.hpp"
 
 namespace dungwich_sandeon
 {
 
-namespace engine
+namespace game_engine
 {
 
 class Menu final
@@ -104,8 +104,8 @@ public:		// functions
 	~Menu() = default;
 };
 
-} // namespace engine
+} // namespace game_engine
 
 } // namespace dungwich_sandeon
 
-#endif		// src_engine_menu_classes_hpp
+#endif		// src_game_engine_menu_classes_hpp

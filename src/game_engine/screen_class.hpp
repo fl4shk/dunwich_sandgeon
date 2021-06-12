@@ -13,51 +13,37 @@
 // You should have received a copy of the GNU General Public License along
 // with Dungwich Sandeon.  If not, see <https://www.gnu.org/licenses/>.
 
-#ifndef src_real_main_sdl_class_hpp
-#define src_real_main_sdl_class_hpp
+#ifndef src_game_engine_screen_class_hpp
+#define src_game_engine_screen_class_hpp
 
-// src/sdl/real_main_sdl_class.hpp
+// src/game_engine/screen_class.hpp
 
 #include "../misc_includes.hpp"
-#include "../input_state_machine_class.hpp"
-#include "../game_engine/screen_class.hpp"
-#include "text_handler_sdl_class.hpp"
+#include "window_class.hpp"
 
 namespace dungwich_sandeon
 {
 
-namespace io
+namespace game_engine
 {
 
-class RealMainSdl final
+class Screen final
 {
-public:		// types
-	using FontColor = TextHandlerSdl::FontColor;
 public:		// constants
-	// Default values for some member variables
-	static constexpr int DEF_ZOOM = 2;
+	// These constants have values in amount of tilemap entries
+	//static const PosVec2 SIZE_2D, PLAYFIELD_POS, PLAYFIELD_SIZE_2D;
+	static const PosVec2 SIZE_2D;
 private:		// variables
-	PosVec2 _window_size_2d;
-	int _zoom = DEF_ZOOM;
-	game_engine::Screen _screen;
-	sdl::Window _window;
-	sdl::Renderer _renderer;
-	sdl::KeyStatusMap _key_status_map;
-	TextHandlerSdl _text_handler;
-	InputKind _input_kind;
 public:		// functions
-	RealMainSdl() = default;
-	~RealMainSdl() = default;
+	Screen() = default;
+	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Screen);
+	~Screen() = default;
 
-	int run();
-
-	GEN_GETTER_BY_VAL(zoom);
-private:		// functions
-	void _update_window_size_2d();
+	void draw(const Window& win, const PosVec2& pos);
 };
 
-} // namespace io
+} // namespace game_engine
 
 } // namespace dungwich_sandeon
 
-#endif		// src_real_main_sdl_class_hpp
+#endif		// src_game_engine_screen_class_hpp

@@ -13,37 +13,32 @@
 // You should have received a copy of the GNU General Public License along
 // with Dungwich Sandeon.  If not, see <https://www.gnu.org/licenses/>.
 
-#ifndef src_engine_screen_class_hpp
-#define src_engine_screen_class_hpp
+#ifndef src_game_engine_engine_class_hpp
+#define src_game_engine_engine_class_hpp
 
-// src/engine/screen_class.hpp
+// src/game_engine/engine_class.hpp
 
 #include "../misc_includes.hpp"
-#include "window_class.hpp"
+#include "entity_etc_classes.hpp"
 
 namespace dungwich_sandeon
 {
 
-namespace engine
+namespace game_engine
 {
 
-class Screen final
+class Engine final
 {
-public:		// constants
-	// These constants have values in amount of tilemap entries
-	//static const Vec2<int> SIZE_2D, PLAYFIELD_POS, PLAYFIELD_SIZE_2D;
-	static const Vec2<int> SIZE_2D;
 private:		// variables
+	EngineComponentMap _engine_comp_map;
+	SystemMap _sys_map;
 public:		// functions
-	Screen() = default;
-	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Screen);
-	~Screen() = default;
-
-	void draw(const Window& win, const Vec2<int>& pos);
+	Engine() = default;
+	EntityId
 };
 
-} // namespace engine
+} // namespace game_engine
 
 } // namespace dungwich_sandeon
 
-#endif		// src_engine_screen_class_hpp
+#endif		// src_game_engine_engine_class_hpp

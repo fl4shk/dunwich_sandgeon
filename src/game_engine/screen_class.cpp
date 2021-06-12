@@ -13,33 +13,19 @@
 // You should have received a copy of the GNU General Public License along
 // with Dungwich Sandeon.  If not, see <https://www.gnu.org/licenses/>.
 
-#ifndef src_engine_ticker_base_class_hpp
-#define src_engine_ticker_base_class_hpp
-
-// src/engine/ticker_base_class.hpp
-
-#include "../misc_includes.hpp"
+#include "screen_class.hpp"
 
 namespace dungwich_sandeon
 {
 
-namespace engine
+namespace game_engine
 {
 
-// A base class for a class that has its `tick()` function run on every
-// iteration of the main loop.
-class TickerBase
-{
-public:		// functions
-	TickerBase() = default;
-	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(TickerBase);
-	virtual ~TickerBase() = default;
+//const PosVec2 Screen::SIZE_2D(80, 60),
+//	Screen::PLAYFIELD_POS(0, 0),
+//	Screen::PLAYFIELD_SIZE_2D(60, 50);
+const PosVec2 Screen::SIZE_2D(80, 60);
 
-	virtual void tick() = 0;
-};
-
-} // namespace engine
+} // namespace game_engine
 
 } // namespace dungwich_sandeon
-
-#endif		// src_engine_ticker_base_class_hpp
