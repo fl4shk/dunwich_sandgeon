@@ -19,6 +19,7 @@
 // src/sdl/text_handler_sdl_class.hpp
 
 #include "../misc_includes.hpp"
+#include "../misc_types.hpp"
 
 namespace dungwich_sandeon
 {

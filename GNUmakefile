@@ -7,6 +7,7 @@ SHARED_SRC_DIRS:=src \
 	src/game_engine \
 	src/sdl \
 	src/liborangepower_src/json_stuff \
+	src/liborangepower_src/game_stuff \
 
 CXX_DIRS:=$(SHARED_SRC_DIRS)
 # End of source directories

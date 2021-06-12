@@ -28,6 +28,7 @@
 #include "liborangepower_src/strings/string_conversion_stuff.hpp"
 #include "liborangepower_src/containers/vec2_classes.hpp"
 #include "liborangepower_src/containers/prev_curr_pair_classes.hpp"
+#include "liborangepower_src/game_stuff/ecs_classes.hpp"
 
 #include "liborangepower_src/sdl2/sdl.hpp"
 #include "liborangepower_src/sdl2/dpi_stuff.hpp"
@@ -46,6 +47,7 @@ using namespace liborangepower::strings;
 using namespace liborangepower::containers;
 namespace sdl = liborangepower::sdl;
 using sdl::KeycModPair, sdl::KeyStatus;
+namespace ecs = liborangepower::game::ecs;
 
 #include <cstdio>
 #include <cstdlib>

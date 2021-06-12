@@ -19,7 +19,7 @@
 // src/game_engine/window_class.hpp
 
 #include "../misc_includes.hpp"
-#include "entity_etc_classes.hpp"
+#include "../misc_types.hpp"
 
 namespace dungwich_sandeon
 {
@@ -32,22 +32,22 @@ class Window
 {
 protected:		// variables
 	bool _active = false;
-	EntityIdMap _ent_id_map;
+	ecs::EntIdMap _ent_id_map;
 public:		// functions
-	Window() = default;
+	Window();
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Window);
-	virtual ~Window() = default;
+	virtual ~Window();
 
-	inline auto& ent_id_at(const EntityIdMapFullIndex& full_index)
+	inline auto& ent_id_at(const ecs::EntIdMapFullIndex& full_index)
 	{
-		return _ent_id_map.at(full_index[0]).at(full_index[1].y)
-			.at(full_index[1].x);
+		return _ent_id_map.at(full_index.first).at(full_index.second.y)
+			.at(full_index.second.x);
 	}
-	inline const auto& ent_id_at(const EntityIdMapFullIndex& full_index)
+	inline const auto& ent_id_at(const ecs::EntIdMapFullIndex& full_index)
 		const
 	{
-		return _ent_id_map.at(full_index[0]).at(full_index[1].y)
-			.at(full_index[1].x);
+		return _ent_id_map.at(full_index.first).at(full_index.second.y)
+			.at(full_index.second.x);
 	}
 
 	GEN_GETTER_AND_SETTER_BY_VAL(active);

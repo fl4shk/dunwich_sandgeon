@@ -21,6 +21,13 @@ namespace dungwich_sandeon
 namespace game_engine
 {
 
+Window::Window()
+{
+}
+Window::~Window()
+{
+}
+
 } // namespace game_engine
 
 } // namespace dungwich_sandeon
