@@ -32,27 +32,26 @@ class Window
 {
 protected:		// variables
 	bool _active = false;
-	ecs::EntIdMap _ent_id_map;
+	PosVec2 _pos;
+	ecs::EntIdVec2d _ent_id_vec_2d;
 public:		// functions
 	Window();
+	Window(const PosVec2& s_pos, const Vec2<size_t>& s_size_2d);
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Window);
 	virtual ~Window();
 
-	inline auto& ent_id_at(const ecs::EntIdMapFullIndex& full_index)
+	inline auto& ent_id_at(const PosVec2& index)
 	{
-		return _ent_id_map.at(full_index.first).at(full_index.second.y)
-			.at(full_index.second.x);
+		return _ent_id_vec_2d.at(index.y).at(index.x);
 	}
-	inline const auto& ent_id_at(const ecs::EntIdMapFullIndex& full_index)
-		const
+	inline const auto& ent_id_at(const PosVec2& index) const
 	{
-		return _ent_id_map.at(full_index.first).at(full_index.second.y)
-			.at(full_index.second.x);
+		return _ent_id_vec_2d.at(index.y).at(index.x);
 	}
 
 	GEN_GETTER_AND_SETTER_BY_VAL(active);
-	GEN_GETTER_AND_SETTER_BY_CON_REF(ent_id_map);
-	GEN_SETTER_BY_RVAL_REF(ent_id_map);
+	GEN_GETTER_BY_CON_REF(pos);
+	GEN_GETTER_BY_CON_REF(ent_id_vec_2d);
 };
 
 } // namespace game_engine

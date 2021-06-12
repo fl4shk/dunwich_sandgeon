@@ -24,6 +24,12 @@ namespace game_engine
 Window::Window()
 {
 }
+Window::Window(const PosVec2& s_pos, const Vec2<size_t>& s_size_2d)
+	: _active(false), _pos(s_pos), 
+	_ent_id_vec_2d(s_size_2d.y,
+		ecs::EntIdVec(s_size_2d.x, ecs::ENT_NULL_ID))
+{
+}
 Window::~Window()
 {
 }
