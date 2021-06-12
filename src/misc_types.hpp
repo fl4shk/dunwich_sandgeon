@@ -25,6 +25,7 @@ namespace dungwich_sandeon
 
 using StrKeySet = std::set<std::string>;
 using PosVec2 = Vec2<int>;
+using SizeVec2 = Vec2<size_t>;
 
 } // namespace dungwich_sandeon
 

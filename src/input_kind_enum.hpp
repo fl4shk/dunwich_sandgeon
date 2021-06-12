@@ -13,27 +13,34 @@
 // You should have received a copy of the GNU General Public License along
 // with Dungwich Sandeon.  If not, see <https://www.gnu.org/licenses/>.
 
-#include "window_class.hpp"
+#ifndef src_input_kind_enum_hpp
+#define src_input_kind_enum_hpp
+
+// src/input_kind_enum.hpp
+
+#include "misc_includes.hpp"
 
 namespace dungwich_sandeon
 {
 
-namespace game_engine
+enum class InputKind
 {
+	MoveLeft,
+	MoveUp,
+	MoveRight,
+	MoveDown,
+	TargetEnemy,
+	TargetItem,
 
-Window::Window()
-{
-}
-Window::Window(const PosVec2& s_pos, const Vec2<size_t>& s_size_2d)
-	: _active(false), _pos(s_pos), 
-	_ent_id_vec_2d(s_size_2d.y,
-		ecs::EntIdVec(s_size_2d.x, ecs::ENT_NULL_ID))
-{
-}
-Window::~Window()
-{
-}
+	ExitMenu,
+	OpenInvMenu,
+	OpenSaveMenu,
 
-} // namespace game_engine
+	ZoomIn,
+	ZoomOut,
+};
 
 } // namespace dungwich_sandeon
+
+
+#endif		// src_input_kind_enum_hpp

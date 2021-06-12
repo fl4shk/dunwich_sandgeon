@@ -15,17 +15,44 @@
 
 #include "screen_class.hpp"
 
+#include <queue>
+
 namespace dungwich_sandeon
 {
 
 namespace game_engine
 {
-
+//--------
 //const PosVec2 Screen::SIZE_2D(80, 60),
 //	Screen::PLAYFIELD_POS(0, 0),
 //	Screen::PLAYFIELD_SIZE_2D(60, 50);
 const PosVec2 Screen::SIZE_2D(80, 60);
+//--------
+Screen::Screen()
+{
+}
+Screen::~Screen()
+{
+}
 
+void Screen::draw(const Window& win)
+{
+}
+void Screen::draw(const LayeredWindow& layered_win)
+{
+	std::priority_queue<std::pair<size_t, std::string>> pq;
+
+	for (const auto& pair: layered_win.layer_prio_map())
+	{
+		pq.push(std::pair(pair.second, pair.first));
+	}
+
+	while (!pq.empty())
+	{
+		draw(layered_win.layer_at(pq.top().second));
+	}
+}
+//--------
 } // namespace game_engine
 
 } // namespace dungwich_sandeon

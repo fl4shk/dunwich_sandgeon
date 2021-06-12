@@ -13,12 +13,6 @@
 // You should have received a copy of the GNU General Public License along
 // with Dungwich Sandeon.  If not, see <https://www.gnu.org/licenses/>.
 
-#ifndef src_game_engine_screen_class_hpp
-#define src_game_engine_screen_class_hpp
-
-// src/game_engine/screen_class.hpp
-
-#include "../misc_includes.hpp"
 #include "basic_window_classes.hpp"
 
 namespace dungwich_sandeon
@@ -26,26 +20,46 @@ namespace dungwich_sandeon
 
 namespace game_engine
 {
-
-class Screen final
+//--------
+Window::Window()
 {
-public:		// constants
-	// These constants have values in amount of tilemap entries
-	//static const PosVec2 SIZE_2D, PLAYFIELD_POS, PLAYFIELD_SIZE_2D;
-	static const PosVec2 SIZE_2D;
-private:		// variables
-	ecs::EntIdVec2d _ent_id_vec_2d;
-public:		// functions
-	Screen();
-	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Screen);
-	~Screen();
+}
+Window::Window(const PosVec2& s_pos, const SizeVec2& s_size_2d)
+	: _active(false), _pos(s_pos), 
+	_ent_id_v2d(s_size_2d.y, ecs::EntIdVec(s_size_2d.x, ecs::ENT_NULL_ID))
+{
+}
+Window::~Window()
+{
+}
 
-	void draw(const Window& win);
-	void draw(const LayeredWindow& layered_win);
+void Window::tick(InputKind input_kind)
+{
+	// Derived classes should override this function
 };
+//--------
+LayeredWindow::LayeredWindow()
+{
+}
+LayeredWindow::LayeredWindow(const PosVec2& s_pos,
+	const SizeVec2& s_size_2d,
+	const std::map<std::string, size_t>& s_layer_prio_map)
+	: _layer_prio_map(s_layer_prio_map)
+{
+	for (const auto& pair: layer_prio_map())
+	{
+		_layer_map[pair.first] = Window(s_pos, s_size_2d);
+	}
+}
+LayeredWindow::~LayeredWindow()
+{
+}
 
+void LayeredWindow::tick(InputKind input_kind)
+{
+	// Derived classes should override this function
+}
+//--------
 } // namespace game_engine
 
 } // namespace dungwich_sandeon
-
-#endif		// src_game_engine_screen_class_hpp

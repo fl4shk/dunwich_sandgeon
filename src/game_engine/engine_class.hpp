@@ -13,13 +13,14 @@
 // You should have received a copy of the GNU General Public License along
 // with Dungwich Sandeon.  If not, see <https://www.gnu.org/licenses/>.
 
-#ifndef src_game_engine_window_class_hpp
-#define src_game_engine_window_class_hpp
+#ifndef src_game_engine_engine_class_hpp
+#define src_game_engine_engine_class_hpp
 
-// src/game_engine/window_class.hpp
+// src/game_engine/engine_class.hpp
 
 #include "../misc_includes.hpp"
-#include "../misc_types.hpp"
+#include "basic_window_classeses.hpp"
+#include "screen_class.hpp"
 
 namespace dungwich_sandeon
 {
@@ -27,35 +28,11 @@ namespace dungwich_sandeon
 namespace game_engine
 {
 
-// A window made out of `Entity`s
-class Window
+class Engine final
 {
-protected:		// variables
-	bool _active = false;
-	PosVec2 _pos;
-	ecs::EntIdVec2d _ent_id_vec_2d;
-public:		// functions
-	Window();
-	Window(const PosVec2& s_pos, const Vec2<size_t>& s_size_2d);
-	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Window);
-	virtual ~Window();
-
-	inline auto& ent_id_at(const PosVec2& index)
-	{
-		return _ent_id_vec_2d.at(index.y).at(index.x);
-	}
-	inline const auto& ent_id_at(const PosVec2& index) const
-	{
-		return _ent_id_vec_2d.at(index.y).at(index.x);
-	}
-
-	GEN_GETTER_AND_SETTER_BY_VAL(active);
-	GEN_GETTER_BY_CON_REF(pos);
-	GEN_GETTER_BY_CON_REF(ent_id_vec_2d);
 };
-
 } // namespace game_engine
 
 } // namespace dungwich_sandeon
 
-#endif		// src_game_engine_window_class_hpp
+#endif		// src_game_engine_engine_class_hpp

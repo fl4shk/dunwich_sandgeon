@@ -19,7 +19,7 @@
 // src/sdl/real_main_sdl_class.hpp
 
 #include "../misc_includes.hpp"
-#include "../input_state_machine_class.hpp"
+#include "../input_kind_enum.hpp"
 #include "../game_engine/screen_class.hpp"
 #include "text_handler_sdl_class.hpp"
 
