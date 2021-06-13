@@ -31,14 +31,31 @@ class Screen final
 {
 public:		// constants
 	// These constants have values in amount of tilemap entries
-	//static const PosVec2 SIZE_2D, PLAYFIELD_POS, PLAYFIELD_SIZE_2D;
-	static const PosVec2 SIZE_2D;
+	//static const SizeVec2 SIZE_2D, PLAYFIELD_POS, PLAYFIELD_SIZE_2D;
+	static const SizeVec2 SIZE_2D;
 private:		// variables
-	ecs::EntIdVec2d _ent_id_vec_2d;
+	ecs::EntIdVec2d _ent_id_v2d;
 public:		// functions
 	Screen();
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Screen);
 	~Screen();
+
+	inline auto& ent_id_at(const PosVec2& index)
+	{
+		return _ent_id_v2d.at(index.y).at(index.x);
+	}
+	inline const auto& ent_id_at(const PosVec2& index) const
+	{
+		return _ent_id_v2d.at(index.y).at(index.x);
+	}
+	inline auto& ent_id_at(const SizeVec2& index)
+	{
+		return _ent_id_v2d.at(index.y).at(index.x);
+	}
+	inline const auto& ent_id_at(const SizeVec2& index) const
+	{
+		return _ent_id_v2d.at(index.y).at(index.x);
+	}
 
 	void draw(const Window& win);
 	void draw(const LayeredWindow& layered_win);

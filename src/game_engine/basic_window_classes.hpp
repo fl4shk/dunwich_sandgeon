@@ -44,6 +44,14 @@ public:		// functions
 
 	virtual void tick(InputKind input_kind);
 
+	inline auto& ent_id_at(const PosVec2& index)
+	{
+		return _ent_id_v2d.at(index.y).at(index.x);
+	}
+	inline const auto& ent_id_at(const PosVec2& index) const
+	{
+		return _ent_id_v2d.at(index.y).at(index.x);
+	}
 	inline auto& ent_id_at(const SizeVec2& index)
 	{
 		return _ent_id_v2d.at(index.y).at(index.x);
