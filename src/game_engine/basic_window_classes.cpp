@@ -15,11 +15,18 @@
 
 #include "basic_window_classes.hpp"
 
+#include <queue>
+
 namespace dungwich_sandeon
 {
 
 namespace game_engine
 {
+//--------
+//const SizeVec2 Window::SIZE_2D(80, 60),
+//	Screen::PLAYFIELD_POS(0, 0),
+//	Screen::PLAYFIELD_SIZE_2D(60, 50);
+const SizeVec2 Window::SCREEN_SIZE_2D(80, 60);
 //--------
 Window::Window()
 {
@@ -37,6 +44,34 @@ void Window::tick(InputKind input_kind)
 {
 	// Derived classes should override this function
 };
+
+void Window::draw(const Window& win)
+{
+	for (int j=0; j<win.pos().y; ++j)
+	{
+		for (int i=0; i<win.pos().x; ++i)
+		{
+			const PosVec2 curr_pos(i, j);
+			ent_id_at(curr_pos) = win.ent_id_at(curr_pos);
+		}
+	}
+}
+void Window::draw(const LayeredWindow& layered_win)
+{
+	// This might need `std::greater` instead of `std::less`
+	std::priority_queue<std::pair<size_t, std::string>> pq;
+
+	for (const auto& pair: layered_win.layer_prio_map())
+	{
+		pq.push(std::pair(pair.second, pair.first));
+	}
+
+	while (!pq.empty())
+	{
+		draw(layered_win.layer_at(pq.top().second));
+		pq.pop();
+	}
+}
 //--------
 LayeredWindow::LayeredWindow()
 {

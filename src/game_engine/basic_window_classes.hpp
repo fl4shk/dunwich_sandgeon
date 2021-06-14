@@ -29,9 +29,15 @@ namespace dungwich_sandeon
 namespace game_engine
 {
 
+class LayeredWindow;
+
 // A window made out of `Entity`s
 class Window
 {
+public:		// constants
+	// These constants have values in amount of tilemap entries
+	//static const SizeVec2 SIZE_2D, PLAYFIELD_POS, PLAYFIELD_SIZE_2D;
+	static const SizeVec2 SCREEN_SIZE_2D;
 protected:		// variables
 	bool _active = false;
 	PosVec2 _pos;
@@ -64,6 +70,8 @@ public:		// functions
 	{
 		return SizeVec2(ent_id_v2d().size(), ent_id_v2d().at(0).size());
 	}
+	void draw(const Window& win);
+	void draw(const LayeredWindow& layered_win);
 
 	GEN_GETTER_AND_SETTER_BY_VAL(active);
 	GEN_GETTER_BY_CON_REF(pos);

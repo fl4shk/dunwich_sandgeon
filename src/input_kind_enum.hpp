@@ -39,8 +39,10 @@ enum class InputKind
 
 	SwitchWindow,
 
-	ScrollWindowDown,
+	ScrollWindowLeft,
 	ScrollWindowUp,
+	ScrollWindowRight,
+	ScrollWindowDown,
 
 	ZoomIn,
 	ZoomOut,

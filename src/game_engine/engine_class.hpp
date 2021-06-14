@@ -20,7 +20,6 @@
 
 #include "../misc_includes.hpp"
 #include "basic_window_classes.hpp"
-#include "screen_class.hpp"
 #include "../input_kind_enum.hpp"
 
 namespace dungwich_sandeon
@@ -33,7 +32,7 @@ class Engine final
 {
 private:		// variables
 	ecs::Engine _ecs_engine;
-	Screen _screen;
+	Window _screen;
 public:		// functions
 	Engine();
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Engine);

@@ -99,9 +99,9 @@ int RealMainSdl::run()
 
 void RealMainSdl::_update_window_size_2d()
 {
-	_window_size_2d.x = game_engine::Screen::SIZE_2D.x
+	_window_size_2d.x = game_engine::Window::SCREEN_SIZE_2D.x
 		* TextHandlerSdl::TILE_SIZE_2D.x * zoom();
-	_window_size_2d.y = game_engine::Screen::SIZE_2D.y
+	_window_size_2d.y = game_engine::Window::SCREEN_SIZE_2D.y
 		* TextHandlerSdl::TILE_SIZE_2D.y * zoom();
 }
 
