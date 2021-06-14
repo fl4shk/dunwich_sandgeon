@@ -13,7 +13,7 @@
 // You should have received a copy of the GNU General Public License along
 // with Dungwich Sandeon.  If not, see <https://www.gnu.org/licenses/>.
 
-#include "engine_class.hpp"
+#include "general_comp_classes.hpp"
 
 namespace dungwich_sandeon
 {
@@ -21,14 +21,15 @@ namespace dungwich_sandeon
 namespace game_engine
 {
 
-Engine::Engine()
-	: _screen(PosVec2(), Window::SCREEN_SIZE_2D)
+std::string Position::kind_str() const
 {
-}
-Engine::~Engine()
-{
+	return "Position";
 }
 
+std::string Drawable::kind_str() const
+{
+	return "Drawable";
+}
 } // namespace game_engine
 
 } // namespace dungwich_sandeon

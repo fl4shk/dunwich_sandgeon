@@ -13,14 +13,14 @@
 // You should have received a copy of the GNU General Public License along
 // with Dungwich Sandeon.  If not, see <https://www.gnu.org/licenses/>.
 
-#ifndef src_game_engine_engine_class_hpp
-#define src_game_engine_engine_class_hpp
+#ifndef src_game_engine_general_comp_classes_hpp
+#define src_game_engine_general_comp_classes_hpp
 
-// src/game_engine/engine_class.hpp
+// src/game_engine/general_comp_classes.hpp
 
 #include "../misc_includes.hpp"
-#include "basic_window_classes.hpp"
-#include "../input_kind_enum.hpp"
+#include "../misc_types.hpp"
+#include "font_color_enum.hpp"
 
 namespace dungwich_sandeon
 {
@@ -28,22 +28,41 @@ namespace dungwich_sandeon
 namespace game_engine
 {
 
-class Engine final
+class Position: public ecs::Comp
 {
-private:		// variables
-	ecs::Engine _ecs_engine;
-	Window _screen;
+public:		// variables
+	PosVec2 pos;
 public:		// functions
-	Engine();
-	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Engine);
-	~Engine();
+	Position() = default;
+	inline Position(const PosVec2& s_pos)
+		: pos(s_pos)
+	{
+	}
+	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Position)
+	virtual ~Position() = default;
 
-	GEN_GETTER_BY_CON_REF(ecs_engine);
-	GEN_GETTER_BY_CON_REF(screen);
+	virtual std::string kind_str() const;
+};
+
+class Drawable: public ecs::Comp
+{
+public:		// variables
+	int c;
+	FontColor color;
+public:		// functions
+	Drawable() = default;
+	inline Drawable(int s_c, FontColor s_color)
+		: c(s_c), color(s_color)
+	{
+	}
+	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Drawable);
+	virtual ~Drawable() = default;
+
+	virtual std::string kind_str() const;
 };
 
 } // namespace game_engine
 
 } // namespace dungwich_sandeon
 
-#endif		// src_game_engine_engine_class_hpp
+#endif		// src_game_engine_general_comp_classes_hpp

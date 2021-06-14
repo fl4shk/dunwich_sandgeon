@@ -22,20 +22,6 @@ namespace io
 {
 
 const PosVec2 TextHandlerSdl::TILE_SIZE_2D(8, 8);
-const std::map<TextHandlerSdl::FontColor, std::string>
-	TextHandlerSdl::COLOR_TO_STR_MAP
-= {
-	{TextHandlerSdl::FontColor::White, "White"},
-	{TextHandlerSdl::FontColor::Red, "Red"},
-	{TextHandlerSdl::FontColor::Green, "Green"},
-	{TextHandlerSdl::FontColor::Brown, "Brown"},
-	{TextHandlerSdl::FontColor::Yellow, "Yellow"},
-	{TextHandlerSdl::FontColor::Blue, "Blue"},
-	{TextHandlerSdl::FontColor::Purple, "Purple"},
-	{TextHandlerSdl::FontColor::Cyan, "Cyan"},
-	{TextHandlerSdl::FontColor::Gray, "Gray"},
-	{TextHandlerSdl::FontColor::Lim, "Lim"},
-};
 
 bool TextHandlerSdl::init(sdl::Renderer& s_renderer, int& s_zoom)
 {

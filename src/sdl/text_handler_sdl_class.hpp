@@ -20,6 +20,7 @@
 
 #include "../misc_includes.hpp"
 #include "../misc_types.hpp"
+#include "../game_engine/font_color_enum.hpp"
 
 namespace dungwich_sandeon
 {
@@ -32,34 +33,9 @@ class RealMainSdl;
 class TextHandlerSdl final
 {
 public:		// types
-	enum class FontColor: u32
-	{
-		White,
-
-		Red,
-		Green,
-		Brown,
-		Yellow,
-
-		Blue,
-		Purple,
-		Cyan,
-		Gray,
-
-		// The limit, which is not a real font_color 
-		Lim,
-	};
-public:		// functions
-	static inline FontColor font_color_add(FontColor font_color,
-		u32 amount)
-	{
-		u32 ret_u32 = static_cast<u32>(font_color);
-		ret_u32 += amount;
-		return static_cast<FontColor>(ret_u32);
-	}
+	using FontColor = game_engine::FontColor;
 public:		// constants
 	static const PosVec2 TILE_SIZE_2D;
-	static const std::map<FontColor, std::string> COLOR_TO_STR_MAP;
 private:		// variables
 	sdl::Surface _font_surface;
 	std::map<FontColor, sdl::Texture> _font_texture_map;

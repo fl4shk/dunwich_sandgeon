@@ -13,7 +13,7 @@
 // You should have received a copy of the GNU General Public License along
 // with Dungwich Sandeon.  If not, see <https://www.gnu.org/licenses/>.
 
-#include "engine_class.hpp"
+#include "font_color_enum.hpp"
 
 namespace dungwich_sandeon
 {
@@ -21,13 +21,19 @@ namespace dungwich_sandeon
 namespace game_engine
 {
 
-Engine::Engine()
-	: _screen(PosVec2(), Window::SCREEN_SIZE_2D)
-{
-}
-Engine::~Engine()
-{
-}
+const std::map<FontColor, std::string> FONT_COLOR_TO_STR_MAP
+= {
+	{FontColor::White, "White"},
+	{FontColor::Red, "Red"},
+	{FontColor::Green, "Green"},
+	{FontColor::Brown, "Brown"},
+	{FontColor::Yellow, "Yellow"},
+	{FontColor::Blue, "Blue"},
+	{FontColor::Purple, "Purple"},
+	{FontColor::Cyan, "Cyan"},
+	{FontColor::Gray, "Gray"},
+	{FontColor::Lim, "Lim"},
+};
 
 } // namespace game_engine
 
