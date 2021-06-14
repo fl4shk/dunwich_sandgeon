@@ -20,7 +20,7 @@
 
 #include "../misc_includes.hpp"
 #include "../input_kind_enum.hpp"
-#include "../game_engine/screen_class.hpp"
+#include "../game_engine/engine_class.hpp"
 #include "text_handler_sdl_class.hpp"
 
 namespace dungwich_sandeon
@@ -39,10 +39,10 @@ public:		// constants
 private:		// variables
 	PosVec2 _window_size_2d;
 	int _zoom = DEF_ZOOM;
-	game_engine::Screen _screen;
 	sdl::Window _window;
 	sdl::Renderer _renderer;
 	sdl::KeyStatusMap _key_status_map;
+	game_engine::Engine _engine;
 	TextHandlerSdl _text_handler;
 	InputKind _input_kind;
 public:		// functions

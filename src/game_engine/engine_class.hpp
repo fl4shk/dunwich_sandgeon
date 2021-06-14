@@ -19,8 +19,9 @@
 // src/game_engine/engine_class.hpp
 
 #include "../misc_includes.hpp"
-#include "basic_window_classeses.hpp"
+#include "basic_window_classes.hpp"
 #include "screen_class.hpp"
+#include "../input_kind_enum.hpp"
 
 namespace dungwich_sandeon
 {
@@ -30,7 +31,15 @@ namespace game_engine
 
 class Engine final
 {
+private:		// variables
+	ecs::Engine _ecs_engine;
+	Screen _screen;
+public:		// functions
+	Engine();
+	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Engine);
+	~Engine();
 };
+
 } // namespace game_engine
 
 } // namespace dungwich_sandeon
