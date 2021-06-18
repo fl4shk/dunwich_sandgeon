@@ -32,7 +32,7 @@ namespace io
 class RealMainSdl final
 {
 public:		// types
-	using FontColor = TextHandlerSdl::FontColor;
+	using FontColor = game_engine::FontColor;
 public:		// constants
 	// Default values for some member variables
 	static constexpr int DEF_ZOOM = 2;

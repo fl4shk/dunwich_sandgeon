@@ -21,6 +21,7 @@
 #include "../misc_includes.hpp"
 #include "basic_window_classes.hpp"
 #include "../input_kind_enum.hpp"
+#include "general_comp_classes.hpp"
 
 namespace dungwich_sandeon
 {

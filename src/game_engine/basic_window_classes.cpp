@@ -52,7 +52,12 @@ void Window::draw(const Window& win)
 		for (int i=0; i<win.pos().x; ++i)
 		{
 			const PosVec2 curr_pos(i, j);
-			ent_id_at(curr_pos) = win.ent_id_at(curr_pos);
+			const auto& ent_id = win.ent_id_at(curr_pos);
+
+			if (ent_id != ecs::ENT_TRANSP_ID)
+			{
+				ent_id_at(curr_pos) = ent_id;
+			}
 		}
 	}
 }

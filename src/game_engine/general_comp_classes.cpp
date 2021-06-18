@@ -21,15 +21,21 @@ namespace dungwich_sandeon
 namespace game_engine
 {
 
+std::string Drawable::kind_str() const
+{
+	return "Drawable";
+}
+
 std::string Position::kind_str() const
 {
 	return "Position";
 }
 
-std::string Drawable::kind_str() const
+std::string HasWeight::kind_str() const
 {
-	return "Drawable";
+	return "HasWeight";
 }
+
 } // namespace game_engine
 
 } // namespace dungwich_sandeon

@@ -28,23 +28,7 @@ namespace dungwich_sandeon
 namespace game_engine
 {
 
-class Position: public ecs::Comp
-{
-public:		// variables
-	PosVec2 pos;
-public:		// functions
-	Position() = default;
-	inline Position(const PosVec2& s_pos)
-		: pos(s_pos)
-	{
-	}
-	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Position)
-	virtual ~Position() = default;
-
-	virtual std::string kind_str() const;
-};
-
-class Drawable: public ecs::Comp
+class Drawable final: public ecs::Comp
 {
 public:		// variables
 	int c;
@@ -57,6 +41,38 @@ public:		// functions
 	}
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Drawable);
 	virtual ~Drawable() = default;
+
+	virtual std::string kind_str() const;
+};
+
+class Position final: public ecs::Comp
+{
+public:		// variables
+	PosVec2 pos;
+public:		// functions
+	Position() = default;
+	inline Position(const PosVec2& s_pos)
+		: pos(s_pos)
+	{
+	}
+	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Position);
+	virtual ~Position() = default;
+
+	virtual std::string kind_str() const;
+};
+
+class HasWeight final: public ecs::Comp
+{
+public:		// variables
+	int weight;
+public:		// functions
+	HasWeight() = default;
+	inline HasWeight(int s_weight)
+		: weight(s_weight)
+	{
+	}
+	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(HasWeight);
+	virtual ~HasWeight() = default;
 
 	virtual std::string kind_str() const;
 };
