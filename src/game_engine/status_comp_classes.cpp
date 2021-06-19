@@ -13,7 +13,7 @@
 // You should have received a copy of the GNU General Public License along
 // with Dungwich Sandeon.  If not, see <https://www.gnu.org/licenses/>.
 
-#include "general_comp_classes.hpp"
+#include "status_comp_classes.hpp"
 
 namespace dungwich_sandeon
 {
@@ -24,24 +24,29 @@ namespace game_engine
 namespace comp
 {
 
-std::string Drawable::kind_str() const
+std::string StatusOnFire::kind_str() const
 {
-	return "Drawable";
+	return "StatusOnFire";
 }
 
-std::string Position::kind_str() const
+std::string StatusPoisoned::kind_str() const
 {
-	return "Position";
+	return "StatusPoisoned";
 }
 
-std::string Weight::kind_str() const
+std::string StatusAsleep::kind_str() const
 {
-	return "Weight";
+	return "StatusAsleep";
 }
 
-std::string BaseStats::kind_str() const
+std::string StatusTravelSpeed::kind_str() const
 {
-	return "BaseStats";
+	return "StatusTravelSpeed";
+}
+
+std::string StatusActionSpeed::kind_str() const
+{
+	return "StatusActionSpeed";
 }
 
 } // namespace comp

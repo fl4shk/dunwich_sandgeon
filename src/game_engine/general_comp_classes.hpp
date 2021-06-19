@@ -28,11 +28,14 @@ namespace dungwich_sandeon
 namespace game_engine
 {
 
+namespace comp
+{
+
 class Drawable final: public ecs::Comp
 {
 public:		// variables
-	int c;
-	FontColor color;
+	int c = ' ';
+	FontColor color = FontColor::White;
 public:		// functions
 	Drawable() = default;
 	inline Drawable(int s_c, FontColor s_color)
@@ -61,21 +64,52 @@ public:		// functions
 	virtual std::string kind_str() const;
 };
 
-class HasWeight final: public ecs::Comp
+class Weight final: public ecs::Comp
 {
 public:		// variables
-	int weight;
+	int val = 0;
 public:		// functions
-	HasWeight() = default;
-	inline HasWeight(int s_weight)
-		: weight(s_weight)
+	Weight() = default;
+	inline Weight(int s_val)
+		: val(s_val)
 	{
 	}
-	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(HasWeight);
-	virtual ~HasWeight() = default;
+	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Weight);
+	virtual ~Weight() = default;
 
 	virtual std::string kind_str() const;
 };
+
+class BaseStats final: public ecs::Comp
+{
+public:		// constants
+	static constexpr uint MAX_VAL = 999,
+		DEFAULT_HP = 50,
+		DEFAULT_ATK = 20,
+		DEFAULT_DEF = 20,
+		DEFAULT_MAG_ATK = 20,
+		DEFAULT_MAG_DEF = 20;
+public:		// variables
+	uint hp = DEFAULT_HP,
+		atk = DEFAULT_ATK,
+		def = DEFAULT_DEF,
+		mag_atk = DEFAULT_MAG_ATK,
+		mag_def = DEFAULT_MAG_DEF;
+public:		// functions
+	BaseStats() = default;
+	inline BaseStats(uint s_hp, uint s_atk, uint s_def, uint s_mag_atk,
+		uint s_mag_def)
+		: hp(s_hp), atk(s_atk), def(s_def), mag_atk(s_mag_atk),
+		mag_def(s_mag_def)
+	{
+	}
+	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(BaseStats);
+	virtual ~BaseStats() = default;
+
+	virtual std::string kind_str() const;
+};
+
+} // namespace comp
 
 } // namespace game_engine
 

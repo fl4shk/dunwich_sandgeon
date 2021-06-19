@@ -54,7 +54,7 @@ void Window::draw(const Window& win)
 			const PosVec2 curr_pos(i, j);
 			const auto& ent_id = win.ent_id_at(curr_pos);
 
-			if (ent_id != ecs::ENT_TRANSP_ID)
+			if (ent_id != ecs::ENT_NULL_ID)
 			{
 				ent_id_at(curr_pos) = ent_id;
 			}
