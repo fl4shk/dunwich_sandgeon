@@ -22,6 +22,7 @@
 #include "basic_window_classes.hpp"
 #include "../input_kind_enum.hpp"
 #include "general_comp_classes.hpp"
+#include "block_comp_classes.hpp"
 
 namespace dungwich_sandeon
 {
@@ -31,9 +32,14 @@ namespace game_engine
 
 class Engine final
 {
+public:		// constants
+	static const PosVec2 PLAYFIELD_POS;
+	static const SizeVec2 PLAYFIELD_SIZE_2D;
+	static const std::map<std::string, size_t> PLAYFIELD_LAYER_PRIO_MAP;
 private:		// variables
 	ecs::Engine _ecs_engine;
 	Window _screen;
+	LayeredWindow _playfield;
 public:		// functions
 	Engine();
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Engine);

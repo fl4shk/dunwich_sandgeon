@@ -28,6 +28,8 @@ namespace dungwich_sandeon
 namespace game_engine
 {
 
+class Engine;
+
 namespace comp
 {
 
@@ -108,6 +110,7 @@ public:		// functions
 
 	virtual std::string kind_str() const;
 };
+
 
 } // namespace comp
 

@@ -13,7 +13,7 @@
 // You should have received a copy of the GNU General Public License along
 // with Dungwich Sandeon.  If not, see <https://www.gnu.org/licenses/>.
 
-#include "engine_class.hpp"
+#include "block_comp_classes.hpp"
 
 namespace dungwich_sandeon
 {
@@ -21,23 +21,30 @@ namespace dungwich_sandeon
 namespace game_engine
 {
 
-const PosVec2 Engine::PLAYFIELD_POS(0, 0);
-const SizeVec2 Engine::PLAYFIELD_SIZE_2D(60, 50);
-const std::map<std::string, size_t> Engine::PLAYFIELD_LAYER_PRIO_MAP
-= {
-	{"block", static_cast<size_t>(0u)},
-	{"item", static_cast<size_t>(1u)},
-	{"char", static_cast<size_t>(2u)},
-};
+namespace comp
+{
 
-Engine::Engine()
-	: _screen(PosVec2(), Window::SCREEN_SIZE_2D),
-	_playfield(PLAYFIELD_POS, PLAYFIELD_SIZE_2D, PLAYFIELD_LAYER_PRIO_MAP)
+std::string Wall::kind_str() const
 {
+	return "Wall";
 }
-Engine::~Engine()
+
+std::string Floor::kind_str() const
 {
+	return "Floor";
 }
+
+std::string DownStairs::kind_str() const
+{
+	return "DownStairs";
+}
+
+std::string UpStairs::kind_str() const
+{
+	return "UpStairs";
+}
+
+} // namespace comp
 
 } // namespace game_engine
 
