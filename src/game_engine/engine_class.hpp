@@ -32,21 +32,42 @@ namespace game_engine
 
 class Engine final
 {
+public:		// types
+	using EntIdSetVec2d
+		= std::vector<std::vector<std::set<ecs::EntId>>>;
 public:		// constants
 	static const PosVec2 PLAYFIELD_POS;
 	static const SizeVec2 PLAYFIELD_SIZE_2D;
-	static const std::map<std::string, size_t> PLAYFIELD_LAYER_PRIO_MAP;
+
+	static constexpr size_t HIGHEST_FLOOR = 0;
+	static constexpr size_t LOWEST_FLOOR = 49;
 private:		// variables
 	ecs::Engine _ecs_engine;
-	Window _screen;
-	LayeredWindow _playfield;
+	Window _screen, _playfield;
+	std::vector<EntIdSetVec2d> _playfield_ent_id_set_vec_3d;
+	size_t _floor = HIGHEST_FLOOR;
 public:		// functions
 	Engine();
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Engine);
 	~Engine();
 
+	void position_ctor_callback(comp::Position* self);
+	void position_dtor_callback(comp::Position* self);
+
 	GEN_GETTER_BY_CON_REF(ecs_engine);
 	GEN_GETTER_BY_CON_REF(screen);
+	GEN_GETTER_BY_CON_REF(playfield);
+	GEN_GETTER_BY_CON_REF(playfield_ent_id_set_vec_3d);
+	GEN_GETTER_BY_VAL(floor);
+private:		// functions
+	inline EntIdSetVec2d& _curr_playfield_ent_id_set_vec_2d()
+	{
+		return _playfield_ent_id_set_vec_3d.at(floor());
+	}
+	inline const EntIdSetVec2d& _curr_playfield_ent_id_set_vec_2d() const
+	{
+		return _playfield_ent_id_set_vec_3d.at(floor());
+	}
 };
 
 } // namespace game_engine

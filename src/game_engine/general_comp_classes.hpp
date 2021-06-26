@@ -39,7 +39,7 @@ public:		// variables
 	int c = ' ';
 	FontColor color = FontColor::White;
 public:		// functions
-	Drawable() = default;
+	inline Drawable() = default;
 	inline Drawable(int s_c, FontColor s_color)
 		: c(s_c), color(s_color)
 	{
@@ -52,16 +52,18 @@ public:		// functions
 
 class Position final: public ecs::Comp
 {
+private:		// variables
+	Engine* _engine = nullptr;
 public:		// variables
+	ecs::EntId ent_id = ecs::ENT_NULL_ID;
+	size_t priority = 0;
 	PosVec2 pos;
 public:		// functions
 	Position() = default;
-	inline Position(const PosVec2& s_pos)
-		: pos(s_pos)
-	{
-	}
+	Position(Engine* s_engine, ecs::EntId s_ent_id, size_t s_priority,
+		const PosVec2& s_pos);
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Position);
-	virtual ~Position() = default;
+	virtual ~Position();
 
 	virtual std::string kind_str() const;
 };

@@ -23,19 +23,20 @@ namespace game_engine
 
 const PosVec2 Engine::PLAYFIELD_POS(0, 0);
 const SizeVec2 Engine::PLAYFIELD_SIZE_2D(60, 50);
-const std::map<std::string, size_t> Engine::PLAYFIELD_LAYER_PRIO_MAP
-= {
-	{"block", static_cast<size_t>(0u)},
-	{"item", static_cast<size_t>(1u)},
-	{"char", static_cast<size_t>(2u)},
-};
 
 Engine::Engine()
 	: _screen(PosVec2(), Window::SCREEN_SIZE_2D),
-	_playfield(PLAYFIELD_POS, PLAYFIELD_SIZE_2D, PLAYFIELD_LAYER_PRIO_MAP)
+	_playfield(PLAYFIELD_POS, PLAYFIELD_SIZE_2D)
 {
 }
 Engine::~Engine()
+{
+}
+
+void Engine::position_ctor_callback(comp::Position* self)
+{
+}
+void Engine::position_dtor_callback(comp::Position* self)
 {
 }
 
