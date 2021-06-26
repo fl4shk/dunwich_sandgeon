@@ -69,10 +69,10 @@ public:		// functions
 class Weight final: public ecs::Comp
 {
 public:		// variables
-	int val = 0;
+	uint val = 0;
 public:		// functions
 	Weight() = default;
-	inline Weight(int s_val)
+	inline Weight(uint s_val)
 		: val(s_val)
 	{
 	}
