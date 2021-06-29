@@ -31,16 +31,22 @@ std::string Drawable::kind_str() const
 }
 
 Position::Position(Engine* s_engine, ecs::EntId s_ent_id,
-	size_t s_priority, const PosVec2& s_pos)
-	: _engine(s_engine), ent_id(s_ent_id), priority(s_priority), pos(s_pos)
+	PlayfieldLayerPrio s_priority, const PosVec3& s_pos)
+	: _engine(s_engine), _ent_id(s_ent_id), priority(s_priority),
+	pos(s_pos)
 {
+	if (_engine == nullptr)
+	{
+		fprintf(stderr, "comp::Position::Position(): Internal error.\n");
+		exit(1);
+	}
 	_engine->position_ctor_callback(this);
 }
 Position::~Position()
 {
 	if (_engine == nullptr)
 	{
-		fprintf(stderr, "Position::~Position(): Internal error.\n");
+		fprintf(stderr, "comp::Position::~Position(): Internal error.\n");
 		exit(1);
 	}
 	_engine->position_dtor_callback(this);

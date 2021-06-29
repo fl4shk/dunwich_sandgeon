@@ -13,36 +13,28 @@
 // You should have received a copy of the GNU General Public License along
 // with Dungwich Sandeon.  If not, see <https://www.gnu.org/licenses/>.
 
-#ifndef src_misc_types_hpp
-#define src_misc_types_hpp
+#ifndef src_game_engine_playfield_layer_prio_enum_hpp
+#define src_game_engine_playfield_layer_prio_enum_hpp
 
-// src/misc_types.hpp
+// src/game_engine/playfield_layer_prio_enum.hpp
 
-#include "misc_includes.hpp"
+#include "../misc_includes.hpp"
 
 namespace dungwich_sandeon
 {
 
-using StrKeySet = std::set<std::string>;
-using PosVec2 = Vec2<int>;
-using SizeVec2 = Vec2<size_t>;
-
-template<typename Type>
-class Vec3
+namespace game_engine
 {
-public:		// variables
-	Type x = 0, y = 0, z = 0;
-public:		// functions
-	inline Vec3() = default;
-	inline Vec3(const Type& s_x, const Type& s_y, const Type& s_z)
-		: x(s_x), y(s_y), z(s_z)
-	{
-	}
-	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Vec3);
-	virtual inline ~Vec3() = default;
+
+enum class PlayfieldLayerPrio: size_t
+{
+	Block,
+	Item,
+	Char,
 };
-using PosVec3 = Vec3<int>;
+
+} // namespace game_engine
 
 } // namespace dungwich_sandeon
 
-#endif		// src_misc_types_hpp
+#endif		// src_game_engine_playfield_layer_prio_enum_hpp

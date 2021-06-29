@@ -26,18 +26,45 @@ const SizeVec2 Engine::PLAYFIELD_SIZE_2D(60, 50);
 
 Engine::Engine()
 	: _screen(PosVec2(), Window::SCREEN_SIZE_2D),
-	_playfield(PLAYFIELD_POS, PLAYFIELD_SIZE_2D)
+	_playfield(PLAYFIELD_POS, PLAYFIELD_SIZE_2D),
+	_playfield_ent_id_v3d(NUM_FLOORS, 
+		EntIdSetVec2d(PLAYFIELD_SIZE_2D.y,
+			std::vector<std::set<ecs::EntId>>(PLAYFIELD_SIZE_2D.x)))
 {
 }
 Engine::~Engine()
 {
 }
 
-void Engine::position_ctor_callback(comp::Position* self)
+void Engine::position_ctor_callback(comp::Position* obj)
 {
+	_err_when_ent_id_is_null(obj, "position_ctor_callback");
+
+	auto& ent_id_set = _playfield_ent_id_v3d.at(obj->pos.z).at(obj->pos.y)
+		.at(obj->pos.x);
+	if (ent_id_set.contains(obj->ent_id()))
+	{
+		fprintf(stderr, sconcat("Engine::position_ctor_callback(): ",
+			"Internal error.\n").c_str());
+		exit(1);
+	}
+
+	ent_id_set.insert(obj->ent_id());
 }
-void Engine::position_dtor_callback(comp::Position* self)
+void Engine::position_dtor_callback(comp::Position* obj)
 {
+	_err_when_ent_id_is_null(obj, "position_dtor_callback");
+
+	auto& ent_id_set = _playfield_ent_id_v3d.at(obj->pos.z).at(obj->pos.y)
+		.at(obj->pos.x);
+	if (!ent_id_set.contains(obj->ent_id()))
+	{
+		fprintf(stderr, sconcat("Engine::position_dtor_callback(): ",
+			"Internal error.\n").c_str());
+		exit(1);
+	}
+
+	ent_id_set.erase(obj->ent_id());
 }
 
 } // namespace game_engine

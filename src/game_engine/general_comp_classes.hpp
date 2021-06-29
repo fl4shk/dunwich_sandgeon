@@ -21,6 +21,7 @@
 #include "../misc_includes.hpp"
 #include "../misc_types.hpp"
 #include "font_color_enum.hpp"
+#include "playfield_layer_prio_enum.hpp"
 
 namespace dungwich_sandeon
 {
@@ -54,18 +55,19 @@ class Position final: public ecs::Comp
 {
 private:		// variables
 	Engine* _engine = nullptr;
+	ecs::EntId _ent_id = ecs::ENT_NULL_ID;
 public:		// variables
-	ecs::EntId ent_id = ecs::ENT_NULL_ID;
-	size_t priority = 0;
-	PosVec2 pos;
+	PlayfieldLayerPrio priority = PlayfieldLayerPrio::Block;
+	PosVec3 pos;
 public:		// functions
 	Position() = default;
-	Position(Engine* s_engine, ecs::EntId s_ent_id, size_t s_priority,
-		const PosVec2& s_pos);
+	Position(Engine* s_engine, ecs::EntId s_ent_id,
+		PlayfieldLayerPrio s_priority, const PosVec3& s_pos);
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Position);
 	virtual ~Position();
 
 	virtual std::string kind_str() const;
+	GEN_GETTER_BY_VAL(ent_id);
 };
 
 class Weight final: public ecs::Comp

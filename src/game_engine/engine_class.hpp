@@ -29,6 +29,11 @@ namespace dungwich_sandeon
 
 namespace game_engine
 {
+template<typename ObjType>
+concept EngineErrWhenEntNullIdObj = requires(ObjType obj)
+{
+	{ obj.ent_id() } -> std::same_as<ecs::EntId>;
+};
 
 class Engine final
 {
@@ -39,34 +44,52 @@ public:		// constants
 	static const PosVec2 PLAYFIELD_POS;
 	static const SizeVec2 PLAYFIELD_SIZE_2D;
 
-	static constexpr size_t HIGHEST_FLOOR = 0;
-	static constexpr size_t LOWEST_FLOOR = 49;
+	static constexpr size_t LOWEST_FLOOR = 1;
+	static constexpr size_t HIGHEST_FLOOR = 50;
+	static constexpr size_t NUM_FLOORS = HIGHEST_FLOOR - LOWEST_FLOOR + 1u;
 private:		// variables
 	ecs::Engine _ecs_engine;
 	Window _screen, _playfield;
-	std::vector<EntIdSetVec2d> _playfield_ent_id_set_vec_3d;
+
+	// dimensions: floor, y, x
+	std::vector<EntIdSetVec2d> _playfield_ent_id_v3d;
+
 	size_t _floor = HIGHEST_FLOOR;
 public:		// functions
 	Engine();
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Engine);
 	~Engine();
 
-	void position_ctor_callback(comp::Position* self);
-	void position_dtor_callback(comp::Position* self);
+	void position_ctor_callback(comp::Position* obj);
+	void position_dtor_callback(comp::Position* obj);
+	void move_position(comp::Position* obj);
 
 	GEN_GETTER_BY_CON_REF(ecs_engine);
 	GEN_GETTER_BY_CON_REF(screen);
 	GEN_GETTER_BY_CON_REF(playfield);
-	GEN_GETTER_BY_CON_REF(playfield_ent_id_set_vec_3d);
+	GEN_GETTER_BY_CON_REF(playfield_ent_id_v3d);
 	GEN_GETTER_BY_VAL(floor);
 private:		// functions
-	inline EntIdSetVec2d& _curr_playfield_ent_id_set_vec_2d()
+	template<EngineErrWhenEntNullIdObj ObjType>
+	inline void _err_when_ent_id_is_null(ObjType* obj,
+		const std::string& func_name) const
 	{
-		return _playfield_ent_id_set_vec_3d.at(floor());
+		if (obj->ent_id() == ecs::ENT_NULL_ID)
+		{
+			const std::string err_msg(sconcat("Engine", func_name, "():",
+				"Internal error.\n"));
+			fprintf(stderr, err_msg.c_str());
+			exit(1);
+		}
 	}
-	inline const EntIdSetVec2d& _curr_playfield_ent_id_set_vec_2d() const
+
+	inline EntIdSetVec2d& _curr_floor_playfield_ent_id_v2d()
 	{
-		return _playfield_ent_id_set_vec_3d.at(floor());
+		return _playfield_ent_id_v3d.at(floor());
+	}
+	inline const EntIdSetVec2d& _curr_floor_playfield_ent_id_v2d() const
+	{
+		return _playfield_ent_id_v3d.at(floor());
 	}
 };
 
