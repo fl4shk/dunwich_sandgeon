@@ -17,7 +17,6 @@
 
 namespace dungwich_sandeon
 {
-
 namespace io
 {
 
@@ -106,5 +105,4 @@ void RealMainSdl::_update_window_size_2d()
 }
 
 } // namespace io
-
 } // namespace dungwich_sandeon

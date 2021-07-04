@@ -17,7 +17,6 @@
 
 namespace dungwich_sandeon
 {
-
 namespace io
 {
 
@@ -142,5 +141,4 @@ PosVec2 TextHandlerSdl::_get_draw_char_font_surface_size_2d() const
 }
 
 } // namespace io
-
 } // namespace dungwich_sandeon

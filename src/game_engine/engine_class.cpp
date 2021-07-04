@@ -17,7 +17,6 @@
 
 namespace dungwich_sandeon
 {
-
 namespace game_engine
 {
 
@@ -67,6 +66,15 @@ void Engine::position_dtor_callback(comp::Position* obj)
 	ent_id_set.erase(obj->ent_id());
 }
 
-} // namespace game_engine
+void Engine::position_move_callback(comp::Position* obj,
+	const PosVec3& n_pos)
+{
+	_err_when_ent_id_is_null(obj, "position_move_callback");
 
+	position_dtor_callback(obj);
+	obj->pos = n_pos;
+	position_ctor_callback(obj);
+}
+
+} // namespace game_engine
 } // namespace dungwich_sandeon

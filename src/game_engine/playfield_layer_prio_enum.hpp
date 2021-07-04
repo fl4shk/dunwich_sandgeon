@@ -22,7 +22,6 @@
 
 namespace dungwich_sandeon
 {
-
 namespace game_engine
 {
 
@@ -34,7 +33,6 @@ enum class PlayfieldLayerPrio: size_t
 };
 
 } // namespace game_engine
-
 } // namespace dungwich_sandeon
 
 #endif		// src_game_engine_playfield_layer_prio_enum_hpp

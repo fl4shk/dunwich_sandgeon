@@ -13,48 +13,21 @@
 // You should have received a copy of the GNU General Public License along
 // with Dungwich Sandeon.  If not, see <https://www.gnu.org/licenses/>.
 
-#ifndef src_game_engine_font_color_enum_hpp
-#define src_game_engine_font_color_enum_hpp
+#include "player_comp_class.hpp"
 
-// src/game_engine/font_color_enum.hpp
-
-#include "../misc_includes.hpp"
 
 namespace dungwich_sandeon
 {
 namespace game_engine
 {
-
-enum class FontColor: u32
+namespace comp
 {
-	White,
 
-	Red,
-	Green,
-	Brown,
-	Yellow,
-
-	Blue,
-	Purple,
-	Cyan,
-	Gray,
-
-	// The limit, which is not a real font_color 
-	Lim,
-};
-
-inline FontColor font_color_add(FontColor font_color,
-	u32 amount)
+std::string Player::kind_str() const
 {
-	u32 ret_u32 = static_cast<u32>(font_color);
-	ret_u32 += amount;
-	return static_cast<FontColor>(ret_u32);
+	return "Player";
 }
 
-extern const std::map<FontColor, std::string> FONT_COLOR_TO_STR_MAP;
-
+} // namespace comp
 } // namespace game_engine
 } // namespace dungwich_sandeon
-
-
-#endif		// src_game_engine_font_color_enum_hpp

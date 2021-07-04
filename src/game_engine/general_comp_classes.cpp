@@ -18,10 +18,8 @@
 
 namespace dungwich_sandeon
 {
-
 namespace game_engine
 {
-
 namespace comp
 {
 
@@ -51,6 +49,15 @@ Position::~Position()
 	}
 	_engine->position_dtor_callback(this);
 }
+void Position::move(const PosVec3& n_pos)
+{
+	if (_engine == nullptr)
+	{
+		fprintf(stderr, "comp::Position::move(): Internal error.\n");
+		exit(1);
+	}
+	_engine->position_move_callback(this, n_pos);
+}
 std::string Position::kind_str() const
 {
 	return "Position";
@@ -67,7 +74,5 @@ std::string BaseStats::kind_str() const
 }
 
 } // namespace comp
-
 } // namespace game_engine
-
 } // namespace dungwich_sandeon

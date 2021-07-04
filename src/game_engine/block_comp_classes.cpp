@@ -17,10 +17,8 @@
 
 namespace dungwich_sandeon
 {
-
 namespace game_engine
 {
-
 namespace comp
 {
 
@@ -45,7 +43,5 @@ std::string UpStairs::kind_str() const
 }
 
 } // namespace comp
-
 } // namespace game_engine
-
 } // namespace dungwich_sandeon

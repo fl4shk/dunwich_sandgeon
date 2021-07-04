@@ -22,10 +22,8 @@
 
 namespace dungwich_sandeon
 {
-
 namespace game_engine
 {
-
 namespace comp
 {
 
@@ -70,9 +68,7 @@ public:		// functions
 };
 
 } // namespace comp
-
 } // namespace game_engine
-
 } // namespace dungwich_sandeon
 
 #endif		// src_game_engine_block_comp_classes_hpp

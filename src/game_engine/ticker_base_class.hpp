@@ -22,7 +22,6 @@
 
 namespace dungwich_sandeon
 {
-
 namespace game_engine
 {
 
@@ -39,7 +38,6 @@ public:		// functions
 };
 
 } // namespace game_engine
-
 } // namespace dungwich_sandeon
 
 #endif		// src_game_engine_ticker_base_class_hpp

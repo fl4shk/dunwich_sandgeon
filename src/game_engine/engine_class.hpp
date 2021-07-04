@@ -26,11 +26,12 @@
 
 namespace dungwich_sandeon
 {
-
 namespace game_engine
 {
+
 template<typename ObjType>
-concept EngineErrWhenEntNullIdObj = requires(ObjType obj)
+concept EngineErrWhenEntNullIdObj
+	= requires(ObjType obj)
 {
 	{ obj.ent_id() } -> std::same_as<ecs::EntId>;
 };
@@ -44,9 +45,9 @@ public:		// constants
 	static const PosVec2 PLAYFIELD_POS;
 	static const SizeVec2 PLAYFIELD_SIZE_2D;
 
-	static constexpr size_t LOWEST_FLOOR = 1;
-	static constexpr size_t HIGHEST_FLOOR = 50;
-	static constexpr size_t NUM_FLOORS = HIGHEST_FLOOR - LOWEST_FLOOR + 1u;
+	static constexpr int LOWEST_FLOOR = 50;
+	static constexpr int HIGHEST_FLOOR = 1;
+	static constexpr int NUM_FLOORS = abs(HIGHEST_FLOOR - LOWEST_FLOOR) + 1;
 private:		// variables
 	ecs::Engine _ecs_engine;
 	Window _screen, _playfield;
@@ -62,13 +63,13 @@ public:		// functions
 
 	void position_ctor_callback(comp::Position* obj);
 	void position_dtor_callback(comp::Position* obj);
-	void move_position(comp::Position* obj);
+	void position_move_callback(comp::Position* obj, const PosVec3& n_pos);
 
 	GEN_GETTER_BY_CON_REF(ecs_engine);
 	GEN_GETTER_BY_CON_REF(screen);
 	GEN_GETTER_BY_CON_REF(playfield);
 	GEN_GETTER_BY_CON_REF(playfield_ent_id_v3d);
-	GEN_GETTER_BY_VAL(floor);
+	GEN_GETTER_AND_SETTER_BY_VAL(floor);
 private:		// functions
 	template<EngineErrWhenEntNullIdObj ObjType>
 	inline void _err_when_ent_id_is_null(ObjType* obj,
@@ -94,7 +95,6 @@ private:		// functions
 };
 
 } // namespace game_engine
-
 } // namespace dungwich_sandeon
 
 #endif		// src_game_engine_engine_class_hpp

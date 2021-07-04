@@ -19,7 +19,6 @@
 
 namespace dungwich_sandeon
 {
-
 namespace game_engine
 {
 //--------
@@ -101,5 +100,4 @@ void LayeredWindow::tick(InputKind input_kind)
 }
 //--------
 } // namespace game_engine
-
 } // namespace dungwich_sandeon

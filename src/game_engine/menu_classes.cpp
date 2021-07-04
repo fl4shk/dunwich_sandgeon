@@ -17,11 +17,9 @@
 
 namespace dungwich_sandeon
 {
-
 namespace game_engine
 {
 
 
 } // namespace game_engine
-
 } // namespace dungwich_sandeon

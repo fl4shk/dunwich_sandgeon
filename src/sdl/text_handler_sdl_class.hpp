@@ -24,7 +24,6 @@
 
 namespace dungwich_sandeon
 {
-
 namespace io
 {
 
@@ -53,7 +52,6 @@ private:		// functions
 };
 
 } // namespace io
-
 } // namespace dungwich_sandeon
 
 #endif		// src_sdl_text_handler_sdl_class_hpp

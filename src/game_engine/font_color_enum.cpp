@@ -17,7 +17,6 @@
 
 namespace dungwich_sandeon
 {
-
 namespace game_engine
 {
 
@@ -36,5 +35,4 @@ const std::map<FontColor, std::string> FONT_COLOR_TO_STR_MAP
 };
 
 } // namespace game_engine
-
 } // namespace dungwich_sandeon

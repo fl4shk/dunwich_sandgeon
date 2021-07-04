@@ -25,7 +25,6 @@
 
 namespace dungwich_sandeon
 {
-
 namespace game_engine
 {
 
@@ -114,7 +113,6 @@ public:		// functions
 };
 
 } // namespace game_engine
-
 } // namespace dungwich_sandeon
 
 #endif		// src_game_engine_basic_window_classeses_hpp

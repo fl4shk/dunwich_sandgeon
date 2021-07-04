@@ -25,7 +25,6 @@
 
 namespace dungwich_sandeon
 {
-
 namespace game_engine
 {
 
@@ -67,6 +66,9 @@ public:		// functions
 	virtual ~Position();
 
 	virtual std::string kind_str() const;
+
+	void move(const PosVec3& n_pos);
+
 	GEN_GETTER_BY_VAL(ent_id);
 };
 
@@ -117,9 +119,7 @@ public:		// functions
 
 
 } // namespace comp
-
 } // namespace game_engine
-
 } // namespace dungwich_sandeon
 
 #endif		// src_game_engine_general_comp_classes_hpp

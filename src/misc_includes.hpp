@@ -52,6 +52,7 @@ namespace ecs = liborangepower::game::ecs;
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <cmath>
 
 #include <map>
 #include <set>
