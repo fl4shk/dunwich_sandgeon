@@ -25,23 +25,8 @@ namespace dungwich_sandeon
 
 using StrKeySet = std::set<std::string>;
 using PosVec2 = Vec2<int>;
-using SizeVec2 = Vec2<size_t>;
-
-template<typename Type>
-class Vec3
-{
-public:		// variables
-	Type x = 0, y = 0, z = 0;
-public:		// functions
-	inline Vec3() = default;
-	inline Vec3(const Type& s_x, const Type& s_y, const Type& s_z)
-		: x(s_x), y(s_y), z(s_z)
-	{
-	}
-	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Vec3);
-	virtual inline ~Vec3() = default;
-};
 using PosVec3 = Vec3<int>;
+using SizeVec2 = Vec2<size_t>;
 
 } // namespace dungwich_sandeon
 
