@@ -45,9 +45,11 @@ public:		// constants
 	static const PosVec2 PLAYFIELD_POS;
 	static const SizeVec2 PLAYFIELD_SIZE_2D;
 
+	// These are basement floors
 	static constexpr int LOWEST_FLOOR = 50;
 	static constexpr int HIGHEST_FLOOR = 1;
-	static constexpr int NUM_FLOORS = abs(HIGHEST_FLOOR - LOWEST_FLOOR) + 1;
+	static constexpr int NUM_FLOORS
+		= abs(HIGHEST_FLOOR - LOWEST_FLOOR) + 1;
 private:		// variables
 	ecs::Engine _ecs_engine;
 	Window _screen, _playfield;
