@@ -19,6 +19,7 @@
 // src/game_engine/player_comp_class.hpp
 
 #include "../misc_includes.hpp"
+#include "general_comp_classes.hpp"
 
 namespace dungwich_sandeon
 {
@@ -29,6 +30,9 @@ namespace comp
 
 class Player final: public ecs::Comp
 {
+public:		// constants
+	static constexpr Drawable::Data 
+		DRAWABLE_DATA{.c='@', .color=FontColor::White};
 public:		// functions
 	inline Player() = default;
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Player);

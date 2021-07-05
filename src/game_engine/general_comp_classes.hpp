@@ -35,13 +35,19 @@ namespace comp
 
 class Drawable final: public ecs::Comp
 {
+public:		// types
+	class Data final
+	{
+	public:		// variables
+		int c;
+		FontColor color;
+	};
 public:		// variables
-	int c = ' ';
-	FontColor color = FontColor::White;
+	Data data{.c=' ', .color=FontColor::White};
 public:		// functions
 	inline Drawable() = default;
 	inline Drawable(int s_c, FontColor s_color)
-		: c(s_c), color(s_color)
+		: data{.c=s_c, .color=s_color}
 	{
 	}
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Drawable);
