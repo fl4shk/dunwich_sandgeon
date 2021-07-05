@@ -52,24 +52,24 @@ public:		// functions
 
 class Position final: public ecs::Comp
 {
+	friend class dungwich_sandeon::game_engine::Engine;
 private:		// variables
-	Engine* _engine = nullptr;
 	ecs::EntId _ent_id = ecs::ENT_NULL_ID;
+	PosVec3 _pos;
 public:		// variables
 	PlayfieldLayerPrio priority = PlayfieldLayerPrio::Block;
-	PosVec3 pos;
 public:		// functions
 	Position() = default;
-	Position(Engine* s_engine, ecs::EntId s_ent_id,
-		PlayfieldLayerPrio s_priority, const PosVec3& s_pos);
+	Position(ecs::EntId s_ent_id, const PosVec3& s_pos,
+		PlayfieldLayerPrio s_priority);
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Position);
 	virtual ~Position();
 
 	virtual std::string kind_str() const;
 
-	void move(const PosVec3& n_pos);
-
 	GEN_GETTER_BY_VAL(ent_id);
+	GEN_GETTER_BY_CON_REF(pos);
+	void set_pos(const PosVec3& n_pos);
 };
 
 class Weight final: public ecs::Comp

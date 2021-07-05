@@ -28,35 +28,24 @@ std::string Drawable::kind_str() const
 	return "Drawable";
 }
 
-Position::Position(Engine* s_engine, ecs::EntId s_ent_id,
-	PlayfieldLayerPrio s_priority, const PosVec3& s_pos)
-	: _engine(s_engine), _ent_id(s_ent_id), priority(s_priority),
-	pos(s_pos)
+Position::Position(ecs::EntId s_ent_id, const PosVec3& s_pos,
+	PlayfieldLayerPrio s_priority)
+	: _ent_id(s_ent_id), _pos(s_pos), priority(s_priority)
 {
-	if (_engine == nullptr)
-	{
-		fprintf(stderr, "comp::Position::Position(): Internal error.\n");
-		exit(1);
-	}
-	_engine->position_ctor_callback(this);
+	engine.position_ctor_callback(this);
 }
 Position::~Position()
 {
-	if (_engine == nullptr)
-	{
-		fprintf(stderr, "comp::Position::~Position(): Internal error.\n");
-		exit(1);
-	}
-	_engine->position_dtor_callback(this);
+	engine.position_dtor_callback(this);
 }
-void Position::move(const PosVec3& n_pos)
+void Position::set_pos(const PosVec3& n_pos)
 {
-	if (_engine == nullptr)
-	{
-		fprintf(stderr, "comp::Position::move(): Internal error.\n");
-		exit(1);
-	}
-	_engine->position_move_callback(this, n_pos);
+	//if (_engine == nullptr)
+	//{
+	//	fprintf(stderr, "comp::Position::set_pos(): Internal error.\n");
+	//	exit(1);
+	//}
+	engine.position_set_pos_callback(this, n_pos);
 }
 std::string Position::kind_str() const
 {

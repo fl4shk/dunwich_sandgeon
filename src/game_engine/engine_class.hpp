@@ -65,7 +65,8 @@ public:		// functions
 
 	void position_ctor_callback(comp::Position* obj);
 	void position_dtor_callback(comp::Position* obj);
-	void position_move_callback(comp::Position* obj, const PosVec3& n_pos);
+	void position_set_pos_callback(comp::Position* obj,
+		const PosVec3& n_pos);
 
 	GEN_GETTER_BY_CON_REF(ecs_engine);
 	GEN_GETTER_BY_CON_REF(screen);
@@ -95,6 +96,8 @@ private:		// functions
 		return _playfield_ent_id_v3d.at(floor());
 	}
 };
+
+extern Engine engine;
 
 } // namespace game_engine
 } // namespace dungwich_sandeon

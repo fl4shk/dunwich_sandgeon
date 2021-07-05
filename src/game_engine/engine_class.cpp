@@ -39,8 +39,8 @@ void Engine::position_ctor_callback(comp::Position* obj)
 {
 	_err_when_ent_id_is_null(obj, "position_ctor_callback");
 
-	auto& ent_id_set = _playfield_ent_id_v3d.at(obj->pos.z).at(obj->pos.y)
-		.at(obj->pos.x);
+	auto& ent_id_set = _playfield_ent_id_v3d.at(obj->pos().z)
+		.at(obj->pos().y).at(obj->pos().x);
 	if (ent_id_set.contains(obj->ent_id()))
 	{
 		fprintf(stderr, sconcat("Engine::position_ctor_callback(): ",
@@ -54,8 +54,8 @@ void Engine::position_dtor_callback(comp::Position* obj)
 {
 	_err_when_ent_id_is_null(obj, "position_dtor_callback");
 
-	auto& ent_id_set = _playfield_ent_id_v3d.at(obj->pos.z).at(obj->pos.y)
-		.at(obj->pos.x);
+	auto& ent_id_set = _playfield_ent_id_v3d.at(obj->pos().z)
+		.at(obj->pos().y).at(obj->pos().x);
 	if (!ent_id_set.contains(obj->ent_id()))
 	{
 		fprintf(stderr, sconcat("Engine::position_dtor_callback(): ",
@@ -66,15 +66,17 @@ void Engine::position_dtor_callback(comp::Position* obj)
 	ent_id_set.erase(obj->ent_id());
 }
 
-void Engine::position_move_callback(comp::Position* obj,
+void Engine::position_set_pos_callback(comp::Position* obj,
 	const PosVec3& n_pos)
 {
-	_err_when_ent_id_is_null(obj, "position_move_callback");
+	_err_when_ent_id_is_null(obj, "position_set_pos_callback");
 
 	position_dtor_callback(obj);
-	obj->pos = n_pos;
+	obj->_pos = n_pos;
 	position_ctor_callback(obj);
 }
+
+Engine engine;
 
 } // namespace game_engine
 } // namespace dungwich_sandeon
