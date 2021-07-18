@@ -46,8 +46,12 @@ public:		// variables
 	Data data{.c=' ', .color=FontColor::White};
 public:		// functions
 	inline Drawable() = default;
-	inline Drawable(int s_c, FontColor s_color)
-		: data{.c=s_c, .color=s_color}
+	//inline Drawable(int s_c, FontColor s_color)
+	//	: data{.c=s_c, .color=s_color}
+	//{
+	//}
+	inline Drawable(Data s_data)
+		: data(s_data)
 	{
 	}
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Drawable);
