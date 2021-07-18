@@ -40,7 +40,7 @@ class Engine final
 {
 public:		// types
 	using EntIdSetVec2d
-		= std::vector<std::vector<std::set<ecs::EntId>>>;
+		= std::vector<std::vector<ecs::EntIdSet>>;
 public:		// constants
 	static const PosVec2 PLAYFIELD_POS;
 	static const SizeVec2 PLAYFIELD_SIZE_2D;
@@ -57,7 +57,7 @@ private:		// variables
 	// dimensions: floor, y, x
 	std::vector<EntIdSetVec2d> _playfield_ent_id_v3d;
 
-	size_t _floor = HIGHEST_FLOOR;
+	int _floor = HIGHEST_FLOOR;
 public:		// functions
 	Engine();
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Engine);
