@@ -18,7 +18,7 @@
 
 // src/game_engine/block_comp_classes.hpp
 
-#include "../misc_includes.hpp"
+#include "../../misc_includes.hpp"
 
 namespace dungwich_sandeon
 {

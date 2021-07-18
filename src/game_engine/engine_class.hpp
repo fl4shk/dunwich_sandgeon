@@ -21,8 +21,8 @@
 #include "../misc_includes.hpp"
 #include "basic_window_classes.hpp"
 #include "../input_kind_enum.hpp"
-#include "general_comp_classes.hpp"
-#include "block_comp_classes.hpp"
+#include "comp/general_comp_classes.hpp"
+#include "comp/block_comp_classes.hpp"
 
 namespace dungwich_sandeon
 {
@@ -45,7 +45,7 @@ public:		// constants
 	static const PosVec2 PLAYFIELD_POS;
 	static const SizeVec2 PLAYFIELD_SIZE_2D;
 
-	// These are basement floors
+	// These are basement floors, going from B1F down to B50F
 	static constexpr int LOWEST_FLOOR = 50;
 	static constexpr int HIGHEST_FLOOR = 1;
 	static constexpr int NUM_FLOORS

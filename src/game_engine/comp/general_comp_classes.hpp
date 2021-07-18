@@ -18,10 +18,10 @@
 
 // src/game_engine/general_comp_classes.hpp
 
-#include "../misc_includes.hpp"
-#include "../misc_types.hpp"
-#include "font_color_enum.hpp"
-#include "playfield_layer_prio_enum.hpp"
+#include "../../misc_includes.hpp"
+#include "../../misc_types.hpp"
+#include "../font_color_enum.hpp"
+#include "../playfield_layer_prio_enum.hpp"
 
 namespace dungwich_sandeon
 {

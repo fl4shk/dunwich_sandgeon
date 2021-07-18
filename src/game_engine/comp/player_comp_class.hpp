@@ -18,7 +18,7 @@
 
 // src/game_engine/player_comp_class.hpp
 
-#include "../misc_includes.hpp"
+#include "../../misc_includes.hpp"
 #include "general_comp_classes.hpp"
 
 namespace dungwich_sandeon
