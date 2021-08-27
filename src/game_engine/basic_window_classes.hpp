@@ -44,6 +44,7 @@ protected:		// variables
 public:		// functions
 	Window();
 	Window(const PosVec2& s_pos, const SizeVec2& s_size_2d);
+	Window(const PosVec2& s_pos, const PosVec2& s_end_pos);
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Window);
 	virtual ~Window();
 

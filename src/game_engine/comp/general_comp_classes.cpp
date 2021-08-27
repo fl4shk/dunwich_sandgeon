@@ -40,11 +40,6 @@ Position::~Position()
 }
 void Position::set_pos(const PosVec3& n_pos)
 {
-	//if (_engine == nullptr)
-	//{
-	//	fprintf(stderr, "comp::Position::set_pos(): Internal error.\n");
-	//	exit(1);
-	//}
 	engine.position_set_pos_callback(this, n_pos);
 }
 std::string Position::kind_str() const

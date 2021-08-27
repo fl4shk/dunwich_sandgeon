@@ -25,24 +25,28 @@ namespace dungwich_sandeon
 
 enum class InputKind
 {
-	MoveLeft,
-	MoveUp,
-	MoveRight,
-	MoveDown,
+	Left,
+	Up,
+	Right,
+	Down,
 
-	TargetEnemy,
-	TargetItem,
+	UpLeft,
+	UpRight,
+	DownRight,
+	DownLeft,
 
-	ExitMenu,
-	OpenInvMenu,
-	OpenSaveMenu,
+	Back,
+	Accept,
 
 	SwitchWindow,
 
-	ScrollWindowLeft,
-	ScrollWindowUp,
-	ScrollWindowRight,
-	ScrollWindowDown,
+	OpenInventoryWindow,
+	OpenMiscActionsWindow,
+	OpenSaveWindow,
+
+	BeginAttack,
+	BeginRangedAttack,
+	BeginThrow,
 
 	ZoomIn,
 	ZoomOut,

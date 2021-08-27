@@ -42,18 +42,23 @@ public:		// types
 	using EntIdSetVec2d
 		= std::vector<std::vector<ecs::EntIdSet>>;
 public:		// constants
-	static const PosVec2 PLAYFIELD_POS;
-	static const SizeVec2 PLAYFIELD_SIZE_2D;
+	static const PosVec2 PLAYFIELD_WINDOW_POS, PLAYFIELD_WINDOW_END_POS;
+	static const SizeVec2 PLAYFIELD_WINDOW_SIZE_2D;
+
+	static const PosVec2 BOTTOM_MSG_WINDOW_POS, BOTTOM_MSG_WINDOW_END_POS,
+		RIGHT_MSG_WINDOW_POS, RIGHT_MSG_WINDOW_END_POS,
+		POPUP_WINDOW_POS, POPUP_WINDOW_END_POS;
 
 	// These are basement floors, going from B1F down to B50F
-	static constexpr int LOWEST_FLOOR = 50;
-	static constexpr int HIGHEST_FLOOR = 1;
-	static constexpr int NUM_FLOORS
-		= abs(HIGHEST_FLOOR - LOWEST_FLOOR) + 1;
-private:		// variables
-	ecs::Engine _ecs_engine;
-	Window _screen, _playfield;
+	static constexpr int LOWEST_FLOOR = 50, HIGHEST_FLOOR = 1,
+		NUM_FLOORS = abs(HIGHEST_FLOOR - LOWEST_FLOOR) + 1;
+public:		// variables
+	ecs::Engine ecs_engine;
+	Window screen_window, title_screen_window,
+		playfield_window, bottom_msg_window, right_msg_window,
+		popup_window;
 
+private:		// variables
 	// dimensions: floor, y, x
 	std::vector<EntIdSetVec2d> _playfield_ent_id_v3d;
 
@@ -68,10 +73,8 @@ public:		// functions
 	void position_set_pos_callback(comp::Position* obj,
 		const PosVec3& n_pos);
 
-	GEN_GETTER_BY_CON_REF(ecs_engine);
-	GEN_GETTER_BY_CON_REF(screen);
-	GEN_GETTER_BY_CON_REF(playfield);
 	GEN_GETTER_BY_CON_REF(playfield_ent_id_v3d);
+
 	GEN_GETTER_AND_SETTER_BY_VAL(floor);
 private:		// functions
 	template<EngineErrWhenEntNullIdObj ObjType>

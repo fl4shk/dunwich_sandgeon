@@ -19,6 +19,7 @@
 // src/game_engine/block_comp_classes.hpp
 
 #include "../../misc_includes.hpp"
+#include "general_comp_classes.hpp"
 
 namespace dungwich_sandeon
 {
@@ -27,8 +28,24 @@ namespace game_engine
 namespace comp
 {
 
+//class InBetweenWalls final: public ecs::Comp
+//{
+//public:		// constants
+//	static constexpr Drawable::Data
+//		DRAWABLE_DATA{.c=' ', .color=FontColor::Black};
+//public:		// functions
+//	InBetweenWalls() = default;
+//	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(InBetweenWalls);
+//	virtual ~InBetweenWalls() = default;
+//
+//	virtual std::string kind_str() const;
+//};
+
 class Wall final: public ecs::Comp
 {
+public:		// constants
+	static constexpr Drawable::Data
+		DRAWABLE_DATA{.c='#', .color=FontColor::Gray};
 public:		// functions
 	Wall() = default;
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Wall);
@@ -39,6 +56,9 @@ public:		// functions
 
 class Floor final: public ecs::Comp
 {
+public:		// constants
+	static constexpr Drawable::Data
+		DRAWABLE_DATA{.c='.', .color=FontColor::Gray};
 public:		// functions
 	Floor() = default;
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Floor);
@@ -49,6 +69,9 @@ public:		// functions
 
 class DownStairs final: public ecs::Comp
 {
+public:		// constants
+	static constexpr Drawable::Data
+		DRAWABLE_DATA{.c='s', .color=FontColor::White};
 public:		// functions
 	DownStairs() = default;
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(DownStairs);
@@ -59,6 +82,9 @@ public:		// functions
 
 class UpStairs final: public ecs::Comp
 {
+public:		// constants
+	static constexpr Drawable::Data
+		DRAWABLE_DATA{.c='S', .color=FontColor::White};
 public:		// functions
 	UpStairs() = default;
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(UpStairs);

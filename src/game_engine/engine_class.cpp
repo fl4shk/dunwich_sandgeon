@@ -20,15 +20,54 @@ namespace dungwich_sandeon
 namespace game_engine
 {
 
-const PosVec2 Engine::PLAYFIELD_POS(0, 0);
-const SizeVec2 Engine::PLAYFIELD_SIZE_2D(60, 50);
+const PosVec2 
+	Engine::PLAYFIELD_WINDOW_POS(0, 0),
+
+	Engine::PLAYFIELD_WINDOW_END_POS
+		(Window::SCREEN_SIZE_2D.x - 20,
+		Window::SCREEN_SIZE_2D.y - 10);
+
+const SizeVec2
+	Engine::PLAYFIELD_WINDOW_SIZE_2D
+		(Engine::PLAYFIELD_WINDOW_END_POS.x
+			- Engine::PLAYFIELD_WINDOW_POS.x + 1,
+		Engine::PLAYFIELD_WINDOW_END_POS.y
+			- Engine::PLAYFIELD_WINDOW_POS.y + 1);
+
+const PosVec2 
+	Engine::BOTTOM_MSG_WINDOW_POS
+		(0,
+		Engine::PLAYFIELD_WINDOW_END_POS.y + 2),
+
+	Engine::BOTTOM_MSG_WINDOW_END_POS
+		(Engine::PLAYFIELD_WINDOW_END_POS.x,
+		Window::SCREEN_SIZE_2D.y),
+
+	Engine::RIGHT_MSG_WINDOW_POS
+		(Engine::PLAYFIELD_WINDOW_END_POS.x + 2,
+		Engine::PLAYFIELD_WINDOW_POS.y),
+
+	Engine::RIGHT_MSG_WINDOW_END_POS
+		(Window::SCREEN_SIZE_2D.x,
+		Window::SCREEN_SIZE_2D.y),
+
+	Engine::POPUP_WINDOW_POS(20, 20),
+
+	Engine::POPUP_WINDOW_END_POS
+		(Window::SCREEN_SIZE_2D.x - 20,
+		Window::SCREEN_SIZE_2D.y - 20);
 
 Engine::Engine()
-	: _screen(PosVec2(), Window::SCREEN_SIZE_2D),
-	_playfield(PLAYFIELD_POS, PLAYFIELD_SIZE_2D),
-	_playfield_ent_id_v3d(NUM_FLOORS, 
-		EntIdSetVec2d(PLAYFIELD_SIZE_2D.y,
-			std::vector<std::set<ecs::EntId>>(PLAYFIELD_SIZE_2D.x)))
+	: screen_window(PosVec2(), Window::SCREEN_SIZE_2D),
+	title_screen_window(PosVec2(), Window::SCREEN_SIZE_2D),
+	playfield_window(PLAYFIELD_WINDOW_POS, PLAYFIELD_WINDOW_END_POS),
+	bottom_msg_window(BOTTOM_MSG_WINDOW_POS, BOTTOM_MSG_WINDOW_END_POS),
+	right_msg_window(RIGHT_MSG_WINDOW_POS, RIGHT_MSG_WINDOW_END_POS),
+	popup_window(POPUP_WINDOW_POS, POPUP_WINDOW_END_POS),
+
+	_playfield_ent_id_v3d(NUM_FLOORS,
+		EntIdSetVec2d(PLAYFIELD_WINDOW_SIZE_2D.y,
+			std::vector<std::set<ecs::EntId>>(PLAYFIELD_WINDOW_SIZE_2D.x)))
 {
 }
 Engine::~Engine()

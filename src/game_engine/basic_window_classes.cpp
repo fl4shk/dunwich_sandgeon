@@ -35,6 +35,12 @@ Window::Window(const PosVec2& s_pos, const SizeVec2& s_size_2d)
 	_ent_id_v2d(s_size_2d.y, ecs::EntIdVec(s_size_2d.x, ecs::ENT_NULL_ID))
 {
 }
+Window::Window(const PosVec2& s_pos, const PosVec2& s_end_pos)
+	: _active(false), _pos(s_pos),
+	_ent_id_v2d(s_end_pos.y - s_pos.y + 1,
+		ecs::EntIdVec(s_end_pos.x - s_pos.x + 1, ecs::ENT_NULL_ID))
+{
+}
 Window::~Window()
 {
 }

@@ -22,6 +22,11 @@ namespace game_engine
 namespace comp
 {
 
+//std::string InBetweenWalls::kind_str() const
+//{
+//	return "InBetweenWalls";
+//}
+
 std::string Wall::kind_str() const
 {
 	return "Wall";

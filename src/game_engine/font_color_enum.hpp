@@ -39,6 +39,8 @@ enum class FontColor: u32
 	Cyan,
 	Gray,
 
+	Black,
+
 	// The limit, which is not a real font_color 
 	Lim,
 };

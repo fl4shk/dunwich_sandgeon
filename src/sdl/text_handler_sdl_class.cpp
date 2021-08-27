@@ -110,6 +110,13 @@ bool TextHandlerSdl::init(sdl::Renderer& s_renderer, int& s_zoom)
 			"Couldn't color the font gray: %s", SDL_GetError());
 		return false;
 	}
+	if (SDL_SetTextureColorMod(_font_texture_map[FontColor::Black],
+		0x00, 0x00, 0x00) < 0)
+	{
+		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+			"Couldn't color the font black: %s", SDL_GetError());
+		return false;
+	}
 	//--------
 	return true;
 	//--------

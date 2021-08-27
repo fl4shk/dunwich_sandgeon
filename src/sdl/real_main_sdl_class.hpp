@@ -41,7 +41,6 @@ private:		// variables
 	sdl::Window _window;
 	sdl::Renderer _renderer;
 	sdl::KeyStatusMap _key_status_map;
-	game_engine::Engine _engine;
 	TextHandlerSdl _text_handler;
 	InputKind _input_kind;
 public:		// functions
