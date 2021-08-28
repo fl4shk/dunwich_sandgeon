@@ -40,13 +40,13 @@ public:		// types
 	{
 	public:		// variables
 		int c;
-		FontColor color;
+		FgBgColorPair color_pair;
 	};
 public:		// variables
-	Data data{.c=' ', .color=FontColor::White};
+	Data data{.c=' ', .color_pair=FontColor::White};
 public:		// functions
 	inline Drawable() = default;
-	//inline Drawable(int s_c, FontColor s_color)
+	//inline Drawable(int s_c, const FgBgColorPair& s_color)
 	//	: data{.c=s_c, .color=s_color}
 	//{
 	//}

@@ -57,16 +57,28 @@ extern const std::map<FontColor, std::string> FONT_COLOR_TO_STR_MAP;
 
 class FgBgColorPair final
 {
+public:		// constants
+	static constexpr FontColor
+		DEFAULT_FG = FontColor::White,
+		DEFAULT_BG = FontColor::Black;
 public:		// variables
-	FontColor fg=FontColor::White, bg=FontColor::Black;
+	FontColor fg=DEFAULT_FG, bg=DEFAULT_BG;
 public:		// functions
-	inline FgBgColorPair() = default;
-	inline FgBgColorPair(FontColor s_fg, FontColor s_bg=FontColor::Black)
+	constexpr inline FgBgColorPair() = default;
+	constexpr inline FgBgColorPair(FontColor s_fg,
+		FontColor s_bg=DEFAULT_BG)
 		: fg(s_fg), bg(s_bg)
 	{
 	}
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(FgBgColorPair);
 	inline ~FgBgColorPair() = default;
+
+	constexpr inline FgBgColorPair& operator = (FontColor n_fg)
+	{
+		fg = n_fg;
+		bg = DEFAULT_BG;
+		return *this;
+	}
 };
 
 } // namespace game_engine

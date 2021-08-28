@@ -32,7 +32,7 @@ class Player final: public ecs::Comp
 {
 public:		// constants
 	static constexpr Drawable::Data 
-		DRAWABLE_DATA{.c='@', .color=FontColor::White};
+		DRAWABLE_DATA{.c='@', .color_pair=FontColor::White};
 public:		// functions
 	inline Player() = default;
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Player);
