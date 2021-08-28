@@ -33,6 +33,7 @@ class TextHandlerSdl final
 {
 public:		// types
 	using FontColor = game_engine::FontColor;
+	using FgBgColorPair = game_engine::FgBgColorPair;
 public:		// constants
 	static const SizeVec2 TILE_SIZE_2D;
 
@@ -75,8 +76,8 @@ public:		// constants
 		FONT_BLACK_STCM_B = 0x00;
 		//--------
 private:		// variables
-	sdl::Surface _font_surface, _bg_surface;
-	std::map<FontColor, sdl::Texture> _font_texture_map, _bg_texture_map;
+	sdl::Surface _fg_surface, _bg_surface;
+	std::map<FontColor, sdl::Texture> _fg_texture_map, _bg_texture_map;
 	sdl::Renderer* _renderer = nullptr;
 	int* _zoom = nullptr;
 public:		// functions
@@ -85,9 +86,16 @@ public:		// functions
 	~TextHandlerSdl() = default;
 
 	bool init(sdl::Renderer& s_renderer, int& s_zoom);
-	void draw_char(int c, FontColor color, const PosVec2& draw_pos);
+
+	void draw_char(int c, const FgBgColorPair& color_pair,
+		const PosVec2& draw_pos);
+	inline void draw_char(int c, FontColor fg_color,
+		const PosVec2& draw_pos)
+	{
+		draw_char(c, FgBgColorPair(fg_color), draw_pos);
+	}
 private:		// functions
-	PosVec2 _get_draw_char_font_surface_size_2d() const;
+	PosVec2 _get_draw_char_fg_surface_size_2d() const;
 };
 
 } // namespace io

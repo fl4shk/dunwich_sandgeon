@@ -55,6 +55,20 @@ inline FontColor font_color_add(FontColor font_color,
 
 extern const std::map<FontColor, std::string> FONT_COLOR_TO_STR_MAP;
 
+class FgBgColorPair final
+{
+public:		// variables
+	FontColor fg=FontColor::White, bg=FontColor::Black;
+public:		// functions
+	inline FgBgColorPair() = default;
+	inline FgBgColorPair(FontColor s_fg, FontColor s_bg=FontColor::Black)
+		: fg(s_fg), bg(s_bg)
+	{
+	}
+	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(FgBgColorPair);
+	inline ~FgBgColorPair() = default;
+};
+
 } // namespace game_engine
 } // namespace dungwich_sandeon
 
