@@ -20,15 +20,26 @@ namespace dungwich_sandeon
 namespace io
 {
 
-const PosVec2 TextHandlerSdl::TILE_SIZE_2D(8, 8);
+const SizeVec2 TextHandlerSdl::TILE_SIZE_2D(8, 8);
 
 bool TextHandlerSdl::init(sdl::Renderer& s_renderer, int& s_zoom)
 {
 	//--------
 	_renderer = &s_renderer;
 	_zoom = &s_zoom;
+
 	_font_surface = SDL_LoadBMP("gfx/font.bmp");
+
 	if (!_font_surface)
+	{
+		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+			"Couldn't load the bitmap font: %s", SDL_GetError());
+		return false;
+	}
+
+	_bg_surface = SDL_LoadBMP("gfx/bg.bmp");
+
+	if (!_bg_surface)
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
 			"Couldn't load the bitmap font: %s", SDL_GetError());
@@ -54,28 +65,28 @@ bool TextHandlerSdl::init(sdl::Renderer& s_renderer, int& s_zoom)
 	//--------
 	// Color the font textures
 	if (SDL_SetTextureColorMod(_font_texture_map[FontColor::Red],
-		0xdd, 0x00, 0x00) < 0)
+		FONT_RED_STCM_R, FONT_RED_STCM_G, FONT_RED_STCM_B) < 0)
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
 			"Couldn't color the font red: %s", SDL_GetError());
 		return false;
 	}
 	if (SDL_SetTextureColorMod(_font_texture_map[FontColor::Green],
-		0x00, 0xdd, 0x00) < 0)
+		FONT_GREEN_STCM_R, FONT_GREEN_STCM_G, FONT_GREEN_STCM_B) < 0)
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
 			"Couldn't color the font green: %s", SDL_GetError());
 		return false;
 	}
 	if (SDL_SetTextureColorMod(_font_texture_map[FontColor::Brown],
-		0xc0, 0x66, 0x20) < 0)
+		FONT_BROWN_STCM_R, FONT_BROWN_STCM_G, FONT_BROWN_STCM_B) < 0)
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
 			"Couldn't color the font brown: %s", SDL_GetError());
 		return false;
 	}
 	if (SDL_SetTextureColorMod(_font_texture_map[FontColor::Yellow],
-		0xdd, 0xdd, 0x00) < 0)
+		FONT_YELLOW_STCM_R, FONT_YELLOW_STCM_G, FONT_YELLOW_STCM_B) < 0)
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
 			"Couldn't color the font yellow: %s", SDL_GetError());
@@ -83,35 +94,35 @@ bool TextHandlerSdl::init(sdl::Renderer& s_renderer, int& s_zoom)
 	}
 	//--------
 	if (SDL_SetTextureColorMod(_font_texture_map[FontColor::Blue],
-		0x64, 0x64, 0xff) < 0)
+		FONT_BLUE_STCM_R, FONT_BLUE_STCM_G, FONT_BLUE_STCM_B) < 0)
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
 			"Couldn't color the font blue: %s", SDL_GetError());
 		return false;
 	}
 	if (SDL_SetTextureColorMod(_font_texture_map[FontColor::Purple],
-		0xdd, 0x00, 0xdd) < 0)
+		FONT_PURPLE_STCM_R, FONT_PURPLE_STCM_G, FONT_PURPLE_STCM_B) < 0)
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
 			"Couldn't color the font purple: %s", SDL_GetError());
 		return false;
 	}
 	if (SDL_SetTextureColorMod(_font_texture_map[FontColor::Cyan],
-		0x00, 0xdd, 0xdd) < 0)
+		FONT_CYAN_STCM_R, FONT_CYAN_STCM_G, FONT_CYAN_STCM_B) < 0)
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
 			"Couldn't color the font cyan: %s", SDL_GetError());
 		return false;
 	}
 	if (SDL_SetTextureColorMod(_font_texture_map[FontColor::Gray],
-		0x90, 0x90, 0x90) < 0)
+		FONT_GRAY_STCM_R, FONT_GRAY_STCM_G, FONT_GRAY_STCM_B) < 0)
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
 			"Couldn't color the font gray: %s", SDL_GetError());
 		return false;
 	}
 	if (SDL_SetTextureColorMod(_font_texture_map[FontColor::Black],
-		0x00, 0x00, 0x00) < 0)
+		FONT_BLACK_STCM_R, FONT_BLACK_STCM_G, FONT_BLACK_STCM_B) < 0)
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
 			"Couldn't color the font black: %s", SDL_GetError());

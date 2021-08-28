@@ -34,10 +34,49 @@ class TextHandlerSdl final
 public:		// types
 	using FontColor = game_engine::FontColor;
 public:		// constants
-	static const PosVec2 TILE_SIZE_2D;
+	static const SizeVec2 TILE_SIZE_2D;
+
+	static constexpr int
+		//--------
+		FONT_RED_STCM_R = 0xdd,
+		FONT_RED_STCM_G = 0x0,
+		FONT_RED_STCM_B = 0x0,
+
+		FONT_GREEN_STCM_R = 0x0,
+		FONT_GREEN_STCM_G = 0xdd,
+		FONT_GREEN_STCM_B = 0x0,
+
+		FONT_BROWN_STCM_R = 0xc0,
+		FONT_BROWN_STCM_G = 0x66,
+		FONT_BROWN_STCM_B = 0x20,
+
+		FONT_YELLOW_STCM_R = 0xdd,
+		FONT_YELLOW_STCM_G = 0xdd,
+		FONT_YELLOW_STCM_B = 0x00,
+		//--------
+		FONT_BLUE_STCM_R = 0x64,
+		FONT_BLUE_STCM_G = 0x64,
+		FONT_BLUE_STCM_B = 0xff,
+
+		FONT_PURPLE_STCM_R = 0xdd,
+		FONT_PURPLE_STCM_G = 0x00,
+		FONT_PURPLE_STCM_B = 0xdd,
+
+		FONT_CYAN_STCM_R = 0x00,
+		FONT_CYAN_STCM_G = 0xdd,
+		FONT_CYAN_STCM_B = 0xdd,
+
+		FONT_GRAY_STCM_R = 0x90,
+		FONT_GRAY_STCM_G = 0x90,
+		FONT_GRAY_STCM_B = 0x90,
+		//--------
+		FONT_BLACK_STCM_R = 0x00,
+		FONT_BLACK_STCM_G = 0x00,
+		FONT_BLACK_STCM_B = 0x00;
+		//--------
 private:		// variables
-	sdl::Surface _font_surface;
-	std::map<FontColor, sdl::Texture> _font_texture_map;
+	sdl::Surface _font_surface, _bg_surface;
+	std::map<FontColor, sdl::Texture> _font_texture_map, _bg_texture_map;
 	sdl::Renderer* _renderer = nullptr;
 	int* _zoom = nullptr;
 public:		// functions
