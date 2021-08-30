@@ -74,6 +74,8 @@ int RealMainSdl::run()
 			else if (handle_key_events(e, _key_status_map));
 		}
 
+		_update_engine_key_status();
+
 		// Draw a black background
 		SDL_SetRenderDrawColor(_renderer, 0x00, 0x00, 0x00, 0xff);
 		SDL_RenderFillRect(_renderer, nullptr);
@@ -102,6 +104,10 @@ void RealMainSdl::_update_window_size_2d()
 		* TextHandlerSdl::TILE_SIZE_2D.x * zoom();
 	_window_size_2d.y = game_engine::Window::SCREEN_SIZE_2D.y
 		* TextHandlerSdl::TILE_SIZE_2D.y * zoom();
+}
+
+void RealMainSdl::_update_engine_key_status() const
+{
 }
 
 } // namespace io

@@ -42,7 +42,6 @@ private:		// variables
 	sdl::Renderer _renderer;
 	sdl::KeyStatusMap _key_status_map;
 	TextHandlerSdl _text_handler;
-	InputKind _input_kind;
 public:		// functions
 	RealMainSdl() = default;
 	~RealMainSdl() = default;
@@ -52,6 +51,7 @@ public:		// functions
 	GEN_GETTER_BY_VAL(zoom);
 private:		// functions
 	void _update_window_size_2d();
+	void _update_engine_key_status() const;
 };
 
 } // namespace io

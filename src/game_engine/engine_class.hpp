@@ -45,7 +45,8 @@ public:		// constants
 	static const PosVec2 PLAYFIELD_WINDOW_POS, PLAYFIELD_WINDOW_END_POS;
 	static const SizeVec2 PLAYFIELD_WINDOW_SIZE_2D;
 
-	static const PosVec2 BOTTOM_MSG_WINDOW_POS, BOTTOM_MSG_WINDOW_END_POS,
+	static const PosVec2
+		BOTTOM_MSG_WINDOW_POS, BOTTOM_MSG_WINDOW_END_POS,
 		RIGHT_MSG_WINDOW_POS, RIGHT_MSG_WINDOW_END_POS,
 		POPUP_WINDOW_POS, POPUP_WINDOW_END_POS;
 
@@ -57,12 +58,25 @@ public:		// variables
 	Window screen_window, title_screen_window,
 		playfield_window, bottom_msg_window, right_msg_window,
 		popup_window;
+	//InputKind initial_input_kind = InputKind::None,
+	//	final_input_kind = InputKind::None;
+	InputKind input_kind;
 
+	struct
+	{
+		PrevCurrPair<bool>
+			left_l, up_l, right_l, down_l,
+			left_r, up_r, right_r, down_r,
+			mod_1_l, mod_2_l,
+			mod_1_r, mod_2_r,
+			start, select;
+	} key_status;
+
+	int floor = HIGHEST_FLOOR;
 private:		// variables
 	// dimensions: floor, y, x
 	std::vector<EntIdSetVec2d> _playfield_ent_id_v3d;
 
-	int _floor = HIGHEST_FLOOR;
 public:		// functions
 	Engine();
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Engine);
@@ -74,8 +88,6 @@ public:		// functions
 		const PosVec3& n_pos);
 
 	GEN_GETTER_BY_CON_REF(playfield_ent_id_v3d);
-
-	GEN_GETTER_AND_SETTER_BY_VAL(floor);
 private:		// functions
 	template<EngineErrWhenEntNullIdObj ObjType>
 	inline void _err_when_ent_id_is_null(ObjType* obj,
@@ -92,11 +104,11 @@ private:		// functions
 
 	inline EntIdSetVec2d& _curr_floor_playfield_ent_id_v2d()
 	{
-		return _playfield_ent_id_v3d.at(floor());
+		return _playfield_ent_id_v3d.at(floor);
 	}
 	inline const EntIdSetVec2d& _curr_floor_playfield_ent_id_v2d() const
 	{
-		return _playfield_ent_id_v3d.at(floor());
+		return _playfield_ent_id_v3d.at(floor);
 	}
 };
 

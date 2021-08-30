@@ -41,12 +41,11 @@ enum class FontColor: u32
 
 	Black,
 
-	// The limit, which is not a real font_color 
+	// The limit, which is not a real FontColor 
 	Lim,
 };
 
-inline FontColor font_color_add(FontColor font_color,
-	u32 amount)
+inline FontColor font_color_add(FontColor font_color, u32 amount)
 {
 	u32 ret_u32 = static_cast<u32>(font_color);
 	ret_u32 += amount;

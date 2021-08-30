@@ -59,10 +59,15 @@ const PosVec2
 
 Engine::Engine()
 	: screen_window(PosVec2(), Window::SCREEN_SIZE_2D),
+
 	title_screen_window(PosVec2(), Window::SCREEN_SIZE_2D),
+
 	playfield_window(PLAYFIELD_WINDOW_POS, PLAYFIELD_WINDOW_END_POS),
+
 	bottom_msg_window(BOTTOM_MSG_WINDOW_POS, BOTTOM_MSG_WINDOW_END_POS),
+
 	right_msg_window(RIGHT_MSG_WINDOW_POS, RIGHT_MSG_WINDOW_END_POS),
+
 	popup_window(POPUP_WINDOW_POS, POPUP_WINDOW_END_POS),
 
 	_playfield_ent_id_v3d(NUM_FLOORS,

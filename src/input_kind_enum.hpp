@@ -23,8 +23,10 @@
 namespace dungwich_sandeon
 {
 
-enum class InputKind
+enum class InputKind: u32
 {
+	None,
+
 	Left,
 	Up,
 	Right,
@@ -35,8 +37,8 @@ enum class InputKind
 	DownRight,
 	DownLeft,
 
-	Back,
-	Accept,
+	Escape,
+	Enter,
 
 	SwitchWindow,
 
@@ -48,11 +50,18 @@ enum class InputKind
 	BeginRangedAttack,
 	BeginThrow,
 
-	ZoomIn,
-	ZoomOut,
+	Lim,
 };
 
-} // namespace dungwich_sandeon
+inline InputKind input_kind_add(InputKind input_kind, u32 amount)
+{
+	u32 ret_u32 = static_cast<u32>(input_kind);
+	ret_u32 += amount;
+	return static_cast<InputKind>(ret_u32);
+}
 
+extern const std::map<InputKind, std::string> INPUT_KIND_TO_STR_MAP;
+
+} // namespace dungwich_sandeon
 
 #endif		// src_input_kind_enum_hpp

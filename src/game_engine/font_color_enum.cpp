@@ -23,14 +23,19 @@ namespace game_engine
 const std::map<FontColor, std::string> FONT_COLOR_TO_STR_MAP
 = {
 	{FontColor::White, "White"},
+
 	{FontColor::Red, "Red"},
 	{FontColor::Green, "Green"},
 	{FontColor::Brown, "Brown"},
 	{FontColor::Yellow, "Yellow"},
+
 	{FontColor::Blue, "Blue"},
 	{FontColor::Purple, "Purple"},
 	{FontColor::Cyan, "Cyan"},
 	{FontColor::Gray, "Gray"},
+
+	{FontColor::Black, "Black"},
+
 	{FontColor::Lim, "Lim"},
 };
 
