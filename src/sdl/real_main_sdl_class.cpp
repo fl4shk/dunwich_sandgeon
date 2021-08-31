@@ -79,7 +79,9 @@ int RealMainSdl::run()
 		// Draw a black background
 		SDL_SetRenderDrawColor(_renderer, 0x00, 0x00, 0x00, 0xff);
 		SDL_RenderFillRect(_renderer, nullptr);
-		//_text_handler.draw_char('@', FontColor::White, PosVec2(0, 0));
+		//_text_handler.draw_char('@', 
+		//	game_engine::FgBgColorPair(FontColor::White, FontColor::Blue),
+		//	PosVec2(0, 0));
 
 		//_text_handler.draw_char('@', FontColor::Red, PosVec2(1, 0));
 		//_text_handler.draw_char('@', FontColor::Green, PosVec2(2, 0));
@@ -108,6 +110,7 @@ void RealMainSdl::_update_window_size_2d()
 
 void RealMainSdl::_update_engine_key_status() const
 {
+	game_engine::engine.key_status.character = "";
 }
 
 } // namespace io
