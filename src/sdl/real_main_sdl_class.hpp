@@ -34,6 +34,7 @@ public:		// types
 	using FontColor = game_engine::FontColor;
 	using FgBgColorPair = game_engine::FgBgColorPair;
 	using Window = game_engine::Window;
+	using Engine = game_engine::Engine;
 public:		// constants
 	//static constexpr int DEF_ZOOM = 2;
 	static constexpr float

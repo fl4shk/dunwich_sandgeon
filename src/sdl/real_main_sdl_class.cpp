@@ -165,16 +165,15 @@ int RealMainSdl::run()
 		SDL_SetRenderDrawColor(_renderer, 0x00, 0x00, 0x00, 0xff);
 		SDL_RenderFillRect(_renderer, nullptr);
 
-		for (size_t j=0; j<(Window::SCREEN_SIZE_2D.y + 2u); ++j)
+		for (size_t j=0; j<(Window::SCREEN_SIZE_2D.y + 2); ++j)
 		{
-			for (size_t i=0; i<(Window::SCREEN_SIZE_2D.x + 2u); ++i)
+			for (size_t i=0; i<(Window::SCREEN_SIZE_2D.x + 2); ++i)
 			{
 				auto draw_border_char
 					= [this, &j, &i]() -> void
 				{
-					_text_handler.draw_char('#',
-						FgBgColorPair(FontColor::White, FontColor::White),
-						PosVec2(i, j));
+					_text_handler.draw_char(Engine::WINDOW_SEP_CHAR,
+						Engine::WINDOW_SEP_COLOR, PosVec2(i, j));
 				};
 				if (j == 0)
 				{
