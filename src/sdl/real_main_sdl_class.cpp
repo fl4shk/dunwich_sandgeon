@@ -284,11 +284,11 @@ void RealMainSdl::_update_engine_key_status() const
 	update_key_status(key_status.right_r, SDLK_l);
 	update_key_status(key_status.down_r, SDLK_k);
 
-	update_key_status(key_status.mod_1_l, SDLK_LSHIFT);
-	update_key_status(key_status.mod_2_l, SDLK_LCTRL);
+	update_key_status(key_status.shoulder_1_l, SDLK_LSHIFT);
+	update_key_status(key_status.shoulder_2_l, SDLK_LCTRL);
 
-	update_key_status(key_status.mod_1_r, SDLK_RSHIFT);
-	update_key_status(key_status.mod_2_r, SDLK_RCTRL);
+	update_key_status(key_status.shoulder_1_r, SDLK_RSHIFT);
+	update_key_status(key_status.shoulder_2_r, SDLK_RCTRL);
 
 	update_key_status(key_status.start, SDLK_RETURN);
 	update_key_status(key_status.select, SDLK_ESCAPE);

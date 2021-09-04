@@ -72,8 +72,8 @@ public:		// variables
 		PrevCurrPair<bool>
 			left_l, up_l, right_l, down_l,
 			left_r, up_r, right_r, down_r,
-			mod_1_l, mod_2_l,
-			mod_1_r, mod_2_r,
+			shoulder_1_l, shoulder_2_l,
+			shoulder_1_r, shoulder_2_r,
 			start, select;
 	} key_status;
 
