@@ -32,13 +32,16 @@ class RealMainSdl final
 {
 public:		// types
 	using FontColor = game_engine::FontColor;
+	using FgBgColorPair = game_engine::FgBgColorPair;
+	using Window = game_engine::Window;
 public:		// constants
 	//static constexpr int DEF_ZOOM = 2;
-	static constexpr float SCALE_MUL_AMOUNT = 0.1f;
+	static constexpr float
+		SCALE_MUL_VAL = 0.1f, SCALE_DEFAULT_VAL = 1.0f;
 private:		// variables
 	PosVec2 _logical_size_2d;
 	//int _zoom = DEF_ZOOM;
-	float _scale = 1.0f;
+	float _scale = SCALE_DEFAULT_VAL;
 	bool _fullscreen = false;
 	sdl::Window _window;
 	sdl::Renderer _renderer;
@@ -53,8 +56,14 @@ public:		// functions
 
 	//GEN_GETTER_BY_VAL(zoom);
 private:		// functions
-	void _update_renderer_scale_etc();
-	void _update_logical_size_2d();
+	inline void _set_scale_etc(float n_scale)
+	{
+		_scale = n_scale;
+		_update_logical_size_2d();
+		_update_renderer_scale_etc();
+	}
+	void _update_logical_size_2d(bool use_default_scale=false);
+	void _update_renderer_scale_etc(bool use_default_scale=false);
 	void _update_engine_key_status() const;
 };
 
