@@ -57,14 +57,15 @@ public:		// functions
 
 	//GEN_GETTER_BY_VAL(zoom);
 private:		// functions
-	inline void _set_scale_etc(float n_scale)
-	{
-		_scale = n_scale;
-		_update_logical_size_2d();
-		_update_renderer_scale_etc();
-	}
-	void _update_logical_size_2d(bool use_default_scale=false);
-	void _update_renderer_scale_etc(bool use_default_scale=false);
+	//inline void _set_scale_etc(float n_scale)
+	//{
+	//	_scale = n_scale;
+	//	_update_logical_size_2d();
+	//	_update_renderer_scale_etc();
+	//}
+	//void _update_logical_size_2d(bool use_default_scale=true);
+	void _update_logical_size_2d();
+	//void _update_renderer_scale_etc(bool use_default_scale=true);
 	void _update_engine_key_status() const;
 };
 

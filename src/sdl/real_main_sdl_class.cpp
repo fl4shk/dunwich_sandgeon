@@ -84,6 +84,8 @@ int RealMainSdl::run()
 	bool quit = false;
 	while (!quit)
 	{
+		_mouse_right_button_state.back_up();
+
 		SDL_Event e;
 
 		while (SDL_PollEvent(&e) != 0)
@@ -93,73 +95,73 @@ int RealMainSdl::run()
 				quit = true;
 			}
 			else if (handle_key_events(e, _key_status_map));
-			else if (e.type == SDL_MOUSEWHEEL)
-			{
-				if (!_fullscreen)
-				{
-					_set_scale_etc(fabsf(_scale
-						+ ((-static_cast<float>(e.wheel.y))
-							* SCALE_MUL_VAL)));
-				}
-			}
+			//else if (e.type == SDL_MOUSEWHEEL)
+			//{
+			//	if (!_fullscreen)
+			//	{
+			//		_set_scale_etc(fabsf(_scale
+			//			+ ((-static_cast<float>(e.wheel.y))
+			//				* SCALE_MUL_VAL)));
+			//	}
+			//}
 			else if ((e.type == SDL_MOUSEBUTTONDOWN)
 				|| (e.type = SDL_MOUSEBUTTONUP))
 			{
-				if (e.button.button == SDL_BUTTON_MIDDLE)
-				{
-					if (e.type == SDL_MOUSEBUTTONDOWN)
-					{
-						_set_scale_etc(_scale);
-					}
-				}
-				else if (e.button.button == SDL_BUTTON_RIGHT)
+				//if (e.button.button == SDL_BUTTON_MIDDLE)
+				//{
+				//	if (e.type == SDL_MOUSEBUTTONDOWN)
+				//	{
+				//		_set_scale_etc(SCALE_DEFAULT_VAL);
+				//	}
+				//}
+				//else
+				if (e.button.button == SDL_BUTTON_RIGHT)
 				{
 					_mouse_right_button_state.back_up_and_update
 						(e.type == SDL_MOUSEBUTTONDOWN);
-
-					if (_mouse_right_button_state.has_changed()
-						&& _mouse_right_button_state())
-					{
-						if (!_fullscreen)
-						{
-							if (SDL_SetWindowFullscreen(_window,
-								SDL_WINDOW_FULLSCREEN_DESKTOP))
-							{
-								SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
-									"Couldn't switch to fullscreen: %s",
-									SDL_GetError());
-								exit(1);
-							}
-							_update_logical_size_2d(true);
-							_update_renderer_scale_etc(true);
-						}
-						else // if (_fullscreen)
-						{
-							if (SDL_SetWindowFullscreen(_window, 0))
-							{
-								SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
-									"Couldn't switch to windowed "
-										"(non-fullscreen): %s",
-									SDL_GetError());
-								exit(1);
-							}
-
-							_update_logical_size_2d();
-							_update_renderer_scale_etc();
-						}
-
-						_fullscreen = !_fullscreen;
-					}
 				}
 			}
-			else if (e.type == SDL_WINDOWEVENT)
-			{
-				_update_renderer_scale_etc();
-			}
+			//else if (e.type == SDL_WINDOWEVENT)
+			//{
+			//	_update_renderer_scale_etc();
+			//}
 		}
 
 		_update_engine_key_status();
 
+		if (_mouse_right_button_state.has_changed()
+			&& _mouse_right_button_state())
+		{
+			if (!_fullscreen)
+			{
+				if (SDL_SetWindowFullscreen(_window,
+					SDL_WINDOW_FULLSCREEN_DESKTOP))
+				{
+					SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+						"Couldn't switch to fullscreen: %s",
+						SDL_GetError());
+					exit(1);
+				}
+				//_update_logical_size_2d(true);
+				//_update_renderer_scale_etc(true);
+			}
+			else // if (_fullscreen)
+			{
+				if (SDL_SetWindowFullscreen(_window, 0))
+				{
+					SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+						"Couldn't switch to windowed "
+							"(non-fullscreen): %s",
+						SDL_GetError());
+					exit(1);
+				}
+
+				//_update_logical_size_2d();
+				//_update_renderer_scale_etc();
+			}
+
+			_fullscreen = !_fullscreen;
+		}
 
 		// Draw a black background
 		SDL_SetRenderDrawColor(_renderer, 0x00, 0x00, 0x00, 0xff);
@@ -219,7 +221,8 @@ int RealMainSdl::run()
 	//--------
 }
 
-void RealMainSdl::_update_logical_size_2d(bool use_default_scale)
+//void RealMainSdl::_update_logical_size_2d(bool use_default_scale)
+void RealMainSdl::_update_logical_size_2d()
 {
 	//_logical_size_2d.x = game_engine::Window::SCREEN_SIZE_2D.x
 	//	* TextHandlerSdl::TILE_SIZE_2D.x * zoom();
@@ -228,33 +231,37 @@ void RealMainSdl::_update_logical_size_2d(bool use_default_scale)
 
 	//const float TEMP_SCALE
 	//	= 1.0f / ((!use_default_scale) ? _scale : SCALE_DEFAULT_VAL);
-	const float TEMP_SCALE
-		= (!use_default_scale) ? _scale : SCALE_DEFAULT_VAL;
+	//const float TEMP_SCALE
+	//	= (!use_default_scale) ? _scale : SCALE_DEFAULT_VAL;
 
+	//_logical_size_2d.x = (game_engine::Window::SCREEN_SIZE_2D.x + 2)
+	//	* TextHandlerSdl::TILE_SIZE_2D.x * TEMP_SCALE;
+	//_logical_size_2d.y = (game_engine::Window::SCREEN_SIZE_2D.y + 2)
+	//	* TextHandlerSdl::TILE_SIZE_2D.y * TEMP_SCALE;
 	_logical_size_2d.x = (game_engine::Window::SCREEN_SIZE_2D.x + 2)
-		* TextHandlerSdl::TILE_SIZE_2D.x * TEMP_SCALE;
+		* TextHandlerSdl::TILE_SIZE_2D.x;
 	_logical_size_2d.y = (game_engine::Window::SCREEN_SIZE_2D.y + 2)
-		* TextHandlerSdl::TILE_SIZE_2D.y * TEMP_SCALE;
+		* TextHandlerSdl::TILE_SIZE_2D.y;
 }
-void RealMainSdl::_update_renderer_scale_etc(bool use_default_scale)
-{
-	const float TEMP_SCALE
-		= 1.0f / ((!use_default_scale) ? _scale : SCALE_DEFAULT_VAL);
-	if (SDL_RenderSetScale(_renderer, TEMP_SCALE, TEMP_SCALE))
-	{
-		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
-			"Couldn't scale the renderer: %s", SDL_GetError());
-		exit(1);
-	}
-
-	if (SDL_RenderSetLogicalSize(_renderer, _logical_size_2d.x,
-		_logical_size_2d.y))
-	{
-		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
-			"Couldn't set renderer logical size: %s", SDL_GetError());
-		exit(1);
-	}
-}
+//void RealMainSdl::_update_renderer_scale_etc(bool use_default_scale)
+//{
+//	const float TEMP_SCALE
+//		= 1.0f / ((!use_default_scale) ? _scale : SCALE_DEFAULT_VAL);
+//	if (SDL_RenderSetScale(_renderer, TEMP_SCALE, TEMP_SCALE))
+//	{
+//		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+//			"Couldn't scale the renderer: %s", SDL_GetError());
+//		exit(1);
+//	}
+//
+//	if (SDL_RenderSetLogicalSize(_renderer, _logical_size_2d.x,
+//		_logical_size_2d.y))
+//	{
+//		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+//			"Couldn't set renderer logical size: %s", SDL_GetError());
+//		exit(1);
+//	}
+//}
 
 void RealMainSdl::_update_engine_key_status() const
 {
@@ -266,8 +273,7 @@ void RealMainSdl::_update_engine_key_status() const
 	{
 		if (_key_status_map.contains(sym))
 		{
-			key_status_down.back_up_and_update
-				(_key_status_map.at(sym).down.prev());
+			key_status_down() = _key_status_map.at(sym).down.prev();
 			key_status_down.back_up_and_update
 				(_key_status_map.at(sym).down.curr());
 		}
