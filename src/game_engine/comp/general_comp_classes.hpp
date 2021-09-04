@@ -13,10 +13,10 @@
 // You should have received a copy of the GNU General Public License along
 // with Dungwich Sandeon.  If not, see <https://www.gnu.org/licenses/>.
 
-#ifndef src_game_engine_general_comp_classes_hpp
-#define src_game_engine_general_comp_classes_hpp
+#ifndef src_game_engine_comp_general_comp_classes_hpp
+#define src_game_engine_comp_general_comp_classes_hpp
 
-// src/game_engine/general_comp_classes.hpp
+// src/game_engine/comp/general_comp_classes.hpp
 
 #include "../../misc_includes.hpp"
 #include "../../misc_types.hpp"
@@ -132,4 +132,4 @@ public:		// functions
 } // namespace game_engine
 } // namespace dungwich_sandeon
 
-#endif		// src_game_engine_general_comp_classes_hpp
+#endif		// src_game_engine_comp_general_comp_classes_hpp

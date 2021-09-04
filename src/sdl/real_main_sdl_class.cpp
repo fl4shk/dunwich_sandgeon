@@ -129,6 +129,7 @@ int RealMainSdl::run()
 
 		_update_engine_key_status();
 
+		// Handle switching into or out of fullscreen.
 		if (_mouse_right_button_state.has_changed()
 			&& _mouse_right_button_state())
 		{
@@ -142,6 +143,7 @@ int RealMainSdl::run()
 						SDL_GetError());
 					exit(1);
 				}
+
 				//_update_logical_size_2d(true);
 				//_update_renderer_scale_etc(true);
 			}
@@ -150,8 +152,7 @@ int RealMainSdl::run()
 				if (SDL_SetWindowFullscreen(_window, 0))
 				{
 					SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
-						"Couldn't switch to windowed "
-							"(non-fullscreen): %s",
+						"Couldn't switch to windowed (non-fullscreen): %s",
 						SDL_GetError());
 					exit(1);
 				}
@@ -177,6 +178,7 @@ int RealMainSdl::run()
 					_text_handler.draw_char(Engine::WINDOW_SEP_CHAR,
 						Engine::WINDOW_SEP_COLOR, PosVec2(i, j));
 				};
+
 				if (j == 0)
 				{
 					draw_border_char();
@@ -185,16 +187,13 @@ int RealMainSdl::run()
 				{
 					draw_border_char();
 				}
+				else if ((i == 0) || (i == (Window::SCREEN_SIZE_2D.x + 1)))
+				{
+					draw_border_char();
+				}
 				else
 				{
-					if ((i == 0) || (i == (Window::SCREEN_SIZE_2D.x + 1)))
-					{
-						draw_border_char();
-					}
-					else
-					{
-						// Draw the non-border tiles here.
-					}
+					// Draw the non-border tiles here.
 				}
 			}
 		}

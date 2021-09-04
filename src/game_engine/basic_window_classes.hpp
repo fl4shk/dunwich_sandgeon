@@ -72,6 +72,7 @@ public:		// functions
 	}
 	void draw(const Window& win);
 	void draw(const LayeredWindow& layered_win);
+	//void draw_text(const PosVec2& where, const std::string& what);
 
 	GEN_GETTER_AND_SETTER_BY_VAL(active);
 	GEN_GETTER_BY_CON_REF(pos);

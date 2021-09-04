@@ -37,12 +37,12 @@ public:		// types
 	using Engine = game_engine::Engine;
 public:		// constants
 	//static constexpr int DEF_ZOOM = 2;
-	static constexpr float
-		SCALE_MUL_VAL = 0.1f, SCALE_DEFAULT_VAL = 1.0f;
+	//static constexpr float
+	//	SCALE_MUL_VAL = 0.1f, SCALE_DEFAULT_VAL = 1.0f;
 private:		// variables
 	PosVec2 _logical_size_2d;
 	//int _zoom = DEF_ZOOM;
-	float _scale = SCALE_DEFAULT_VAL;
+	//float _scale = SCALE_DEFAULT_VAL;
 	bool _fullscreen = false;
 	sdl::Window _window;
 	sdl::Renderer _renderer;

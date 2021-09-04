@@ -13,13 +13,13 @@
 // You should have received a copy of the GNU General Public License along
 // with Dungwich Sandeon.  If not, see <https://www.gnu.org/licenses/>.
 
-#ifndef src_game_engine_comp_player_comp_class_hpp
-#define src_game_engine_comp_player_comp_class_hpp
+#ifndef src_game_engine_comp_ui_etc_comp_classes_hpp
+#define src_game_engine_comp_ui_etc_comp_classes_hpp
 
-// src/game_engine/comp/player_comp_class.hpp
+// src/game_engine/comp/ui_etc_comp_classes.hpp
 
 #include "../../misc_includes.hpp"
-#include "general_comp_classes.hpp"
+#include "../font_color_enum.hpp"
 
 namespace dungwich_sandeon
 {
@@ -28,15 +28,39 @@ namespace game_engine
 namespace comp
 {
 
-class Player final: public ecs::Comp
+class Text final: public ecs::Comp
+{
+public:		// variables
+	std::string str = " "s;
+public:		// functions
+	inline Text() = default;
+	inline Text(const std::string& s_str)
+		: str(s_str)
+	{
+	}
+	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Text);
+	virtual ~Text() = default;
+
+	virtual std::string kind_str() const;
+};
+
+class CheckButton final: public ecs::Comp
 {
 public:		// constants
-	static constexpr Drawable::Data 
-		DRAWABLE_DATA{.c='@', .color_pair=FontColor::White};
+	static constexpr FgBgColorPair DRAWABLE_DATA_COLOR_PAIR
+		= FontColor::Red;
+	static const std::string
+		UNCHECKED_STR, CHECKED_STR;
+public:		// variables
+	bool checked = false;
 public:		// functions
-	inline Player() = default;
-	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Player);
-	virtual ~Player() = default;
+	inline CheckButton() = default;
+	inline CheckButton(bool s_checked)
+		: checked(s_checked)
+	{
+	}
+	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(CheckButton);
+	virtual ~CheckButton() = default;
 
 	virtual std::string kind_str() const;
 };
@@ -45,4 +69,5 @@ public:		// functions
 } // namespace game_engine
 } // namespace dungwich_sandeon
 
-#endif		// src_game_engine_comp_player_comp_class_hpp
+
+#endif		// src_game_engine_comp_ui_etc_comp_classes_hpp

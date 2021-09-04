@@ -25,8 +25,8 @@ namespace game_engine
 //const SizeVec2 Window::SIZE_2D(80, 60),
 //	Screen::PLAYFIELD_POS(0, 0),
 //	Screen::PLAYFIELD_SIZE_2D(60, 50);
-//const SizeVec2 Window::SCREEN_SIZE_2D(80, 60);
-const SizeVec2 Window::SCREEN_SIZE_2D(60, 50);
+const SizeVec2 Window::SCREEN_SIZE_2D(80, 60);
+//const SizeVec2 Window::SCREEN_SIZE_2D(60, 50);
 //--------
 Window::Window()
 {
