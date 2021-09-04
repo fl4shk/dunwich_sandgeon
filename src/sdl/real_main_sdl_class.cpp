@@ -27,7 +27,7 @@ int RealMainSdl::run()
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
 			"Couldn't initialize SDL: %s", SDL_GetError());
-		return 1;
+		exit(1);
 	}
 	sdl::QuitUponDtor quit_upon_dtor;
 
@@ -44,7 +44,7 @@ int RealMainSdl::run()
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
 			"Couldn't create window: %s", SDL_GetError());
-		return 1;
+		exit(1);
 	}
 
 	_renderer = SDL_CreateRenderer(_window, -1, SDL_RENDERER_ACCELERATED);
@@ -53,32 +53,37 @@ int RealMainSdl::run()
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
 			"Couldn't create renderer: %s", SDL_GetError());
-		return 1;
+		exit(1);
 	}
 	if (SDL_RenderSetIntegerScale(_renderer, SDL_FALSE))
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
 			"Couldn't set renderer integer size: %s", SDL_GetError());
-		return 1;
+		exit(1);
 	}
 	if (SDL_RenderSetLogicalSize(_renderer, _logical_size_2d.x,
 		_logical_size_2d.y))
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
 			"Couldn't set renderer logical size: %s", SDL_GetError());
-		return 1;
+		exit(1);
 	}
+
+	_mouse_right_button_state() = false;
+	_mouse_right_button_state.back_up();
 
 	//if (!_text_handler.init(_renderer, _zoom))
 	if (!_text_handler.init(_renderer))
 	{
-		return 1;
+		exit(1);
 	}
 
 	//--------
 	bool quit = false;
 	while (!quit)
 	{
+		_mouse_right_button_state.back_up();
+
 		SDL_Event e;
 
 		while (SDL_PollEvent(&e) != 0)
@@ -88,12 +93,21 @@ int RealMainSdl::run()
 				quit = true;
 			}
 			else if (handle_key_events(e, _key_status_map));
+			else if ((e.type == SDL_MOUSEBUTTONDOWN)
+				|| (e.type = SDL_MOUSEBUTTONUP))
+			{
+				if (e.button.button == SDL_BUTTON_RIGHT)
+				{
+					_mouse_right_button_state()
+						= (e.type == SDL_MOUSEBUTTONDOWN);
+				}
+			}
 			else if (e.type == SDL_MOUSEWHEEL)
 			{
 				_scale = fabsf(_scale
 					+ ((-static_cast<float>(e.wheel.y))
 						* SCALE_MUL_AMOUNT));
-				fprintf(stdout, "Change _scale: %f\n", _scale);
+				//fprintf(stdout, "Change _scale: %f\n", _scale);
 				_update_logical_size_2d();
 				_update_renderer_scale_etc();
 			}
@@ -103,12 +117,46 @@ int RealMainSdl::run()
 			}
 		}
 
-
 		_update_engine_key_status();
+		if (_mouse_right_button_state.has_changed()
+			&& _mouse_right_button_state())
+		{
+			if (!_fullscreen)
+			{
+				if (SDL_SetWindowFullscreen(_window,
+					SDL_WINDOW_FULLSCREEN))
+				{
+					SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+						"Couldn't switch to fullscreen: %s",
+						SDL_GetError());
+					exit(1);
+				}
+			}
+			else // if (_fullscreen)
+			{
+				if (SDL_SetWindowFullscreen(_window, 0))
+				{
+					SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+						"Couldn't switch to windowed (non-fullscreen): %s",
+						SDL_GetError());
+					exit(1);
+				}
+			}
+
+			_fullscreen = !_fullscreen;
+		}
 
 		// Draw a black background
 		SDL_SetRenderDrawColor(_renderer, 0x00, 0x00, 0x00, 0xff);
 		SDL_RenderFillRect(_renderer, nullptr);
+
+		//for (size_t j=0; j<Window::SCREEN_SIZE_2D.y; ++j)
+		//{
+		//	for (size_t i=0; i<Window::SCREEN_SIZE_2D.x; ++i)
+		//	{
+		//		_text_handler.draw_char
+		//	}
+		//}
 
 		_text_handler.draw_char('@', 
 			game_engine::FgBgColorPair(FontColor::White, FontColor::Blue),
@@ -128,7 +176,7 @@ int RealMainSdl::run()
 		//SDL_Delay(10'000);
 	}
 	//--------
-	return 0;
+	exit(0);
 	//--------
 }
 
@@ -159,11 +207,6 @@ void RealMainSdl::_update_logical_size_2d()
 		* TextHandlerSdl::TILE_SIZE_2D.x * _scale;
 	_logical_size_2d.y = game_engine::Window::SCREEN_SIZE_2D.y
 		* TextHandlerSdl::TILE_SIZE_2D.y * _scale;
-
-	//_logical_size_2d.x = game_engine::Window::SCREEN_SIZE_2D.x
-	//	* TextHandlerSdl::TILE_SIZE_2D.x;
-	//_logical_size_2d.y = game_engine::Window::SCREEN_SIZE_2D.y
-	//	* TextHandlerSdl::TILE_SIZE_2D.y;
 }
 
 void RealMainSdl::_update_engine_key_status() const

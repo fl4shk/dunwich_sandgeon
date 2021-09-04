@@ -39,9 +39,11 @@ private:		// variables
 	PosVec2 _logical_size_2d;
 	//int _zoom = DEF_ZOOM;
 	float _scale = 1.0f;
+	bool _fullscreen = false;
 	sdl::Window _window;
 	sdl::Renderer _renderer;
 	sdl::KeyStatusMap _key_status_map;
+	PrevCurrPair<bool> _mouse_right_button_state;
 	TextHandlerSdl _text_handler;
 public:		// functions
 	RealMainSdl() = default;
