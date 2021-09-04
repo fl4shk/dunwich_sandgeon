@@ -79,13 +79,14 @@ private:		// variables
 	sdl::Surface _fg_surface, _bg_surface;
 	std::map<FontColor, sdl::Texture> _fg_texture_map, _bg_texture_map;
 	sdl::Renderer* _renderer = nullptr;
-	int* _zoom = nullptr;
+	//int* _zoom = nullptr;
 public:		// functions
 	TextHandlerSdl() = default;
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(TextHandlerSdl);
 	~TextHandlerSdl() = default;
 
-	bool init(sdl::Renderer& s_renderer, int& s_zoom);
+	//bool init(sdl::Renderer& s_renderer, int& s_zoom);
+	bool init(sdl::Renderer& s_renderer);
 
 	void draw_char(int c, const FgBgColorPair& color_pair,
 		const PosVec2& draw_pos);

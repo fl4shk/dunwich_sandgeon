@@ -33,12 +33,13 @@ int RealMainSdl::run()
 
 	sdl::prevent_dpi_scaling_issues();
 
-	_zoom = DEF_ZOOM;
-	_update_window_size_2d();
+	//_zoom = DEF_ZOOM;
+
+	_update_logical_size_2d();
 
 	_window = SDL_CreateWindow("Dungwich Sandeon",
 		SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-		_window_size_2d.x, _window_size_2d.y, SDL_WINDOW_RESIZABLE);
+		_logical_size_2d.x, _logical_size_2d.y, SDL_WINDOW_RESIZABLE);
 	if (!_window)
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
@@ -47,14 +48,29 @@ int RealMainSdl::run()
 	}
 
 	_renderer = SDL_CreateRenderer(_window, -1, SDL_RENDERER_ACCELERATED);
+	//_renderer = SDL_CreateRenderer(_window, -1, 0);
 	if (!_renderer)
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
 			"Couldn't create renderer: %s", SDL_GetError());
 		return 1;
 	}
+	if (SDL_RenderSetIntegerScale(_renderer, SDL_FALSE))
+	{
+		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+			"Couldn't set renderer integer size: %s", SDL_GetError());
+		return 1;
+	}
+	if (SDL_RenderSetLogicalSize(_renderer, _logical_size_2d.x,
+		_logical_size_2d.y))
+	{
+		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+			"Couldn't set renderer logical size: %s", SDL_GetError());
+		return 1;
+	}
 
-	if (!_text_handler.init(_renderer, _zoom))
+	//if (!_text_handler.init(_renderer, _zoom))
+	if (!_text_handler.init(_renderer))
 	{
 		return 1;
 	}
@@ -72,26 +88,42 @@ int RealMainSdl::run()
 				quit = true;
 			}
 			else if (handle_key_events(e, _key_status_map));
+			else if (e.type == SDL_MOUSEWHEEL)
+			{
+				_scale = fabsf(_scale
+					+ ((-static_cast<float>(e.wheel.y))
+						* SCALE_MUL_AMOUNT));
+				fprintf(stdout, "Change _scale: %f\n", _scale);
+				_update_logical_size_2d();
+				_update_renderer_scale_etc();
+			}
+			else if (e.type == SDL_WINDOWEVENT)
+			{
+				_update_renderer_scale_etc();
+			}
 		}
+
 
 		_update_engine_key_status();
 
 		// Draw a black background
 		SDL_SetRenderDrawColor(_renderer, 0x00, 0x00, 0x00, 0xff);
 		SDL_RenderFillRect(_renderer, nullptr);
-		//_text_handler.draw_char('@', 
-		//	game_engine::FgBgColorPair(FontColor::White, FontColor::Blue),
-		//	PosVec2(0, 0));
 
-		//_text_handler.draw_char('@', FontColor::Red, PosVec2(1, 0));
-		//_text_handler.draw_char('@', FontColor::Green, PosVec2(2, 0));
-		//_text_handler.draw_char('@', FontColor::Brown, PosVec2(3, 0));
-		//_text_handler.draw_char('@', FontColor::Yellow, PosVec2(4, 0));
+		_text_handler.draw_char('@', 
+			game_engine::FgBgColorPair(FontColor::White, FontColor::Blue),
+			PosVec2(0, 0));
 
-		//_text_handler.draw_char('@', FontColor::Blue, PosVec2(5, 0));
-		//_text_handler.draw_char('@', FontColor::Purple, PosVec2(6, 0));
-		//_text_handler.draw_char('@', FontColor::Cyan, PosVec2(7, 0));
-		//_text_handler.draw_char('@', FontColor::Gray, PosVec2(8, 0));
+		_text_handler.draw_char('@', FontColor::Red, PosVec2(1, 0));
+		_text_handler.draw_char('@', FontColor::Green, PosVec2(2, 0));
+		_text_handler.draw_char('@', FontColor::Brown, PosVec2(3, 0));
+		_text_handler.draw_char('@', FontColor::Yellow, PosVec2(4, 0));
+
+		_text_handler.draw_char('@', FontColor::Blue, PosVec2(5, 0));
+		_text_handler.draw_char('@', FontColor::Purple, PosVec2(6, 0));
+		_text_handler.draw_char('@', FontColor::Cyan, PosVec2(7, 0));
+		_text_handler.draw_char('@', FontColor::Gray, PosVec2(8, 0));
+
 		SDL_RenderPresent(_renderer);
 		//SDL_Delay(10'000);
 	}
@@ -100,17 +132,76 @@ int RealMainSdl::run()
 	//--------
 }
 
-void RealMainSdl::_update_window_size_2d()
+void RealMainSdl::_update_renderer_scale_etc()
 {
-	_window_size_2d.x = game_engine::Window::SCREEN_SIZE_2D.x
-		* TextHandlerSdl::TILE_SIZE_2D.x * zoom();
-	_window_size_2d.y = game_engine::Window::SCREEN_SIZE_2D.y
-		* TextHandlerSdl::TILE_SIZE_2D.y * zoom();
+	if (SDL_RenderSetScale(_renderer, _scale, _scale))
+	{
+		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+			"Couldn't scale the renderer: %s", SDL_GetError());
+		exit(1);
+	}
+	if (SDL_RenderSetLogicalSize(_renderer, _logical_size_2d.x,
+		_logical_size_2d.y))
+	{
+		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+			"Couldn't set renderer logical size: %s", SDL_GetError());
+		exit(1);
+	}
+}
+void RealMainSdl::_update_logical_size_2d()
+{
+	//_logical_size_2d.x = game_engine::Window::SCREEN_SIZE_2D.x
+	//	* TextHandlerSdl::TILE_SIZE_2D.x * zoom();
+	//_logical_size_2d.y = game_engine::Window::SCREEN_SIZE_2D.y
+	//	* TextHandlerSdl::TILE_SIZE_2D.y * zoom();
+
+	_logical_size_2d.x = game_engine::Window::SCREEN_SIZE_2D.x
+		* TextHandlerSdl::TILE_SIZE_2D.x * _scale;
+	_logical_size_2d.y = game_engine::Window::SCREEN_SIZE_2D.y
+		* TextHandlerSdl::TILE_SIZE_2D.y * _scale;
+
+	//_logical_size_2d.x = game_engine::Window::SCREEN_SIZE_2D.x
+	//	* TextHandlerSdl::TILE_SIZE_2D.x;
+	//_logical_size_2d.y = game_engine::Window::SCREEN_SIZE_2D.y
+	//	* TextHandlerSdl::TILE_SIZE_2D.y;
 }
 
 void RealMainSdl::_update_engine_key_status() const
 {
-	game_engine::engine.key_status.character = "";
+	auto& key_status = game_engine::engine.key_status;
+
+	auto update_key_status
+		= [this](PrevCurrPair<bool>& key_status_down,
+		SDL_Keycode sym) -> void
+	{
+		if (_key_status_map.contains(sym))
+		{
+			key_status_down.back_up_and_update
+				(_key_status_map.at(sym).down.prev());
+			key_status_down.back_up_and_update
+				(_key_status_map.at(sym).down.curr());
+		}
+	};
+
+	// Hard code the keybindings for now.
+	update_key_status(key_status.left_l, SDLK_s);
+	update_key_status(key_status.up_l, SDLK_e);
+	update_key_status(key_status.right_l, SDLK_f);
+	update_key_status(key_status.down_l, SDLK_d);
+
+	update_key_status(key_status.left_r, SDLK_j);
+	update_key_status(key_status.up_r, SDLK_i);
+	update_key_status(key_status.right_r, SDLK_l);
+	update_key_status(key_status.down_r, SDLK_k);
+
+	update_key_status(key_status.mod_1_l, SDLK_LSHIFT);
+	update_key_status(key_status.mod_2_l, SDLK_LCTRL);
+
+	update_key_status(key_status.mod_1_r, SDLK_RSHIFT);
+	update_key_status(key_status.mod_2_r, SDLK_RCTRL);
+
+	update_key_status(key_status.start, SDLK_RETURN);
+	update_key_status(key_status.select, SDLK_ESCAPE);
 }
 
 } // namespace io

@@ -56,6 +56,7 @@ public:		// constants
 public:		// variables
 	ecs::Engine ecs_engine;
 	Window screen_window, title_screen_window, credits_window,
+		options_window,
 		playfield_window, bottom_msg_window, right_msg_window,
 		popup_window;
 	//InputKind initial_input_kind = InputKind::None,
@@ -70,8 +71,13 @@ public:		// variables
 			mod_1_l, mod_2_l,
 			mod_1_r, mod_2_r,
 			start, select;
-		std::string character;
 	} key_status;
+
+	//struct
+	//{
+	//	bool req_start = false;
+	//	std::string text;
+	//} text_input;
 
 	int floor = HIGHEST_FLOOR;
 private:		// variables

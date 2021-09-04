@@ -61,6 +61,7 @@ Engine::Engine()
 	: screen_window(PosVec2(), Window::SCREEN_SIZE_2D),
 	title_screen_window(PosVec2(), Window::SCREEN_SIZE_2D),
 	credits_window(PosVec2(), Window::SCREEN_SIZE_2D),
+	options_window(PosVec2(), Window::SCREEN_SIZE_2D),
 
 	playfield_window(PLAYFIELD_WINDOW_POS, PLAYFIELD_WINDOW_END_POS),
 	bottom_msg_window(BOTTOM_MSG_WINDOW_POS, BOTTOM_MSG_WINDOW_END_POS),

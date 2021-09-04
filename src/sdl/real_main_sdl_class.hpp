@@ -33,11 +33,12 @@ class RealMainSdl final
 public:		// types
 	using FontColor = game_engine::FontColor;
 public:		// constants
-	// Default values for some member variables
-	static constexpr int DEF_ZOOM = 2;
+	//static constexpr int DEF_ZOOM = 2;
+	static constexpr float SCALE_MUL_AMOUNT = 0.1f;
 private:		// variables
-	PosVec2 _window_size_2d;
-	int _zoom = DEF_ZOOM;
+	PosVec2 _logical_size_2d;
+	//int _zoom = DEF_ZOOM;
+	float _scale = 1.0f;
 	sdl::Window _window;
 	sdl::Renderer _renderer;
 	sdl::KeyStatusMap _key_status_map;
@@ -48,9 +49,10 @@ public:		// functions
 
 	int run();
 
-	GEN_GETTER_BY_VAL(zoom);
+	//GEN_GETTER_BY_VAL(zoom);
 private:		// functions
-	void _update_window_size_2d();
+	void _update_renderer_scale_etc();
+	void _update_logical_size_2d();
 	void _update_engine_key_status() const;
 };
 

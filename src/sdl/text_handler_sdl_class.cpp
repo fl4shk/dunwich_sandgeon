@@ -22,11 +22,12 @@ namespace io
 
 const SizeVec2 TextHandlerSdl::TILE_SIZE_2D(8, 8);
 
-bool TextHandlerSdl::init(sdl::Renderer& s_renderer, int& s_zoom)
+//bool TextHandlerSdl::init(sdl::Renderer& s_renderer, int& s_zoom)
+bool TextHandlerSdl::init(sdl::Renderer& s_renderer)
 {
 	//--------
 	_renderer = &s_renderer;
-	_zoom = &s_zoom;
+	//_zoom = &s_zoom;
 
 	_fg_surface = SDL_LoadBMP("gfx/font.bmp");
 
@@ -227,8 +228,10 @@ void TextHandlerSdl::draw_char(int c, const FgBgColorPair& color_pair,
 
 		bg_src_rect(0, 0, TILE_SIZE_2D.x, TILE_SIZE_2D.y),
 
-		dst_rect(draw_real_pos.x * (*_zoom), draw_real_pos.y * (*_zoom),
-			TILE_SIZE_2D.x * (*_zoom), TILE_SIZE_2D.y * (*_zoom));
+		//dst_rect(draw_real_pos.x * (*_zoom), draw_real_pos.y * (*_zoom),
+		//	TILE_SIZE_2D.x * (*_zoom), TILE_SIZE_2D.y * (*_zoom));
+		dst_rect(draw_real_pos.x, draw_real_pos.y,
+			TILE_SIZE_2D.x, TILE_SIZE_2D.y);
 
 	SDL_RenderCopy(*_renderer, _bg_texture_map.at(color_pair.bg),
 		bg_src_rect, dst_rect);
