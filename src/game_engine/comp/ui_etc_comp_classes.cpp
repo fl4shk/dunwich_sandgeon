@@ -22,19 +22,30 @@ namespace game_engine
 namespace comp
 {
 
-std::string Text::kind_str() const
-{
-	return "Text";
-}
-
-const std::string
-	CheckButton::UNCHECKED_STR("[ ]"),
-	CheckButton::CHECKED_STR("[x]");
-
-std::string CheckButton::kind_str() const
-{
-	return "CheckButton";
-}
+//std::string Text::kind_str() const
+//{
+//	return "Text";
+//}
+//
+//const std::string
+//	Button::UNSELECTED_STR("( )"),
+//	Button::SELECTED_STR("(_)");
+//
+//std::string Buttons::kind_str()
+//{
+//	return "Button";
+//}
+//
+//const std::string
+//	CheckButton::UNSELECTED_UNCHECKED_STR("[ ]"),
+//	CheckButton::SELECTED_UNCHECKED_STR("[_]");
+//	CheckButton::UNSELECTED_CHECKED_STR("[x]");
+//	CheckButton::SELECTED_CHECKED_STR("[X]");
+//
+//std::string CheckButton::kind_str() const
+//{
+//	return "CheckButton";
+//}
 
 } // namespace comp
 } // namespace game_engine

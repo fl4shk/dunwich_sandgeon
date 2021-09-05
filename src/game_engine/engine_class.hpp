@@ -19,8 +19,9 @@
 // src/game_engine/engine_class.hpp
 
 #include "../misc_includes.hpp"
-#include "basic_window_classes.hpp"
 #include "../input_kind_enum.hpp"
+#include "basic_window_classes.hpp"
+#include "menu_classes.hpp"
 #include "comp/general_comp_classes.hpp"
 #include "comp/block_comp_classes.hpp"
 #include "comp/ui_etc_comp_classes.hpp"
@@ -47,9 +48,10 @@ public:		// constants
 	static const SizeVec2 PLAYFIELD_WINDOW_SIZE_2D;
 
 	static const PosVec2
-		BOTTOM_MSG_WINDOW_POS, BOTTOM_MSG_WINDOW_END_POS,
-		RIGHT_MSG_WINDOW_POS, RIGHT_MSG_WINDOW_END_POS,
-		POPUP_WINDOW_POS, POPUP_WINDOW_END_POS;
+		MSG_WINDOW_POS, MSG_WINDOW_END_POS,
+		HUD_WINDOW_POS, HUD_WINDOW_END_POS,
+		POPUP_WINDOW_POS, POPUP_WINDOW_END_POS,
+		YES_NO_WINDOW_POS, YES_NO_WINDOW_END_POS;
 
 	// These are basement floors, going from B1F down to B50F
 	static constexpr int
@@ -58,10 +60,39 @@ public:		// constants
 
 public:		// variables
 	ecs::Engine ecs_engine;
-	Window screen_window, title_screen_window, credits_window,
-		options_window,
-		playfield_window, bottom_msg_window, right_msg_window,
-		popup_window;
+	Window 
+		// The `Window` that contains the entities to display on screen 
+		screen_window,
+
+		// Auxilliary `Window`, which takes up the whole game window, for
+		// things like the title screen, game options, and credits.
+		full_size_window,
+
+		// The game world's `Window`.
+		playfield_window,
+
+		// `Window` for messages from the game.
+		msg_window,
+
+		// The heads up display `Window`.
+		hud_window,
+
+		// A popup window for various tasks (inventory, shops, etc.)
+		popup_window,
+
+		// A window containing "yes" and "no" buttons.
+		yes_no_window;
+
+	Menu 
+		// `Menu` for various tasks that take up the whole game window
+		full_size_menu,
+
+		// The popup window's menu
+		popup_menu,
+
+		// The yes-no window's menu
+		yes_no_menu;
+
 	//InputKind initial_input_kind = InputKind::None,
 	//	final_input_kind = InputKind::None;
 	InputKind input_kind;

@@ -60,6 +60,8 @@ public:		// functions
 	virtual std::string kind_str() const;
 };
 
+// Note that this is a 3D position within the game world.
+// Which floor the entity is on is what the Z axis represents.
 class Position final: public ecs::Comp
 {
 	friend class dungwich_sandeon::game_engine::Engine;

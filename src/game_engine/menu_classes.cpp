@@ -20,6 +20,14 @@ namespace dungwich_sandeon
 namespace game_engine
 {
 
+const std::string
+	Menu::BUTTON_UNSELECTED_STR("(   )"),
+	Menu::BUTTON_SELECTED_STR("( _ )");
+
+	//Menu::CHECK_BUTTON_UNSELECTED_UNCHECKED_STR("[   ]"),
+	//Menu::CHECK_BUTTON_SELECTED_UNCHECKED_STR("[ _ ]"),
+	//Menu::CHECK_BUTTON_UNSELECTED_CHECKED_STR("[ x ]"),
+	//Menu::CHECK_BUTTON_SELECTED_CHECKED_STR("[ X ]");
 
 } // namespace game_engine
 } // namespace dungwich_sandeon
