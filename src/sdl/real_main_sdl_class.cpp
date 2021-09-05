@@ -173,23 +173,26 @@ int RealMainSdl::run()
 			for (size_t i=0; i<(Window::SCREEN_SIZE_2D.x + 2); ++i)
 			{
 				auto draw_border_char
-					= [this, &j, &i]() -> void
+					= [this, &j, &i](int c) -> void
 				{
-					_text_handler.draw_char(Engine::WINDOW_SEP_CHAR,
-						Engine::WINDOW_SEP_COLOR, PosVec2(i, j));
+					_text_handler.draw_char(c, Window::SEP_COLOR,
+						PosVec2(i, j));
 				};
 
-				if (j == 0)
+				if ((j == 0) || (j == (Window::SCREEN_SIZE_2D.y + 1)))
 				{
-					draw_border_char();
-				}
-				else if (j == (Window::SCREEN_SIZE_2D.y + 1))
-				{
-					draw_border_char();
+					if ((i == 0) || (i == (Window::SCREEN_SIZE_2D.x + 1)))
+					{
+						draw_border_char(Window::SEP_CORNER_CHAR);
+					}
+					else
+					{
+						draw_border_char(Window::SEP_HORIZ_CHAR);
+					}
 				}
 				else if ((i == 0) || (i == (Window::SCREEN_SIZE_2D.x + 1)))
 				{
-					draw_border_char();
+					draw_border_char(Window::SEP_VERT_CHAR);
 				}
 				else
 				{

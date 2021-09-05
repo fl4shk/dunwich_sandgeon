@@ -28,10 +28,14 @@ namespace game_engine
 namespace comp
 {
 
+static constexpr FgBgColorPair
+	UI_SELECTED_COLOR = FontColor::Red,
+	UI_UNSELECTED_COLOR = FontColor::White;
+
 class Text final: public ecs::Comp
 {
 public:		// variables
-	std::string str = " "s;
+	std::string str = " ";
 public:		// functions
 	inline Text() = default;
 	inline Text(const std::string& s_str)
@@ -47,7 +51,7 @@ public:		// functions
 class CheckButton final: public ecs::Comp
 {
 public:		// constants
-	static constexpr FgBgColorPair DRAWABLE_DATA_COLOR_PAIR
+	static constexpr FgBgColorPair SELECTED_COLOR
 		= FontColor::Red;
 	static const std::string
 		UNCHECKED_STR, CHECKED_STR;

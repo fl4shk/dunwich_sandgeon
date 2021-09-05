@@ -5,6 +5,7 @@
 
 SHARED_SRC_DIRS:=src \
 	src/game_engine \
+	src/game_engine/comp \
 	src/sdl \
 	src/liborangepower_src/json_stuff \
 	src/liborangepower_src/game_stuff \

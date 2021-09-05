@@ -14,7 +14,7 @@
 // with Dungwich Sandeon.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "general_comp_classes.hpp"
-#include "engine_class.hpp"
+#include "../engine_class.hpp"
 
 namespace dungwich_sandeon
 {

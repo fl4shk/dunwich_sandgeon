@@ -21,6 +21,7 @@
 #include "../misc_includes.hpp"
 #include "../misc_types.hpp"
 #include "../input_kind_enum.hpp"
+#include "font_color_enum.hpp"
 #include "ticker_base_class.hpp"
 
 namespace dungwich_sandeon
@@ -37,6 +38,12 @@ public:		// constants
 	// These constants have values in amount of tilemap entries
 	//static const SizeVec2 SIZE_2D, PLAYFIELD_POS, PLAYFIELD_SIZE_2D;
 	static const SizeVec2 SCREEN_SIZE_2D;
+
+	static constexpr int
+		SEP_CORNER_CHAR = '+',
+		SEP_HORIZ_CHAR = '-',
+		SEP_VERT_CHAR = '|';
+	static constexpr FgBgColorPair SEP_COLOR = FontColor::White;
 protected:		// variables
 	bool _active = false;
 	PosVec2 _pos;

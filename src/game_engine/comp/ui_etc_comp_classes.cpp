@@ -29,7 +29,7 @@ std::string Text::kind_str() const
 
 const std::string
 	CheckButton::UNCHECKED_STR("[ ]"),
-	CheckButton::CHECKED_STR;("[X]");
+	CheckButton::CHECKED_STR("[x]");
 
 std::string CheckButton::kind_str() const
 {

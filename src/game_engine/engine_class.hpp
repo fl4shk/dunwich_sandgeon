@@ -23,6 +23,7 @@
 #include "../input_kind_enum.hpp"
 #include "comp/general_comp_classes.hpp"
 #include "comp/block_comp_classes.hpp"
+#include "comp/ui_etc_comp_classes.hpp"
 
 namespace dungwich_sandeon
 {
@@ -51,12 +52,10 @@ public:		// constants
 		POPUP_WINDOW_POS, POPUP_WINDOW_END_POS;
 
 	// These are basement floors, going from B1F down to B50F
-	static constexpr int LOWEST_FLOOR = 50, HIGHEST_FLOOR = 1,
+	static constexpr int
+		LOWEST_FLOOR = 50, HIGHEST_FLOOR = 1,
 		NUM_FLOORS = abs(HIGHEST_FLOOR - LOWEST_FLOOR) + 1;
 
-	static constexpr int WINDOW_SEP_CHAR = '%';
-	static constexpr FgBgColorPair WINDOW_SEP_COLOR
-		= FontColor::White;
 public:		// variables
 	ecs::Engine ecs_engine;
 	Window screen_window, title_screen_window, credits_window,
