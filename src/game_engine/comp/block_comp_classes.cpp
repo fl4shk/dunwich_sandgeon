@@ -27,24 +27,28 @@ namespace comp
 //	return "InBetweenWalls";
 //}
 
+const std::string Wall::KIND_STR("Wall");
 std::string Wall::kind_str() const
 {
-	return "Wall";
+	return KIND_STR;
 }
 
+const std::string Floor::KIND_STR("Floor");
 std::string Floor::kind_str() const
 {
-	return "Floor";
+	return KIND_STR;
 }
 
+const std::string DownStairs::KIND_STR("DownStairs");
 std::string DownStairs::kind_str() const
 {
-	return "DownStairs";
+	return KIND_STR;
 }
 
+const std::string UpStairs::KIND_STR("UpStairs");
 std::string UpStairs::kind_str() const
 {
-	return "UpStairs";
+	return KIND_STR;
 }
 
 } // namespace comp

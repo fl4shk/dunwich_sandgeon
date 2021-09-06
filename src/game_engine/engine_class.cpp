@@ -35,23 +35,31 @@ const SizeVec2
 			- Engine::PLAYFIELD_WINDOW_POS.y + 1);
 
 const PosVec2 
-	Engine::MSG_WINDOW_POS
+	//Engine::LOG_WINDOW_POS
+	//	(0,
+	//	Engine::PLAYFIELD_WINDOW_END_POS.y + 2),
+	Engine::LOG_WINDOW_POS
 		(0,
-		Engine::PLAYFIELD_WINDOW_END_POS.y + 2),
+		Engine::PLAYFIELD_WINDOW_END_POS.y + 1),
 
-	Engine::MSG_WINDOW_END_POS
+	Engine::LOG_WINDOW_END_POS
 		(Engine::PLAYFIELD_WINDOW_END_POS.x,
 		Window::SCREEN_SIZE_2D.y),
 
+	//Engine::HUD_WINDOW_POS
+	//	(Engine::PLAYFIELD_WINDOW_END_POS.x + 2,
+	//	Engine::PLAYFIELD_WINDOW_POS.y),
 	Engine::HUD_WINDOW_POS
-		(Engine::PLAYFIELD_WINDOW_END_POS.x + 2,
+		(Engine::PLAYFIELD_WINDOW_END_POS.x + 1,
 		Engine::PLAYFIELD_WINDOW_POS.y),
 
 	Engine::HUD_WINDOW_END_POS
 		(Window::SCREEN_SIZE_2D.x,
 		Window::SCREEN_SIZE_2D.y),
 
-	Engine::POPUP_WINDOW_POS(10, 10),
+	Engine::POPUP_WINDOW_POS
+		(10,
+		10),
 
 	Engine::POPUP_WINDOW_END_POS
 		(Window::SCREEN_SIZE_2D.x - 10,
@@ -67,10 +75,10 @@ const PosVec2
 
 Engine::Engine()
 	: screen_window(PosVec2(), Window::SCREEN_SIZE_2D),
-	full_size_window(PosVec2(), Window::SCREEN_SIZE_2D),
+	aux_window(PosVec2(), Window::SCREEN_SIZE_2D),
 
 	playfield_window(PLAYFIELD_WINDOW_POS, PLAYFIELD_WINDOW_END_POS),
-	msg_window(MSG_WINDOW_POS, MSG_WINDOW_END_POS),
+	log_window(LOG_WINDOW_POS, LOG_WINDOW_END_POS),
 	hud_window(HUD_WINDOW_POS, HUD_WINDOW_END_POS),
 	popup_window(POPUP_WINDOW_POS, POPUP_WINDOW_END_POS),
 	yes_no_window(YES_NO_WINDOW_POS, YES_NO_WINDOW_END_POS),

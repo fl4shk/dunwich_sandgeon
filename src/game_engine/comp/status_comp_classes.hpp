@@ -31,6 +31,8 @@ static constexpr int STATUS_TIMER_DEFAULT_VAL = 20;
 
 class StatusOnFire final: public ecs::Comp
 {
+public:		// constants
+	static const std::string KIND_STR;
 public:		// variables
 	int timer = STATUS_TIMER_DEFAULT_VAL;
 public:		// functions
@@ -48,6 +50,8 @@ public:		// functions
 // Take damage slowly
 class StatusPoisoned final: public ecs::Comp
 {
+public:		// constants
+	static const std::string KIND_STR;
 public:		// variables
 	int timer = STATUS_TIMER_DEFAULT_VAL;
 public:		// functions
@@ -65,6 +69,8 @@ public:		// functions
 // Can do nothing
 class StatusAsleep final: public ecs::Comp
 {
+public:		// constants
+	static const std::string KIND_STR;
 public:		// variables
 	int timer = STATUS_TIMER_DEFAULT_VAL;
 public:		// functions
@@ -83,6 +89,7 @@ public:		// functions
 class StatusTravelSpeed final: public ecs::Comp
 {
 public:		// constants
+	static const std::string KIND_STR;
 	static constexpr int ABS_MIN_MAX_VAL = 6;
 public:		// variables
 	int val = 0;
@@ -102,6 +109,7 @@ public:		// functions
 class StatusActionSpeed final: public ecs::Comp
 {
 public:		// constants
+	static const std::string KIND_STR;
 	static constexpr int ABS_MIN_MAX_VAL = 6;
 public:		// variables
 	int val = 0;

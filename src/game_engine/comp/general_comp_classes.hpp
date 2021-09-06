@@ -35,6 +35,8 @@ namespace comp
 
 class Drawable final: public ecs::Comp
 {
+public:		// constants
+	static const std::string KIND_STR;
 public:		// types
 	class Data final
 	{
@@ -65,6 +67,8 @@ public:		// functions
 class Position final: public ecs::Comp
 {
 	friend class dungwich_sandeon::game_engine::Engine;
+public:		// constants
+	static const std::string KIND_STR;
 private:		// variables
 	ecs::EntId _ent_id = ecs::ENT_NULL_ID;
 	PosVec3 _pos;
@@ -86,6 +90,8 @@ public:		// functions
 
 class Weight final: public ecs::Comp
 {
+public:		// constants
+	static const std::string KIND_STR;
 public:		// variables
 	uint val = 0;
 public:		// functions
@@ -103,6 +109,7 @@ public:		// functions
 class BaseStats final: public ecs::Comp
 {
 public:		// constants
+	static const std::string KIND_STR;
 	static constexpr uint MAX_VAL = 999,
 		DEFAULT_HP = 50,
 		DEFAULT_ATK = 20,

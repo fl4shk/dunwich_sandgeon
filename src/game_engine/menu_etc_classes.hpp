@@ -13,10 +13,10 @@
 // You should have received a copy of the GNU General Public License along
 // with Dungwich Sandeon.  If not, see <https://www.gnu.org/licenses/>.
 
-#ifndef src_game_engine_menu_classes_hpp
-#define src_game_engine_menu_classes_hpp
+#ifndef src_game_engine_menu_etc_classes_hpp
+#define src_game_engine_menu_etc_classes_hpp
 
-// src/game_engine/menu_classes.hpp
+// src/game_engine/menu_etc_classes.hpp
 
 #include "../misc_includes.hpp"
 #include "font_color_enum.hpp"
@@ -30,8 +30,8 @@ class Menu final
 {
 public:		// constants
 	static constexpr FgBgColorPair
-		UI_SELECTED_COLOR = FontColor::Red,
-		UI_UNSELECTED_COLOR = FontColor::White;
+		UI_UNSELECTED_COLOR = FontColor::White,
+		UI_SELECTED_COLOR = FontColor::Green;
 	static const std::string
 		BUTTON_UNSELECTED_STR, BUTTON_SELECTED_STR;
 
@@ -52,6 +52,9 @@ public:		// types
 		//--------
 		enum class Kind
 		{
+			// Beginning of node list
+			Start,
+
 			// End of node list
 			End,
 
@@ -77,7 +80,7 @@ public:		// types
 		};
 		//--------
 		// Value to modify for horiz pickers
-		using DataValue = int*;
+		using DataValue = PrevCurrPair<int>;
 
 		// Button action
 		using DataActionFunc = std::function<void()>;
@@ -85,7 +88,7 @@ public:		// types
 		// Button action with parameter
 		using DataActionParamFunc = std::function<void(int)>;
 		//--------
-		// When it's updated
+		// When it's updated at all
 		using OnUpdateFunc = std::function<void()>;
 		//--------
 	public:		// variables
@@ -167,7 +170,17 @@ public:		// functions
 	GEN_GETTER_BY_CON_REF(node_map);
 };
 
+class Log final
+{
+private:		// variables
+};
+
+class Hud final
+{
+private:		// variables
+};
+
 } // namespace game_engine
 } // namespace dungwich_sandeon
 
-#endif		// src_game_engine_menu_classes_hpp
+#endif		// src_game_engine_menu_etc_classes_hpp

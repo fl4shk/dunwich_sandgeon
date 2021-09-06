@@ -168,35 +168,16 @@ int RealMainSdl::run()
 		SDL_SetRenderDrawColor(_renderer, 0x00, 0x00, 0x00, 0xff);
 		SDL_RenderFillRect(_renderer, nullptr);
 
-		for (size_t j=0; j<(Window::SCREEN_SIZE_2D.y + 2); ++j)
-		{
-			for (size_t i=0; i<(Window::SCREEN_SIZE_2D.x + 2); ++i)
-			{
-				auto draw_border_char
-					= [this, &j, &i](int c) -> void
-				{
-					_text_handler.draw_char(c, Window::SEP_COLOR,
-						PosVec2(i, j));
-				};
 
-				if ((j == 0) || (j == (Window::SCREEN_SIZE_2D.y + 1)))
+		// Draw tiles here.
+		{
+			auto& screen_window = game_engine::engine.screen_window;
+			for (size_t j=0; j<screen_window.with_border_size_2d().y; ++j)
+			{
+				for (size_t i=0;
+					i<screen_window.with_border_size_2d().x;
+					++i)
 				{
-					if ((i == 0) || (i == (Window::SCREEN_SIZE_2D.x + 1)))
-					{
-						draw_border_char(Window::SEP_CORNER_CHAR);
-					}
-					else
-					{
-						draw_border_char(Window::SEP_HORIZ_CHAR);
-					}
-				}
-				else if ((i == 0) || (i == (Window::SCREEN_SIZE_2D.x + 1)))
-				{
-					draw_border_char(Window::SEP_VERT_CHAR);
-				}
-				else
-				{
-					// Draw the non-border tiles here.
 				}
 			}
 		}
@@ -226,9 +207,9 @@ int RealMainSdl::run()
 //void RealMainSdl::_update_logical_size_2d(bool use_default_scale)
 void RealMainSdl::_update_logical_size_2d()
 {
-	//_logical_size_2d.x = game_engine::Window::SCREEN_SIZE_2D.x
+	//_logical_size_2d.x = game_engine::Window::WITH_BORDER_SCREEN_SIZE_2D.x
 	//	* TextHandlerSdl::TILE_SIZE_2D.x * zoom();
-	//_logical_size_2d.y = game_engine::Window::SCREEN_SIZE_2D.y
+	//_logical_size_2d.y = game_engine::Window::WITH_BORDER_SCREEN_SIZE_2D.y
 	//	* TextHandlerSdl::TILE_SIZE_2D.y * zoom();
 
 	//const float TEMP_SCALE
@@ -236,13 +217,18 @@ void RealMainSdl::_update_logical_size_2d()
 	//const float TEMP_SCALE
 	//	= (!use_default_scale) ? _scale : SCALE_DEFAULT_VAL;
 
-	//_logical_size_2d.x = (game_engine::Window::SCREEN_SIZE_2D.x + 2)
+	//_logical_size_2d.x = (game_engine::Window::WITH_BORDER_SCREEN_SIZE_2D.x + 2)
 	//	* TextHandlerSdl::TILE_SIZE_2D.x * TEMP_SCALE;
-	//_logical_size_2d.y = (game_engine::Window::SCREEN_SIZE_2D.y + 2)
+	//_logical_size_2d.y = (game_engine::Window::WITH_BORDER_SCREEN_SIZE_2D.y + 2)
 	//	* TextHandlerSdl::TILE_SIZE_2D.y * TEMP_SCALE;
-	_logical_size_2d.x = (game_engine::Window::SCREEN_SIZE_2D.x + 2)
+
+	//_logical_size_2d.x = (game_engine::Window::WITH_BORDER_SCREEN_SIZE_2D.x + 2)
+	//	* TextHandlerSdl::TILE_SIZE_2D.x;
+	//_logical_size_2d.y = (game_engine::Window::WITH_BORDER_SCREEN_SIZE_2D.y + 2)
+	//	* TextHandlerSdl::TILE_SIZE_2D.y;
+	_logical_size_2d.x = game_engine::Window::WITH_BORDER_SCREEN_SIZE_2D.x
 		* TextHandlerSdl::TILE_SIZE_2D.x;
-	_logical_size_2d.y = (game_engine::Window::SCREEN_SIZE_2D.y + 2)
+	_logical_size_2d.y = game_engine::Window::WITH_BORDER_SCREEN_SIZE_2D.y
 		* TextHandlerSdl::TILE_SIZE_2D.y;
 }
 //void RealMainSdl::_update_renderer_scale_etc(bool use_default_scale)

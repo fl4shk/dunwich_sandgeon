@@ -23,11 +23,13 @@ namespace game_engine
 namespace comp
 {
 
+const std::string Drawable::KIND_STR("Drawable");
 std::string Drawable::kind_str() const
 {
-	return "Drawable";
+	return KIND_STR;
 }
 
+const std::string Position::KIND_STR("Position");
 Position::Position(ecs::EntId s_ent_id, const PosVec3& s_pos,
 	PlayfieldLayerPrio s_priority)
 	: _ent_id(s_ent_id), _pos(s_pos), priority(s_priority)
@@ -44,17 +46,19 @@ void Position::set_pos(const PosVec3& n_pos)
 }
 std::string Position::kind_str() const
 {
-	return "Position";
+	return KIND_STR;
 }
 
+const std::string Weight::KIND_STR("Weight");
 std::string Weight::kind_str() const
 {
-	return "Weight";
+	return KIND_STR;
 }
 
+const std::string BaseStats::KIND_STR("BaseStats");
 std::string BaseStats::kind_str() const
 {
-	return "BaseStats";
+	return KIND_STR;
 }
 
 } // namespace comp

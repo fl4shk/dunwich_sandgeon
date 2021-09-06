@@ -35,55 +35,79 @@ class LayeredWindow;
 class Window
 {
 public:		// constants
-	// These constants have values in amount of tilemap entries
-	//static const SizeVec2 SIZE_2D, PLAYFIELD_POS, PLAYFIELD_SIZE_2D;
-	static const SizeVec2 SCREEN_SIZE_2D;
+	// This constant has values in the amount of tilemap entries
+	static const SizeVec2 WITH_BORDER_SCREEN_SIZE_2D, SCREEN_SIZE_2D;
 
 	static constexpr int
-		SEP_CORNER_CHAR = '+',
-		SEP_HORIZ_CHAR = '-',
-		SEP_VERT_CHAR = '|';
-	static constexpr FgBgColorPair SEP_COLOR = FontColor::White;
+		BORDER_CORNER_CHAR = '+',
+		BORDER_HORIZ_CHAR = '-',
+		BORDER_VERT_CHAR = '|';
+	static constexpr FgBgColorPair BORDER_COLOR = FontColor::White;
 protected:		// variables
-	bool _active = false;
 	PosVec2 _pos;
 	ecs::EntIdVec2d _ent_id_v2d;
 public:		// functions
 	Window();
-	Window(const PosVec2& s_pos, const SizeVec2& s_size_2d);
-	Window(const PosVec2& s_pos, const PosVec2& s_end_pos);
+	Window(const PosVec2& s_some_pos, const SizeVec2& s_some_size_2d,
+		bool prev_args_are_with_border=false);
+	Window(const PosVec2& s_some_pos, const PosVec2& s_some_end_pos,
+		bool prev_args_are_with_border=false);
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Window);
 	virtual ~Window();
 
 	virtual void tick(InputKind input_kind);
 
-	inline auto& ent_id_at(const PosVec2& index)
+	inline auto& with_border_ent_id_at(const PosVec2& index)
 	{
 		return _ent_id_v2d.at(index.y).at(index.x);
+	}
+	inline const auto& with_border_ent_id_at(const PosVec2& index) const
+	{
+		return _ent_id_v2d.at(index.y).at(index.x);
+	}
+	inline auto& with_border_ent_id_at(const SizeVec2& index)
+	{
+		return _ent_id_v2d.at(index.y).at(index.x);
+	}
+	inline const auto& with_border_ent_id_at(const SizeVec2& index) const
+	{
+		return _ent_id_v2d.at(index.y).at(index.x);
+	}
+
+	inline auto& ent_id_at(const PosVec2& index)
+	{
+		return with_border_ent_id_at(index + PosVec2(1, 1));
 	}
 	inline const auto& ent_id_at(const PosVec2& index) const
 	{
-		return _ent_id_v2d.at(index.y).at(index.x);
+		return with_border_ent_id_at(index + PosVec2(1, 1));
 	}
 	inline auto& ent_id_at(const SizeVec2& index)
 	{
-		return _ent_id_v2d.at(index.y).at(index.x);
+		return with_border_ent_id_at(index + SizeVec2(1, 1));
 	}
 	inline const auto& ent_id_at(const SizeVec2& index) const
 	{
-		return _ent_id_v2d.at(index.y).at(index.x);
+		return with_border_ent_id_at(index + SizeVec2(1, 1));
+	}
+
+	inline SizeVec2 with_border_size_2d() const
+	{
+		return SizeVec2(ent_id_v2d().size(), ent_id_v2d().at(0).size());
 	}
 	inline SizeVec2 size_2d() const
 	{
-		return SizeVec2(ent_id_v2d().size(), ent_id_v2d().at(0).size());
+		return SizeVec2(ent_id_v2d().size() - 2,
+			ent_id_v2d().at(1).size() - 2);
 	}
 	void draw(const Window& win);
 	void draw(const LayeredWindow& layered_win);
 	//void draw_text(const PosVec2& where, const std::string& what);
 
-	GEN_GETTER_AND_SETTER_BY_VAL(active);
 	GEN_GETTER_BY_CON_REF(pos);
 	GEN_GETTER_BY_CON_REF(ent_id_v2d);
+private:		// functions
+	void _init_set_border();
 };
 
 class LayeredWindow

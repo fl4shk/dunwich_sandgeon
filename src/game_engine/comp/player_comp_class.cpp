@@ -23,9 +23,10 @@ namespace game_engine
 namespace comp
 {
 
+const std::string Player::KIND_STR("Player");
 std::string Player::kind_str() const
 {
-	return "Player";
+	return KIND_STR;
 }
 
 } // namespace comp

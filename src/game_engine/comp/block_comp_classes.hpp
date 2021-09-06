@@ -44,6 +44,7 @@ namespace comp
 class Wall final: public ecs::Comp
 {
 public:		// constants
+	static const std::string KIND_STR;
 	static constexpr Drawable::Data
 		DRAWABLE_DATA{.c='#', .color_pair=FontColor::Gray};
 public:		// functions
@@ -57,6 +58,7 @@ public:		// functions
 class Floor final: public ecs::Comp
 {
 public:		// constants
+	static const std::string KIND_STR;
 	static constexpr Drawable::Data
 		DRAWABLE_DATA{.c='.', .color_pair=FontColor::Gray};
 public:		// functions
@@ -70,6 +72,7 @@ public:		// functions
 class DownStairs final: public ecs::Comp
 {
 public:		// constants
+	static const std::string KIND_STR;
 	static constexpr Drawable::Data
 		DRAWABLE_DATA{.c='s', .color_pair=FontColor::White};
 public:		// functions
@@ -83,6 +86,7 @@ public:		// functions
 class UpStairs final: public ecs::Comp
 {
 public:		// constants
+	static const std::string KIND_STR;
 	static constexpr Drawable::Data
 		DRAWABLE_DATA{.c='S', .color_pair=FontColor::White};
 public:		// functions

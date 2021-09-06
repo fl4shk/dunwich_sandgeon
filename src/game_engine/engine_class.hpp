@@ -21,7 +21,7 @@
 #include "../misc_includes.hpp"
 #include "../input_kind_enum.hpp"
 #include "basic_window_classes.hpp"
-#include "menu_classes.hpp"
+#include "menu_etc_classes.hpp"
 #include "comp/general_comp_classes.hpp"
 #include "comp/block_comp_classes.hpp"
 #include "comp/ui_etc_comp_classes.hpp"
@@ -48,7 +48,7 @@ public:		// constants
 	static const SizeVec2 PLAYFIELD_WINDOW_SIZE_2D;
 
 	static const PosVec2
-		MSG_WINDOW_POS, MSG_WINDOW_END_POS,
+		LOG_WINDOW_POS, LOG_WINDOW_END_POS,
 		HUD_WINDOW_POS, HUD_WINDOW_END_POS,
 		POPUP_WINDOW_POS, POPUP_WINDOW_END_POS,
 		YES_NO_WINDOW_POS, YES_NO_WINDOW_END_POS;
@@ -66,13 +66,13 @@ public:		// variables
 
 		// Auxilliary `Window`, which takes up the whole game window, for
 		// things like the title screen, game options, and credits.
-		full_size_window,
+		aux_window,
 
 		// The game world's `Window`.
 		playfield_window,
 
 		// `Window` for messages from the game.
-		msg_window,
+		log_window,
 
 		// The heads up display `Window`.
 		hud_window,
@@ -85,7 +85,7 @@ public:		// variables
 
 	Menu 
 		// `Menu` for various tasks that take up the whole game window
-		full_size_menu,
+		aux_menu,
 
 		// The popup window's menu
 		popup_menu,

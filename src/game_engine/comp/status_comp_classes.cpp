@@ -22,29 +22,34 @@ namespace game_engine
 namespace comp
 {
 
+const std::string StatusOnFire::KIND_STR("StatusOnFire");
 std::string StatusOnFire::kind_str() const
 {
-	return "StatusOnFire";
+	return KIND_STR;
 }
 
+const std::string StatusPoisoned::KIND_STR("StatusPoisoned");
 std::string StatusPoisoned::kind_str() const
 {
-	return "StatusPoisoned";
+	return KIND_STR;
 }
 
+const std::string StatusAsleep::KIND_STR("StatusAsleep");
 std::string StatusAsleep::kind_str() const
 {
-	return "StatusAsleep";
+	return KIND_STR;
 }
 
+const std::string StatusTravelSpeed::KIND_STR("StatusTravelSpeed");
 std::string StatusTravelSpeed::kind_str() const
 {
-	return "StatusTravelSpeed";
+	return KIND_STR;
 }
 
+const std::string StatusActionSpeed::KIND_STR("StatusActionSpeed");
 std::string StatusActionSpeed::kind_str() const
 {
-	return "StatusActionSpeed";
+	return KIND_STR;
 }
 
 } // namespace comp
