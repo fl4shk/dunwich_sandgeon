@@ -168,17 +168,29 @@ int RealMainSdl::run()
 		SDL_SetRenderDrawColor(_renderer, 0x00, 0x00, 0x00, 0xff);
 		SDL_RenderFillRect(_renderer, nullptr);
 
+		// Draw tiles/graphics here.
+		auto& screen_window = game_engine::engine.screen_window;
 
-		// Draw tiles here.
+		for (size_t j=0; j<screen_window.with_border_size_2d().y; ++j)
 		{
-			auto& screen_window = game_engine::engine.screen_window;
-			for (size_t j=0; j<screen_window.with_border_size_2d().y; ++j)
+			for (size_t i=0; i<screen_window.with_border_size_2d().x; ++i)
 			{
-				for (size_t i=0;
-					i<screen_window.with_border_size_2d().x;
-					++i)
-				{
-				}
+				auto& ecs_engine = game_engine::engine.ecs_engine;
+				const PosVec2 wb_pos(i, j);
+				const ecs::EntId id
+					= screen_window.with_border_ent_id_at(wb_pos);
+
+				//if (ecs_engine.has_ent_with_comp(id,
+				//	comp::Drawable::KIND_STR))
+				//{
+				//	//auto& drawable = static_cast<comp::Drawable*>
+				//	//	(ecs_engine.comp_map(id).at
+				//	//		(comp::Drawable::KIND_STR).get());
+				//	auto* drawable = ecs_engine.comp_at<comp::Drawable*>
+				//		(id, comp::Drawable::KIND_STR);
+				//	_text_handler.draw_char(drawable->data.c,
+				//		drawable->data.color_pair);
+				//}
 			}
 		}
 
@@ -217,14 +229,18 @@ void RealMainSdl::_update_logical_size_2d()
 	//const float TEMP_SCALE
 	//	= (!use_default_scale) ? _scale : SCALE_DEFAULT_VAL;
 
-	//_logical_size_2d.x = (game_engine::Window::WITH_BORDER_SCREEN_SIZE_2D.x + 2)
+	//_logical_size_2d.x
+	//	= (game_engine::Window::WITH_BORDER_SCREEN_SIZE_2D.x + 2)
 	//	* TextHandlerSdl::TILE_SIZE_2D.x * TEMP_SCALE;
-	//_logical_size_2d.y = (game_engine::Window::WITH_BORDER_SCREEN_SIZE_2D.y + 2)
+	//_logical_size_2d.y
+	//	= (game_engine::Window::WITH_BORDER_SCREEN_SIZE_2D.y + 2)
 	//	* TextHandlerSdl::TILE_SIZE_2D.y * TEMP_SCALE;
 
-	//_logical_size_2d.x = (game_engine::Window::WITH_BORDER_SCREEN_SIZE_2D.x + 2)
+	//_logical_size_2d.x
+	//	= (game_engine::Window::WITH_BORDER_SCREEN_SIZE_2D.x + 2)
 	//	* TextHandlerSdl::TILE_SIZE_2D.x;
-	//_logical_size_2d.y = (game_engine::Window::WITH_BORDER_SCREEN_SIZE_2D.y + 2)
+	//_logical_size_2d.y
+	//	= (game_engine::Window::WITH_BORDER_SCREEN_SIZE_2D.y + 2)
 	//	* TextHandlerSdl::TILE_SIZE_2D.y;
 	_logical_size_2d.x = game_engine::Window::WITH_BORDER_SCREEN_SIZE_2D.x
 		* TextHandlerSdl::TILE_SIZE_2D.x;
