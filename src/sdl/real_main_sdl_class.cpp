@@ -180,17 +180,18 @@ int RealMainSdl::run()
 				const ecs::EntId id
 					= screen_window.with_border_ent_id_at(wb_pos);
 
-				//if (ecs_engine.has_ent_with_comp(id,
-				//	comp::Drawable::KIND_STR))
-				//{
-				//	//auto& drawable = static_cast<comp::Drawable*>
-				//	//	(ecs_engine.comp_map(id).at
-				//	//		(comp::Drawable::KIND_STR).get());
-				//	auto* drawable = ecs_engine.comp_at<comp::Drawable*>
-				//		(id, comp::Drawable::KIND_STR);
-				//	_text_handler.draw_char(drawable->data.c,
-				//		drawable->data.color_pair);
-				//}
+				if (ecs_engine.has_ent_with_comp(id,
+					comp::Drawable::KIND_STR))
+				{
+					//auto& drawable = static_cast<comp::Drawable*>
+					//	(ecs_engine.comp_map(id).at
+					//		(comp::Drawable::KIND_STR).get());
+					auto* drawable = ecs_engine
+						.casted_comp_at<comp::Drawable*>(id,
+							comp::Drawable::KIND_STR);
+					_text_handler.draw_char(drawable->data.c,
+						drawable->data.color_pair, wb_pos);
+				}
 			}
 		}
 
