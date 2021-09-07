@@ -34,15 +34,15 @@ Position::Position(ecs::EntId s_ent_id, const PosVec3& s_pos,
 	PlayfieldLayerPrio s_priority)
 	: _ent_id(s_ent_id), _pos(s_pos), priority(s_priority)
 {
-	engine.position_ctor_callback(this);
+	engine->position_ctor_callback(this);
 }
 Position::~Position()
 {
-	engine.position_dtor_callback(this);
+	engine->position_dtor_callback(this);
 }
 void Position::set_pos(const PosVec3& n_pos)
 {
-	engine.position_set_pos_callback(this, n_pos);
+	engine->position_set_pos_callback(this, n_pos);
 }
 std::string Position::kind_str() const
 {

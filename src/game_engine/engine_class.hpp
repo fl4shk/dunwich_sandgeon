@@ -123,6 +123,8 @@ public:		// functions
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Engine);
 	~Engine();
 
+	void dbg_check_ecs_engine(const PosVec2& wb_pos=PosVec2(0, 0));
+
 	void position_ctor_callback(comp::Position* obj);
 	void position_dtor_callback(comp::Position* obj);
 	void position_set_pos_callback(comp::Position* obj,
@@ -153,7 +155,7 @@ private:		// functions
 	}
 };
 
-extern Engine engine;
+extern Engine* engine;
 
 } // namespace game_engine
 } // namespace dungwich_sandeon

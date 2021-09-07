@@ -18,5 +18,7 @@
 
 int main(int argc, char* argv[])
 {
+	//printout("main()");
+	//dungwich_sandeon::game_engine::engine->dbg_check_ecs_engine();
 	return dungwich_sandeon::io::RealMainSdl().run();
 }

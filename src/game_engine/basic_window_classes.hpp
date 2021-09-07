@@ -23,11 +23,14 @@
 #include "../input_kind_enum.hpp"
 #include "font_color_enum.hpp"
 #include "ticker_base_class.hpp"
+//#include "engine_class.hpp"
 
 namespace dungwich_sandeon
 {
 namespace game_engine
 {
+
+class Engine;
 
 class LayeredWindow;
 
@@ -44,16 +47,21 @@ public:		// constants
 		BORDER_VERT_CHAR = '|';
 	static constexpr FgBgColorPair BORDER_COLOR = FontColor::White;
 protected:		// variables
+	Engine* _engine = nullptr;
 	PosVec2 _pos;
 	ecs::EntIdVec2d _ent_id_v2d;
 public:		// functions
 	Window();
-	Window(const PosVec2& s_some_pos, const SizeVec2& s_some_size_2d,
+	Window(Engine* s_engine, const PosVec2& s_some_pos,
+		const SizeVec2& s_some_size_2d,
 		bool prev_args_are_with_border=false);
-	Window(const PosVec2& s_some_pos, const PosVec2& s_some_end_pos,
+	Window(Engine* s_engine, const PosVec2& s_some_pos,
+		const PosVec2& s_some_end_pos,
 		bool prev_args_are_with_border=false);
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Window);
 	virtual ~Window();
+
+	void init_set_border();
 
 	virtual void tick(InputKind input_kind);
 
@@ -93,57 +101,56 @@ public:		// functions
 
 	inline SizeVec2 with_border_size_2d() const
 	{
-		return SizeVec2(ent_id_v2d().size(), ent_id_v2d().at(0).size());
+		return SizeVec2(ent_id_v2d().at(0).size(),
+			ent_id_v2d().size());
 	}
 	inline SizeVec2 size_2d() const
 	{
-		return SizeVec2(ent_id_v2d().size() - 2,
-			ent_id_v2d().at(1).size() - 2);
+		return SizeVec2(ent_id_v2d().at(1).size() - 2,
+			ent_id_v2d().size() - 2);
 	}
 	void draw(const Window& win);
-	void draw(const LayeredWindow& layered_win);
+	//void draw(const LayeredWindow& layered_win);
 	//void draw_text(const PosVec2& where, const std::string& what);
 
 	GEN_GETTER_BY_CON_REF(pos);
 	GEN_GETTER_BY_CON_REF(ent_id_v2d);
-private:		// functions
-	void _init_set_border();
 };
 
-class LayeredWindow
-{
-protected:		// variables
-	std::map<std::string, Window> _layer_map;
-	std::map<std::string, size_t> _layer_prio_map;
-public:		// functions
-	LayeredWindow();
-	LayeredWindow(const PosVec2& s_pos, const SizeVec2& s_size_2d,
-		const std::map<std::string, size_t>& s_layer_prio_map);
-	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(LayeredWindow);
-	virtual ~LayeredWindow();
-
-	virtual void tick(InputKind input_kind);
-
-	inline Window& layer_at(const std::string& key)
-	{
-		return _layer_map.at(key);
-	}
-	inline const Window& layer_at(const std::string& key) const
-	{
-		return _layer_map.at(key);
-	}
-	inline SizeVec2 size_2d() const
-	{
-		for (const auto& pair: layer_map())
-		{
-			// All layers have the same size
-			return pair.second.size_2d();
-		}
-	}
-
-	GEN_GETTER_BY_CON_REF(layer_map);
-	GEN_GETTER_BY_CON_REF(layer_prio_map);
-};
+//class LayeredWindow
+//{
+//protected:		// variables
+//	std::map<std::string, Window> _layer_map;
+//	std::map<std::string, size_t> _layer_prio_map;
+//public:		// functions
+//	LayeredWindow();
+//	LayeredWindow(const PosVec2& s_pos, const SizeVec2& s_size_2d,
+//		const std::map<std::string, size_t>& s_layer_prio_map);
+//	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(LayeredWindow);
+//	virtual ~LayeredWindow();
+//
+//	virtual void tick(InputKind input_kind);
+//
+//	inline Window& layer_at(const std::string& key)
+//	{
+//		return _layer_map.at(key);
+//	}
+//	inline const Window& layer_at(const std::string& key) const
+//	{
+//		return _layer_map.at(key);
+//	}
+//	inline SizeVec2 size_2d() const
+//	{
+//		for (const auto& pair: layer_map())
+//		{
+//			// All layers have the same size
+//			return pair.second.size_2d();
+//		}
+//	}
+//
+//	GEN_GETTER_BY_CON_REF(layer_map);
+//	GEN_GETTER_BY_CON_REF(layer_prio_map);
+//};
 
 } // namespace game_engine
 } // namespace dungwich_sandeon

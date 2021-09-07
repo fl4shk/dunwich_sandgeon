@@ -74,22 +74,53 @@ const PosVec2
 		Engine::YES_NO_WINDOW_POS.y + 10);
 
 Engine::Engine()
-	: screen_window(PosVec2(), Window::SCREEN_SIZE_2D),
-	aux_window(PosVec2(), Window::SCREEN_SIZE_2D),
+	: screen_window(this, PosVec2(), Window::SCREEN_SIZE_2D),
+	aux_window(this, PosVec2(), Window::SCREEN_SIZE_2D),
 
-	playfield_window(PLAYFIELD_WINDOW_POS, PLAYFIELD_WINDOW_END_POS),
-	log_window(LOG_WINDOW_POS, LOG_WINDOW_END_POS),
-	hud_window(HUD_WINDOW_POS, HUD_WINDOW_END_POS),
-	popup_window(POPUP_WINDOW_POS, POPUP_WINDOW_END_POS),
-	yes_no_window(YES_NO_WINDOW_POS, YES_NO_WINDOW_END_POS),
+	playfield_window(this, PLAYFIELD_WINDOW_POS, PLAYFIELD_WINDOW_END_POS),
+	log_window(this, LOG_WINDOW_POS, LOG_WINDOW_END_POS),
+	hud_window(this, HUD_WINDOW_POS, HUD_WINDOW_END_POS),
+	popup_window(this, POPUP_WINDOW_POS, POPUP_WINDOW_END_POS),
+	yes_no_window(this, YES_NO_WINDOW_POS, YES_NO_WINDOW_END_POS),
 
 	_playfield_ent_id_v3d(NUM_FLOORS,
 		EntIdSetVec2d(PLAYFIELD_WINDOW_SIZE_2D.y,
 			std::vector<std::set<ecs::EntId>>(PLAYFIELD_WINDOW_SIZE_2D.x)))
 {
+	screen_window.init_set_border();
+	aux_window.init_set_border();
+
+	playfield_window.init_set_border();
+	log_window.init_set_border();
+	hud_window.init_set_border();
+	popup_window.init_set_border();
+	yes_no_window.init_set_border();
+
+	//printout("Engine::Engine()\n");
+	//dbg_check_ecs_engine();
 }
 Engine::~Engine()
 {
+}
+
+void Engine::dbg_check_ecs_engine(const PosVec2& wb_pos)
+{
+	const ecs::EntId id
+		= screen_window.with_border_ent_id_at(wb_pos);
+
+	if (id != ecs::ENT_NULL_ID)
+	{
+		printout("Engine::dbg_check_ecs_engine(): ",
+			id, " ", ecs_engine.engine_comp_map().contains(id),
+			"\n");
+
+		if (ecs_engine.engine_comp_map().contains(id))
+		{
+			printout(ecs_engine.comp_map(id).contains
+				(game_engine::comp::Drawable::KIND_STR),
+				"\n");
+		}
+	}
 }
 
 void Engine::position_ctor_callback(comp::Position* obj)
@@ -133,7 +164,7 @@ void Engine::position_set_pos_callback(comp::Position* obj,
 	position_ctor_callback(obj);
 }
 
-Engine engine;
+Engine* engine = nullptr;
 
 } // namespace game_engine
 } // namespace dungwich_sandeon

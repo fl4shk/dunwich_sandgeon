@@ -20,6 +20,15 @@ namespace dungwich_sandeon
 namespace io
 {
 
+RealMainSdl::RealMainSdl()
+{
+	game_engine::engine = &_engine;
+	//_engine.dbg_check_ecs_engine();
+
+	//_temp_engine.dbg_check_ecs_engine();
+	//_temp_engine_1.dbg_check_ecs_engine();
+}
+
 int RealMainSdl::run()
 {
 	//--------
@@ -169,26 +178,26 @@ int RealMainSdl::run()
 		SDL_RenderFillRect(_renderer, nullptr);
 
 		// Draw tiles/graphics here.
-		auto& screen_window = game_engine::engine.screen_window;
+		auto& screen_window = _engine.screen_window;
 
 		for (size_t j=0; j<screen_window.with_border_size_2d().y; ++j)
 		{
 			for (size_t i=0; i<screen_window.with_border_size_2d().x; ++i)
 			{
-				auto& ecs_engine = game_engine::engine.ecs_engine;
+				auto& ecs_engine = _engine.ecs_engine;
 				const PosVec2 wb_pos(i, j);
 				const ecs::EntId id
 					= screen_window.with_border_ent_id_at(wb_pos);
 
 				if (ecs_engine.has_ent_with_comp(id,
-					comp::Drawable::KIND_STR))
+					game_engine::comp::Drawable::KIND_STR))
 				{
 					//auto& drawable = static_cast<comp::Drawable*>
 					//	(ecs_engine.comp_map(id).at
 					//		(comp::Drawable::KIND_STR).get());
-					auto* drawable = ecs_engine
-						.casted_comp_at<comp::Drawable*>(id,
-							comp::Drawable::KIND_STR);
+					auto drawable = ecs_engine
+						.casted_comp_at<game_engine::comp::Drawable>(id,
+							game_engine::comp::Drawable::KIND_STR);
 					_text_handler.draw_char(drawable->data.c,
 						drawable->data.color_pair, wb_pos);
 				}
@@ -268,9 +277,9 @@ void RealMainSdl::_update_logical_size_2d()
 //	}
 //}
 
-void RealMainSdl::_update_engine_key_status() const
+void RealMainSdl::_update_engine_key_status()
 {
-	auto& key_status = game_engine::engine.key_status;
+	auto& key_status = _engine.key_status;
 
 	auto update_key_status
 		= [this](PrevCurrPair<bool>& key_status_down,

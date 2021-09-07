@@ -43,6 +43,8 @@ private:		// variables
 	PosVec2 _logical_size_2d;
 	//int _zoom = DEF_ZOOM;
 	//float _scale = SCALE_DEFAULT_VAL;
+	//Engine _temp_engine, _temp_engine_1;
+	Engine _engine;
 	bool _fullscreen = false;
 	sdl::Window _window;
 	sdl::Renderer _renderer;
@@ -50,7 +52,7 @@ private:		// variables
 	PrevCurrPair<bool> _mouse_right_button_state;
 	TextHandlerSdl _text_handler;
 public:		// functions
-	RealMainSdl() = default;
+	RealMainSdl();
 	~RealMainSdl() = default;
 
 	int run();
@@ -66,7 +68,7 @@ private:		// functions
 	//void _update_logical_size_2d(bool use_default_scale=true);
 	void _update_logical_size_2d();
 	//void _update_renderer_scale_etc(bool use_default_scale=true);
-	void _update_engine_key_status() const;
+	void _update_engine_key_status();
 };
 
 } // namespace io

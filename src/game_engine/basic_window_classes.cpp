@@ -34,9 +34,10 @@ const SizeVec2
 Window::Window()
 {
 }
-Window::Window(const PosVec2& s_some_pos, const SizeVec2& s_some_size_2d,
-	bool prev_args_are_with_border)
-	: _pos(s_some_pos
+Window::Window(Engine* s_engine, const PosVec2& s_some_pos,
+	const SizeVec2& s_some_size_2d, bool prev_args_are_with_border)
+	: _engine(s_engine),
+	_pos(s_some_pos
 		- ((!prev_args_are_with_border) ? PosVec2(1, 1) : PosVec2(0, 0))),
 	_ent_id_v2d
 	(
@@ -50,11 +51,12 @@ Window::Window(const PosVec2& s_some_pos, const SizeVec2& s_some_size_2d,
 		)
 	)
 {
-	_init_set_border();
+	//init_set_border();
 }
-Window::Window(const PosVec2& s_some_pos, const PosVec2& s_some_end_pos,
-	bool prev_args_are_with_border)
-	: _pos(s_some_pos
+Window::Window(Engine* s_engine, const PosVec2& s_some_pos,
+	const PosVec2& s_some_end_pos, bool prev_args_are_with_border)
+	: _engine(s_engine),
+	_pos(s_some_pos
 		- ((!prev_args_are_with_border) ? PosVec2(1, 1) : PosVec2(0, 0))),
 	_ent_id_v2d
 	(
@@ -68,51 +70,13 @@ Window::Window(const PosVec2& s_some_pos, const PosVec2& s_some_end_pos,
 		)
 	)
 {
-	_init_set_border();
+	//init_set_border();
 }
 Window::~Window()
 {
 }
 
-void Window::tick(InputKind input_kind)
-{
-	// Derived classes should override this function
-};
-
-void Window::draw(const Window& win)
-{
-	for (int j=0; j<win.pos().y; ++j)
-	{
-		for (int i=0; i<win.pos().x; ++i)
-		{
-			const PosVec2 curr_pos(i, j);
-			const auto& ent_id = win.ent_id_at(curr_pos);
-
-			if (ent_id != ecs::ENT_NULL_ID)
-			{
-				ent_id_at(curr_pos) = ent_id;
-			}
-		}
-	}
-}
-void Window::draw(const LayeredWindow& layered_win)
-{
-	// This might need `std::greater` instead of `std::less`
-	std::priority_queue<std::pair<size_t, std::string>> pq;
-
-	for (const auto& pair: layered_win.layer_prio_map())
-	{
-		pq.push(std::pair(pair.second, pair.first));
-	}
-
-	while (!pq.empty())
-	{
-		draw(layered_win.layer_at(pq.top().second));
-		pq.pop();
-	}
-}
-
-void Window::_init_set_border()
+void Window::init_set_border()
 {
 	//for (size_t j=0; j<(Window::SCREEN_SIZE_2D.y + 2); ++j)
 	//{
@@ -150,14 +114,13 @@ void Window::_init_set_border()
 	auto add_border_drawable
 		= [this](const PosVec2& index, int c) -> void
 	{
-		const ecs::EntId id = engine.ecs_engine.create();
+		const ecs::EntId id = _engine->ecs_engine.create();
 		with_border_ent_id_at(index) = id;
 
-		engine.ecs_engine.insert_comp(id, comp::Drawable::KIND_STR,
+		_engine->ecs_engine.insert_comp(id, comp::Drawable::KIND_STR,
 			ecs::CompUptr(new comp::Drawable
 				(comp::Drawable::Data{.c=c, .color_pair=BORDER_COLOR})));
 	};
-
 	for (size_t i=0; i<with_border_size_2d().x; ++i)
 	{
 		if ((i == 0) || (i == (with_border_size_2d().x - 1)))
@@ -178,29 +141,105 @@ void Window::_init_set_border()
 				BORDER_HORIZ_CHAR);
 		}
 	}
-}
-//--------
-LayeredWindow::LayeredWindow()
-{
-}
-LayeredWindow::LayeredWindow(const PosVec2& s_pos,
-	const SizeVec2& s_size_2d,
-	const std::map<std::string, size_t>& s_layer_prio_map)
-	: _layer_prio_map(s_layer_prio_map)
-{
-	for (const auto& pair: layer_prio_map())
-	{
-		_layer_map[pair.first] = Window(s_pos, s_size_2d);
-	}
-}
-LayeredWindow::~LayeredWindow()
-{
+
+	//// This is test code.
+	//for (size_t j=0; j<with_border_size_2d().y; ++j)
+	//{
+	//	for (size_t i=0; i<with_border_size_2d().x; ++i)
+	//	{
+	//		if ((j == 0) && (i == 0))
+	//		{
+	//			const PosVec2 index(i, j);
+	//			const ecs::EntId id = _engine->ecs_engine.create();
+	//			with_border_ent_id_at(index) = id;
+
+	//			const comp::Drawable::Data TO_INSERT_DATA
+	//				= {
+	//					.c='@',
+	//					.color_pair=FgBgColorPair(FontColor::Red,
+	//						FontColor::White)
+	//				};
+	//			_engine->ecs_engine.insert_comp(id,
+	//				comp::Drawable::KIND_STR,
+	//				ecs::CompUptr(new comp::Drawable(TO_INSERT_DATA)));
+	//			printout("Window: ", id, " ", std::hex, 
+	//				(void*)(&_engine->ecs_engine.comp_map(id)), std::dec,
+	//				"\n");
+	//			printout(_engine->ecs_engine.comp_map(id).contains
+	//				(comp::Drawable::KIND_STR), "\n");
+	//			printout(_engine->ecs_engine.has_ent_with_comp(id,
+	//				comp::Drawable::KIND_STR), "\n");
+
+
+	//			//auto& comp_map = _engine->ecs_engine.comp_map(id);
+	//			////printout("Testificate: ",
+	//			////	comp_map.at("Drawable")->kind_str(), "\n");
+	//			//printout("Testificate: ",
+	//			//	comp_map.contains("Drawable"), "\n");
+	//		}
+	//	}
+	//}
 }
 
-void LayeredWindow::tick(InputKind input_kind)
+void Window::tick(InputKind input_kind)
 {
 	// Derived classes should override this function
+};
+
+void Window::draw(const Window& win)
+{
+	for (int j=0; j<win.pos().y; ++j)
+	{
+		for (int i=0; i<win.pos().x; ++i)
+		{
+			const PosVec2 curr_pos(i, j);
+			const auto& ent_id = win.ent_id_at(curr_pos);
+
+			if (ent_id != ecs::ENT_NULL_ID)
+			{
+				ent_id_at(curr_pos) = ent_id;
+			}
+		}
+	}
 }
+//void Window::draw(const LayeredWindow& layered_win)
+//{
+//	// This might need `std::greater` instead of `std::less`
+//	std::priority_queue<std::pair<size_t, std::string>> pq;
+//
+//	for (const auto& pair: layered_win.layer_prio_map())
+//	{
+//		pq.push(std::pair(pair.second, pair.first));
+//	}
+//
+//	while (!pq.empty())
+//	{
+//		draw(layered_win.layer_at(pq.top().second));
+//		pq.pop();
+//	}
+//}
+//--------
+//LayeredWindow::LayeredWindow()
+//{
+//}
+//LayeredWindow::LayeredWindow(const PosVec2& s_pos,
+//	const SizeVec2& s_size_2d,
+//	const std::map<std::string, size_t>& s_layer_prio_map)
+//	: _layer_prio_map(s_layer_prio_map)
+//{
+//	for (const auto& pair: layer_prio_map())
+//	{
+//		_layer_map[pair.first] = Window(s_pos, s_size_2d);
+//	}
+//}
+//LayeredWindow::~LayeredWindow()
+//{
+//}
+//
+//void LayeredWindow::tick(InputKind input_kind)
+//{
+//	// Derived classes should override this function
+//}
 //--------
 } // namespace game_engine
 } // namespace dungwich_sandeon
