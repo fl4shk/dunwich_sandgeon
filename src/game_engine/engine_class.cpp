@@ -103,25 +103,25 @@ Engine::~Engine()
 {
 }
 
-void Engine::dbg_check_ecs_engine(const PosVec2& wb_pos)
-{
-	const ecs::EntId id
-		= screen_window.with_border_ent_id_at(wb_pos);
-
-	if (id != ecs::ENT_NULL_ID)
-	{
-		printout("Engine::dbg_check_ecs_engine(): ",
-			id, " ", ecs_engine.engine_comp_map().contains(id),
-			"\n");
-
-		if (ecs_engine.engine_comp_map().contains(id))
-		{
-			printout(ecs_engine.comp_map(id).contains
-				(game_engine::comp::Drawable::KIND_STR),
-				"\n");
-		}
-	}
-}
+//void Engine::dbg_check_ecs_engine(const PosVec2& wb_pos)
+//{
+//	const ecs::EntId id
+//		= screen_window.with_border_ent_id_at(wb_pos);
+//
+//	if (id != ecs::ENT_NULL_ID)
+//	{
+//		printout("Engine::dbg_check_ecs_engine(): ",
+//			id, " ", ecs_engine.engine_comp_map().contains(id),
+//			"\n");
+//
+//		if (ecs_engine.engine_comp_map().contains(id))
+//		{
+//			printout(ecs_engine.comp_map(id).contains
+//				(game_engine::comp::Drawable::KIND_STR),
+//				"\n");
+//		}
+//	}
+//}
 
 void Engine::position_ctor_callback(comp::Position* obj)
 {

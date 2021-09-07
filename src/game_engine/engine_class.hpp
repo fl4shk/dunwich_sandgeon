@@ -123,7 +123,7 @@ public:		// functions
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Engine);
 	~Engine();
 
-	void dbg_check_ecs_engine(const PosVec2& wb_pos=PosVec2(0, 0));
+	//void dbg_check_ecs_engine(const PosVec2& wb_pos=PosVec2(0, 0));
 
 	void position_ctor_callback(comp::Position* obj);
 	void position_dtor_callback(comp::Position* obj);
