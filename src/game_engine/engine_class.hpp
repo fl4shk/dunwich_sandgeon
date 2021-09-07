@@ -138,7 +138,7 @@ private:		// functions
 	{
 		if (obj->ent_id() == ecs::ENT_NULL_ID)
 		{
-			const std::string err_msg(sconcat("Engine", func_name, "():",
+			const std::string err_msg(sconcat("Engine::", func_name, "():",
 				"Internal error.\n"));
 			fprintf(stderr, err_msg.c_str());
 			exit(1);
