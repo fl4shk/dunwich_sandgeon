@@ -78,6 +78,15 @@ public:		// functions
 		bg = DEFAULT_BG;
 		return *this;
 	}
+
+	constexpr inline bool operator == (const FgBgColorPair& other) const
+	{
+		return ((fg == other.fg) && (bg == other.bg));
+	}
+	constexpr inline bool operator != (const FgBgColorPair& other) const
+	{
+		return (!((*this) == other));
+	}
 };
 
 } // namespace game_engine

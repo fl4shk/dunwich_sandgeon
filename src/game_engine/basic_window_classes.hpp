@@ -45,19 +45,20 @@ public:		// constants
 		BORDER_CORNER_CHAR = '+',
 		BORDER_HORIZ_CHAR = '-',
 		BORDER_VERT_CHAR = '|';
-	static constexpr FgBgColorPair BORDER_COLOR = FontColor::White;
+	static constexpr FgBgColorPair BORDER_COLOR_PAIR = FontColor::White;
 protected:		// variables
 	Engine* _engine = nullptr;
+	//int _priority = 0;
 	PosVec2 _pos;
 	ecs::EntIdVec2d _ent_id_v2d;
 public:		// functions
 	Window();
 	Window(Engine* s_engine, const PosVec2& s_some_pos,
 		const SizeVec2& s_some_size_2d,
-		bool prev_args_are_with_border=false);
+		bool prev_args_are_with_border=true);
 	Window(Engine* s_engine, const PosVec2& s_some_pos,
 		const PosVec2& s_some_end_pos,
-		bool prev_args_are_with_border=false);
+		bool prev_args_are_with_border=true);
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Window);
 	virtual ~Window();
 
@@ -106,13 +107,14 @@ public:		// functions
 	}
 	inline SizeVec2 size_2d() const
 	{
-		return SizeVec2(ent_id_v2d().at(1).size() - 2,
-			ent_id_v2d().size() - 2);
+		return with_border_size_2d() - SizeVec2(2, 2);
 	}
-	void draw(const Window& win);
+	// This draws the border as well.
+	void draw(const Window& win, bool leave_corner=false);
 	//void draw(const LayeredWindow& layered_win);
 	//void draw_text(const PosVec2& where, const std::string& what);
 
+	//GEN_GETTER_AND_SETTER_BY_VAL(priority);
 	GEN_GETTER_BY_CON_REF(pos);
 	GEN_GETTER_BY_CON_REF(ent_id_v2d);
 };

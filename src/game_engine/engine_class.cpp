@@ -24,8 +24,8 @@ const PosVec2
 	Engine::PLAYFIELD_WINDOW_POS(0, 0),
 
 	Engine::PLAYFIELD_WINDOW_END_POS
-		(Window::SCREEN_SIZE_2D.x - 20,
-		Window::SCREEN_SIZE_2D.y - 10);
+		(Window::WITH_BORDER_SCREEN_SIZE_2D.x - 20 - 1,
+		Window::WITH_BORDER_SCREEN_SIZE_2D.y - 10 - 1);
 
 const SizeVec2
 	Engine::PLAYFIELD_WINDOW_SIZE_2D
@@ -38,44 +38,50 @@ const PosVec2
 	//Engine::LOG_WINDOW_POS
 	//	(0,
 	//	Engine::PLAYFIELD_WINDOW_END_POS.y + 2),
+	//Engine::LOG_WINDOW_POS
+	//	(0,
+	//	Engine::PLAYFIELD_WINDOW_END_POS.y + 1),
 	Engine::LOG_WINDOW_POS
 		(0,
-		Engine::PLAYFIELD_WINDOW_END_POS.y + 1),
+		Engine::PLAYFIELD_WINDOW_END_POS.y),
 
 	Engine::LOG_WINDOW_END_POS
 		(Engine::PLAYFIELD_WINDOW_END_POS.x,
-		Window::SCREEN_SIZE_2D.y),
+		Window::WITH_BORDER_SCREEN_SIZE_2D.y - 1),
 
 	//Engine::HUD_WINDOW_POS
 	//	(Engine::PLAYFIELD_WINDOW_END_POS.x + 2,
 	//	Engine::PLAYFIELD_WINDOW_POS.y),
+	//Engine::HUD_WINDOW_POS
+	//	(Engine::PLAYFIELD_WINDOW_END_POS.x + 1,
+	//	Engine::PLAYFIELD_WINDOW_POS.y),
 	Engine::HUD_WINDOW_POS
-		(Engine::PLAYFIELD_WINDOW_END_POS.x + 1,
+		(Engine::PLAYFIELD_WINDOW_END_POS.x,
 		Engine::PLAYFIELD_WINDOW_POS.y),
 
 	Engine::HUD_WINDOW_END_POS
-		(Window::SCREEN_SIZE_2D.x,
-		Window::SCREEN_SIZE_2D.y),
+		(Window::WITH_BORDER_SCREEN_SIZE_2D.x - 1,
+		Window::WITH_BORDER_SCREEN_SIZE_2D.y - 1),
 
 	Engine::POPUP_WINDOW_POS
 		(10,
 		10),
 
 	Engine::POPUP_WINDOW_END_POS
-		(Window::SCREEN_SIZE_2D.x - 10,
-		Window::SCREEN_SIZE_2D.y - 10),
+		(Window::WITH_BORDER_SCREEN_SIZE_2D.x - 10 - 1,
+		Window::WITH_BORDER_SCREEN_SIZE_2D.y - 10 - 1),
 
 	Engine::YES_NO_WINDOW_POS
 		(5,
-		Window::SCREEN_SIZE_2D.y / 2),
+		Window::WITH_BORDER_SCREEN_SIZE_2D.y / 2),
 
 	Engine::YES_NO_WINDOW_END_POS
 		(Engine::YES_NO_WINDOW_POS.x + 10,
 		Engine::YES_NO_WINDOW_POS.y + 10);
 
 Engine::Engine()
-	: screen_window(this, PosVec2(), Window::SCREEN_SIZE_2D),
-	aux_window(this, PosVec2(), Window::SCREEN_SIZE_2D),
+	: screen_window(this, PosVec2(), Window::WITH_BORDER_SCREEN_SIZE_2D),
+	aux_window(this, PosVec2(), Window::WITH_BORDER_SCREEN_SIZE_2D),
 
 	playfield_window(this, PLAYFIELD_WINDOW_POS, PLAYFIELD_WINDOW_END_POS),
 	log_window(this, LOG_WINDOW_POS, LOG_WINDOW_END_POS),

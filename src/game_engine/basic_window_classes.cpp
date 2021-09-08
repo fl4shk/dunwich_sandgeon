@@ -111,34 +111,66 @@ void Window::init_set_border()
 	//	}
 	//}
 
-	auto add_border_drawable
-		= [this](const PosVec2& index, int c) -> void
-	{
-		const ecs::EntId id = _engine->ecs_engine.create();
-		with_border_ent_id_at(index) = id;
+	//for (size_t i=0; i<with_border_size_2d().x; ++i)
+	//{
+	//	if ((i == 0) || (i == (with_border_size_2d().x - 1)))
+	//	{
+	//		add_border_drawable(PosVec2(i, 0), BORDER_CORNER_CHAR);
+	//		add_border_drawable(PosVec2(i, with_border_size_2d().y - 1),
+	//			BORDER_CORNER_CHAR);
 
+	//		for (size_t j=1; j<with_border_size_2d().y - 1; ++j)
+	//		{
+	//			add_border_drawable(PosVec2(i, j), BORDER_VERT_CHAR);
+	//		}
+	//	}
+	//	else
+	//	{
+	//		add_border_drawable(PosVec2(i, 0), BORDER_HORIZ_CHAR);
+	//		add_border_drawable(PosVec2(i, with_border_size_2d().y - 1),
+	//			BORDER_HORIZ_CHAR);
+	//	}
+	//}
+
+	ecs::EntId id = ecs::ENT_NULL_ID;
+	auto add_border_drawable
+		= [this, &id](int c) -> void
+	{
 		_engine->ecs_engine.insert_comp(id, comp::Drawable::KIND_STR,
 			ecs::CompUptr(new comp::Drawable
-				(comp::Drawable::Data{.c=c, .color_pair=BORDER_COLOR})));
+				(comp::Drawable::Data{.c=c,
+					.color_pair=BORDER_COLOR_PAIR})));
 	};
-	for (size_t i=0; i<with_border_size_2d().x; ++i)
+	for (size_t j=0; j<with_border_size_2d().y; ++j)
 	{
-		if ((i == 0) || (i == (with_border_size_2d().x - 1)))
+		for (size_t i=0; i<with_border_size_2d().x; ++i)
 		{
-			add_border_drawable(PosVec2(i, 0), BORDER_CORNER_CHAR);
-			add_border_drawable(PosVec2(i, with_border_size_2d().y - 1),
-				BORDER_CORNER_CHAR);
+			id = _engine->ecs_engine.create();
+			with_border_ent_id_at(PosVec2(i, j)) = id;
 
-			for (size_t j=1; j<with_border_size_2d().y - 1; ++j)
+			if ((j == 0) || (j == (with_border_size_2d().y - 1)))
 			{
-				add_border_drawable(PosVec2(i, j), BORDER_VERT_CHAR);
+				if ((i == 0) || (i == (with_border_size_2d().x - 1)))
+				{
+					add_border_drawable(BORDER_CORNER_CHAR);
+				}
+				else
+				{
+					add_border_drawable(BORDER_HORIZ_CHAR);
+				}
 			}
-		}
-		else
-		{
-			add_border_drawable(PosVec2(i, 0), BORDER_HORIZ_CHAR);
-			add_border_drawable(PosVec2(i, with_border_size_2d().y - 1),
-				BORDER_HORIZ_CHAR);
+			else if ((i == 0) || (i == (with_border_size_2d().x - 1)))
+			{
+				add_border_drawable(BORDER_VERT_CHAR);
+			}
+			else
+			{
+				_engine->ecs_engine.insert_comp(id,
+					comp::Drawable::KIND_STR,
+					ecs::CompUptr(new comp::Drawable
+						(comp::Drawable::Data{.c=' ',
+							.color_pair=FontColor::Black})));
+			}
 		}
 	}
 
@@ -186,18 +218,55 @@ void Window::tick(InputKind input_kind)
 	// Derived classes should override this function
 };
 
-void Window::draw(const Window& win)
+void Window::draw(const Window& win, bool leave_corner)
 {
-	for (int j=0; j<win.pos().y; ++j)
+	PosVec2 src_pos;
+	for (src_pos.y=0; src_pos.y<win.with_border_size_2d().y; ++src_pos.y)
 	{
-		for (int i=0; i<win.pos().x; ++i)
+		for (src_pos.x=0;
+			src_pos.x<win.with_border_size_2d().x;
+			++src_pos.x)
 		{
-			const PosVec2 curr_pos(i, j);
-			const auto& ent_id = win.ent_id_at(curr_pos);
+			const auto SRC_ENT_ID = win.with_border_ent_id_at(src_pos);
 
-			if (ent_id != ecs::ENT_NULL_ID)
+			if (_engine->ecs_engine.has_ent_with_comp
+				(SRC_ENT_ID, comp::Drawable::KIND_STR))
 			{
-				ent_id_at(curr_pos) = ent_id;
+				const auto DST_POS = win.pos() + src_pos;
+				const auto DST_ENT_ID = with_border_ent_id_at(DST_POS);
+
+				//printout("Window::draw(): ", src_pos.x, " ", src_pos.y,
+				//	"; ", DST_POS.x, " ", DST_POS.y,
+				//	"; ", win.with_border_size_2d().x, " ",
+				//	win.with_border_size_2d().y, "\n");
+
+				auto src = _engine->ecs_engine
+					.casted_comp_at<comp::Drawable>(SRC_ENT_ID,
+						comp::Drawable::KIND_STR);
+
+				if (!_engine->ecs_engine.comp_map(DST_ENT_ID)
+					.contains(comp::Drawable::KIND_STR))
+				{
+					_engine->ecs_engine.insert_comp(DST_ENT_ID,
+						comp::Drawable::KIND_STR,
+						ecs::CompUptr(new comp::Drawable(src->data)));
+				}
+				else
+				{
+					auto dst = _engine->ecs_engine
+						.casted_comp_at<comp::Drawable>(DST_ENT_ID,
+							comp::Drawable::KIND_STR);
+
+					if ((!leave_corner)
+						|| (dst->data.c != BORDER_CORNER_CHAR)
+						|| (dst->data.color_pair != BORDER_COLOR_PAIR))
+					{
+						*dst = *src;
+					}
+				}
+
+				//with_border_ent_id_at(TEMP_POS) = SRC_ENT_ID;
+
 			}
 		}
 	}
