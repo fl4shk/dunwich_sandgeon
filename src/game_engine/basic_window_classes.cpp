@@ -234,9 +234,13 @@ void Window::clear()
 				SRC_ENT_ID = _cleared_ent_id_v2d.at(src_pos.y)
 					.at(src_pos.x),
 				DST_ENT_ID = with_border_ent_id_at(src_pos);
-			auto src = _engine->ecs_engine
-				.casted_comp_at<comp::Drawable>(SRC_ENT_ID,
-					comp::Drawable::KIND_STR);
+			auto
+				src = _engine->ecs_engine
+					.casted_comp_at<comp::Drawable>(SRC_ENT_ID),
+				dst = _engine->ecs_engine
+					.casted_comp_at<comp::Drawable>(DST_ENT_ID);
+			*dst = *src;
+			//dst->data.color_pair = FontColor::Black;
 		}
 	}
 }
