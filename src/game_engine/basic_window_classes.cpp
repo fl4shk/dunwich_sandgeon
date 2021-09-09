@@ -105,7 +105,7 @@ void Window::init_set_border()
 	auto add_border_drawable
 		= [this, &id](int c) -> void
 	{
-		_engine->ecs_engine.insert_comp(id, comp::Drawable::KIND_STR,
+		_engine->ecs_engine.insert_comp(id,
 			ecs::CompUptr(new comp::Drawable
 				(comp::Drawable::Data{.c=c,
 					.color_pair=BORDER_COLOR_PAIR})));
@@ -152,7 +152,6 @@ void Window::init_set_border()
 				id = _engine->ecs_engine.create();
 				with_border_ent_id_at(PosVec2(i, j)) = id;
 				_engine->ecs_engine.insert_comp(id,
-					comp::Drawable::KIND_STR,
 					ecs::CompUptr(new comp::Drawable
 						(comp::Drawable::Data{.c=' ',
 							.color_pair=FontColor::Black})));
@@ -160,7 +159,6 @@ void Window::init_set_border()
 				id = _engine->ecs_engine.create();
 				_cleared_ent_id_v2d.at(j).at(i) = id;
 				_engine->ecs_engine.insert_comp(id,
-					comp::Drawable::KIND_STR,
 					ecs::CompUptr(new comp::Drawable
 						(comp::Drawable::Data{.c=' ',
 							.color_pair=FontColor::Black})));
@@ -197,21 +195,18 @@ void Window::draw(const Window& win, bool leave_corner)
 				//	win.with_border_size_2d().y, "\n");
 
 				auto src = _engine->ecs_engine
-					.casted_comp_at<comp::Drawable>(SRC_ENT_ID,
-						comp::Drawable::KIND_STR);
+					.casted_comp_at<comp::Drawable>(SRC_ENT_ID);
 
 				if (!_engine->ecs_engine.comp_map(DST_ENT_ID)
 					.contains(comp::Drawable::KIND_STR))
 				{
 					_engine->ecs_engine.insert_comp(DST_ENT_ID,
-						comp::Drawable::KIND_STR,
 						ecs::CompUptr(new comp::Drawable(src->data)));
 				}
 				else
 				{
 					auto dst = _engine->ecs_engine
-						.casted_comp_at<comp::Drawable>(DST_ENT_ID,
-							comp::Drawable::KIND_STR);
+						.casted_comp_at<comp::Drawable>(DST_ENT_ID);
 
 					if ((!leave_corner)
 						|| (dst->data.c != BORDER_CORNER_CHAR)

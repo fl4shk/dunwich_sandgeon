@@ -187,6 +187,7 @@ int RealMainSdl::run()
 		//screen_window.draw(_engine.aux_window);
 		screen_window.draw(_engine.popup_window);
 		screen_window.draw(_engine.yes_no_window);
+		//screen_window.clear();
 
 		for (size_t j=0; j<screen_window.with_border_size_2d().y; ++j)
 		{
