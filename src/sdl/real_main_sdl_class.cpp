@@ -180,12 +180,13 @@ int RealMainSdl::run()
 		// Draw tiles/graphics here.
 		auto& screen_window = _engine.screen_window;
 
-		//// Temporary drawing into `_engine.screen_window`.
-		//screen_window.draw(_engine.playfield_window, true);
-		//screen_window.draw(_engine.log_window, true);
-		//screen_window.draw(_engine.hud_window, true);
+		// Temporary drawing into `_engine.screen_window`.
+		screen_window.draw(_engine.playfield_window, true);
+		screen_window.draw(_engine.log_window, true);
+		screen_window.draw(_engine.hud_window, true);
 		//screen_window.draw(_engine.aux_window);
-		//screen_window.draw(_engine.yes_no_window);
+		screen_window.draw(_engine.popup_window);
+		screen_window.draw(_engine.yes_no_window);
 
 		for (size_t j=0; j<screen_window.with_border_size_2d().y; ++j)
 		{
@@ -223,7 +224,10 @@ int RealMainSdl::run()
 		//_text_handler.draw_char('@', FontColor::Blue, PosVec2(5, 0));
 		//_text_handler.draw_char('@', FontColor::Purple, PosVec2(6, 0));
 		//_text_handler.draw_char('@', FontColor::Cyan, PosVec2(7, 0));
-		//_text_handler.draw_char('@', FontColor::Gray, PosVec2(8, 0));
+		//_text_handler.draw_char('@', FontColor::White, PosVec2(8, 0));
+		//_text_handler.draw_char('@', FontColor::LightGray, PosVec2(9, 0));
+
+		//_text_handler.draw_char('@', FontColor::DarkGray, PosVec2(10, 0));
 
 		SDL_RenderPresent(_renderer);
 		//SDL_Delay(10'000);

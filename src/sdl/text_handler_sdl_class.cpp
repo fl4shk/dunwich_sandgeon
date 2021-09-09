@@ -173,21 +173,40 @@ bool TextHandlerSdl::init(sdl::Renderer& s_renderer)
 		return false;
 	}
 
-	if (SDL_SetTextureColorMod(_fg_texture_map[FontColor::Gray],
-		FONT_GRAY_STCM_R, FONT_GRAY_STCM_G, FONT_GRAY_STCM_B) < 0)
+	if (SDL_SetTextureColorMod(_fg_texture_map[FontColor::LightGray],
+		FONT_LIGHT_GRAY_STCM_R, FONT_LIGHT_GRAY_STCM_G,
+			FONT_LIGHT_GRAY_STCM_B) < 0)
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
-			"Couldn't color the fg gray: %s", SDL_GetError());
+			"Couldn't color the fg light gray: %s", SDL_GetError());
 		return false;
 	}
-	if (SDL_SetTextureColorMod(_bg_texture_map[FontColor::Gray],
-		FONT_GRAY_STCM_R, FONT_GRAY_STCM_G, FONT_GRAY_STCM_B) < 0)
+	if (SDL_SetTextureColorMod(_bg_texture_map[FontColor::LightGray],
+		FONT_LIGHT_GRAY_STCM_R, FONT_LIGHT_GRAY_STCM_G,
+			FONT_LIGHT_GRAY_STCM_B) < 0)
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
-			"Couldn't color the bg gray: %s", SDL_GetError());
+			"Couldn't color the bg light gray: %s", SDL_GetError());
 		return false;
 	}
 	//--------
+	if (SDL_SetTextureColorMod(_fg_texture_map[FontColor::DarkGray],
+		FONT_DARK_GRAY_STCM_R, FONT_DARK_GRAY_STCM_G,
+			FONT_DARK_GRAY_STCM_B) < 0)
+	{
+		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+			"Couldn't color the fg dark gray: %s", SDL_GetError());
+		return false;
+	}
+	if (SDL_SetTextureColorMod(_bg_texture_map[FontColor::DarkGray],
+		FONT_DARK_GRAY_STCM_R, FONT_DARK_GRAY_STCM_G,
+			FONT_DARK_GRAY_STCM_B) < 0)
+	{
+		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+			"Couldn't color the bg dark gray: %s", SDL_GetError());
+		return false;
+	}
+
 	if (SDL_SetTextureColorMod(_fg_texture_map[FontColor::Black],
 		FONT_BLACK_STCM_R, FONT_BLACK_STCM_G, FONT_BLACK_STCM_B) < 0)
 	{

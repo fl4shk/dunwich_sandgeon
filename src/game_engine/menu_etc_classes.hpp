@@ -170,15 +170,17 @@ public:		// functions
 	GEN_GETTER_BY_CON_REF(node_map);
 };
 
-class Log final
+class MsgLog final
 {
 private:		// variables
+	std::vector<std::string> _data;
+public:		// functions
 };
 
-class Hud final
-{
-private:		// variables
-};
+//class Hud final
+//{
+//private:		// variables
+//};
 
 } // namespace game_engine
 } // namespace dungwich_sandeon

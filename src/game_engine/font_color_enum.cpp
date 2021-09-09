@@ -32,8 +32,9 @@ const std::map<FontColor, std::string> FONT_COLOR_TO_STR_MAP
 	{FontColor::Blue, "Blue"},
 	{FontColor::Purple, "Purple"},
 	{FontColor::Cyan, "Cyan"},
-	{FontColor::Gray, "Gray"},
+	{FontColor::LightGray, "LightGray"},
 
+	{FontColor::DarkGray, "DarkGray"},
 	{FontColor::Black, "Black"},
 
 	{FontColor::Lim, "Lim"},

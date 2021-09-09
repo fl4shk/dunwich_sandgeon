@@ -31,6 +31,9 @@ namespace game_engine
 {
 
 class Engine;
+class Menu;
+class MsgLog;
+//class Hud;
 
 //class LayeredWindow;
 
@@ -50,7 +53,7 @@ protected:		// variables
 	Engine* _engine = nullptr;
 	//int _priority = 0;
 	PosVec2 _pos;
-	ecs::EntIdVec2d _ent_id_v2d;
+	ecs::EntIdVec2d _ent_id_v2d, _cleared_ent_id_v2d;
 public:		// functions
 	Window();
 	Window(Engine* s_engine, const PosVec2& s_some_pos,
@@ -109,10 +112,17 @@ public:		// functions
 	{
 		return with_border_size_2d() - SizeVec2(2, 2);
 	}
+
+	void clear();
+
 	// This draws the border as well.
 	void draw(const Window& win, bool leave_corner=false);
+	void draw(const Menu& menu);
+	void draw(const MsgLog& msg_log);
+	//void draw(const Hud& hud);
 	//void draw(const LayeredWindow& layered_win);
 	//void draw_text(const PosVec2& where, const std::string& what);
+
 
 	//GEN_GETTER_AND_SETTER_BY_VAL(priority);
 	GEN_GETTER_BY_CON_REF(pos);

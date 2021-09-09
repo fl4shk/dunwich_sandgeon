@@ -33,7 +33,9 @@ class Player final: public ecs::Comp
 public:		// constants
 	static const std::string KIND_STR;
 	static constexpr Drawable::Data 
-		DRAWABLE_DATA{.c='@', .color_pair=FontColor::White};
+		DRAWABLE_DATA{.c='@',
+			.color_pair=FontColor::White,
+			.gs_color_pair=FontColor::White};
 public:		// functions
 	inline Player() = default;
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Player);

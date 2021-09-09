@@ -42,10 +42,16 @@ public:		// types
 	{
 	public:		// variables
 		int c;
-		FgBgColorPair color_pair;
+		FgBgColorPair
+			color_pair,
+
+			// Grayscale color pair
+			gs_color_pair;
 	};
 public:		// variables
-	Data data{.c=' ', .color_pair=FontColor::White};
+	Data data{.c=' ',
+		.color_pair=FontColor::White,
+		.gs_color_pair=FontColor::White};
 public:		// functions
 	inline Drawable() = default;
 	//inline Drawable(int s_c, const FgBgColorPair& s_color)

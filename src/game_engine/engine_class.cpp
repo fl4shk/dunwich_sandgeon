@@ -24,8 +24,8 @@ const PosVec2
 	Engine::PLAYFIELD_WINDOW_POS(0, 0),
 
 	Engine::PLAYFIELD_WINDOW_END_POS
-		(Window::WITH_BORDER_SCREEN_SIZE_2D.x - 20 - 1,
-		Window::WITH_BORDER_SCREEN_SIZE_2D.y - 10 - 1);
+		(Window::WITH_BORDER_SCREEN_SIZE_2D.x - 1 - 20,
+		Window::WITH_BORDER_SCREEN_SIZE_2D.y - 1 - 10);
 
 const SizeVec2
 	Engine::PLAYFIELD_WINDOW_SIZE_2D
@@ -35,12 +35,6 @@ const SizeVec2
 			- Engine::PLAYFIELD_WINDOW_POS.y + 1);
 
 const PosVec2 
-	//Engine::LOG_WINDOW_POS
-	//	(0,
-	//	Engine::PLAYFIELD_WINDOW_END_POS.y + 2),
-	//Engine::LOG_WINDOW_POS
-	//	(0,
-	//	Engine::PLAYFIELD_WINDOW_END_POS.y + 1),
 	Engine::LOG_WINDOW_POS
 		(0,
 		Engine::PLAYFIELD_WINDOW_END_POS.y),
@@ -49,12 +43,6 @@ const PosVec2
 		(Engine::PLAYFIELD_WINDOW_END_POS.x,
 		Window::WITH_BORDER_SCREEN_SIZE_2D.y - 1),
 
-	//Engine::HUD_WINDOW_POS
-	//	(Engine::PLAYFIELD_WINDOW_END_POS.x + 2,
-	//	Engine::PLAYFIELD_WINDOW_POS.y),
-	//Engine::HUD_WINDOW_POS
-	//	(Engine::PLAYFIELD_WINDOW_END_POS.x + 1,
-	//	Engine::PLAYFIELD_WINDOW_POS.y),
 	Engine::HUD_WINDOW_POS
 		(Engine::PLAYFIELD_WINDOW_END_POS.x,
 		Engine::PLAYFIELD_WINDOW_POS.y),
@@ -64,20 +52,20 @@ const PosVec2
 		Window::WITH_BORDER_SCREEN_SIZE_2D.y - 1),
 
 	Engine::POPUP_WINDOW_POS
-		(10,
+		(13,
 		10),
 
 	Engine::POPUP_WINDOW_END_POS
-		(Window::WITH_BORDER_SCREEN_SIZE_2D.x - 10 - 1,
-		Window::WITH_BORDER_SCREEN_SIZE_2D.y - 10 - 1),
+		(Engine::HUD_WINDOW_POS.x - 1,
+		Window::WITH_BORDER_SCREEN_SIZE_2D.y - 15),
 
 	Engine::YES_NO_WINDOW_POS
-		(5,
+		(2,
 		Window::WITH_BORDER_SCREEN_SIZE_2D.y / 2),
 
 	Engine::YES_NO_WINDOW_END_POS
-		(Engine::YES_NO_WINDOW_POS.x + 10,
-		Engine::YES_NO_WINDOW_POS.y + 10);
+		(Engine::YES_NO_WINDOW_POS.x + 4 + Menu::Node::SPACING,
+		Engine::YES_NO_WINDOW_POS.y + 4 + Menu::Node::SPACING);
 
 Engine::Engine()
 	: screen_window(this, PosVec2(), Window::WITH_BORDER_SCREEN_SIZE_2D),
