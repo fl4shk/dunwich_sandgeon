@@ -32,7 +32,7 @@ namespace game_engine
 
 class Engine;
 
-class LayeredWindow;
+//class LayeredWindow;
 
 // A window made out of `Entity`s
 class Window

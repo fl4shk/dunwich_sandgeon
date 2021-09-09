@@ -78,60 +78,6 @@ Window::~Window()
 
 void Window::init_set_border()
 {
-	//for (size_t j=0; j<(Window::SCREEN_SIZE_2D.y + 2); ++j)
-	//{
-	//	for (size_t i=0; i<(Window::SCREEN_SIZE_2D.x + 2); ++i)
-	//	{
-	//		auto draw_border_char
-	//			= [this, &j, &i](int c) -> void
-	//		{
-	//			_text_handler.draw_char(c, Window::SEP_COLOR,
-	//				PosVec2(i, j));
-	//		};
-
-	//		if ((j == 0) || (j == (Window::SCREEN_SIZE_2D.y + 1)))
-	//		{
-	//			if ((i == 0) || (i == (Window::SCREEN_SIZE_2D.x + 1)))
-	//			{
-	//				draw_border_char(Window::SEP_CORNER_CHAR);
-	//			}
-	//			else
-	//			{
-	//				draw_border_char(Window::SEP_HORIZ_CHAR);
-	//			}
-	//		}
-	//		else if ((i == 0) || (i == (Window::SCREEN_SIZE_2D.x + 1)))
-	//		{
-	//			draw_border_char(Window::SEP_VERT_CHAR);
-	//		}
-	//		else
-	//		{
-	//			// Draw the non-border tiles here.
-	//		}
-	//	}
-	//}
-
-	//for (size_t i=0; i<with_border_size_2d().x; ++i)
-	//{
-	//	if ((i == 0) || (i == (with_border_size_2d().x - 1)))
-	//	{
-	//		add_border_drawable(PosVec2(i, 0), BORDER_CORNER_CHAR);
-	//		add_border_drawable(PosVec2(i, with_border_size_2d().y - 1),
-	//			BORDER_CORNER_CHAR);
-
-	//		for (size_t j=1; j<with_border_size_2d().y - 1; ++j)
-	//		{
-	//			add_border_drawable(PosVec2(i, j), BORDER_VERT_CHAR);
-	//		}
-	//	}
-	//	else
-	//	{
-	//		add_border_drawable(PosVec2(i, 0), BORDER_HORIZ_CHAR);
-	//		add_border_drawable(PosVec2(i, with_border_size_2d().y - 1),
-	//			BORDER_HORIZ_CHAR);
-	//	}
-	//}
-
 	ecs::EntId id = ecs::ENT_NULL_ID;
 	auto add_border_drawable
 		= [this, &id](int c) -> void
@@ -173,44 +119,6 @@ void Window::init_set_border()
 			}
 		}
 	}
-
-	//// This is test code.
-	//for (size_t j=0; j<with_border_size_2d().y; ++j)
-	//{
-	//	for (size_t i=0; i<with_border_size_2d().x; ++i)
-	//	{
-	//		if ((j == 0) && (i == 0))
-	//		{
-	//			const PosVec2 index(i, j);
-	//			const ecs::EntId id = _engine->ecs_engine.create();
-	//			with_border_ent_id_at(index) = id;
-
-	//			const comp::Drawable::Data TO_INSERT_DATA
-	//				= {
-	//					.c='@',
-	//					.color_pair=FgBgColorPair(FontColor::Red,
-	//						FontColor::White)
-	//				};
-	//			_engine->ecs_engine.insert_comp(id,
-	//				comp::Drawable::KIND_STR,
-	//				ecs::CompUptr(new comp::Drawable(TO_INSERT_DATA)));
-	//			printout("Window: ", id, " ", std::hex, 
-	//				(void*)(&_engine->ecs_engine.comp_map(id)), std::dec,
-	//				"\n");
-	//			printout(_engine->ecs_engine.comp_map(id).contains
-	//				(comp::Drawable::KIND_STR), "\n");
-	//			printout(_engine->ecs_engine.has_ent_with_comp(id,
-	//				comp::Drawable::KIND_STR), "\n");
-
-
-	//			//auto& comp_map = _engine->ecs_engine.comp_map(id);
-	//			////printout("Testificate: ",
-	//			////	comp_map.at("Drawable")->kind_str(), "\n");
-	//			//printout("Testificate: ",
-	//			//	comp_map.contains("Drawable"), "\n");
-	//		}
-	//	}
-	//}
 }
 
 void Window::tick(InputKind input_kind)

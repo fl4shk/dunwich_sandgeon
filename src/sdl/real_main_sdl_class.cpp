@@ -180,12 +180,12 @@ int RealMainSdl::run()
 		// Draw tiles/graphics here.
 		auto& screen_window = _engine.screen_window;
 
-		// Temporary drawing into `_engine.screen_window`.
-		screen_window.draw(_engine.playfield_window, true);
-		screen_window.draw(_engine.log_window, true);
-		screen_window.draw(_engine.hud_window, true);
+		//// Temporary drawing into `_engine.screen_window`.
+		//screen_window.draw(_engine.playfield_window, true);
+		//screen_window.draw(_engine.log_window, true);
+		//screen_window.draw(_engine.hud_window, true);
 		//screen_window.draw(_engine.aux_window);
-		screen_window.draw(_engine.yes_no_window);
+		//screen_window.draw(_engine.yes_no_window);
 
 		for (size_t j=0; j<screen_window.with_border_size_2d().y; ++j)
 		{
