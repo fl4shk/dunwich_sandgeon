@@ -26,28 +26,137 @@ namespace dungwich_sandeon
 namespace game_engine
 {
 
-class Menu final
+class MsgLog final
 {
 public:		// constants
-	static constexpr FgBgColorPair
-		UI_UNSELECTED_COLOR = FontColor::White,
-		UI_SELECTED_COLOR = FontColor::Green;
+	static constexpr size_t
+		TAB_SPACING_SIZE = 4u,
+		WIDGET_SPACING_SIZE = 6u;
 	static const std::string
-		BUTTON_UNSELECTED_STR, BUTTON_SELECTED_STR;
+		TAB_SPACING_STR,
+		WIDGET_SPACING_STR;
+public:		// types
+	using DataInnerElem = std::pair<FgBgColorPair, std::string>;
+	using DataElem = std::deque<DataInnerElem>;
+	using Data = std::deque<DataElem>;
+private:		// variables
+	Data _data;
+public:		// functions
+	MsgLog() = default;
+	MsgLog(const Data& s_data);
+	MsgLog(Data&& s_data);
+	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(MsgLog);
+	~MsgLog() = default;
 
-		//CHECK_BUTTON_UNSELECTED_UNCHECKED_STR,
-		//CHECK_BUTTON_SELECTED_UNCHECKED_STR,
-		//CHECK_BUTTON_UNSELECTED_CHECKED_STR,
-		//CHECK_BUTTON_SELECTED_CHECKED_STR;
+	static inline std::string spaces_str(size_t length)
+	{
+		std::string ret;
+		for (size_t i=0; i<length; ++i)
+		{
+			ret += " ";
+		}
+		return ret;
+	}
+
+	void pop_front();
+	void push_back(const DataElem& to_push);
+	void push_back(DataElem&& to_push);
+
+	void wrap(size_t row_length);
+
+	GEN_GETTER_BY_CON_REF(data);
+private:		// functions
+	void _wrap_back(size_t row_length);
+};
+
+
+class Menu final
+{
+public:		// types
+	//class WidgetTriple final
+	//{
+	//public:		// constants
+	//	static constexpr size_t
+	//		SIZE = 5u, INNER_SIZE = 3u,
+	//		LEFT_INDEX = 0u, INNER_INDEX = 1u, RIGHT_INDEX = 4u;
+	//public:		// variables
+	//	std::array<char, SIZE> data;
+	//public:		// functions
+	//	constexpr inline WidgetTriple() = default;
+	//	constexpr inline WidgetTriple(const WidgetTriple& to_copy)
+	//		: data(to_copy.data)
+	//	{
+	//	}
+	//	constexpr inline WidgetTriple(WidgetTriple&& to_move)
+	//		: data(std::move(to_move.data))
+	//	{
+	//	}
+	//	constexpr inline WidgetTriple(const std::array<char, SIZE>& s_data)
+	//		: data(s_data)
+	//	{
+	//	}
+	//	constexpr inline WidgetTriple(std::array<char, SIZE>&& s_data)
+	//		: data(std::move(s_data))
+	//	{
+	//	}
+	//	constexpr inline ~WidgetTriple() = default;
+	//	constexpr inline WidgetTriple& operator =
+	//		(const WidgetTriple& to_copy)
+	//	{
+	//		data = to_copy.data;
+	//		return *this;
+	//	}
+	//	constexpr inline WidgetTriple& operator =
+	//		(WidgetTriple&& to_move)
+	//	{
+	//		data = std::move(to_copy.data);
+	//		return *this;
+	//	}
+
+	//	inline std::string left() const
+	//	{
+	//		std::string ret;
+	//		ret += data.at(LEFT_INDEX);
+	//		return ret;
+	//	}
+	//	inline std::string inner() const
+	//	{
+	//		std::string ret;
+	//		for (size_t i=0; i<INNER_SIZE; ++i)
+	//		{
+	//			ret += data.at(INNER_INDEX + i);
+	//		}
+	//		return ret;
+	//	}
+	//	inline std::string right() const
+	//	{
+	//		std::string ret;
+	//		ret += data.at(RIGHT_INDEX);
+	//		return ret;
+	//	}
+	//};
+public:		// constants
+	// The maximum value of `variable` when using a `HorizPicker` or
+	// `HorizPickerWrap` `kind`.
+	static constexpr int HORIZ_PICKER_VAR_MAX = 999;
+
+	static constexpr FgBgColorPair
+		UI_UNSELECTED_COLOR_PAIR = FontColor::White,
+		UI_SELECTED_COLOR_PAIR = FontColor::LightGray;
+	static const std::string
+		BUTTON_STR,
+
+		CHECK_BUTTON_UNCHECKED_STR,
+		CHECK_BUTTON_CHECKED_STR,
+
+		HORIZ_PICKER_VAR_LEFT_STR, HORIZ_PICKER_VAR_INNER_BLANK_STR,
+		HORIZ_PICKER_VAR_RIGHT_STR;
+	static constexpr size_t 
+		WIDGET_SPACING_SIZE = MsgLog::WIDGET_SPACING_SIZE;
 
 public:		// types
 	class Node final
 	{
-	public:		// constants
-		// The maximum value of `variable` when using a `HorizPicker` or
-		// `HorizPickerWrap` `kind`.
-		static constexpr int HORIZ_PICKER_VAR_MAX = 999;
-		static constexpr size_t SPACING = 6u;
 	public:		// types
 		//--------
 		enum class Kind
@@ -130,16 +239,8 @@ private:		// variables
 	NodeMap _node_map;
 public:		// functions
 	Menu() = default;
-	inline Menu(const std::string& s_start_key, const NodeMap& s_node_map)
-		: _start_key(s_start_key), _sel_key(s_start_key),
-		_node_map(s_node_map)
-	{
-	}
-	inline Menu(const std::string& s_start_key, NodeMap&& s_node_map)
-		: _start_key(s_start_key), _sel_key(s_start_key),
-		_node_map(std::move(s_node_map))
-	{
-	}
+	Menu(const std::string& s_start_key, const NodeMap& s_node_map);
+	Menu(const std::string& s_start_key, NodeMap&& s_node_map);
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Menu);
 	~Menu() = default;
 
@@ -165,16 +266,11 @@ public:		// functions
 		return _node_map.at(key);
 	}
 
+	operator MsgLog () const;
+
 	GEN_GETTER_BY_CON_REF(start_key);
 	GEN_GETTER_AND_SETTER_BY_CON_REF(sel_key);
 	GEN_GETTER_BY_CON_REF(node_map);
-};
-
-class MsgLog final
-{
-private:		// variables
-	std::vector<std::string> _data;
-public:		// functions
 };
 
 //class Hud final

@@ -215,9 +215,6 @@ void Window::draw(const Window& win, bool leave_corner)
 						*dst = *src;
 					}
 				}
-
-				//with_border_ent_id_at(TEMP_POS) = SRC_ENT_ID;
-
 			}
 		}
 	}

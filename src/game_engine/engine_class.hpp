@@ -93,6 +93,10 @@ public:		// variables
 		// The yes-no window's menu
 		yes_no_menu;
 
+	MsgLog
+		log_msg_log,
+		hud_msg_log;
+
 	//InputKind initial_input_kind = InputKind::None,
 	//	final_input_kind = InputKind::None;
 	InputKind input_kind;
