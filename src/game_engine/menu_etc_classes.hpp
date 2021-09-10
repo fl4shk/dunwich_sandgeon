@@ -51,10 +51,12 @@ public:		// functions
 	static inline std::string spaces_str(size_t length)
 	{
 		std::string ret;
+
 		for (size_t i=0; i<length; ++i)
 		{
 			ret += " ";
 		}
+
 		return ret;
 	}
 
@@ -141,16 +143,17 @@ public:		// constants
 	static constexpr int HORIZ_PICKER_VAR_MAX = 999;
 
 	static constexpr FgBgColorPair
-		UI_UNSELECTED_COLOR_PAIR = FontColor::White,
-		UI_SELECTED_COLOR_PAIR = FontColor::LightGray;
+		WIDGET_UNSELECTED_COLOR_PAIR = FontColor::White,
+		WIDGET_SELECTED_COLOR_PAIR = FontColor::LightGray;
 	static const std::string
-		BUTTON_STR,
+		WIDGET_BUTTON_STR,
 
-		CHECK_BUTTON_UNCHECKED_STR,
-		CHECK_BUTTON_CHECKED_STR,
+		WIDGET_CHECK_BUTTON_UNCHECKED_STR,
+		WIDGET_CHECK_BUTTON_CHECKED_STR,
 
-		HORIZ_PICKER_VAR_LEFT_STR, HORIZ_PICKER_VAR_INNER_BLANK_STR,
-		HORIZ_PICKER_VAR_RIGHT_STR;
+		WIDGET_HORIZ_PICKER_LEFT_STR,
+		WIDGET_HORIZ_PICKER_INNER_BLANK_STR,
+		WIDGET_HORIZ_PICKER_RIGHT_STR;
 	static constexpr size_t 
 		WIDGET_SPACING_SIZE = MsgLog::WIDGET_SPACING_SIZE;
 
@@ -224,6 +227,32 @@ public:		// types
 		int variable;
 		//--------
 		OnUpdateFunc on_update_func;
+		//--------
+	public:		// functions
+		//--------
+		inline std::string widget_horiz_picker_str() const
+		{
+			std::string ret;
+
+			ret += WIDGET_HORIZ_PICKER_LEFT_STR;
+
+			const std::string DATA_STR
+				= sconcat(std::get<DataValue>(data)());
+			{
+				size_t i;
+				for (i=0; i<DATA_STR.size(); ++i)
+				{
+					ret += DATA_STR.at(i);
+				}
+				for (; i<WIDGET_HORIZ_PICKER_INNER_BLANK_STR.size(); ++i)
+				{
+					ret += " ";
+				}
+			}
+			ret += WIDGET_HORIZ_PICKER_RIGHT_STR;
+
+			return ret;
+		}
 		//--------
 	};
 

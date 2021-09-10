@@ -56,14 +56,14 @@ void MsgLog::_wrap_back(size_t row_length)
 }
 
 const std::string
-	Menu::BUTTON_STR("(    )"),
+	Menu::WIDGET_BUTTON_STR("(*)"),
 
-	Menu::CHECK_BUTTON_UNCHECKED_STR("[   ]"),
-	Menu::CHECK_BUTTON_CHECKED_STR("[ x ]"),
+	Menu::WIDGET_CHECK_BUTTON_UNCHECKED_STR("[ ]"),
+	Menu::WIDGET_CHECK_BUTTON_CHECKED_STR("[x]"),
 
-	Menu::HORIZ_PICKER_VAR_LEFT_STR("["),
-	Menu::HORIZ_PICKER_VAR_INNER_BLANK_STR("   "),
-	Menu::HORIZ_PICKER_VAR_RIGHT_STR("]");
+	Menu::WIDGET_HORIZ_PICKER_LEFT_STR("["),
+	Menu::WIDGET_HORIZ_PICKER_INNER_BLANK_STR(MsgLog::spaces_str(3u)),
+	Menu::WIDGET_HORIZ_PICKER_RIGHT_STR("]");
 
 Menu::Menu(const std::string& s_start_key, const NodeMap& s_node_map)
 	: _start_key(s_start_key), _sel_key(s_start_key),
