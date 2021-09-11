@@ -45,10 +45,6 @@ class Wall final: public ecs::Comp
 {
 public:		// constants
 	static const std::string KIND_STR;
-	static constexpr Drawable::Data
-		DRAWABLE_DATA{.c='#',
-			.color_pair=FontColor::LightGray,
-			.gs_color_pair=FontColor::LightGray};
 public:		// functions
 	Wall() = default;
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Wall);
@@ -61,10 +57,6 @@ class Floor final: public ecs::Comp
 {
 public:		// constants
 	static const std::string KIND_STR;
-	static constexpr Drawable::Data
-		DRAWABLE_DATA{.c='.',
-			.color_pair=FontColor::LightGray,
-			.gs_color_pair=FontColor::LightGray};
 public:		// functions
 	Floor() = default;
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Floor);
@@ -77,10 +69,6 @@ class DownStairs final: public ecs::Comp
 {
 public:		// constants
 	static const std::string KIND_STR;
-	static constexpr Drawable::Data
-		DRAWABLE_DATA{.c='s',
-			.color_pair=FontColor::White,
-			.gs_color_pair=FontColor::White};
 public:		// functions
 	DownStairs() = default;
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(DownStairs);
@@ -93,10 +81,6 @@ class UpStairs final: public ecs::Comp
 {
 public:		// constants
 	static const std::string KIND_STR;
-	static constexpr Drawable::Data
-		DRAWABLE_DATA{.c='S',
-			.color_pair=FontColor::White,
-			.gs_color_pair=FontColor::White};
 public:		// functions
 	UpStairs() = default;
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(UpStairs);

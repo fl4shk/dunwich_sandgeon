@@ -13,10 +13,10 @@
 // You should have received a copy of the GNU General Public License along
 // with Dungwich Sandeon.  If not, see <https://www.gnu.org/licenses/>.
 
-#ifndef src_game_engine_comp_player_comp_class_hpp
-#define src_game_engine_comp_player_comp_class_hpp
+#ifndef src_game_engine_comp_drawable_data_map_hpp
+#define src_game_engine_comp_drawable_data_map_hpp
 
-// src/game_engine/comp/player_comp_class.hpp
+// src/game_engine/comp/drawable_data_map.hpp
 
 #include "../../misc_includes.hpp"
 #include "general_comp_classes.hpp"
@@ -28,20 +28,11 @@ namespace game_engine
 namespace comp
 {
 
-class Player final: public ecs::Comp
-{
-public:		// constants
-	static const std::string KIND_STR;
-public:		// functions
-	inline Player() = default;
-	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Player);
-	virtual ~Player() = default;
+extern const std::map<std::string, Drawable::Data> DRAWABLE_DATA_MAP;
 
-	virtual std::string kind_str() const;
-};
 
 } // namespace comp
 } // namespace game_engine
 } // namespace dungwich_sandeon
 
-#endif		// src_game_engine_comp_player_comp_class_hpp
+#endif		// src_game_engine_comp_drawable_data_map_hpp
