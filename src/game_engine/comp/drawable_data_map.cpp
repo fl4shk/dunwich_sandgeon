@@ -26,12 +26,55 @@ namespace comp
 
 const std::map<std::string, Drawable::Data> DRAWABLE_DATA_MAP
 = {
-	{Player::KIND_STR, {'@', FontColor::White, FontColor::White}},
+	// '#', 35
+	{
+		Wall::KIND_STR,
+		{
+			.c='#',
+			.color_pair=FontColor::LightGray,
+			.gs_color_pair=FontColor::LightGray
+		}
+	},
 
-	{Wall::KIND_STR, {'#', FontColor::LightGray, FontColor::LightGray}},
-	{Floor::KIND_STR, {'.', FontColor::LightGray, FontColor::LightGray}},
-	{DownStairs::KIND_STR, {'s', FontColor::White, FontColor::White}},
-	{UpStairs::KIND_STR, {'S', FontColor::White, FontColor::White}},
+	// '.', 46
+	{
+		Floor::KIND_STR,
+		{
+			.c='.',
+			.color_pair=FontColor::LightGray,
+			.gs_color_pair=FontColor::LightGray
+		}
+	},
+
+	// '@', 64
+	{
+		Player::KIND_STR,
+		{
+			.c='@',
+			.color_pair=FontColor::White,
+			.gs_color_pair=FontColor::White
+		}
+	},
+
+	// 'S', 83
+	{
+		UpStairs::KIND_STR,
+		{
+			.c='S',
+			.color_pair=FontColor::White,
+			.gs_color_pair=FontColor::White
+		}
+	},
+
+	// 's', 115
+	{
+		DownStairs::KIND_STR,
+		{
+			.c='s',
+			.color_pair=FontColor::White,
+			.gs_color_pair=FontColor::White
+		}
+	},
 };
 
 } // namespace comp

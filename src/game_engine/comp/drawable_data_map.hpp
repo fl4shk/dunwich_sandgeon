@@ -30,7 +30,6 @@ namespace comp
 
 extern const std::map<std::string, Drawable::Data> DRAWABLE_DATA_MAP;
 
-
 } // namespace comp
 } // namespace game_engine
 } // namespace dungwich_sandeon
