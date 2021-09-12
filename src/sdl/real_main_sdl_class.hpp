@@ -69,6 +69,8 @@ private:		// functions
 	void _update_logical_size_2d();
 	//void _update_renderer_scale_etc(bool use_default_scale=true);
 	void _update_engine_key_status();
+
+	static Uint32 _timer_callback(Uint32 interval, void* param);
 };
 
 } // namespace io

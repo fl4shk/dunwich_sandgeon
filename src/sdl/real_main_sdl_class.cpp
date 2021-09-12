@@ -32,7 +32,7 @@ RealMainSdl::RealMainSdl()
 int RealMainSdl::run()
 {
 	//--------
-	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) < 0)
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_TIMER) < 0)
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
 			"Couldn't initialize SDL: %s", SDL_GetError());
@@ -204,10 +204,9 @@ int RealMainSdl::run()
 					//	(ecs_engine.comp_map(id).at
 					//		(comp::Drawable::KIND_STR).get());
 					auto drawable = ecs_engine
-						.casted_comp_at<game_engine::comp::Drawable>(id,
-							game_engine::comp::Drawable::KIND_STR);
-					_text_handler.draw_char(drawable->data.c,
-						drawable->data.color_pair, wb_pos);
+						.casted_comp_at<game_engine::comp::Drawable>(id);
+					_text_handler.draw_char(drawable->data().c,
+						drawable->data().color_pair, wb_pos);
 				}
 			}
 		}
@@ -323,6 +322,12 @@ void RealMainSdl::_update_engine_key_status()
 
 	update_key_status(key_status.start, SDLK_RETURN);
 	update_key_status(key_status.select, SDLK_ESCAPE);
+}
+
+Uint32 RealMainSdl::_timer_callback(Uint32 interval, void* param)
+{
+	// This function creates data in an SDL user event because this
+	// function will be called in a separate thread from the main one.
 }
 
 } // namespace io

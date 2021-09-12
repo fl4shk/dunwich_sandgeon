@@ -201,7 +201,7 @@ void Window::draw(const Window& win, bool leave_corner)
 					.contains(comp::Drawable::KIND_STR))
 				{
 					_engine->ecs_engine.insert_comp(DST_ENT_ID,
-						ecs::CompUptr(new comp::Drawable(src->data)));
+						ecs::CompUptr(new comp::Drawable(src->data())));
 				}
 				else
 				{
@@ -209,8 +209,8 @@ void Window::draw(const Window& win, bool leave_corner)
 						.casted_comp_at<comp::Drawable>(DST_ENT_ID);
 
 					if ((!leave_corner)
-						|| (dst->data.c != BORDER_CORNER_CHAR)
-						|| (dst->data.color_pair != BORDER_COLOR_PAIR))
+						|| (dst->data().c != BORDER_CORNER_CHAR)
+						|| (dst->data().color_pair != BORDER_COLOR_PAIR))
 					{
 						*dst = *src;
 					}

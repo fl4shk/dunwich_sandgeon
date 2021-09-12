@@ -48,10 +48,14 @@ public:		// types
 			// Grayscale color pair
 			gs_color_pair;
 	};
-public:		// variables
-	Data data{.c=' ',
+private:		// variables
+	Data _data{.c=' ',
 		.color_pair=FontColor::White,
 		.gs_color_pair=FontColor::White};
+	FgBgColorPair
+		_non_blink_color_pair = FontColor::White,
+		_non_blink_gs_color_pair = FontColor::White;
+	bool _in_blink = false;
 public:		// functions
 	inline Drawable() = default;
 	//inline Drawable(int s_c, const FgBgColorPair& s_color)
@@ -59,13 +63,40 @@ public:		// functions
 	//{
 	//}
 	inline Drawable(Data s_data)
-		: data(s_data)
 	{
+		set_data(s_data);
 	}
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Drawable);
 	virtual ~Drawable() = default;
 
 	virtual std::string kind_str() const;
+
+	void blink()
+	{
+		if (!_in_blink)
+		{
+			_data.color_pair.fg = _non_blink_color_pair.bg;
+			_data.gs_color_pair.fg = _non_blink_gs_color_pair.bg;
+			_in_blink = true;
+		}
+		else // if (_in_blink)
+		{
+			_data.color_pair.fg = _non_blink_color_pair.fg;
+			_data.gs_color_pair.fg = _non_blink_gs_color_pair.fg;
+			_in_blink = false;
+		}
+	}
+
+	inline Data& set_data(Data n_data)
+	{
+		_data = n_data;
+		_non_blink_color_pair = _data.color_pair;
+		_non_blink_gs_color_pair = _data.gs_color_pair;
+
+		return _data;
+	}
+	GEN_GETTER_BY_CON_REF(data);
+	
 };
 
 // Note that this is a 3D position within the game world.
