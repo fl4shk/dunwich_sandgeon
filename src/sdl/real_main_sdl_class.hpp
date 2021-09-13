@@ -35,15 +35,20 @@ public:		// types
 	using FgBgColorPair = game_engine::FgBgColorPair;
 	using Window = game_engine::Window;
 	using Engine = game_engine::Engine;
+	using KeyStatus = Engine::KeyStatus;
 public:		// constants
+	// 100 ms global timer for ticking the game engine
+	static constexpr Uint32 GLOBAL_TIMER_DELAY = 50u;
+
 	//static constexpr int DEF_ZOOM = 2;
 	//static constexpr float
 	//	SCALE_MUL_VAL = 0.1f, SCALE_DEFAULT_VAL = 1.0f;
 private:		// variables
+	SDL_TimerID _global_timer_id;
+	Uint32 _global_timer_interval = 0;
 	PosVec2 _logical_size_2d;
 	//int _zoom = DEF_ZOOM;
 	//float _scale = SCALE_DEFAULT_VAL;
-	//Engine _temp_engine, _temp_engine_1;
 	Engine _engine;
 	bool _fullscreen = false;
 	sdl::Window _window;
@@ -59,6 +64,7 @@ public:		// functions
 
 	//GEN_GETTER_BY_VAL(zoom);
 private:		// functions
+	static Uint32 _global_timer_callback(Uint32 interval, void* self);
 	//inline void _set_scale_etc(float n_scale)
 	//{
 	//	_scale = n_scale;
@@ -69,8 +75,6 @@ private:		// functions
 	void _update_logical_size_2d();
 	//void _update_renderer_scale_etc(bool use_default_scale=true);
 	void _update_engine_key_status();
-
-	static Uint32 _timer_callback(Uint32 interval, void* param);
 };
 
 } // namespace io

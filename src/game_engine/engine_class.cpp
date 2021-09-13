@@ -117,6 +117,12 @@ Engine::~Engine()
 //	}
 //}
 
+void Engine::tick()
+{
+	printout("Ticking the game engine: ", _tick_counter, "\n");
+	++_tick_counter;
+}
+
 void Engine::position_ctor_callback(comp::Position* obj)
 {
 	_err_when_ent_id_is_null(obj, "position_ctor_callback");

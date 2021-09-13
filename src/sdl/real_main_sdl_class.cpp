@@ -42,6 +42,9 @@ int RealMainSdl::run()
 
 	sdl::prevent_dpi_scaling_issues();
 
+	_global_timer_id = SDL_AddTimer(GLOBAL_TIMER_DELAY,
+		&_global_timer_callback, this);
+
 	//_zoom = DEF_ZOOM;
 
 	_update_logical_size_2d();
@@ -89,11 +92,34 @@ int RealMainSdl::run()
 		exit(1);
 	}
 
+	auto draw_test_chars = [this]() -> void
+	{
+		_text_handler.draw_char('@', 
+			{FontColor::White, FontColor::Blue},
+			PosVec2(0, 0));
+
+		_text_handler.draw_char('@', FontColor::Red, PosVec2(1, 0));
+		_text_handler.draw_char('@', FontColor::Green, PosVec2(2, 0));
+		_text_handler.draw_char('@', FontColor::Brown, PosVec2(3, 0));
+		_text_handler.draw_char('@', FontColor::Yellow, PosVec2(4, 0));
+
+		_text_handler.draw_char('@', FontColor::Blue, PosVec2(5, 0));
+		_text_handler.draw_char('@', FontColor::Purple, PosVec2(6, 0));
+		_text_handler.draw_char('@', FontColor::Cyan, PosVec2(7, 0));
+		_text_handler.draw_char('@', FontColor::White, PosVec2(8, 0));
+		_text_handler.draw_char('@', FontColor::LightGray, PosVec2(9, 0));
+
+		_text_handler.draw_char('@', FontColor::DarkGray, PosVec2(10, 0));
+	};
+
 	//--------
 	bool quit = false;
 	while (!quit)
 	{
 		_mouse_right_button_state.back_up();
+
+		//bool tick_engine_now = false;
+		bool ksm_perf_total_backup = true;
 
 		SDL_Event e;
 
@@ -103,40 +129,31 @@ int RealMainSdl::run()
 			{
 				quit = true;
 			}
-			else if (handle_key_events(e, _key_status_map));
-			//else if (e.type == SDL_MOUSEWHEEL)
-			//{
-			//	if (!_fullscreen)
-			//	{
-			//		_set_scale_etc(fabsf(_scale
-			//			+ ((-static_cast<float>(e.wheel.y))
-			//				* SCALE_MUL_VAL)));
-			//	}
-			//}
+			else if (handle_key_events(e, _key_status_map,
+				ksm_perf_total_backup));
 			else if ((e.type == SDL_MOUSEBUTTONDOWN)
-				|| (e.type = SDL_MOUSEBUTTONUP))
+				|| (e.type == SDL_MOUSEBUTTONUP))
 			{
-				//if (e.button.button == SDL_BUTTON_MIDDLE)
-				//{
-				//	if (e.type == SDL_MOUSEBUTTONDOWN)
-				//	{
-				//		_set_scale_etc(SCALE_DEFAULT_VAL);
-				//	}
-				//}
-				//else
 				if (e.button.button == SDL_BUTTON_RIGHT)
 				{
 					_mouse_right_button_state.back_up_and_update
 						(e.type == SDL_MOUSEBUTTONDOWN);
 				}
 			}
-			//else if (e.type == SDL_WINDOWEVENT)
-			//{
-			//	_update_renderer_scale_etc();
-			//}
+			else if (e.type == SDL_USEREVENT)
+			{
+				//printout("Global Timer Interval: ",
+				//	_global_timer_interval, "\n");
+				//tick_engine_now = true;
+			}
 		}
 
 		_update_engine_key_status();
+
+		if (_engine.key_status.any_key_just_now_down())
+		{
+			_engine.tick();
+		}
 
 		// Handle switching into or out of fullscreen.
 		if (_mouse_right_button_state.has_changed()
@@ -152,9 +169,6 @@ int RealMainSdl::run()
 						SDL_GetError());
 					exit(1);
 				}
-
-				//_update_logical_size_2d(true);
-				//_update_renderer_scale_etc(true);
 			}
 			else // if (_fullscreen)
 			{
@@ -165,9 +179,6 @@ int RealMainSdl::run()
 						SDL_GetError());
 					exit(1);
 				}
-
-				//_update_logical_size_2d();
-				//_update_renderer_scale_etc();
 			}
 
 			_fullscreen = !_fullscreen;
@@ -211,22 +222,7 @@ int RealMainSdl::run()
 			}
 		}
 
-		//_text_handler.draw_char('@', 
-		//	FgBgColorPair(FontColor::White, FontColor::Blue),
-		//	PosVec2(0, 0));
-
-		//_text_handler.draw_char('@', FontColor::Red, PosVec2(1, 0));
-		//_text_handler.draw_char('@', FontColor::Green, PosVec2(2, 0));
-		//_text_handler.draw_char('@', FontColor::Brown, PosVec2(3, 0));
-		//_text_handler.draw_char('@', FontColor::Yellow, PosVec2(4, 0));
-
-		//_text_handler.draw_char('@', FontColor::Blue, PosVec2(5, 0));
-		//_text_handler.draw_char('@', FontColor::Purple, PosVec2(6, 0));
-		//_text_handler.draw_char('@', FontColor::Cyan, PosVec2(7, 0));
-		//_text_handler.draw_char('@', FontColor::White, PosVec2(8, 0));
-		//_text_handler.draw_char('@', FontColor::LightGray, PosVec2(9, 0));
-
-		//_text_handler.draw_char('@', FontColor::DarkGray, PosVec2(10, 0));
+		//draw_test_chars();
 
 		SDL_RenderPresent(_renderer);
 		//SDL_Delay(10'000);
@@ -234,6 +230,30 @@ int RealMainSdl::run()
 	//--------
 	exit(0);
 	//--------
+}
+
+Uint32 RealMainSdl::_global_timer_callback(Uint32 interval, void* self)
+{
+	// This function creates data in an SDL user event because this
+	// function will be called in a separate thread from the main one.
+	reinterpret_cast<RealMainSdl*>(self)->_global_timer_interval
+		= interval;
+
+	SDL_Event event;
+	SDL_UserEvent userevent;
+
+	userevent.type = SDL_USEREVENT;
+	userevent.code = 0;
+	userevent.data1 = nullptr;
+	userevent.data2 = nullptr;
+
+	event.type = SDL_USEREVENT;
+	event.user = userevent;
+
+	SDL_PushEvent(&event);
+
+	// Used to prevent the timer from being cancelled.
+	return interval;
 }
 
 //void RealMainSdl::_update_logical_size_2d(bool use_default_scale)
@@ -302,32 +322,33 @@ void RealMainSdl::_update_engine_key_status()
 				(_key_status_map.at(sym).down.curr());
 		}
 	};
-
 	// Hard code the keybindings for now.
-	update_key_status(key_status.left_l, SDLK_s);
-	update_key_status(key_status.up_l, SDLK_e);
-	update_key_status(key_status.right_l, SDLK_f);
-	update_key_status(key_status.down_l, SDLK_d);
+	update_key_status(key_status.at(KeyStatus::LeftL), SDLK_s);
+	update_key_status(key_status.at(KeyStatus::UpL), SDLK_e);
+	update_key_status(key_status.at(KeyStatus::RightL), SDLK_f);
+	update_key_status(key_status.at(KeyStatus::DownR), SDLK_d);
 
-	update_key_status(key_status.left_r, SDLK_j);
-	update_key_status(key_status.up_r, SDLK_i);
-	update_key_status(key_status.right_r, SDLK_l);
-	update_key_status(key_status.down_r, SDLK_k);
+	update_key_status(key_status.at(KeyStatus::LeftR), SDLK_j);
+	update_key_status(key_status.at(KeyStatus::UpR), SDLK_i);
+	update_key_status(key_status.at(KeyStatus::RightR), SDLK_l);
+	update_key_status(key_status.at(KeyStatus::DownR), SDLK_k);
 
-	update_key_status(key_status.shoulder_1_l, SDLK_LSHIFT);
-	update_key_status(key_status.shoulder_2_l, SDLK_LCTRL);
+	update_key_status(key_status.at(KeyStatus::ShoulderL), SDLK_a);
+	update_key_status(key_status.at(KeyStatus::ShoulderR), SDLK_SEMICOLON);
 
-	update_key_status(key_status.shoulder_1_r, SDLK_RSHIFT);
-	update_key_status(key_status.shoulder_2_r, SDLK_RCTRL);
+	update_key_status(key_status.at(KeyStatus::Start), SDLK_RETURN);
+	update_key_status(key_status.at(KeyStatus::Select), SDLK_ESCAPE);
 
-	update_key_status(key_status.start, SDLK_RETURN);
-	update_key_status(key_status.select, SDLK_ESCAPE);
-}
+	//if (_key_status_map.contains(SDLK_s)
+	//	&& _key_status_map.at(SDLK_s).down.has_changed())
+	//if (_key_status_map.contains(SDLK_s))
+	//{
+	//	printout("testificate: ", key_status.at(KeyStatus::LeftL).prev(),
+	//		" ", key_status.at(KeyStatus::LeftL)(), "\n");
+	//	printout("testificate 2: ", _key_status_map.at(SDLK_s).down.prev(),
+	//		" ", _key_status_map.at(SDLK_s).down.curr(), "\n");
+	//}
 
-Uint32 RealMainSdl::_timer_callback(Uint32 interval, void* param)
-{
-	// This function creates data in an SDL user event because this
-	// function will be called in a separate thread from the main one.
 }
 
 } // namespace io

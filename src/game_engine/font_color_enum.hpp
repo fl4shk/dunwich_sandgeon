@@ -61,10 +61,20 @@ public:		// constants
 	static constexpr FontColor
 		DEFAULT_FG = FontColor::White,
 		DEFAULT_BG = FontColor::Black;
+public:		// types
+	class CtorArgs final
+	{
+	public:		// variables
+		FontColor fg, bg;
+	};
 public:		// variables
-	FontColor fg=DEFAULT_FG, bg=DEFAULT_BG;
+	FontColor fg = DEFAULT_FG, bg = DEFAULT_BG;
 public:		// functions
 	constexpr inline FgBgColorPair() = default;
+	constexpr inline FgBgColorPair(CtorArgs s_fg_and_bg)
+		: fg(s_fg_and_bg.fg), bg(s_fg_and_bg.bg)
+	{
+	}
 	constexpr inline FgBgColorPair(FontColor s_fg,
 		FontColor s_bg=DEFAULT_BG)
 		: fg(s_fg), bg(s_bg)

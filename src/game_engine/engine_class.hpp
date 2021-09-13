@@ -101,14 +101,77 @@ public:		// variables
 	//	final_input_kind = InputKind::None;
 	InputKind input_kind;
 
-	struct
+	class KeyStatus final
 	{
-		PrevCurrPair<bool>
-			left_l, up_l, right_l, down_l,
-			left_r, up_r, right_r, down_r,
-			shoulder_1_l, shoulder_2_l,
-			shoulder_1_r, shoulder_2_r,
-			start, select;
+	public:		// types
+		enum KeyKind
+		{
+			LeftL,
+			UpL,
+			RightL,
+			DownL,
+
+			LeftR,
+			UpR,
+			RightR,
+			DownR,
+
+			ShoulderL,
+			ShoulderR,
+
+			Start,
+			Select,
+
+			LimKeyKind,
+		};
+	public:		// variables
+		std::map<KeyKind, PrevCurrPair<bool>> state_map;
+	public:		// functions
+		inline KeyStatus()
+		{
+			auto init_state = [&](KeyKind key_kind) -> void
+			{
+				state_map[key_kind] = PrevCurrPair<bool>();
+				state_map.at(key_kind)() = false;
+				state_map.at(key_kind).back_up();
+			};
+
+			init_state(LeftL);
+			init_state(UpL);
+			init_state(RightL);
+			init_state(DownL);
+
+			init_state(LeftR);
+			init_state(UpR);
+			init_state(RightR);
+			init_state(DownR);
+
+			init_state(ShoulderL);
+			init_state(ShoulderR);
+
+			init_state(Start);
+			init_state(Select);
+		}
+		inline PrevCurrPair<bool>& at(KeyKind key_kind)
+		{
+			return state_map.at(key_kind);
+		}
+		inline const PrevCurrPair<bool>& at(KeyKind key_kind) const
+		{
+			return state_map.at(key_kind);
+		}
+
+		inline bool any_key_just_now_down() const
+		{
+			for (const auto& item: state_map)
+			{
+				if ((!item.second.prev()) && item.second())
+				{
+					return true;
+				}
+			}
+			return false;
+		}
 	} key_status;
 
 	//struct
@@ -122,12 +185,16 @@ private:		// variables
 	// dimensions: floor, y, x
 	std::vector<EntIdSetVec2d> _playfield_ent_id_v3d;
 
+	u64 _tick_counter = 0;
+
 public:		// functions
 	Engine();
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Engine);
 	~Engine();
 
 	//void dbg_check_ecs_engine(const PosVec2& wb_pos=PosVec2(0, 0));
+
+	void tick();
 
 	void position_ctor_callback(comp::Position* obj);
 	void position_dtor_callback(comp::Position* obj);
