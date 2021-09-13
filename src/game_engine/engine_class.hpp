@@ -161,11 +161,33 @@ public:		// variables
 			return state_map.at(key_kind);
 		}
 
-		inline bool any_key_just_now_down() const
+		inline bool any_key_up_just_now() const
+		{
+			for (const auto& item: state_map)
+			{
+				if (item.second.prev() && (!item.second()))
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+		inline bool any_key_down_just_now() const
 		{
 			for (const auto& item: state_map)
 			{
 				if ((!item.second.prev()) && item.second())
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+		inline bool has_changed() const
+		{
+			for (const auto& item: state_map)
+			{
+				if (item.second.has_changed())
 				{
 					return true;
 				}

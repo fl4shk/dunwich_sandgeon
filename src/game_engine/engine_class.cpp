@@ -121,6 +121,12 @@ void Engine::tick()
 {
 	printout("Ticking the game engine: ", _tick_counter, "\n");
 	++_tick_counter;
+
+	//if (key_status.has_changed())
+	//{
+	//	printout("game_engine::Engine::tick(): key_status.has_changed()",
+	//		" true.\n");
+	//}
 }
 
 void Engine::position_ctor_callback(comp::Position* obj)

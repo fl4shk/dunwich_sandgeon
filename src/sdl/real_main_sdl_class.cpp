@@ -42,8 +42,8 @@ int RealMainSdl::run()
 
 	sdl::prevent_dpi_scaling_issues();
 
-	_global_timer_id = SDL_AddTimer(GLOBAL_TIMER_DELAY,
-		&_global_timer_callback, this);
+	//_global_timer_id = SDL_AddTimer(GLOBAL_TIMER_DELAY,
+	//	&_global_timer_callback, this);
 
 	//_zoom = DEF_ZOOM;
 
@@ -116,10 +116,12 @@ int RealMainSdl::run()
 	bool quit = false;
 	while (!quit)
 	{
+		//printout("while (!quit) testificate\n");
+
 		_mouse_right_button_state.back_up();
 
-		//bool tick_engine_now = false;
-		bool ksm_perf_total_backup = true;
+		bool //tick_engine_now = false,
+			ksm_perf_total_backup = true;
 
 		SDL_Event e;
 
@@ -140,17 +142,23 @@ int RealMainSdl::run()
 						(e.type == SDL_MOUSEBUTTONDOWN);
 				}
 			}
-			else if (e.type == SDL_USEREVENT)
-			{
-				//printout("Global Timer Interval: ",
-				//	_global_timer_interval, "\n");
-				//tick_engine_now = true;
-			}
+			//else if (e.type == SDL_USEREVENT)
+			//{
+			//	//printout("Global Timer Interval: ",
+			//	//	_global_timer_interval, "\n");
+			//	tick_engine_now = true;
+			//}
 		}
+
+		//if (tick_engine_now)
+		//{
+		//	_update_engine_key_status();
+		//	_engine.tick();
+		//}
 
 		_update_engine_key_status();
 
-		if (_engine.key_status.any_key_just_now_down())
+		if (_engine.key_status.any_key_down_just_now())
 		{
 			_engine.tick();
 		}
@@ -232,29 +240,29 @@ int RealMainSdl::run()
 	//--------
 }
 
-Uint32 RealMainSdl::_global_timer_callback(Uint32 interval, void* self)
-{
-	// This function creates data in an SDL user event because this
-	// function will be called in a separate thread from the main one.
-	reinterpret_cast<RealMainSdl*>(self)->_global_timer_interval
-		= interval;
-
-	SDL_Event event;
-	SDL_UserEvent userevent;
-
-	userevent.type = SDL_USEREVENT;
-	userevent.code = 0;
-	userevent.data1 = nullptr;
-	userevent.data2 = nullptr;
-
-	event.type = SDL_USEREVENT;
-	event.user = userevent;
-
-	SDL_PushEvent(&event);
-
-	// Used to prevent the timer from being cancelled.
-	return interval;
-}
+//Uint32 RealMainSdl::_global_timer_callback(Uint32 interval, void* self)
+//{
+//	// This function creates data in an SDL user event because this
+//	// function will be called in a separate thread from the main one.
+//	reinterpret_cast<RealMainSdl*>(self)->_global_timer_interval
+//		= interval;
+//
+//	SDL_Event event;
+//	SDL_UserEvent userevent;
+//
+//	userevent.type = SDL_USEREVENT;
+//	userevent.code = 0;
+//	userevent.data1 = nullptr;
+//	userevent.data2 = nullptr;
+//
+//	event.type = SDL_USEREVENT;
+//	event.user = userevent;
+//
+//	SDL_PushEvent(&event);
+//
+//	// Used to prevent the timer from being cancelled.
+//	return interval;
+//}
 
 //void RealMainSdl::_update_logical_size_2d(bool use_default_scale)
 void RealMainSdl::_update_logical_size_2d()
@@ -312,14 +320,20 @@ void RealMainSdl::_update_engine_key_status()
 	auto& key_status = _engine.key_status;
 
 	auto update_key_status
-		= [this](PrevCurrPair<bool>& key_status_down,
-		SDL_Keycode sym) -> void
+		= [this](PrevCurrPair<bool>& key_status_down, SDL_Keycode sym)
+		-> void
 	{
 		if (_key_status_map.contains(sym))
 		{
-			key_status_down() = _key_status_map.at(sym).down.prev();
+			//printout("_update_engine_key_status(): ",
+			//	key_status_down.prev(), " ", key_status_down(), "\n");
+			//key_status_down() = _key_status_map.at(sym).down.prev();
 			key_status_down.back_up_and_update
-				(_key_status_map.at(sym).down.curr());
+				(_key_status_map.at(sym).down());
+			//printout("testificate: ", key_status_down.has_changed(), "; ",
+			//	key_status_down.prev(), " ", key_status_down(), "\n");
+			//printout("_update_engine_key_status() next: ",
+			//	key_status_down.prev(), " ", key_status_down(), "\n");
 		}
 	};
 	// Hard code the keybindings for now.
