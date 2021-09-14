@@ -158,7 +158,7 @@ int RealMainSdl::run()
 
 		_update_engine_key_status();
 
-		if (_engine.key_status.any_key_down_just_now())
+		if (_engine.key_status.any_key_went_down_just_now())
 		{
 			_engine.tick();
 		}

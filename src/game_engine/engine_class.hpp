@@ -161,7 +161,7 @@ public:		// variables
 			return state_map.at(key_kind);
 		}
 
-		inline bool any_key_up_just_now() const
+		inline bool any_key_went_up_just_now() const
 		{
 			for (const auto& item: state_map)
 			{
@@ -172,7 +172,7 @@ public:		// variables
 			}
 			return false;
 		}
-		inline bool any_key_down_just_now() const
+		inline bool any_key_went_down_just_now() const
 		{
 			for (const auto& item: state_map)
 			{
