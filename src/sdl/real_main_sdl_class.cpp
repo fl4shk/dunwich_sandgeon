@@ -42,8 +42,8 @@ int RealMainSdl::run()
 
 	sdl::prevent_dpi_scaling_issues();
 
-	//_global_timer_id = SDL_AddTimer(GLOBAL_TIMER_DELAY,
-	//	&_global_timer_callback, this);
+	_global_timer_id = SDL_AddTimer(GLOBAL_TIMER_DELAY,
+		&_global_timer_callback, this);
 
 	//_zoom = DEF_ZOOM;
 
@@ -120,7 +120,7 @@ int RealMainSdl::run()
 
 		_mouse_right_button_state.back_up();
 
-		bool //tick_engine_now = false,
+		bool tick_engine_now = false,
 			ksm_perf_total_backup = true;
 
 		SDL_Event e;
@@ -142,26 +142,27 @@ int RealMainSdl::run()
 						(e.type == SDL_MOUSEBUTTONDOWN);
 				}
 			}
-			//else if (e.type == SDL_USEREVENT)
-			//{
-			//	//printout("Global Timer Interval: ",
-			//	//	_global_timer_interval, "\n");
-			//	tick_engine_now = true;
-			//}
+			else if (e.type == SDL_USEREVENT)
+			{
+				//printout("Global Timer Interval: ",
+				//	_global_timer_interval, "\n");
+				_did_handle_global_timer = true;
+				tick_engine_now = true;
+			}
 		}
 
-		//if (tick_engine_now)
-		//{
-		//	_update_engine_key_status();
-		//	_engine.tick();
-		//}
-
-		_update_engine_key_status();
-
-		if (_engine.key_status.any_key_went_down_just_now())
+		if (tick_engine_now)
 		{
+			_update_engine_key_status();
 			_engine.tick();
 		}
+
+		//_update_engine_key_status();
+
+		//if (_engine.key_status.any_key_went_down_just_now())
+		//{
+		//	_engine.tick();
+		//}
 
 		// Handle switching into or out of fullscreen.
 		if (_mouse_right_button_state.has_changed()
@@ -240,29 +241,35 @@ int RealMainSdl::run()
 	//--------
 }
 
-//Uint32 RealMainSdl::_global_timer_callback(Uint32 interval, void* self)
-//{
-//	// This function creates data in an SDL user event because this
-//	// function will be called in a separate thread from the main one.
-//	reinterpret_cast<RealMainSdl*>(self)->_global_timer_interval
-//		= interval;
-//
-//	SDL_Event event;
-//	SDL_UserEvent userevent;
-//
-//	userevent.type = SDL_USEREVENT;
-//	userevent.code = 0;
-//	userevent.data1 = nullptr;
-//	userevent.data2 = nullptr;
-//
-//	event.type = SDL_USEREVENT;
-//	event.user = userevent;
-//
-//	SDL_PushEvent(&event);
-//
-//	// Used to prevent the timer from being cancelled.
-//	return interval;
-//}
+Uint32 RealMainSdl::_global_timer_callback(Uint32 interval, void* self)
+{
+	// This function creates data in an SDL user event because this
+	// function will be called in a separate thread from the main one.
+
+	auto casted_self = reinterpret_cast<RealMainSdl*>(self);
+
+	if (casted_self->_did_handle_global_timer)
+	{
+		casted_self->_did_handle_global_timer = false;
+		casted_self->_global_timer_interval = interval;
+
+		SDL_Event event;
+		SDL_UserEvent userevent;
+
+		userevent.type = SDL_USEREVENT;
+		userevent.code = 0;
+		userevent.data1 = nullptr;
+		userevent.data2 = nullptr;
+
+		event.type = SDL_USEREVENT;
+		event.user = userevent;
+
+		SDL_PushEvent(&event);
+	}
+
+	// Used to prevent the timer from being cancelled.
+	return interval;
+}
 
 //void RealMainSdl::_update_logical_size_2d(bool use_default_scale)
 void RealMainSdl::_update_logical_size_2d()

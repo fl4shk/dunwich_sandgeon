@@ -44,7 +44,8 @@ public:		// constants
 	//static constexpr float
 	//	SCALE_MUL_VAL = 0.1f, SCALE_DEFAULT_VAL = 1.0f;
 private:		// variables
-	//SDL_TimerID _global_timer_id;
+	SDL_TimerID _global_timer_id;
+	bool _did_handle_global_timer = true;
 	Uint32 _global_timer_interval = 0;
 	PosVec2 _logical_size_2d;
 	//int _zoom = DEF_ZOOM;
@@ -64,7 +65,7 @@ public:		// functions
 
 	//GEN_GETTER_BY_VAL(zoom);
 private:		// functions
-	//static Uint32 _global_timer_callback(Uint32 interval, void* self);
+	static Uint32 _global_timer_callback(Uint32 interval, void* self);
 	//inline void _set_scale_etc(float n_scale)
 	//{
 	//	_scale = n_scale;

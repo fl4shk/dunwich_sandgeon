@@ -207,7 +207,7 @@ private:		// variables
 	// dimensions: floor, y, x
 	std::vector<EntIdSetVec2d> _playfield_ent_id_v3d;
 
-	u64 _tick_counter = 0;
+	//u64 _tick_counter = 0;
 
 public:		// functions
 	Engine();

@@ -119,8 +119,8 @@ Engine::~Engine()
 
 void Engine::tick()
 {
-	printout("Ticking the game engine: ", _tick_counter, "\n");
-	++_tick_counter;
+	//printout("Ticking the game engine: ", _tick_counter, "\n");
+	//++_tick_counter;
 
 	//if (key_status.has_changed())
 	//{
