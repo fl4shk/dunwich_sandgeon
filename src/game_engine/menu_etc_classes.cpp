@@ -20,82 +20,118 @@ namespace dungwich_sandeon
 {
 namespace game_engine
 {
+//--------
+Rope split_rope_by_whitespace(const Rope& rope)
+{
+	// Create a new `Rope` that consists of the contents of `rope` split by
+	// whatever amount of whitespace characters is between each
+	// colored `std::string`. As such, whitespace characters in this
+	// new `Rope` are nonexistent.
+	Rope ret;
 
+	for (const auto& rope_part: rope)
+	{
+		auto str_vec = split_str_by_whitespace(rope_part.str);
+
+		for (const auto& str: str_vec)
+		{
+			ret.push_back(RopePart({.str=str,
+				.color_pair=rope_part.color_pair,
+				.gs_color_pair=rope_part.gs_color_pair}));
+		}
+	}
+
+	return ret;
+}
+RopeDeque wrap_rope(const Rope& rope, i64 row_length)
+{
+	RopeDeque ret;
+
+	if (rope.size() == 0)
+	{
+		return ret;
+	}
+
+	Rope split_rope(split_rope_by_whitespace(rope));
+
+	if (split_rope.size() == 0)
+	{
+		return ret;
+	}
+
+	i64
+		col = 0,
+		prev_col = 0;
+
+	for (size_t i=0; i<split_rope.size(); ++i)
+	{
+		auto& rope_part = split_rope.at(i);
+		const i64 next_col = col + 1 + rope_part.str.size();
+
+		if (col <= prev_col)
+		{
+			ret.push_back(Rope());
+		}
+		ret.back().push_back(std::move(rope_part));
+
+		prev_col = col;
+		col = (next_col < row_length) ? next_col : 0;
+	}
+
+	return ret;
+}
+//--------
 const std::string
-	MsgLog::TAB_SPACING_STR(MsgLog::spaces_str(MsgLog::TAB_SPACING_SIZE)),
-	MsgLog::WIDGET_SPACING_STR(MsgLog::spaces_str
-		(MsgLog::WIDGET_SPACING_SIZE));
+	MsgLog::TAB_SPACING_STR(spaces_str(MsgLog::TAB_SPACING_SIZE)),
+	MsgLog::WIDGET_SPACING_STR(spaces_str(MsgLog::WIDGET_SPACING_SIZE));
 
-MsgLog::MsgLog(const Data& s_data)
-	: _data(s_data)
+MsgLog::MsgLog(const RopeDeque& s_data, i64 s_row_length)
+	: _data(s_data), _row_length(s_row_length)
 {
 }
-MsgLog::MsgLog(Data&& s_data)
-	: _data(s_data)
+MsgLog::MsgLog(RopeDeque&& s_data, i64 s_row_length)
+	: _data(std::move(s_data)), _row_length(s_row_length)
 {
 }
 
+void MsgLog::clear()
+{
+	_data.clear();
+}
 void MsgLog::pop_front()
 {
 	_data.pop_front();
 }
+
 void MsgLog::push_back(const Rope& to_push)
 {
-	_data.push_back(to_push);
-}
-void MsgLog::push_back(Rope&& to_push)
-{
-	_data.push_back(std::move(to_push));
-}
+	//_data.push_back(wrap_rope(to_push, row_length()));
+	auto wrapped = wrap_rope(to_push, row_length());
 
-void MsgLog::wrap(size_t row_length)
-{
-	for (auto& rope: _data)
+	// FIXME: The current use of `auto` here might not work, but I don't
+	// remember my C++ well enough to say for sure. I will come back to
+	// this later.
+	for (auto& single_rope: wrapped)
 	{
-		wrap_rope(rope, row_length);
+		_data.push_back(std::move(single_rope));
 	}
 }
 
-void MsgLog::wrap_rope(Rope& rope, size_t row_length)
+void MsgLog::push_back(const RopePart& to_push)
 {
-	std::array<Rope, 2> temp_rope_arr;
-
-	for (const auto& rope_part: rope)
-	{
-		for (size_t i=0; i<rope_part.str.size(); ++i)
-		{
-			auto c = rope_part.str.at(i);
-
-			while (std::isspace(c) && (i < rope_part.str.size()))
-			{
-				++i;
-				c = rope_part.str.at(i);
-			}
-
-			bool did_first_push_back = false;
-
-			while ((!std::isspace(c)) && (i < rope_part.str.size()))
-			{
-				if (!did_first_push_back)
-				{
-					did_first_push_back = true;
-					temp_rope_arr.at(0).push_back(RopePart(c,
-						rope_part.color_pair, rope_part.gs_color_pair));
-				}
-				else // if (did_first_push_back)
-				{
-					temp_rope_arr.at(0).back().str += c;
-				}
-
-				++i;
-				c = rope_part.str.at(i);
-			}
-		}
-	}
-
-	rope = std::move(temp_rope_arr.at(1));
+	Rope to_push_rope;
+	to_push_rope.push_back(to_push);
+	push_back(to_push_rope);
 }
 
+//void MsgLog::wrap(size_t row_length)
+//{
+//	//for (auto& rope: _data)
+//	//{
+//	//	wrap_rope(rope, row_length);
+//	//}
+//}
+//--------
 const std::string
 	Menu::WIDGET_BUTTON_STR("(*)"),
 
@@ -116,6 +152,6 @@ Menu::Menu(const std::string& s_start_key, NodeMap&& s_node_map)
 	_node_map(std::move(s_node_map))
 {
 }
-
+//--------
 } // namespace game_engine
 } // namespace dungwich_sandeon

@@ -26,6 +26,7 @@
 #include "liborangepower_src/misc/misc_defines.hpp"
 #include "liborangepower_src/gen_class_innards_defines.hpp"
 #include "liborangepower_src/strings/string_conversion_stuff.hpp"
+#include "liborangepower_src/strings/string_extra_stuff.hpp"
 #include "liborangepower_src/containers/vec2_classes.hpp"
 #include "liborangepower_src/containers/vec3_classes.hpp"
 #include "liborangepower_src/containers/prev_curr_pair_classes.hpp"

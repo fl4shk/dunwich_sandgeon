@@ -20,11 +20,80 @@
 
 #include "../misc_includes.hpp"
 #include "font_color_enum.hpp"
+#include "basic_window_classes.hpp"
+#include "comp/general_comp_classes.hpp"
 
 namespace dungwich_sandeon
 {
 namespace game_engine
 {
+
+class RopePart final
+{
+public:		// types
+	class CtorArgs final
+	{
+	public:		// variables
+		std::string str;
+		FgBgColorPair
+			color_pair,
+			gs_color_pair;
+	};
+public:		// variables
+	std::string str;
+	FgBgColorPair
+		color_pair = FontColor::White,
+		gs_color_pair = FontColor::White;
+public:		// variables
+	inline RopePart() = default;
+
+	inline RopePart(const CtorArgs& ctor_args)
+		: str(ctor_args.str), color_pair(ctor_args.color_pair),
+		gs_color_pair(ctor_args.gs_color_pair)
+	{
+	}
+	inline RopePart(CtorArgs&& ctor_args)
+		: str(std::move(ctor_args.str)),
+		color_pair(ctor_args.color_pair),
+		gs_color_pair(ctor_args.gs_color_pair)
+	{
+	}
+	inline RopePart(comp::Drawable::Data drawable_data)
+		: str(""), color_pair(drawable_data.color_pair),
+		gs_color_pair(drawable_data.gs_color_pair)
+	{
+		str += drawable_data.c;
+	}
+
+	inline RopePart(const std::string& s_str,
+		FgBgColorPair s_color_pair, FgBgColorPair s_gs_color_pair)
+		: str(s_str), color_pair(s_color_pair),
+		gs_color_pair(s_gs_color_pair)
+	{
+	}
+	inline RopePart(std::string&& s_str,
+		FgBgColorPair s_color_pair, FgBgColorPair s_gs_color_pair)
+		: str(std::move(s_str)), color_pair(s_color_pair),
+		gs_color_pair(s_gs_color_pair)
+	{
+	}
+	inline RopePart(char c,
+		FgBgColorPair s_color_pair, FgBgColorPair s_gs_color_pair)
+		: str(""), color_pair(s_color_pair),
+		gs_color_pair(s_gs_color_pair)
+	{
+		str += c;
+	}
+
+	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(RopePart);
+	inline ~RopePart() = default;
+};
+
+using Rope = std::deque<RopePart>;
+using RopeDeque = std::deque<Rope>;
+
+Rope split_rope_by_whitespace(const Rope& rope);
+RopeDeque wrap_rope(const Rope& rope, i64 row_length);
 
 class MsgLog final
 {
@@ -35,76 +104,33 @@ public:		// constants
 	static const std::string
 		TAB_SPACING_STR,
 		WIDGET_SPACING_STR;
-public:		// types
-	//class DataInnerElem final
-	//{
-	//public:		// variables
-	//	FgBgColorPair color_pair;
-	//	std::string str;
-	//};
-	class RopePart final
-	{
-	public:		// variables
-		std::string str;
-		FgBgColorPair
-			color_pair=FontColor::White,
-			gs_color_pair=FontColor::White;
-	public:		// variables
-		inline RopePart() = default;
-		inline RopePart(const std::string& s_str,
-			FgBgColorPair s_color_pair, FgBgColorPair s_gs_color_pair)
-			: str(s_str), color_pair(s_color_pair),
-			gs_color_pair(s_gs_color_pair)
-		{
-		}
-		inline RopePart(std::string&& s_str,
-			FgBgColorPair s_color_pair, FgBgColorPair s_gs_color_pair)
-			: str(std::move(s_str)), color_pair(s_color_pair),
-			gs_color_pair(s_gs_color_pair)
-		{
-		}
-		inline RopePart(char s_str_only_char,
-			FgBgColorPair s_color_pair, FgBgColorPair s_gs_color_pair)
-			: str(""), color_pair(s_color_pair),
-			gs_color_pair(s_gs_color_pair)
-		{
-			str += s_str_only_char;
-		}
-		GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(RopePart);
-		inline ~RopePart() = default;
-	};
-
-	using Rope = std::deque<RopePart>;
-	using Data = std::deque<Rope>;
 private:		// variables
-	Data _data;
+	RopeDeque _data;
+	i64 _row_length = Window::SCREEN_SIZE_2D.x;
 public:		// functions
-	MsgLog() = default;
-	MsgLog(const Data& s_data);
-	MsgLog(Data&& s_data);
-	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(MsgLog);
-	~MsgLog() = default;
-
-	static inline std::string spaces_str(size_t length)
+	inline MsgLog(i64 s_row_length=Window::SCREEN_SIZE_2D.x)
+		: _row_length(s_row_length)
 	{
-		std::string ret;
-
-		for (size_t i=0; i<length; ++i)
-		{
-			ret += " ";
-		}
-
-		return ret;
 	}
+	MsgLog(const RopeDeque& s_data,
+		i64 s_row_length=Window::SCREEN_SIZE_2D.x);
+	MsgLog(RopeDeque&& s_data,
+		i64 s_row_length=Window::SCREEN_SIZE_2D.x);
+	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(MsgLog);
+	inline ~MsgLog() = default;
 
+	void clear();
 	void pop_front();
-	void push_back(const Rope& to_push);
-	void push_back(Rope&& to_push);
 
-	void wrap(size_t row_length);
-	static void wrap_rope(Rope& rope, size_t row_length);
+	void push_back(const Rope& to_push);
+	void push_back(const RopePart& to_push);
+
+	//void wrap();
 
 	GEN_GETTER_BY_CON_REF(data);
+
+	// `set_row_length()` might now actually be necesary
+	GEN_GETTER_AND_SETTER_BY_VAL(row_length);
 };
 
 

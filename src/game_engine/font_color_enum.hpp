@@ -71,8 +71,8 @@ public:		// variables
 	FontColor fg = DEFAULT_FG, bg = DEFAULT_BG;
 public:		// functions
 	constexpr inline FgBgColorPair() = default;
-	constexpr inline FgBgColorPair(CtorArgs s_fg_and_bg)
-		: fg(s_fg_and_bg.fg), bg(s_fg_and_bg.bg)
+	constexpr inline FgBgColorPair(CtorArgs ctor_args)
+		: fg(ctor_args.fg), bg(ctor_args.bg)
 	{
 	}
 	constexpr inline FgBgColorPair(FontColor s_fg,
