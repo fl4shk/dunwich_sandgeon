@@ -200,6 +200,8 @@ int RealMainSdl::run()
 		// Draw tiles/graphics here.
 		auto& screen_window = _engine.screen_window;
 
+		screen_window.clear();
+
 		// Temporary drawing into `_engine.screen_window`.
 		screen_window.draw(_engine.playfield_window, true);
 		screen_window.draw(_engine.log_window, true);

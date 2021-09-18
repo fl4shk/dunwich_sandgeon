@@ -39,6 +39,23 @@ const std::string
 	Window::BORDER_VERT_KIND_STR("game_engine::Window::BorderVert"),
 	Window::BLANK_KIND_STR("game_engine::Window::Blank");
 //--------
+const comp::Drawable::Data& Window::BORDER_CORNER_DRAWABLE_DATA()
+{
+	return comp::DRAWABLE_DATA_MAP.at(BORDER_CORNER_KIND_STR);
+}
+const comp::Drawable::Data& Window::BORDER_HORIZ_DRAWABLE_DATA()
+{
+	return comp::DRAWABLE_DATA_MAP.at(BORDER_HORIZ_KIND_STR);
+}
+const comp::Drawable::Data& Window::BORDER_VERT_DRAWABLE_DATA()
+{
+	return comp::DRAWABLE_DATA_MAP.at(BORDER_VERT_KIND_STR);
+}
+const comp::Drawable::Data& Window::BLANK_DRAWABLE_DATA()
+{
+	return comp::DRAWABLE_DATA_MAP.at(BLANK_KIND_STR);
+}
+
 Window::Window()
 {
 }
@@ -272,23 +289,6 @@ void Window::draw(const MsgLog& msg_log)
 //		pq.pop();
 //	}
 //}
-
-const comp::Drawable::Data& Window::BORDER_CORNER_DRAWABLE_DATA()
-{
-	return comp::DRAWABLE_DATA_MAP.at(BORDER_CORNER_KIND_STR);
-}
-const comp::Drawable::Data& Window::BORDER_HORIZ_DRAWABLE_DATA()
-{
-	return comp::DRAWABLE_DATA_MAP.at(BORDER_HORIZ_KIND_STR);
-}
-const comp::Drawable::Data& Window::BORDER_VERT_DRAWABLE_DATA()
-{
-	return comp::DRAWABLE_DATA_MAP.at(BORDER_VERT_KIND_STR);
-}
-const comp::Drawable::Data& Window::BLANK_DRAWABLE_DATA()
-{
-	return comp::DRAWABLE_DATA_MAP.at(BLANK_KIND_STR);
-}
 //--------
 //LayeredWindow::LayeredWindow()
 //{

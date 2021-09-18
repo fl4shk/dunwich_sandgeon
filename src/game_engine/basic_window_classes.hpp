@@ -68,6 +68,12 @@ public:		// constants
 	//	BLANK_DRAWABLE_DATA{.c=' ',
 	//		.color_pair=FontColor::Black,
 	//		.gs_color_pair=FontColor::Black};
+	static const comp::Drawable::Data& BORDER_CORNER_DRAWABLE_DATA();
+	static const comp::Drawable::Data& BORDER_HORIZ_DRAWABLE_DATA();
+	static const comp::Drawable::Data& BORDER_VERT_DRAWABLE_DATA();
+	static const comp::Drawable::Data& BLANK_DRAWABLE_DATA();
+
+
 protected:		// variables
 	Engine* _engine = nullptr;
 	//int _priority = 0;
@@ -142,12 +148,6 @@ public:		// functions
 	//void draw(const LayeredWindow& layered_win);
 	//void draw_text(const PosVec2& where, const std::string& what);
 	
-	static const comp::Drawable::Data& BORDER_CORNER_DRAWABLE_DATA();
-	static const comp::Drawable::Data& BORDER_HORIZ_DRAWABLE_DATA();
-	static const comp::Drawable::Data& BORDER_VERT_DRAWABLE_DATA();
-	static const comp::Drawable::Data& BLANK_DRAWABLE_DATA();
-
-
 	//GEN_GETTER_AND_SETTER_BY_VAL(priority);
 	GEN_GETTER_BY_CON_REF(pos);
 	GEN_GETTER_BY_CON_REF(ent_id_v2d);
