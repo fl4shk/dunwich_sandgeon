@@ -64,8 +64,8 @@ const PosVec2
 		Window::WITH_BORDER_SCREEN_SIZE_2D.y / 2),
 
 	Engine::YES_NO_WINDOW_END_POS
-		(Engine::YES_NO_WINDOW_POS.x + 4 + Menu::WIDGET_SPACING_SIZE,
-		Engine::YES_NO_WINDOW_POS.y + 4 + Menu::WIDGET_SPACING_SIZE);
+		(Engine::YES_NO_WINDOW_POS.x + 3 + Menu::WIDGET_SPACING_SIZE,
+		Engine::YES_NO_WINDOW_POS.y + 2 + Menu::WIDGET_SPACING_SIZE);
 
 Engine::Engine()
 	: screen_window(this, PosVec2(), Window::WITH_BORDER_SCREEN_SIZE_2D),

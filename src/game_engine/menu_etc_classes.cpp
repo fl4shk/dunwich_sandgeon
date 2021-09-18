@@ -59,24 +59,80 @@ RopeDeque wrap_rope(const Rope& rope, size_t row_length)
 		return ret;
 	}
 
+	ret.push_back(Rope());
+
 	size_t
+		row = 0,
 		col = 0,
 		prev_col = 0;
+
+	//printout("game_engine::wrap_rope():\n");
+
+	//for (const auto& rope_part: split_rope)
+	//{
+	//	printout(rope_part.str, "\n");
+	//}
+	//printout("\n");
+
+	bool added_rope = false;
 
 	for (size_t i=0; i<split_rope.size(); ++i)
 	{
 		auto& rope_part = split_rope.at(i);
-		const size_t next_col = col + 1u + rope_part.str.size();
 
-		if (col <= prev_col)
-		{
-			ret.push_back(Rope());
-		}
-		ret.back().push_back(std::move(rope_part));
+		//printout(i, "; ",
+		//	"\"", rope_part.str, "\" ", rope_part.str.size(), "\n");
+		//printout(row, " ", col, " ", prev_col, "; ", row_length, "\n");
 
 		prev_col = col;
-		col = (next_col < row_length) ? next_col : 0;
+
+		// The `1u` accounts for the space following the word.
+		col += rope_part.str.size();
+
+		if ((!added_rope) && (col > row_length))
+		{
+			//printout("!!new column!!\n",
+			//	row, " ", col, " ", prev_col, "; ", row_length, "\n");
+			ret.push_back(Rope());
+			++row;
+			col = 0;
+		}
+
+		//printout(row, " ", col, " ", prev_col, "; ", row_length, "\n");
+
+		added_rope = false;
+
+		ret.back().push_back(std::move(rope_part));
+
+		if (((i + 1) < split_rope.size())
+			&& ((col + split_rope.at(i + 1).str.size()) > row_length))
+		{
+			//printout("!!new column 2!!\n",
+			//	row, " ", col, " ", prev_col, "; ", row_length, "\n");
+			ret.push_back(Rope());
+			++row;
+			col = 0;
+			added_rope = true;
+		}
+
+		if (col > 0)
+		{
+			++col;
+		}
+
+		//printout("\n\n");
 	}
+	//printout("\n");
+
+	//for (const auto& rope: ret)
+	//{
+	//	for (const auto& rope_part: rope)
+	//	{
+	//		printout(rope_part.str, " ");
+	//	}
+	//	printout("\n");
+	//}
+	//printout("\n\n");
 
 	return ret;
 }
@@ -113,8 +169,7 @@ void MsgLog::push_back(const Rope& to_push, bool do_pop_front)
 	{
 		_data.push_back(std::move(single_rope));
 
-		// I believe there's no need for a `while` loop here.
-		if (do_pop_front && (_data.size() >= size_2d().y))
+		while (do_pop_front && (_data.size() >= size_2d().y))
 		{
 			pop_front();
 		}

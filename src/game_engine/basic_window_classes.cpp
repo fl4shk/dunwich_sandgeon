@@ -267,6 +267,77 @@ void Window::draw(const Menu& menu)
 
 void Window::draw(const MsgLog& msg_log)
 {
+	//for (const auto& rope: msg_log.data())
+
+	for (size_t j=0; j<msg_log.data().size(); ++j)
+	{
+		const auto& ROPE = msg_log.data().at(j);
+
+		SizeVec2 temp_pos(0, j);
+
+		auto draw_at_temp_pos
+			= [this, &temp_pos](comp::Drawable::Data drawable_data) -> void
+		{
+			const auto DST_ENT_ID = ent_id_at(temp_pos);
+			auto dst = _engine->ecs_engine
+				.casted_comp_at<comp::Drawable>(DST_ENT_ID);
+
+			dst->set_data(drawable_data);
+		};
+
+		for (const auto& rope_part: ROPE)
+		{
+			for (size_t i=0; i<rope_part.str.size(); ++i, ++temp_pos.x)
+			{
+				draw_at_temp_pos
+				(
+					comp::Drawable::Data
+					{
+						.c=rope_part.str.at(i),
+						.color_pair=rope_part.color_pair,
+						.gs_color_pair=rope_part.gs_color_pair
+					}
+				);
+				//printout("testificate: ",
+				//	"\"", rope_part.str, "\"",
+				//	" ", rope_part.str.size(), " ",
+				//	temp_pos.x, "\n");
+			}
+
+			if (temp_pos.x < size_2d().x)
+			{
+				draw_at_temp_pos
+				(
+					comp::Drawable::Data
+					{
+						.c=' ',
+						.color_pair=rope_part.color_pair,
+						.gs_color_pair=rope_part.gs_color_pair
+					}
+				);
+				//printout("testificate 2: ",
+				//	"\"", rope_part.str, "\"",
+				//	" ", rope_part.str.size(), " ",
+				//	temp_pos.x, "\n");
+
+				++temp_pos.x;
+			}
+		}
+		for (; temp_pos.x < size_2d().x; ++temp_pos.x)
+		{
+			draw_at_temp_pos
+			(
+				comp::Drawable::Data
+				{
+					.c=' ',
+					.color_pair=FontColor::Black,
+					.gs_color_pair=FontColor::Black
+				}
+			);
+
+			//printout("testificate 3: ", temp_pos.x, "\n");
+		}
+	}
 }
 
 //void Window::draw(const Hud& hud)

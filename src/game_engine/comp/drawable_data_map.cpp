@@ -25,6 +25,9 @@ namespace game_engine
 namespace comp
 {
 
+static constexpr FgBgColorPair
+	WINDOW_BORDER_COLOR_PAIR = FontColor::Green;
+
 const std::map<std::string, Drawable::Data> DRAWABLE_DATA_MAP
 = {
 	// ' ', 32
@@ -32,8 +35,8 @@ const std::map<std::string, Drawable::Data> DRAWABLE_DATA_MAP
 		Window::BLANK_KIND_STR,
 		{
 			.c=' ',
-			.color_pair=FontColor::LightGray,
-			.gs_color_pair=FontColor::LightGray
+			.color_pair=FontColor::Black,
+			.gs_color_pair=FontColor::Black
 		}
 	},
 	// '#', 35
@@ -51,7 +54,7 @@ const std::map<std::string, Drawable::Data> DRAWABLE_DATA_MAP
 		Window::BORDER_CORNER_KIND_STR,
 		{
 			.c='+',
-			.color_pair=FontColor::Green,
+			.color_pair=WINDOW_BORDER_COLOR_PAIR,
 			.gs_color_pair=FontColor::White
 		}
 	},
@@ -60,7 +63,7 @@ const std::map<std::string, Drawable::Data> DRAWABLE_DATA_MAP
 		Window::BORDER_HORIZ_KIND_STR,
 		{
 			.c='-',
-			.color_pair=FontColor::Green,
+			.color_pair=WINDOW_BORDER_COLOR_PAIR,
 			.gs_color_pair=FontColor::White
 		}
 	},
@@ -110,7 +113,7 @@ const std::map<std::string, Drawable::Data> DRAWABLE_DATA_MAP
 		Window::BORDER_VERT_KIND_STR,
 		{
 			.c='|',
-			.color_pair=FontColor::Green,
+			.color_pair=WINDOW_BORDER_COLOR_PAIR,
 			.gs_color_pair=FontColor::White
 		}
 	},

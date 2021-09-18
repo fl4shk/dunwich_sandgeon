@@ -112,20 +112,26 @@ int RealMainSdl::run()
 		_text_handler.draw_char('@', FontColor::DarkGray, PosVec2(10, 0));
 	};
 	//--------
-	auto& playfield_window = _engine.playfield_window;
+	auto& yes_no_window = _engine.yes_no_window;
 	const MsgLog
 		msg_log
 		(
 			{
 				{
-					RopePart("This is a red string.", FontColor::Red,
+					//RopePart("This is a red string.", FontColor::Red,
+					//	FontColor::DarkGray),
+					RopePart("Red string 2", FontColor::Red,
 						FontColor::DarkGray),
-					RopePart("This is a green string.", FontColor::Green,
-						FontColor::LightGray)
-				}
+				},
+				//{
+				//	RopePart("This is a green string.", FontColor::Green,
+				//		FontColor::LightGray),
+				//}
 			},
-			playfield_window.size_2d()
+			yes_no_window.size_2d()
+			//SizeVec2(6, 200)
 		);
+	_engine.yes_no_window.draw(msg_log);
 	//--------
 	bool quit = false;
 	while (!quit)
@@ -215,14 +221,14 @@ int RealMainSdl::run()
 		auto& screen_window = _engine.screen_window;
 
 		screen_window.clear();
-		playfield_window.draw(msg_log);
+		//playfield_window.draw(msg_log);
 
 		// Temporary drawing into `_engine.screen_window`.
 		screen_window.draw(_engine.playfield_window, true);
 		screen_window.draw(_engine.log_window, true);
 		screen_window.draw(_engine.hud_window, true);
 		//screen_window.draw(_engine.aux_window);
-		screen_window.draw(_engine.popup_window);
+		//screen_window.draw(_engine.popup_window);
 		screen_window.draw(_engine.yes_no_window);
 
 		for (size_t j=0; j<screen_window.with_border_size_2d().y; ++j)
