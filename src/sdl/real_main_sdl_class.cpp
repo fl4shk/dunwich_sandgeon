@@ -111,7 +111,21 @@ int RealMainSdl::run()
 
 		_text_handler.draw_char('@', FontColor::DarkGray, PosVec2(10, 0));
 	};
-
+	//--------
+	auto& playfield_window = _engine.playfield_window;
+	const MsgLog
+		msg_log
+		(
+			{
+				{
+					RopePart("This is a red string.", FontColor::Red,
+						FontColor::DarkGray),
+					RopePart("This is a green string.", FontColor::Green,
+						FontColor::LightGray)
+				}
+			},
+			playfield_window.size_2d()
+		);
 	//--------
 	bool quit = false;
 	while (!quit)
@@ -201,6 +215,7 @@ int RealMainSdl::run()
 		auto& screen_window = _engine.screen_window;
 
 		screen_window.clear();
+		playfield_window.draw(msg_log);
 
 		// Temporary drawing into `_engine.screen_window`.
 		screen_window.draw(_engine.playfield_window, true);

@@ -43,7 +43,7 @@ Rope split_rope_by_whitespace(const Rope& rope)
 
 	return ret;
 }
-RopeDeque wrap_rope(const Rope& rope, i64 row_length)
+RopeDeque wrap_rope(const Rope& rope, size_t row_length)
 {
 	RopeDeque ret;
 
@@ -59,14 +59,14 @@ RopeDeque wrap_rope(const Rope& rope, i64 row_length)
 		return ret;
 	}
 
-	i64
+	size_t
 		col = 0,
 		prev_col = 0;
 
 	for (size_t i=0; i<split_rope.size(); ++i)
 	{
 		auto& rope_part = split_rope.at(i);
-		const i64 next_col = col + 1 + rope_part.str.size();
+		const size_t next_col = col + 1u + rope_part.str.size();
 
 		if (col <= prev_col)
 		{
@@ -85,13 +85,14 @@ const std::string
 	MsgLog::TAB_SPACING_STR(spaces_str(MsgLog::TAB_SPACING_SIZE)),
 	MsgLog::WIDGET_SPACING_STR(spaces_str(MsgLog::WIDGET_SPACING_SIZE));
 
-MsgLog::MsgLog(const RopeDeque& s_data, i64 s_row_length)
-	: _data(s_data), _row_length(s_row_length)
+MsgLog::MsgLog(const RopeDeque& s_data, const SizeVec2& s_size_2d)
 {
-}
-MsgLog::MsgLog(RopeDeque&& s_data, i64 s_row_length)
-	: _data(std::move(s_data)), _row_length(s_row_length)
-{
+	_size_2d = s_size_2d;
+
+	for (const auto& rope: s_data)
+	{
+		push_back(rope);
+	}
 }
 
 void MsgLog::clear()
@@ -103,34 +104,29 @@ void MsgLog::pop_front()
 	_data.pop_front();
 }
 
-void MsgLog::push_back(const Rope& to_push)
+void MsgLog::push_back(const Rope& to_push, bool do_pop_front)
 {
-	//_data.push_back(wrap_rope(to_push, row_length()));
-	auto wrapped = wrap_rope(to_push, row_length());
+	//_data.push_back(wrap_rope(to_push, size_2d().x));
+	auto wrapped = wrap_rope(to_push, size_2d().x);
 
-	// FIXME: The current use of `auto` here might not work, but I don't
-	// remember my C++ well enough to say for sure. I will come back to
-	// this later.
 	for (auto& single_rope: wrapped)
 	{
 		_data.push_back(std::move(single_rope));
+
+		// I believe there's no need for a `while` loop here.
+		if (do_pop_front && (_data.size() >= size_2d().y))
+		{
+			pop_front();
+		}
 	}
 }
 
-void MsgLog::push_back(const RopePart& to_push)
+void MsgLog::push_back(const RopePart& to_push, bool do_pop_front)
 {
 	Rope to_push_rope;
 	to_push_rope.push_back(to_push);
-	push_back(to_push_rope);
+	push_back(to_push_rope, do_pop_front);
 }
-
-//void MsgLog::wrap(size_t row_length)
-//{
-//	//for (auto& rope: _data)
-//	//{
-//	//	wrap_rope(rope, row_length);
-//	//}
-//}
 //--------
 const std::string
 	Menu::WIDGET_BUTTON_STR("(*)"),

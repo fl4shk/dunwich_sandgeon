@@ -93,7 +93,7 @@ using Rope = std::deque<RopePart>;
 using RopeDeque = std::deque<Rope>;
 
 Rope split_rope_by_whitespace(const Rope& rope);
-RopeDeque wrap_rope(const Rope& rope, i64 row_length);
+RopeDeque wrap_rope(const Rope& rope, size_t row_length);
 
 class MsgLog final
 {
@@ -106,31 +106,27 @@ public:		// constants
 		WIDGET_SPACING_STR;
 private:		// variables
 	RopeDeque _data;
-	i64 _row_length = Window::SCREEN_SIZE_2D.x;
+	SizeVec2 _size_2d = Window::SCREEN_SIZE_2D;
 public:		// functions
-	inline MsgLog(i64 s_row_length=Window::SCREEN_SIZE_2D.x)
-		: _row_length(s_row_length)
+	inline MsgLog(const SizeVec2& s_size_2d=Window::SCREEN_SIZE_2D)
+		: _size_2d(s_size_2d)
 	{
 	}
 	MsgLog(const RopeDeque& s_data,
-		i64 s_row_length=Window::SCREEN_SIZE_2D.x);
-	MsgLog(RopeDeque&& s_data,
-		i64 s_row_length=Window::SCREEN_SIZE_2D.x);
+		const SizeVec2& s_size_2d=Window::SCREEN_SIZE_2D);
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(MsgLog);
 	inline ~MsgLog() = default;
 
 	void clear();
-	void pop_front();
 
-	void push_back(const Rope& to_push);
-	void push_back(const RopePart& to_push);
+	void pop_front();
+	void push_back(const Rope& to_push, bool do_pop_front=true);
+	void push_back(const RopePart& to_push, bool do_pop_front=true);
 
 	//void wrap();
 
 	GEN_GETTER_BY_CON_REF(data);
-
-	// `set_row_length()` might now actually be necesary
-	GEN_GETTER_AND_SETTER_BY_VAL(row_length);
+	GEN_GETTER_BY_CON_REF(size_2d);
 };
 
 

@@ -36,6 +36,12 @@ public:		// types
 	using Window = game_engine::Window;
 	using Engine = game_engine::Engine;
 	using KeyStatus = game_engine::KeyStatus;
+
+	using Menu = game_engine::Menu;
+	using MsgLog = game_engine::MsgLog;
+	using RopePart = game_engine::RopePart;
+	using Rope = game_engine::Rope;
+	using RopeDeque = game_engine::RopeDeque;
 public:		// constants
 	// 10 ms global timer for ticking the game engine
 	static constexpr Uint32 GLOBAL_TIMER_DELAY = 10u;

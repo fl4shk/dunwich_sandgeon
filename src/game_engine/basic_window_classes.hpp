@@ -68,12 +68,11 @@ public:		// constants
 	//	BLANK_DRAWABLE_DATA{.c=' ',
 	//		.color_pair=FontColor::Black,
 	//		.gs_color_pair=FontColor::Black};
+
 	static const comp::Drawable::Data& BORDER_CORNER_DRAWABLE_DATA();
 	static const comp::Drawable::Data& BORDER_HORIZ_DRAWABLE_DATA();
 	static const comp::Drawable::Data& BORDER_VERT_DRAWABLE_DATA();
 	static const comp::Drawable::Data& BLANK_DRAWABLE_DATA();
-
-
 protected:		// variables
 	Engine* _engine = nullptr;
 	//int _priority = 0;

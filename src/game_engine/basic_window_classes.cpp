@@ -192,6 +192,28 @@ void Window::tick(InputKind input_kind)
 	// Derived classes should override this function
 };
 
+void Window::clear()
+{
+	PosVec2 src_pos;
+	for (src_pos.y=0; src_pos.y<with_border_size_2d().y; ++src_pos.y)
+	{
+		for (src_pos.x=0; src_pos.x<with_border_size_2d().x; ++src_pos.x)
+		{
+			const auto
+				SRC_ENT_ID = _cleared_ent_id_v2d.at(src_pos.y)
+					.at(src_pos.x),
+				DST_ENT_ID = with_border_ent_id_at(src_pos);
+			auto
+				src = _engine->ecs_engine
+					.casted_comp_at<comp::Drawable>(SRC_ENT_ID),
+				dst = _engine->ecs_engine
+					.casted_comp_at<comp::Drawable>(DST_ENT_ID);
+			*dst = *src;
+			//dst->data.color_pair = FontColor::Black;
+		}
+	}
+}
+
 void Window::draw(const Window& win, bool leave_corner)
 {
 	PosVec2 src_pos;
@@ -235,28 +257,6 @@ void Window::draw(const Window& win, bool leave_corner)
 					}
 				}
 			}
-		}
-	}
-}
-
-void Window::clear()
-{
-	PosVec2 src_pos;
-	for (src_pos.y=0; src_pos.y<with_border_size_2d().y; ++src_pos.y)
-	{
-		for (src_pos.x=0; src_pos.x<with_border_size_2d().x; ++src_pos.x)
-		{
-			const auto
-				SRC_ENT_ID = _cleared_ent_id_v2d.at(src_pos.y)
-					.at(src_pos.x),
-				DST_ENT_ID = with_border_ent_id_at(src_pos);
-			auto
-				src = _engine->ecs_engine
-					.casted_comp_at<comp::Drawable>(SRC_ENT_ID),
-				dst = _engine->ecs_engine
-					.casted_comp_at<comp::Drawable>(DST_ENT_ID);
-			*dst = *src;
-			//dst->data.color_pair = FontColor::Black;
 		}
 	}
 }
