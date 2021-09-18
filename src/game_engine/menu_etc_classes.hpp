@@ -36,9 +36,46 @@ public:		// constants
 		TAB_SPACING_STR,
 		WIDGET_SPACING_STR;
 public:		// types
-	using DataInnerElem = std::pair<FgBgColorPair, std::string>;
-	using DataElem = std::deque<DataInnerElem>;
-	using Data = std::deque<DataElem>;
+	//class DataInnerElem final
+	//{
+	//public:		// variables
+	//	FgBgColorPair color_pair;
+	//	std::string str;
+	//};
+	class RopePart final
+	{
+	public:		// variables
+		std::string str;
+		FgBgColorPair
+			color_pair=FontColor::White,
+			gs_color_pair=FontColor::White;
+	public:		// variables
+		inline RopePart() = default;
+		inline RopePart(const std::string& s_str,
+			FgBgColorPair s_color_pair, FgBgColorPair s_gs_color_pair)
+			: str(s_str), color_pair(s_color_pair),
+			gs_color_pair(s_gs_color_pair)
+		{
+		}
+		inline RopePart(std::string&& s_str,
+			FgBgColorPair s_color_pair, FgBgColorPair s_gs_color_pair)
+			: str(std::move(s_str)), color_pair(s_color_pair),
+			gs_color_pair(s_gs_color_pair)
+		{
+		}
+		inline RopePart(char s_str_only_char,
+			FgBgColorPair s_color_pair, FgBgColorPair s_gs_color_pair)
+			: str(""), color_pair(s_color_pair),
+			gs_color_pair(s_gs_color_pair)
+		{
+			str += s_str_only_char;
+		}
+		GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(RopePart);
+		inline ~RopePart() = default;
+	};
+
+	using Rope = std::deque<RopePart>;
+	using Data = std::deque<Rope>;
 private:		// variables
 	Data _data;
 public:		// functions
@@ -61,82 +98,18 @@ public:		// functions
 	}
 
 	void pop_front();
-	void push_back(const DataElem& to_push);
-	void push_back(DataElem&& to_push);
+	void push_back(const Rope& to_push);
+	void push_back(Rope&& to_push);
 
 	void wrap(size_t row_length);
+	static void wrap_rope(Rope& rope, size_t row_length);
 
 	GEN_GETTER_BY_CON_REF(data);
-private:		// functions
-	void _wrap_back(size_t row_length);
 };
 
 
 class Menu final
 {
-public:		// types
-	//class WidgetTriple final
-	//{
-	//public:		// constants
-	//	static constexpr size_t
-	//		SIZE = 5u, INNER_SIZE = 3u,
-	//		LEFT_INDEX = 0u, INNER_INDEX = 1u, RIGHT_INDEX = 4u;
-	//public:		// variables
-	//	std::array<char, SIZE> data;
-	//public:		// functions
-	//	constexpr inline WidgetTriple() = default;
-	//	constexpr inline WidgetTriple(const WidgetTriple& to_copy)
-	//		: data(to_copy.data)
-	//	{
-	//	}
-	//	constexpr inline WidgetTriple(WidgetTriple&& to_move)
-	//		: data(std::move(to_move.data))
-	//	{
-	//	}
-	//	constexpr inline WidgetTriple(const std::array<char, SIZE>& s_data)
-	//		: data(s_data)
-	//	{
-	//	}
-	//	constexpr inline WidgetTriple(std::array<char, SIZE>&& s_data)
-	//		: data(std::move(s_data))
-	//	{
-	//	}
-	//	constexpr inline ~WidgetTriple() = default;
-	//	constexpr inline WidgetTriple& operator =
-	//		(const WidgetTriple& to_copy)
-	//	{
-	//		data = to_copy.data;
-	//		return *this;
-	//	}
-	//	constexpr inline WidgetTriple& operator =
-	//		(WidgetTriple&& to_move)
-	//	{
-	//		data = std::move(to_copy.data);
-	//		return *this;
-	//	}
-
-	//	inline std::string left() const
-	//	{
-	//		std::string ret;
-	//		ret += data.at(LEFT_INDEX);
-	//		return ret;
-	//	}
-	//	inline std::string inner() const
-	//	{
-	//		std::string ret;
-	//		for (size_t i=0; i<INNER_SIZE; ++i)
-	//		{
-	//			ret += data.at(INNER_INDEX + i);
-	//		}
-	//		return ret;
-	//	}
-	//	inline std::string right() const
-	//	{
-	//		std::string ret;
-	//		ret += data.at(RIGHT_INDEX);
-	//		return ret;
-	//	}
-	//};
 public:		// constants
 	// The maximum value of `variable` when using a `HorizPicker` or
 	// `HorizPickerWrap` `kind`.

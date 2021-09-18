@@ -47,6 +47,17 @@ public:		// types
 
 			// Grayscale color pair
 			gs_color_pair;
+	public:		// functions
+		inline bool operator == (Data to_cmp) const
+		{
+			return ((c == to_cmp.c)
+				&& (color_pair == to_cmp.color_pair)
+				&& (gs_color_pair == to_cmp.gs_color_pair));
+		}
+		inline bool operator != (Data to_cmp) const
+		{
+			return (!(*this == to_cmp));
+		}
 	};
 private:		// variables
 	Data _data{.c=' ',

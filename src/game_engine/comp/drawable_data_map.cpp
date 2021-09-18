@@ -14,6 +14,7 @@
 // with Dungwich Sandeon.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "drawable_data_map.hpp"
+#include "../basic_window_classes.hpp"
 #include "player_comp_class.hpp"
 #include "block_comp_classes.hpp"
 
@@ -26,6 +27,15 @@ namespace comp
 
 const std::map<std::string, Drawable::Data> DRAWABLE_DATA_MAP
 = {
+	// ' ', 32
+	{
+		Window::BLANK_KIND_STR,
+		{
+			.c=' ',
+			.color_pair=FontColor::LightGray,
+			.gs_color_pair=FontColor::LightGray
+		}
+	},
 	// '#', 35
 	{
 		Wall::KIND_STR,
@@ -33,6 +43,25 @@ const std::map<std::string, Drawable::Data> DRAWABLE_DATA_MAP
 			.c='#',
 			.color_pair=FontColor::LightGray,
 			.gs_color_pair=FontColor::LightGray
+		}
+	},
+
+	// '+', 43
+	{
+		Window::BORDER_CORNER_KIND_STR,
+		{
+			.c='+',
+			.color_pair=FontColor::Green,
+			.gs_color_pair=FontColor::White
+		}
+	},
+	// '-', 45
+	{
+		Window::BORDER_HORIZ_KIND_STR,
+		{
+			.c='-',
+			.color_pair=FontColor::Green,
+			.gs_color_pair=FontColor::White
 		}
 	},
 
@@ -72,6 +101,16 @@ const std::map<std::string, Drawable::Data> DRAWABLE_DATA_MAP
 		{
 			.c='s',
 			.color_pair=FontColor::White,
+			.gs_color_pair=FontColor::White
+		}
+	},
+
+	// '|', 124
+	{
+		Window::BORDER_VERT_KIND_STR,
+		{
+			.c='|',
+			.color_pair=FontColor::Green,
 			.gs_color_pair=FontColor::White
 		}
 	},

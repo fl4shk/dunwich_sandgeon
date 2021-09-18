@@ -16,6 +16,7 @@
 #include "basic_window_classes.hpp"
 #include "engine_class.hpp"
 #include "menu_etc_classes.hpp"
+#include "comp/drawable_data_map.hpp"
 
 #include <queue>
 
@@ -31,6 +32,12 @@ const SizeVec2
 		(Window::WITH_BORDER_SCREEN_SIZE_2D - SizeVec2(2, 2));
 //const SizeVec2 Window::SCREEN_SIZE_2D(82, 62);
 //const SizeVec2 Window::SCREEN_SIZE_2D(60, 50);
+
+const std::string
+	Window::BORDER_CORNER_KIND_STR("game_engine::Window::BorderCorner"),
+	Window::BORDER_HORIZ_KIND_STR("game_engine::Window::BorderHoriz"),
+	Window::BORDER_VERT_KIND_STR("game_engine::Window::BorderVert"),
+	Window::BLANK_KIND_STR("game_engine::Window::Blank");
 //--------
 Window::Window()
 {
@@ -103,12 +110,10 @@ void Window::init_set_border()
 {
 	ecs::EntId id = ecs::ENT_NULL_ID;
 	auto add_border_drawable
-		= [this, &id](int c) -> void
+		= [this, &id](comp::Drawable::Data drawable_data) -> void
 	{
 		_engine->ecs_engine.insert_comp(id,
-			ecs::CompUptr(new comp::Drawable
-				(comp::Drawable::Data{.c=c,
-					.color_pair=BORDER_COLOR_PAIR})));
+			ecs::CompUptr(new comp::Drawable(drawable_data)));
 	};
 	for (size_t j=0; j<with_border_size_2d().y; ++j)
 	{
@@ -120,32 +125,32 @@ void Window::init_set_border()
 				{
 					id = _engine->ecs_engine.create();
 					with_border_ent_id_at(PosVec2(i, j)) = id;
-					add_border_drawable(BORDER_CORNER_CHAR);
+					add_border_drawable(BORDER_CORNER_DRAWABLE_DATA());
 
 					id = _engine->ecs_engine.create();
 					_cleared_ent_id_v2d.at(j).at(i) = id;
-					add_border_drawable(BORDER_CORNER_CHAR);
+					add_border_drawable(BORDER_CORNER_DRAWABLE_DATA());
 				}
 				else
 				{
 					id = _engine->ecs_engine.create();
 					with_border_ent_id_at(PosVec2(i, j)) = id;
-					add_border_drawable(BORDER_HORIZ_CHAR);
+					add_border_drawable(BORDER_HORIZ_DRAWABLE_DATA());
 
 					id = _engine->ecs_engine.create();
 					_cleared_ent_id_v2d.at(j).at(i) = id;
-					add_border_drawable(BORDER_HORIZ_CHAR);
+					add_border_drawable(BORDER_HORIZ_DRAWABLE_DATA());
 				}
 			}
 			else if ((i == 0) || (i == (with_border_size_2d().x - 1)))
 			{
 				id = _engine->ecs_engine.create();
 				with_border_ent_id_at(PosVec2(i, j)) = id;
-				add_border_drawable(BORDER_VERT_CHAR);
+				add_border_drawable(BORDER_VERT_DRAWABLE_DATA());
 
 				id = _engine->ecs_engine.create();
 				_cleared_ent_id_v2d.at(j).at(i) = id;
-				add_border_drawable(BORDER_VERT_CHAR);
+				add_border_drawable(BORDER_VERT_DRAWABLE_DATA());
 			}
 			else
 			{
@@ -153,15 +158,13 @@ void Window::init_set_border()
 				with_border_ent_id_at(PosVec2(i, j)) = id;
 				_engine->ecs_engine.insert_comp(id,
 					ecs::CompUptr(new comp::Drawable
-						(comp::Drawable::Data{.c=' ',
-							.color_pair=FontColor::Black})));
+						(BLANK_DRAWABLE_DATA())));
 
 				id = _engine->ecs_engine.create();
 				_cleared_ent_id_v2d.at(j).at(i) = id;
 				_engine->ecs_engine.insert_comp(id,
 					ecs::CompUptr(new comp::Drawable
-						(comp::Drawable::Data{.c=' ',
-							.color_pair=FontColor::Black})));
+						(BLANK_DRAWABLE_DATA())));
 			}
 		}
 	}
@@ -209,8 +212,7 @@ void Window::draw(const Window& win, bool leave_corner)
 						.casted_comp_at<comp::Drawable>(DST_ENT_ID);
 
 					if ((!leave_corner)
-						|| (dst->data().c != BORDER_CORNER_CHAR)
-						|| (dst->data().color_pair != BORDER_COLOR_PAIR))
+						|| (dst->data() != BORDER_CORNER_DRAWABLE_DATA()))
 					{
 						*dst = *src;
 					}
@@ -270,6 +272,23 @@ void Window::draw(const MsgLog& msg_log)
 //		pq.pop();
 //	}
 //}
+
+const comp::Drawable::Data& Window::BORDER_CORNER_DRAWABLE_DATA()
+{
+	return comp::DRAWABLE_DATA_MAP.at(BORDER_CORNER_KIND_STR);
+}
+const comp::Drawable::Data& Window::BORDER_HORIZ_DRAWABLE_DATA()
+{
+	return comp::DRAWABLE_DATA_MAP.at(BORDER_HORIZ_KIND_STR);
+}
+const comp::Drawable::Data& Window::BORDER_VERT_DRAWABLE_DATA()
+{
+	return comp::DRAWABLE_DATA_MAP.at(BORDER_VERT_KIND_STR);
+}
+const comp::Drawable::Data& Window::BLANK_DRAWABLE_DATA()
+{
+	return comp::DRAWABLE_DATA_MAP.at(BLANK_KIND_STR);
+}
 //--------
 //LayeredWindow::LayeredWindow()
 //{

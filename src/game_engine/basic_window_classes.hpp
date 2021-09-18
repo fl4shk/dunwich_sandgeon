@@ -23,6 +23,7 @@
 #include "../input_kind_enum.hpp"
 #include "font_color_enum.hpp"
 #include "ticker_base_class.hpp"
+#include "comp/general_comp_classes.hpp"
 //#include "engine_class.hpp"
 
 namespace dungwich_sandeon
@@ -44,11 +45,29 @@ public:		// constants
 	// This constant has values in the amount of tilemap entries
 	static const SizeVec2 WITH_BORDER_SCREEN_SIZE_2D, SCREEN_SIZE_2D;
 
-	static constexpr int
-		BORDER_CORNER_CHAR = '+',
-		BORDER_HORIZ_CHAR = '-',
-		BORDER_VERT_CHAR = '|';
-	static constexpr FgBgColorPair BORDER_COLOR_PAIR = FontColor::White;
+	static const std::string
+		BORDER_CORNER_KIND_STR,
+		BORDER_HORIZ_KIND_STR,
+		BORDER_VERT_KIND_STR,
+		BLANK_KIND_STR;
+	//static const comp::Drawable::Data
+	//	BORDER_CORNER_DRAWABLE_DATA,
+	//	BORDER_HORIZ_DRAWABLE_DATA,
+	//	BORDER_VERT_DRAWABLE_DATA,
+	//	BLANK_DRAWABLE_DATA;
+	//static constexpr comp::Drawable::Data
+	//	BORDER_CORNER_DRAWABLE_DATA{.c='+',
+	//		.color_pair=FontColor::Green,
+	//		.gs_color_pair=FontColor::White},
+	//	BORDER_HORIZ_DRAWABLE_DATA{.c='-',
+	//		.color_pair=FontColor::Green,
+	//		.gs_color_pair=FontColor::White},
+	//	BORDER_VERT_DRAWABLE_DATA{.c='|',
+	//		.color_pair=FontColor::Green,
+	//		.gs_color_pair=FontColor::White},
+	//	BLANK_DRAWABLE_DATA{.c=' ',
+	//		.color_pair=FontColor::Black,
+	//		.gs_color_pair=FontColor::Black};
 protected:		// variables
 	Engine* _engine = nullptr;
 	//int _priority = 0;
@@ -122,6 +141,11 @@ public:		// functions
 	//void draw(const Hud& hud);
 	//void draw(const LayeredWindow& layered_win);
 	//void draw_text(const PosVec2& where, const std::string& what);
+	
+	static const comp::Drawable::Data& BORDER_CORNER_DRAWABLE_DATA();
+	static const comp::Drawable::Data& BORDER_HORIZ_DRAWABLE_DATA();
+	static const comp::Drawable::Data& BORDER_VERT_DRAWABLE_DATA();
+	static const comp::Drawable::Data& BLANK_DRAWABLE_DATA();
 
 
 	//GEN_GETTER_AND_SETTER_BY_VAL(priority);

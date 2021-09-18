@@ -35,10 +35,10 @@ public:		// types
 	using FgBgColorPair = game_engine::FgBgColorPair;
 	using Window = game_engine::Window;
 	using Engine = game_engine::Engine;
-	using KeyStatus = Engine::KeyStatus;
+	using KeyStatus = game_engine::KeyStatus;
 public:		// constants
-	// 50 ms global timer for ticking the game engine
-	static constexpr Uint32 GLOBAL_TIMER_DELAY = 50u;
+	// 10 ms global timer for ticking the game engine
+	static constexpr Uint32 GLOBAL_TIMER_DELAY = 10u;
 
 	//static constexpr int DEF_ZOOM = 2;
 	//static constexpr float

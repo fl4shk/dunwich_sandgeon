@@ -80,8 +80,8 @@ public:		// functions
 		: fg(s_fg), bg(s_bg)
 	{
 	}
-	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(FgBgColorPair);
-	inline ~FgBgColorPair() = default;
+	GEN_CONSTEXPR_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(FgBgColorPair);
+	constexpr inline ~FgBgColorPair() = default;
 
 	constexpr inline FgBgColorPair& operator = (FontColor n_fg)
 	{

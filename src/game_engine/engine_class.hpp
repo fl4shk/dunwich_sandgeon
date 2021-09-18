@@ -22,6 +22,7 @@
 #include "../input_kind_enum.hpp"
 #include "basic_window_classes.hpp"
 #include "menu_etc_classes.hpp"
+#include "options_class.hpp"
 #include "comp/general_comp_classes.hpp"
 #include "comp/block_comp_classes.hpp"
 #include "comp/ui_etc_comp_classes.hpp"
@@ -30,6 +31,104 @@ namespace dungwich_sandeon
 {
 namespace game_engine
 {
+
+class KeyStatus final
+{
+public:		// types
+	enum KeyKind
+	{
+		LeftL,
+		UpL,
+		RightL,
+		DownL,
+
+		LeftR,
+		UpR,
+		RightR,
+		DownR,
+
+		ShoulderL,
+		ShoulderR,
+
+		Start,
+		Select,
+
+		LimKeyKind,
+	};
+public:		// variables
+	std::map<KeyKind, PrevCurrPair<bool>> state_map;
+public:		// functions
+	inline KeyStatus()
+	{
+		auto init_state = [&](KeyKind key_kind) -> void
+		{
+			state_map[key_kind] = PrevCurrPair<bool>();
+			state_map.at(key_kind)() = false;
+			state_map.at(key_kind).back_up();
+		};
+
+		init_state(LeftL);
+		init_state(UpL);
+		init_state(RightL);
+		init_state(DownL);
+
+		init_state(LeftR);
+		init_state(UpR);
+		init_state(RightR);
+		init_state(DownR);
+
+		init_state(ShoulderL);
+		init_state(ShoulderR);
+
+		init_state(Start);
+		init_state(Select);
+	}
+	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(KeyStatus);
+	inline ~KeyStatus() = default;
+
+	inline PrevCurrPair<bool>& at(KeyKind key_kind)
+	{
+		return state_map.at(key_kind);
+	}
+	inline const PrevCurrPair<bool>& at(KeyKind key_kind) const
+	{
+		return state_map.at(key_kind);
+	}
+
+	inline bool any_key_went_up_just_now() const
+	{
+		for (const auto& item: state_map)
+		{
+			if (item.second.prev() && (!item.second()))
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+	inline bool any_key_went_down_just_now() const
+	{
+		for (const auto& item: state_map)
+		{
+			if ((!item.second.prev()) && item.second())
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+	inline bool has_changed() const
+	{
+		for (const auto& item: state_map)
+		{
+			if (item.second.has_changed())
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+}; 
 
 template<typename ObjType>
 concept EngineErrWhenEntNullIdObj
@@ -101,100 +200,7 @@ public:		// variables
 	//	final_input_kind = InputKind::None;
 	InputKind input_kind;
 
-	class KeyStatus final
-	{
-	public:		// types
-		enum KeyKind
-		{
-			LeftL,
-			UpL,
-			RightL,
-			DownL,
-
-			LeftR,
-			UpR,
-			RightR,
-			DownR,
-
-			ShoulderL,
-			ShoulderR,
-
-			Start,
-			Select,
-
-			LimKeyKind,
-		};
-	public:		// variables
-		std::map<KeyKind, PrevCurrPair<bool>> state_map;
-	public:		// functions
-		inline KeyStatus()
-		{
-			auto init_state = [&](KeyKind key_kind) -> void
-			{
-				state_map[key_kind] = PrevCurrPair<bool>();
-				state_map.at(key_kind)() = false;
-				state_map.at(key_kind).back_up();
-			};
-
-			init_state(LeftL);
-			init_state(UpL);
-			init_state(RightL);
-			init_state(DownL);
-
-			init_state(LeftR);
-			init_state(UpR);
-			init_state(RightR);
-			init_state(DownR);
-
-			init_state(ShoulderL);
-			init_state(ShoulderR);
-
-			init_state(Start);
-			init_state(Select);
-		}
-		inline PrevCurrPair<bool>& at(KeyKind key_kind)
-		{
-			return state_map.at(key_kind);
-		}
-		inline const PrevCurrPair<bool>& at(KeyKind key_kind) const
-		{
-			return state_map.at(key_kind);
-		}
-
-		inline bool any_key_went_up_just_now() const
-		{
-			for (const auto& item: state_map)
-			{
-				if (item.second.prev() && (!item.second()))
-				{
-					return true;
-				}
-			}
-			return false;
-		}
-		inline bool any_key_went_down_just_now() const
-		{
-			for (const auto& item: state_map)
-			{
-				if ((!item.second.prev()) && item.second())
-				{
-					return true;
-				}
-			}
-			return false;
-		}
-		inline bool has_changed() const
-		{
-			for (const auto& item: state_map)
-			{
-				if (item.second.has_changed())
-				{
-					return true;
-				}
-			}
-			return false;
-		}
-	} key_status;
+	KeyStatus key_status;
 
 	//struct
 	//{
