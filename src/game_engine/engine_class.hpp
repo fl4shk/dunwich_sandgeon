@@ -219,6 +219,27 @@ public:		// variables
 	//	std::string text;
 	//} text_input;
 
+	class MenuFunctor final
+	{
+	protected:		// variables
+		Engine* _self = nullptr;
+		std::function<void(Engine*)> _func = nullptr;
+	public:		// functions
+		inline MenuFunctor() = default;
+		inline MenuFunctor(Engine* s_self,
+			const std::function<void(Engine*)>& s_func)
+			: _self(s_self), _func(s_func)
+		{
+		}
+		GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(MenuFunctor);
+		inline ~MenuFunctor() = default;
+
+		inline void operator () () const
+		{
+			_func(_self);
+		}
+	};
+
 	int floor = HIGHEST_FLOOR;
 private:		// variables
 	// dimensions: floor, y, x
@@ -242,6 +263,8 @@ public:		// functions
 
 	GEN_GETTER_BY_CON_REF(playfield_ent_id_v3d);
 private:		// functions
+	static void _yes_no_menu_act_yes(Engine* self);
+	static void _yes_no_menu_act_no(Engine* self);
 	template<EngineErrWhenEntNullIdObj ObjType>
 	inline void _err_when_ent_id_is_null(ObjType* obj,
 		const std::string& func_name) const

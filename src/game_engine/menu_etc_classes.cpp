@@ -197,16 +197,106 @@ const std::string
 	Menu::START_NODE_KEY("<start>"),
 	Menu::END_NODE_KEY("<end>");
 
-Menu::Menu(const std::string& s_start_key, const NodeMap& s_node_map,
-	const SizeVec2& s_size_2d)
-	: _start_key(s_start_key), _sel_key(s_start_key),
-	_node_map(s_node_map), _size_2d(s_size_2d)
+Menu::Node::Node()
 {
 }
-Menu::Menu(const std::string& s_start_key, NodeMap&& s_node_map,
-	const SizeVec2& s_size_2d)
-	: _start_key(s_start_key), _sel_key(s_start_key),
-	_node_map(std::move(s_node_map)), _size_2d(s_size_2d)
+
+// This constructor takes an `std::monostate` for `s_data`
+Menu::Node::Node(const std::string& s_text, Kind s_kind, u32 s_flags,
+	const std::string& s_up, const std::string& s_down,
+	std::monostate s_data, int s_variable,
+	const OnUpdateFunc& s_on_update_func)
+	: text(s_text),
+	kind(s_kind),
+	flags(s_flags),
+	up(s_up), down(s_down),
+	data(s_data),
+	variable(s_variable),
+	on_update_func(s_on_update_func)
+{
+}
+
+// This constructor takes a `DataValue` for `s_data`
+Menu::Node::Node(const std::string& s_text, Kind s_kind, u32 s_flags,
+	const std::string& s_up, const std::string& s_down,
+	const DataValue& s_data, int s_variable,
+	const OnUpdateFunc& s_on_update_func)
+	: text(s_text),
+	kind(s_kind),
+	flags(s_flags),
+	up(s_up), down(s_down),
+	data(s_data),
+	variable(s_variable),
+	on_update_func(s_on_update_func)
+{
+}
+
+// This constructor takes a `DataActionFunc` for `s_data`
+Menu::Node::Node(const std::string& s_text, Kind s_kind, u32 s_flags,
+	const std::string& s_up, const std::string& s_down,
+	const DataActionFunc& s_data, int s_variable,
+	const OnUpdateFunc& s_on_update_func)
+	: text(s_text),
+	kind(s_kind),
+	flags(s_flags),
+	up(s_up), down(s_down),
+	data(s_data),
+	variable(s_variable),
+	on_update_func(s_on_update_func)
+{
+}
+
+// This constructor takes a `DataActionParamFunc` for `s_data`
+Menu::Node::Node(const std::string& s_text, Kind s_kind, u32 s_flags,
+	const std::string& s_up, const std::string& s_down,
+	const DataActionParamFunc& s_data, int s_variable,
+	const OnUpdateFunc& s_on_update_func)
+	: text(s_text),
+	kind(s_kind),
+	flags(s_flags),
+	up(s_up), down(s_down),
+	data(s_data),
+	variable(s_variable),
+	on_update_func(s_on_update_func)
+{
+}
+Menu::Node::~Node()
+{
+}
+
+std::string Menu::Node::widget_horiz_picker_str() const
+{
+	std::string ret;
+
+	ret += WIDGET_HORIZ_PICKER_LEFT_STR;
+
+	const std::string DATA_STR
+		= sconcat(std::get<DataValue>(data)());
+	{
+		size_t i;
+		for (i=0; i<DATA_STR.size(); ++i)
+		{
+			ret += DATA_STR.at(i);
+		}
+		for (; i<WIDGET_HORIZ_PICKER_INNER_BLANK_STR.size(); ++i)
+		{
+			ret += " ";
+		}
+	}
+	ret += WIDGET_HORIZ_PICKER_RIGHT_STR;
+
+	return ret;
+}
+
+Menu::Menu(const std::string& s_sel_key, const SizeVec2& s_size_2d,
+	const NodeMap& s_node_map)
+	: _sel_key(s_sel_key), _size_2d(s_size_2d), _node_map(s_node_map)
+{
+}
+Menu::Menu(const std::string& s_sel_key, const SizeVec2& s_size_2d,
+	NodeMap&& s_node_map)
+	: _sel_key(s_sel_key), _size_2d(s_size_2d),
+	_node_map(std::move(s_node_map))
 {
 }
 

@@ -211,11 +211,8 @@ public:		// types
 		u32 flags;
 		//--------
 		// Where to go, using keyboard or controller; "" if nowhere
-		struct 
-		{
-			//std::string left, right, up, down;
-			std::string up, down;
-		} where;
+		//std::string left, right, up, down;
+		std::string up, down;
 		//--------
 		std::variant<std::monostate, DataValue, DataActionFunc,
 			DataActionParamFunc>
@@ -228,49 +225,51 @@ public:		// types
 		//--------
 	public:		// functions
 		//--------
-		inline std::string widget_horiz_picker_str() const
-		{
-			std::string ret;
+		Node();
 
-			ret += WIDGET_HORIZ_PICKER_LEFT_STR;
+		// This constructor takes an `std::monostate` for `s_data`
+		Node(const std::string& s_text, Kind s_kind, u32 s_flags,
+			const std::string& s_up, const std::string& s_down,
+			std::monostate s_data, int s_variable,
+			const OnUpdateFunc& s_on_update_func);
 
-			const std::string DATA_STR
-				= sconcat(std::get<DataValue>(data)());
-			{
-				size_t i;
-				for (i=0; i<DATA_STR.size(); ++i)
-				{
-					ret += DATA_STR.at(i);
-				}
-				for (; i<WIDGET_HORIZ_PICKER_INNER_BLANK_STR.size(); ++i)
-				{
-					ret += " ";
-				}
-			}
-			ret += WIDGET_HORIZ_PICKER_RIGHT_STR;
+		// This constructor takes a `DataValue` for `s_data`
+		Node(const std::string& s_text, Kind s_kind, u32 s_flags,
+			const std::string& s_up, const std::string& s_down,
+			const DataValue& s_data, int s_variable,
+			const OnUpdateFunc& s_on_update_func);
 
-			return ret;
-		}
+		// This constructor takes a `DataActionFunc` for `s_data`
+		Node(const std::string& s_text, Kind s_kind, u32 s_flags,
+			const std::string& s_up, const std::string& s_down,
+			const DataActionFunc& s_data, int s_variable,
+			const OnUpdateFunc& s_on_update_func);
+
+		// This constructor takes a `DataActionParamFunc` for `s_data`
+		Node(const std::string& s_text, Kind s_kind, u32 s_flags,
+			const std::string& s_up, const std::string& s_down,
+			const DataActionParamFunc& s_data, int s_variable,
+			const OnUpdateFunc& s_on_update_func);
+		GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Node);
+		~Node();
+		//--------
+		std::string widget_horiz_picker_str() const;
 		//--------
 	};
 
 	using NodeMap = std::map<std::string, Node>;
 private:		// variables
-	std::string
-		// The starting `Node`'s key
-		_start_key = "",
+	// The currently-selected `Node`'s key
+	std::string _sel_key = "";
 
-		// The currently-selected `Node`'s key
-		_sel_key = "";
-
-	NodeMap _node_map;
 	SizeVec2 _size_2d = Window::SCREEN_SIZE_2D;
+	NodeMap _node_map;
 public:		// functions
 	Menu() = default;
-	Menu(const std::string& s_start_key, const NodeMap& s_node_map,
-		const SizeVec2& s_size_2d=Window::SCREEN_SIZE_2D);
-	Menu(const std::string& s_start_key, NodeMap&& s_node_map,
-		const SizeVec2& s_size_2d=Window::SCREEN_SIZE_2D);
+	Menu(const std::string& s_sel_key, const SizeVec2& s_size_2d,
+		const NodeMap& s_node_map);
+	Menu(const std::string& s_sel_key, const SizeVec2& s_size_2d,
+		NodeMap&& s_node_map);
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Menu);
 	~Menu() = default;
 
@@ -298,10 +297,9 @@ public:		// functions
 
 	operator MsgLog () const;
 
-	GEN_GETTER_BY_CON_REF(start_key);
 	GEN_GETTER_AND_SETTER_BY_CON_REF(sel_key);
-	GEN_GETTER_BY_CON_REF(node_map);
 	GEN_GETTER_BY_CON_REF(size_2d);
+	GEN_GETTER_BY_CON_REF(node_map);
 };
 
 //class Hud final

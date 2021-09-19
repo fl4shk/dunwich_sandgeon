@@ -90,38 +90,71 @@ Engine::Engine()
 	popup_window.init_set_border();
 	yes_no_window.init_set_border();
 
-	//yes_no_menu
-	//	= Menu
-	//	(
-	//		Menu::START_NODE_KEY,
-	//		{
-	//			{
-	//				Menu::START_NODE_KEY,
-	//				Menu::Node
-	//				{
-	//					.text=Menu::START_NODE_KEY,
-	//					.kind=Menu::Node::Kind::Start,
-	//					.flags=0x0,
-	//					.where={.up="", .down="yes"},
-	//					.data=std::monostate,
-	//					.variable=0x0,
-	//					.on_update_func=nullptr,
-	//				}
-	//			},
-	//			{
-	//				"yes",
-	//				Menu::Node
-	//				{
-	//					.text="Yes",
-	//					.kind=Menu::Node::Kind::ActionButton,
-	//					.flags=0x0,
-	//					.where={.up=Menu::START_NODE_KEY, .down="no"},
-	//					.data=
-	//				}
-	//			}
-	//		},
-	//		yes_no_window.size_2d()
-	//	);
+	yes_no_menu
+		= Menu
+		(
+			"yes",
+			yes_no_window.size_2d(),
+			Menu::NodeMap
+			({
+				{
+					Menu::START_NODE_KEY,
+					Menu::Node
+					(
+						Menu::START_NODE_KEY,		// text
+						Menu::Node::Kind::Start,	// kind
+						0x0,						// flags
+						"", "yes",					// where
+						std::monostate(),			// data
+						0x0,						// variable
+						nullptr						// on_update_func
+					)
+				},
+				{
+					"yes",
+					Menu::Node
+					(
+						"Yes",							// text
+						Menu::Node::Kind::ActionButton, // kind
+						0x0,							// flags
+						Menu::START_NODE_KEY, "no",		// where
+						std::function<void()>			// data
+							(MenuFunctor(this, 
+								&Engine::_yes_no_menu_act_yes)),
+						0x0,							// variable
+						nullptr							// on_update_func
+					)
+				},
+				{
+					"no",
+					Menu::Node
+					(
+						"No",							// text
+						Menu::Node::Kind::ActionButton, // kind
+						0x0,							// flags
+						"yes", Menu::END_NODE_KEY,		// where
+						std::function<void()>			// data
+							(MenuFunctor(this, 
+								&Engine::_yes_no_menu_act_no)),
+						0x0,							// variable
+						nullptr							// on_update_func
+					)
+				},
+				{
+					Menu::END_NODE_KEY,
+					Menu::Node
+					(
+						Menu::END_NODE_KEY,		// text
+						Menu::Node::Kind::End,	// kind
+						0x0,					// flags
+						"no", "",				// where
+						std::monostate(),		// data
+						0x0,					// variable
+						nullptr					// on_update_func
+					)
+				},
+			})
+		);
 
 	//printout("Engine::Engine()\n");
 	//dbg_check_ecs_engine();
@@ -211,6 +244,15 @@ void Engine::position_set_pos_callback(comp::Position* obj,
 	position_dtor_callback(obj);
 	obj->_pos = n_pos;
 	position_ctor_callback(obj);
+}
+
+void Engine::_yes_no_menu_act_yes(Engine* self)
+{
+	printout("yes_no_menu: \"Yes\" button activated!\n");
+}
+void Engine::_yes_no_menu_act_no(Engine* self)
+{
+	printout("yes_no_menu: \"No\" button activated!\n");
 }
 
 Engine* engine = nullptr;
