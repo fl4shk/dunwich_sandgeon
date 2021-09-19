@@ -62,9 +62,9 @@ RopeDeque wrap_rope(const Rope& rope, size_t row_length)
 	ret.push_back(Rope());
 
 	size_t
-		row = 0,
-		col = 0,
-		prev_col = 0;
+		//row = 0,
+		col = 0;
+		//prev_col = 0;
 
 	//printout("game_engine::wrap_rope():\n");
 
@@ -84,7 +84,7 @@ RopeDeque wrap_rope(const Rope& rope, size_t row_length)
 		//	"\"", rope_part.str, "\" ", rope_part.str.size(), "\n");
 		//printout(row, " ", col, " ", prev_col, "; ", row_length, "\n");
 
-		prev_col = col;
+		//prev_col = col;
 
 		// The `1u` accounts for the space following the word.
 		col += rope_part.str.size();
@@ -94,7 +94,7 @@ RopeDeque wrap_rope(const Rope& rope, size_t row_length)
 			//printout("!!new column!!\n",
 			//	row, " ", col, " ", prev_col, "; ", row_length, "\n");
 			ret.push_back(Rope());
-			++row;
+			//++row;
 			col = 0;
 		}
 
@@ -110,7 +110,7 @@ RopeDeque wrap_rope(const Rope& rope, size_t row_length)
 			//printout("!!new column 2!!\n",
 			//	row, " ", col, " ", prev_col, "; ", row_length, "\n");
 			ret.push_back(Rope());
-			++row;
+			//++row;
 			col = 0;
 			added_rope = true;
 		}
@@ -193,15 +193,28 @@ const std::string
 	Menu::WIDGET_HORIZ_PICKER_INNER_BLANK_STR("   "),
 	Menu::WIDGET_HORIZ_PICKER_RIGHT_STR("]");
 
-Menu::Menu(const std::string& s_start_key, const NodeMap& s_node_map)
+const std::string
+	Menu::START_NODE_KEY("<start>"),
+	Menu::END_NODE_KEY("<end>");
+
+Menu::Menu(const std::string& s_start_key, const NodeMap& s_node_map,
+	const SizeVec2& s_size_2d)
 	: _start_key(s_start_key), _sel_key(s_start_key),
-	_node_map(s_node_map)
+	_node_map(s_node_map), _size_2d(s_size_2d)
 {
 }
-Menu::Menu(const std::string& s_start_key, NodeMap&& s_node_map)
+Menu::Menu(const std::string& s_start_key, NodeMap&& s_node_map,
+	const SizeVec2& s_size_2d)
 	: _start_key(s_start_key), _sel_key(s_start_key),
-	_node_map(std::move(s_node_map))
+	_node_map(std::move(s_node_map)), _size_2d(s_size_2d)
 {
+}
+
+Menu::operator MsgLog() const
+{
+	RopeDeque ret_rd;
+
+	return MsgLog(ret_rd, size_2d());
 }
 //--------
 } // namespace game_engine

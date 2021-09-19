@@ -44,8 +44,10 @@ const std::map<std::string, Drawable::Data> DRAWABLE_DATA_MAP
 		Wall::KIND_STR,
 		{
 			.c='#',
-			.color_pair=FontColor::LightGray,
-			.gs_color_pair=FontColor::LightGray
+			//.color_pair=FontColor::LightGray,
+			//.gs_color_pair=FontColor::LightGray
+			.color_pair=FontColor::Gray,
+			.gs_color_pair=FontColor::Gray
 		}
 	},
 
@@ -73,8 +75,10 @@ const std::map<std::string, Drawable::Data> DRAWABLE_DATA_MAP
 		Floor::KIND_STR,
 		{
 			.c='.',
-			.color_pair=FontColor::LightGray,
-			.gs_color_pair=FontColor::LightGray
+			//.color_pair=FontColor::LightGray,
+			//.gs_color_pair=FontColor::LightGray
+			.color_pair=FontColor::Gray,
+			.gs_color_pair=FontColor::Gray
 		}
 	},
 

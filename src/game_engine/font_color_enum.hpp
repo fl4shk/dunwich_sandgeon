@@ -37,9 +37,10 @@ enum class FontColor: u32
 	Blue,
 	Purple,
 	Cyan,
-	LightGray,
+	//LightGray,
+	Gray,
 
-	DarkGray,
+	//DarkGray,
 	Black,
 
 	// The limit, which is not a real FontColor 

@@ -64,8 +64,8 @@ const PosVec2
 		Window::WITH_BORDER_SCREEN_SIZE_2D.y / 2),
 
 	Engine::YES_NO_WINDOW_END_POS
-		(Engine::YES_NO_WINDOW_POS.x + 3 + Menu::WIDGET_SPACING_SIZE,
-		Engine::YES_NO_WINDOW_POS.y + 2 + Menu::WIDGET_SPACING_SIZE);
+		(Engine::YES_NO_WINDOW_POS.x + 4 + Menu::WIDGET_SPACING_SIZE,
+		Engine::YES_NO_WINDOW_POS.y + 4 + Menu::WIDGET_SPACING_SIZE);
 
 Engine::Engine()
 	: screen_window(this, PosVec2(), Window::WITH_BORDER_SCREEN_SIZE_2D),
@@ -89,6 +89,39 @@ Engine::Engine()
 	hud_window.init_set_border();
 	popup_window.init_set_border();
 	yes_no_window.init_set_border();
+
+	//yes_no_menu
+	//	= Menu
+	//	(
+	//		Menu::START_NODE_KEY,
+	//		{
+	//			{
+	//				Menu::START_NODE_KEY,
+	//				Menu::Node
+	//				{
+	//					.text=Menu::START_NODE_KEY,
+	//					.kind=Menu::Node::Kind::Start,
+	//					.flags=0x0,
+	//					.where={.up="", .down="yes"},
+	//					.data=std::monostate,
+	//					.variable=0x0,
+	//					.on_update_func=nullptr,
+	//				}
+	//			},
+	//			{
+	//				"yes",
+	//				Menu::Node
+	//				{
+	//					.text="Yes",
+	//					.kind=Menu::Node::Kind::ActionButton,
+	//					.flags=0x0,
+	//					.where={.up=Menu::START_NODE_KEY, .down="no"},
+	//					.data=
+	//				}
+	//			}
+	//		},
+	//		yes_no_window.size_2d()
+	//	);
 
 	//printout("Engine::Engine()\n");
 	//dbg_check_ecs_engine();
@@ -127,6 +160,16 @@ void Engine::tick()
 	//	printout("game_engine::Engine::tick(): key_status.has_changed()",
 	//		" true.\n");
 	//}
+
+	// Test menuing
+	if (key_status.key_went_down_just_now(KeyStatus::UpL)
+		&& (!key_status.at(KeyStatus::DownL)()))
+	{
+	}
+	else if (key_status.key_went_down_just_now(KeyStatus::DownL)
+		&& (!key_status.at(KeyStatus::UpL)()))
+	{
+	}
 }
 
 void Engine::position_ctor_callback(comp::Position* obj)

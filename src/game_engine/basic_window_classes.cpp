@@ -263,6 +263,7 @@ void Window::draw(const Window& win, bool leave_corner)
 
 void Window::draw(const Menu& menu)
 {
+	draw(static_cast<MsgLog>(menu));
 }
 
 void Window::draw(const MsgLog& msg_log)

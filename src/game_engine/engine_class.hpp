@@ -95,6 +95,15 @@ public:		// functions
 		return state_map.at(key_kind);
 	}
 
+	inline bool key_went_up_just_now(KeyKind key_kind) const
+	{
+		return (at(key_kind).prev() && (!at(key_kind)()));
+	}
+	inline bool key_went_down_just_now(KeyKind key_kind) const
+	{
+		return ((!at(key_kind).prev()) && at(key_kind)());
+	}
+
 	inline bool any_key_went_up_just_now() const
 	{
 		for (const auto& item: state_map)
@@ -143,8 +152,10 @@ public:		// types
 	using EntIdSetVec2d
 		= std::vector<std::vector<ecs::EntIdSet>>;
 public:		// constants
-	static const PosVec2 PLAYFIELD_WINDOW_POS, PLAYFIELD_WINDOW_END_POS;
-	static const SizeVec2 PLAYFIELD_WINDOW_SIZE_2D;
+	static const PosVec2
+		PLAYFIELD_WINDOW_POS, PLAYFIELD_WINDOW_END_POS;
+	static const SizeVec2
+		PLAYFIELD_WINDOW_SIZE_2D;
 
 	static const PosVec2
 		LOG_WINDOW_POS, LOG_WINDOW_END_POS,

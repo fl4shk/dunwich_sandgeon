@@ -107,28 +107,32 @@ int RealMainSdl::run()
 		_text_handler.draw_char('@', FontColor::Purple, PosVec2(6, 0));
 		_text_handler.draw_char('@', FontColor::Cyan, PosVec2(7, 0));
 		_text_handler.draw_char('@', FontColor::White, PosVec2(8, 0));
-		_text_handler.draw_char('@', FontColor::LightGray, PosVec2(9, 0));
+		_text_handler.draw_char('@', FontColor::Gray, PosVec2(9, 0));
+		//_text_handler.draw_char('@', FontColor::LightGray, PosVec2(9, 0));
 
-		_text_handler.draw_char('@', FontColor::DarkGray, PosVec2(10, 0));
+		//_text_handler.draw_char('@', FontColor::DarkGray, PosVec2(10, 0));
 	};
 	//--------
-	auto& yes_no_window = _engine.yes_no_window;
 	const MsgLog
 		msg_log
 		(
 			{
 				{
-					//RopePart("This is a red string.", FontColor::Red,
-					//	FontColor::DarkGray),
+					RopePart("This is a red str.", FontColor::Red,
+						FontColor::Gray),
 					RopePart("Red string 2", FontColor::Red,
-						FontColor::DarkGray),
+						FontColor::Gray),
 				},
-				//{
-				//	RopePart("This is a green string.", FontColor::Green,
-				//		FontColor::LightGray),
-				//}
+				{
+					RopePart("This is a green str.", FontColor::Green,
+						FontColor::Gray),
+				},
+				{
+					RopePart("asdf jkl;", FontColor::Brown,
+						FontColor::White),
+				},
 			},
-			yes_no_window.size_2d()
+			_engine.yes_no_window.size_2d()
 			//SizeVec2(6, 200)
 		);
 	_engine.yes_no_window.draw(msg_log);
@@ -223,7 +227,7 @@ int RealMainSdl::run()
 		screen_window.clear();
 		//playfield_window.draw(msg_log);
 
-		// Temporary drawing into `_engine.screen_window`.
+		// Temporary drawing into `screen_window`.
 		screen_window.draw(_engine.playfield_window, true);
 		screen_window.draw(_engine.log_window, true);
 		screen_window.draw(_engine.hud_window, true);
@@ -249,7 +253,7 @@ int RealMainSdl::run()
 					auto drawable = ecs_engine
 						.casted_comp_at<game_engine::comp::Drawable>(id);
 					_text_handler.draw_char(drawable->data().c,
-						drawable->data().color_pair, wb_pos);
+						drawable->data().gs_color_pair, wb_pos);
 				}
 			}
 		}
