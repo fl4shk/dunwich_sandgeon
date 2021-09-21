@@ -268,13 +268,20 @@ void Window::draw(const Menu& menu)
 
 void Window::draw(const MsgLog& msg_log)
 {
-	//for (const auto& rope: msg_log.data())
+	//for (size_t j=0; j<msg_log.data().size(); ++j)
+	//for (size_t j=msg_log.scroll(); j<msg_log.data().size(); ++j)
+	//for (size_t j=msg_log.scroll(); j<msg_log.window_size_2d().y; ++j)
 
-	for (size_t j=0; j<msg_log.data().size(); ++j)
+	for (size_t j=msg_log.scroll();
+		((j - msg_log.scroll()) < msg_log.window_size_2d().y)
+			&& (j < msg_log.internal_height())
+			&& (j < msg_log.data().size());
+		++j)
 	{
 		const auto& ROPE = msg_log.data().at(j);
 
-		SizeVec2 temp_pos(0, j);
+		SizeVec2 temp_pos(0, j - msg_log.scroll());
+		//SizeVec2 temp_pos(0, j + msg_log.scroll());
 
 		auto draw_at_temp_pos
 			= [this, &temp_pos](comp::Drawable::Data drawable_data) -> void

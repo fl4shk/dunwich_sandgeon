@@ -67,7 +67,7 @@ const PosVec2
 		(Engine::YES_NO_WINDOW_POS.x + 3 +
 		MsgLog::WIDGET_SELECTED_SPACING_SIZE + Menu::WIDGET_SPACING_SIZE
 		+ 1,
-		Engine::YES_NO_WINDOW_POS.y + 2 + 1); // "+ 4" is temporary
+		Engine::YES_NO_WINDOW_POS.y + 2 + 1 + 2); // "+ 4" is temporary
 
 Engine::Engine()
 	: screen_window(this, PosVec2(), Window::WITH_BORDER_SCREEN_SIZE_2D),
@@ -198,24 +198,23 @@ void Engine::tick()
 	//		" true.\n");
 	//}
 
-	// Test menuing
 	if (key_status.key_went_down_just_now(KeyStatus::UpL)
 		&& (!key_status.at(KeyStatus::DownL)()))
 	{
-		//printout("Engine::tick(): key_went_down_now(): up\n");
-		if (yes_no_menu.sel_key() == "no")
-		{
-			yes_no_menu.set_sel_key("yes");
-		}
+		////printout("Engine::tick(): key_went_down_now(): up\n");
+		//if (yes_no_menu.sel_key() == "no")
+		//{
+		//	yes_no_menu.set_sel_key("yes");
+		//}
 	}
 	else if (key_status.key_went_down_just_now(KeyStatus::DownL)
 		&& (!key_status.at(KeyStatus::UpL)()))
 	{
-		//printout("Engine::tick(): key_went_down_now(): down\n");
-		if (yes_no_menu.sel_key() == "yes")
-		{
-			yes_no_menu.set_sel_key("no");
-		}
+		////printout("Engine::tick(): key_went_down_now(): down\n");
+		//if (yes_no_menu.sel_key() == "yes")
+		//{
+		//	yes_no_menu.set_sel_key("no");
+		//}
 	}
 }
 

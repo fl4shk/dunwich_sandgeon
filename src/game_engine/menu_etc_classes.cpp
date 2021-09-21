@@ -112,10 +112,11 @@ const std::string
 		(MsgLog::WIDGET_SELECTED_SPACING_SIZE)),
 	MsgLog::WIDGET_SPACING_STR(spaces_str(MsgLog::WIDGET_SPACING_SIZE));
 
-MsgLog::MsgLog(const RopeDeque& s_data, const SizeVec2& s_size_2d,
-	bool s_keep_sep)
+MsgLog::MsgLog(const RopeDeque& s_data, size_t s_internal_height,
+	const SizeVec2& s_window_size_2d, bool s_keep_sep)
 {
-	_size_2d = s_size_2d;
+	_internal_height = s_internal_height;
+	_window_size_2d = s_window_size_2d;
 	_keep_sep = s_keep_sep;
 
 	for (const auto& rope: s_data)
@@ -135,14 +136,15 @@ void MsgLog::pop_front()
 
 void MsgLog::push_back(const Rope& to_push, bool do_pop_front)
 {
-	//_data.push_back(wrap_rope(to_push, size_2d().x, _keep_sep));
-	auto wrapped = wrap_rope(to_push, size_2d().x, _keep_sep);
+	//_data.push_back(wrap_rope(to_push, window_size_2d().x, _keep_sep));
+	auto wrapped = wrap_rope(to_push, window_size_2d().x, _keep_sep);
 
 	for (auto& single_rope: wrapped)
 	{
 		_data.push_back(std::move(single_rope));
 
-		while (do_pop_front && (_data.size() > size_2d().y))
+		//while (do_pop_front && (data().size() > window_size_2d().y))
+		while (do_pop_front && (data().size() > internal_height()))
 		{
 			pop_front();
 		}
@@ -363,7 +365,9 @@ Menu::operator MsgLog() const
 		}
 	}
 
-	return MsgLog(ret_data, size_2d(), true);
+	MsgLog ret(ret_data, MsgLog::DEFAULT_INTERNAL_HEIGHT, size_2d(), true);
+	ret.set_scroll(1);
+	return ret;
 }
 //--------
 } // namespace game_engine

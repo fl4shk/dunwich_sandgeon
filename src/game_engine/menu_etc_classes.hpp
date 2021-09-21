@@ -107,18 +107,28 @@ public:		// constants
 		TAB_SPACING_STR,
 		WIDGET_SELECTED_SPACING_STR,
 		WIDGET_SPACING_STR;
+	static constexpr size_t DEFAULT_INTERNAL_HEIGHT = 128;
 private:		// variables
 	RopeDeque _data;
-	SizeVec2 _size_2d = Window::SCREEN_SIZE_2D;
+
+	size_t
+		// This height allows for scrolling
+		_internal_height = DEFAULT_INTERNAL_HEIGHT,
+		_scroll = 0;
+
+	SizeVec2 _window_size_2d = Window::SCREEN_SIZE_2D;
 	bool _keep_sep = false;
 public:		// functions
-	inline MsgLog(const SizeVec2& s_size_2d=Window::SCREEN_SIZE_2D,
+	inline MsgLog(size_t s_internal_height=DEFAULT_INTERNAL_HEIGHT,
+		const SizeVec2& s_window_size_2d=Window::SCREEN_SIZE_2D,
 		bool s_keep_sep=false)
-		: _size_2d(s_size_2d), _keep_sep(s_keep_sep)
+		: _internal_height(s_internal_height),
+		_window_size_2d(s_window_size_2d), _keep_sep(s_keep_sep)
 	{
 	}
 	MsgLog(const RopeDeque& s_data,
-		const SizeVec2& s_size_2d=Window::SCREEN_SIZE_2D,
+		size_t s_internal_height=DEFAULT_INTERNAL_HEIGHT,
+		const SizeVec2& s_window_size_2d=Window::SCREEN_SIZE_2D,
 		bool s_keep_sep=false);
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(MsgLog);
 	inline ~MsgLog() = default;
@@ -132,7 +142,9 @@ public:		// functions
 	//void wrap();
 
 	GEN_GETTER_BY_CON_REF(data);
-	GEN_GETTER_BY_CON_REF(size_2d);
+	GEN_GETTER_BY_VAL(internal_height);
+	GEN_GETTER_AND_SETTER_BY_VAL(scroll);
+	GEN_GETTER_BY_CON_REF(window_size_2d);
 	GEN_GETTER_BY_VAL(keep_sep);
 };
 

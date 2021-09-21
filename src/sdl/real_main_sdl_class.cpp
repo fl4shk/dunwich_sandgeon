@@ -113,28 +113,30 @@ int RealMainSdl::run()
 		//_text_handler.draw_char('@', FontColor::DarkGray, PosVec2(10, 0));
 	};
 	//--------
-	//const MsgLog
-	//	msg_log
-	//	(
-	//		{
-	//			{
-	//				RopePart("This is a red str.", FontColor::Red,
-	//					FontColor::Gray),
-	//				RopePart("Red string 2", FontColor::Red,
-	//					FontColor::Gray),
-	//			},
-	//			{
-	//				RopePart("This is a green str.", FontColor::Green,
-	//					FontColor::Gray),
-	//			},
-	//			{
-	//				RopePart("asdf jkl;", FontColor::Brown,
-	//					FontColor::White),
-	//			},
-	//		},
-	//		_engine.yes_no_window.size_2d()
-	//	);
-	//_engine.yes_no_window.draw(msg_log);
+	MsgLog
+		msg_log
+		(
+			{
+				{
+					RopePart("This is a red str.", FontColor::Red,
+						FontColor::Gray),
+					RopePart("Red string 2", FontColor::Red,
+						FontColor::Gray),
+				},
+				{
+					RopePart("This is a green str.", FontColor::Green,
+						FontColor::Gray),
+				},
+				{
+					RopePart("asdf jkl;", FontColor::Brown,
+						FontColor::White),
+				},
+			},
+			MsgLog::DEFAULT_INTERNAL_HEIGHT,
+			_engine.yes_no_window.size_2d()
+		);
+	msg_log.set_scroll(2);
+	_engine.yes_no_window.draw(msg_log);
 	//--------
 	bool quit = false;
 	while (!quit)
@@ -231,8 +233,8 @@ int RealMainSdl::run()
 			& popup_window = _engine.popup_window,
 			& yes_no_window = _engine.yes_no_window;
 
-		yes_no_window.clear();
-		yes_no_window.draw(_engine.yes_no_menu);
+		//yes_no_window.clear();
+		//yes_no_window.draw(_engine.yes_no_menu);
 
 		screen_window.clear();
 		//playfield_window.draw(msg_log);
@@ -262,10 +264,10 @@ int RealMainSdl::run()
 					//		(comp::Drawable::KIND_STR).get());
 					auto drawable = ecs_engine
 						.casted_comp_at<game_engine::comp::Drawable>(id);
-					_text_handler.draw_char(drawable->data().c,
-						drawable->data().gs_color_pair, wb_pos);
 					//_text_handler.draw_char(drawable->data().c,
-					//	drawable->data().color_pair, wb_pos);
+					//	drawable->data().gs_color_pair, wb_pos);
+					_text_handler.draw_char(drawable->data().c,
+						drawable->data().color_pair, wb_pos);
 				}
 			}
 		}
