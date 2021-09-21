@@ -113,29 +113,28 @@ int RealMainSdl::run()
 		//_text_handler.draw_char('@', FontColor::DarkGray, PosVec2(10, 0));
 	};
 	//--------
-	const MsgLog
-		msg_log
-		(
-			{
-				{
-					RopePart("This is a red str.", FontColor::Red,
-						FontColor::Gray),
-					RopePart("Red string 2", FontColor::Red,
-						FontColor::Gray),
-				},
-				{
-					RopePart("This is a green str.", FontColor::Green,
-						FontColor::Gray),
-				},
-				{
-					RopePart("asdf jkl;", FontColor::Brown,
-						FontColor::White),
-				},
-			},
-			_engine.yes_no_window.size_2d()
-			//SizeVec2(6, 200)
-		);
-	_engine.yes_no_window.draw(msg_log);
+	//const MsgLog
+	//	msg_log
+	//	(
+	//		{
+	//			{
+	//				RopePart("This is a red str.", FontColor::Red,
+	//					FontColor::Gray),
+	//				RopePart("Red string 2", FontColor::Red,
+	//					FontColor::Gray),
+	//			},
+	//			{
+	//				RopePart("This is a green str.", FontColor::Green,
+	//					FontColor::Gray),
+	//			},
+	//			{
+	//				RopePart("asdf jkl;", FontColor::Brown,
+	//					FontColor::White),
+	//			},
+	//		},
+	//		_engine.yes_no_window.size_2d()
+	//	);
+	//_engine.yes_no_window.draw(msg_log);
 	//--------
 	bool quit = false;
 	while (!quit)
@@ -221,19 +220,30 @@ int RealMainSdl::run()
 		SDL_SetRenderDrawColor(_renderer, 0x00, 0x00, 0x00, 0xff);
 		SDL_RenderFillRect(_renderer, nullptr);
 
+
 		// Draw tiles/graphics here.
-		auto& screen_window = _engine.screen_window;
+		auto
+			& screen_window = _engine.screen_window,
+			& aux_window = _engine.aux_window,
+			& playfield_window = _engine.playfield_window,
+			& log_window = _engine.log_window,
+			& hud_window = _engine.hud_window,
+			& popup_window = _engine.popup_window,
+			& yes_no_window = _engine.yes_no_window;
+
+		yes_no_window.clear();
+		yes_no_window.draw(_engine.yes_no_menu);
 
 		screen_window.clear();
 		//playfield_window.draw(msg_log);
 
 		// Temporary drawing into `screen_window`.
-		screen_window.draw(_engine.playfield_window, true);
-		screen_window.draw(_engine.log_window, true);
-		screen_window.draw(_engine.hud_window, true);
-		//screen_window.draw(_engine.aux_window);
-		//screen_window.draw(_engine.popup_window);
-		screen_window.draw(_engine.yes_no_window);
+		screen_window.draw(playfield_window, true);
+		screen_window.draw(log_window, true);
+		screen_window.draw(hud_window, true);
+		//screen_window.draw(aux_window);
+		//screen_window.draw(popup_window);
+		screen_window.draw(yes_no_window);
 
 		for (size_t j=0; j<screen_window.with_border_size_2d().y; ++j)
 		{
@@ -254,6 +264,8 @@ int RealMainSdl::run()
 						.casted_comp_at<game_engine::comp::Drawable>(id);
 					_text_handler.draw_char(drawable->data().c,
 						drawable->data().gs_color_pair, wb_pos);
+					//_text_handler.draw_char(drawable->data().c,
+					//	drawable->data().color_pair, wb_pos);
 				}
 			}
 		}
@@ -374,7 +386,7 @@ void RealMainSdl::_update_engine_key_status()
 	update_key_status(key_status.at(KeyStatus::LeftL), SDLK_s);
 	update_key_status(key_status.at(KeyStatus::UpL), SDLK_e);
 	update_key_status(key_status.at(KeyStatus::RightL), SDLK_f);
-	update_key_status(key_status.at(KeyStatus::DownR), SDLK_d);
+	update_key_status(key_status.at(KeyStatus::DownL), SDLK_d);
 
 	update_key_status(key_status.at(KeyStatus::LeftR), SDLK_j);
 	update_key_status(key_status.at(KeyStatus::UpR), SDLK_i);

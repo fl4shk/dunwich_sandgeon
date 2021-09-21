@@ -64,8 +64,10 @@ const PosVec2
 		Window::WITH_BORDER_SCREEN_SIZE_2D.y / 2),
 
 	Engine::YES_NO_WINDOW_END_POS
-		(Engine::YES_NO_WINDOW_POS.x + 4 + Menu::WIDGET_SPACING_SIZE,
-		Engine::YES_NO_WINDOW_POS.y + 4 + Menu::WIDGET_SPACING_SIZE);
+		(Engine::YES_NO_WINDOW_POS.x + 3 +
+		MsgLog::WIDGET_SELECTED_SPACING_SIZE + Menu::WIDGET_SPACING_SIZE
+		+ 1,
+		Engine::YES_NO_WINDOW_POS.y + 2 + 1); // "+ 4" is temporary
 
 Engine::Engine()
 	: screen_window(this, PosVec2(), Window::WITH_BORDER_SCREEN_SIZE_2D),
@@ -119,7 +121,8 @@ Engine::Engine()
 						0x0,							// flags
 						Menu::START_NODE_KEY, "no",		// where
 						std::function<void()>			// data
-							(MenuFunctor(this, 
+							(Menu::ActionButtonFunctor<Engine>
+								(this, 
 								&Engine::_yes_no_menu_act_yes)),
 						0x0,							// variable
 						nullptr							// on_update_func
@@ -134,7 +137,8 @@ Engine::Engine()
 						0x0,							// flags
 						"yes", Menu::END_NODE_KEY,		// where
 						std::function<void()>			// data
-							(MenuFunctor(this, 
+							(Menu::ActionButtonFunctor<Engine>
+								(this, 
 								&Engine::_yes_no_menu_act_no)),
 						0x0,							// variable
 						nullptr							// on_update_func
@@ -198,10 +202,20 @@ void Engine::tick()
 	if (key_status.key_went_down_just_now(KeyStatus::UpL)
 		&& (!key_status.at(KeyStatus::DownL)()))
 	{
+		//printout("Engine::tick(): key_went_down_now(): up\n");
+		if (yes_no_menu.sel_key() == "no")
+		{
+			yes_no_menu.set_sel_key("yes");
+		}
 	}
 	else if (key_status.key_went_down_just_now(KeyStatus::DownL)
 		&& (!key_status.at(KeyStatus::UpL)()))
 	{
+		//printout("Engine::tick(): key_went_down_now(): down\n");
+		if (yes_no_menu.sel_key() == "yes")
+		{
+			yes_no_menu.set_sel_key("no");
+		}
 	}
 }
 

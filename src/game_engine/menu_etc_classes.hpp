@@ -92,28 +92,34 @@ public:		// variables
 using Rope = std::deque<RopePart>;
 using RopeDeque = std::deque<Rope>;
 
-Rope split_rope_by_whitespace(const Rope& rope);
-RopeDeque wrap_rope(const Rope& rope, size_t row_length);
+Rope split_rope_by_whitespace(const Rope& rope, bool keep_sep=false);
+RopeDeque wrap_rope(const Rope& rope, size_t row_length,
+	bool keep_sep=false);
 
 class MsgLog final
 {
 public:		// constants
 	static constexpr size_t
 		TAB_SPACING_SIZE = 4u,
+		WIDGET_SELECTED_SPACING_SIZE = 3u,
 		WIDGET_SPACING_SIZE = 6u;
 	static const std::string
 		TAB_SPACING_STR,
+		WIDGET_SELECTED_SPACING_STR,
 		WIDGET_SPACING_STR;
 private:		// variables
 	RopeDeque _data;
 	SizeVec2 _size_2d = Window::SCREEN_SIZE_2D;
+	bool _keep_sep = false;
 public:		// functions
-	inline MsgLog(const SizeVec2& s_size_2d=Window::SCREEN_SIZE_2D)
-		: _size_2d(s_size_2d)
+	inline MsgLog(const SizeVec2& s_size_2d=Window::SCREEN_SIZE_2D,
+		bool s_keep_sep=false)
+		: _size_2d(s_size_2d), _keep_sep(s_keep_sep)
 	{
 	}
 	MsgLog(const RopeDeque& s_data,
-		const SizeVec2& s_size_2d=Window::SCREEN_SIZE_2D);
+		const SizeVec2& s_size_2d=Window::SCREEN_SIZE_2D,
+		bool s_keep_sep=false);
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(MsgLog);
 	inline ~MsgLog() = default;
 
@@ -127,6 +133,7 @@ public:		// functions
 
 	GEN_GETTER_BY_CON_REF(data);
 	GEN_GETTER_BY_CON_REF(size_2d);
+	GEN_GETTER_BY_VAL(keep_sep);
 };
 
 
@@ -138,9 +145,11 @@ public:		// constants
 	static constexpr int HORIZ_PICKER_VAR_MAX = 999;
 
 	static constexpr FgBgColorPair
-		WIDGET_UNSELECTED_COLOR_PAIR = FontColor::White,
-		WIDGET_SELECTED_COLOR_PAIR = FontColor::Gray;
+		WIDGET_UNSELECTED_COLOR_PAIR = FontColor::Gray,
+		WIDGET_SELECTED_COLOR_PAIR = FontColor::White;
 	static const std::string
+		WIDGET_SELECTED_STR,
+
 		WIDGET_BUTTON_STR,
 
 		WIDGET_CHECK_BUTTON_UNCHECKED_STR,
@@ -156,6 +165,49 @@ public:		// constants
 		START_NODE_KEY, END_NODE_KEY;
 
 public:		// types
+	template<typename SelfType>
+	class ActionButtonFunctor final
+	{
+	protected:		// variables
+		SelfType* _self = nullptr;
+		std::function<void(SelfType*)> _func = nullptr;
+	public:		// functions
+		inline ActionButtonFunctor() = default;
+		inline ActionButtonFunctor(SelfType* s_self,
+			const std::function<void(SelfType*)>& s_func)
+			: _self(s_self), _func(s_func)
+		{
+		}
+		GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(ActionButtonFunctor);
+		inline ~ActionButtonFunctor() = default;
+
+		inline void operator () () const
+		{
+			_func(_self);
+		}
+	};
+	//template<typename SelfType>
+	//class ActionButtonParamFunctor final
+	//{
+	//protected:		// variables
+	//	SelfType* _self = nullptr;
+	//	std::function<void(SelfType*, int)> _func = nullptr;
+	//public:		// functions
+	//	inline ActionButtonParamFunctor() = default;
+	//	inline ActionButtonParamFunctor(SelfType* s_self,
+	//		const std::function<void(SelfType*, int)>& s_func)
+	//		: _self(s_self), _func(s_func)
+	//	{
+	//	}
+	//	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(ActionButtonParamFunctor);
+	//	inline ~ActionButtonParamFunctor() = default;
+
+	//	inline void operator () (int param) const
+	//	{
+	//		_func(_self, param);
+	//	}
+	//};
+
 	class Node final
 	{
 	public:		// types
@@ -174,9 +226,9 @@ public:		// types
 			// Push button triggers the function pointer
 			ActionButton,
 
-			// Push button triggers the function pointer, which
-			// passes in value
-			ActionButtonParam,
+			//// Push button triggers the function pointer, which
+			//// passes in value
+			//ActionButtonParam,
 
 			// When picked, set the dialog exit type to `variable`
 			ExitButton,
@@ -195,8 +247,8 @@ public:		// types
 		// Button action
 		using DataActionFunc = std::function<void()>;
 
-		// Button action with parameter
-		using DataActionParamFunc = std::function<void(int)>;
+		//// Button action with parameter
+		//using DataActionParamFunc = std::function<void(int)>;
 		//--------
 		// When it's updated at all
 		using OnUpdateFunc = std::function<void()>;
@@ -208,20 +260,25 @@ public:		// types
 		//--------
 		Kind kind;
 		//--------
-		u32 flags;
+		u32 flags = 0;
 		//--------
 		// Where to go, using keyboard or controller; "" if nowhere
 		//std::string left, right, up, down;
 		std::string up, down;
 		//--------
-		std::variant<std::monostate, DataValue, DataActionFunc,
-			DataActionParamFunc>
-			data;
+		std::variant
+		<
+			std::monostate,
+			DataValue,
+			DataActionFunc
+			//DataActionParamFunc
+		>
+			data = std::monostate();
 		//--------
 		// Various uses
-		int variable;
+		int variable = 0;
 		//--------
-		OnUpdateFunc on_update_func;
+		OnUpdateFunc on_update_func = nullptr;
 		//--------
 	public:		// functions
 		//--------
@@ -245,12 +302,14 @@ public:		// types
 			const DataActionFunc& s_data, int s_variable,
 			const OnUpdateFunc& s_on_update_func);
 
-		// This constructor takes a `DataActionParamFunc` for `s_data`
-		Node(const std::string& s_text, Kind s_kind, u32 s_flags,
-			const std::string& s_up, const std::string& s_down,
-			const DataActionParamFunc& s_data, int s_variable,
-			const OnUpdateFunc& s_on_update_func);
+		//// This constructor takes a `DataActionParamFunc` for `s_data`
+		//Node(const std::string& s_text, Kind s_kind, u32 s_flags,
+		//	const std::string& s_up, const std::string& s_down,
+		//	const DataActionParamFunc& s_data, int s_variable,
+		//	const OnUpdateFunc& s_on_update_func);
+
 		GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Node);
+
 		~Node();
 		//--------
 		std::string widget_horiz_picker_str() const;

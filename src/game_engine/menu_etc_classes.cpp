@@ -21,7 +21,7 @@ namespace dungwich_sandeon
 namespace game_engine
 {
 //--------
-Rope split_rope_by_whitespace(const Rope& rope)
+Rope split_rope_by_whitespace(const Rope& rope, bool keep_sep)
 {
 	// Create a new `Rope` that consists of the contents of `rope` split by
 	// whatever amount of whitespace characters is between each
@@ -31,7 +31,7 @@ Rope split_rope_by_whitespace(const Rope& rope)
 
 	for (const auto& rope_part: rope)
 	{
-		auto str_vec = split_str_by_whitespace(rope_part.str);
+		auto str_vec = split_str_by_whitespace(rope_part.str, keep_sep);
 
 		for (const auto& str: str_vec)
 		{
@@ -43,7 +43,7 @@ Rope split_rope_by_whitespace(const Rope& rope)
 
 	return ret;
 }
-RopeDeque wrap_rope(const Rope& rope, size_t row_length)
+RopeDeque wrap_rope(const Rope& rope, size_t row_length, bool keep_sep)
 {
 	RopeDeque ret;
 
@@ -52,7 +52,7 @@ RopeDeque wrap_rope(const Rope& rope, size_t row_length)
 		return ret;
 	}
 
-	Rope split_rope(split_rope_by_whitespace(rope));
+	Rope split_rope(split_rope_by_whitespace(rope, keep_sep));
 
 	if (split_rope.size() == 0)
 	{
@@ -61,18 +61,7 @@ RopeDeque wrap_rope(const Rope& rope, size_t row_length)
 
 	ret.push_back(Rope());
 
-	size_t
-		//row = 0,
-		col = 0;
-		//prev_col = 0;
-
-	//printout("game_engine::wrap_rope():\n");
-
-	//for (const auto& rope_part: split_rope)
-	//{
-	//	printout(rope_part.str, "\n");
-	//}
-	//printout("\n");
+	size_t col = 0;
 
 	bool added_rope = false;
 
@@ -80,70 +69,54 @@ RopeDeque wrap_rope(const Rope& rope, size_t row_length)
 	{
 		auto& rope_part = split_rope.at(i);
 
-		//printout(i, "; ",
-		//	"\"", rope_part.str, "\" ", rope_part.str.size(), "\n");
-		//printout(row, " ", col, " ", prev_col, "; ", row_length, "\n");
-
-		//prev_col = col;
-
-		// The `1u` accounts for the space following the word.
 		col += rope_part.str.size();
 
 		if ((!added_rope) && (col > row_length))
 		{
-			//printout("!!new column!!\n",
-			//	row, " ", col, " ", prev_col, "; ", row_length, "\n");
 			ret.push_back(Rope());
-			//++row;
 			col = 0;
 		}
-
-		//printout(row, " ", col, " ", prev_col, "; ", row_length, "\n");
 
 		added_rope = false;
 
 		ret.back().push_back(std::move(rope_part));
+		const size_t j = ret.back().size() - 1;
 
 		if (((i + 1) < split_rope.size())
-			&& ((col + split_rope.at(i + 1).str.size()) > row_length))
+			&& ((col + split_rope.at(i + 1).str.size()) >= row_length))
 		{
-			//printout("!!new column 2!!\n",
-			//	row, " ", col, " ", prev_col, "; ", row_length, "\n");
 			ret.push_back(Rope());
-			//++row;
 			col = 0;
 			added_rope = true;
 		}
 
-		if (col > 0)
+		if ((!keep_sep) && (col > 0))
 		{
 			++col;
 		}
-
-		//printout("\n\n");
+		//else // if (keep_sep)
+		//{
+		//	if (!added_rope)
+		//	{
+		//	}
+		//}
 	}
-	//printout("\n");
-
-	//for (const auto& rope: ret)
-	//{
-	//	for (const auto& rope_part: rope)
-	//	{
-	//		printout(rope_part.str, " ");
-	//	}
-	//	printout("\n");
-	//}
-	//printout("\n\n");
 
 	return ret;
 }
 //--------
 const std::string
 	MsgLog::TAB_SPACING_STR(spaces_str(MsgLog::TAB_SPACING_SIZE)),
+
+	MsgLog::WIDGET_SELECTED_SPACING_STR(spaces_str
+		(MsgLog::WIDGET_SELECTED_SPACING_SIZE)),
 	MsgLog::WIDGET_SPACING_STR(spaces_str(MsgLog::WIDGET_SPACING_SIZE));
 
-MsgLog::MsgLog(const RopeDeque& s_data, const SizeVec2& s_size_2d)
+MsgLog::MsgLog(const RopeDeque& s_data, const SizeVec2& s_size_2d,
+	bool s_keep_sep)
 {
 	_size_2d = s_size_2d;
+	_keep_sep = s_keep_sep;
 
 	for (const auto& rope: s_data)
 	{
@@ -162,14 +135,14 @@ void MsgLog::pop_front()
 
 void MsgLog::push_back(const Rope& to_push, bool do_pop_front)
 {
-	//_data.push_back(wrap_rope(to_push, size_2d().x));
-	auto wrapped = wrap_rope(to_push, size_2d().x);
+	//_data.push_back(wrap_rope(to_push, size_2d().x, _keep_sep));
+	auto wrapped = wrap_rope(to_push, size_2d().x, _keep_sep);
 
 	for (auto& single_rope: wrapped)
 	{
 		_data.push_back(std::move(single_rope));
 
-		while (do_pop_front && (_data.size() >= size_2d().y))
+		while (do_pop_front && (_data.size() > size_2d().y))
 		{
 			pop_front();
 		}
@@ -184,14 +157,16 @@ void MsgLog::push_back(const RopePart& to_push, bool do_pop_front)
 }
 //--------
 const std::string
-	Menu::WIDGET_BUTTON_STR("(*)"),
+	Menu::WIDGET_SELECTED_STR("=> "),
 
-	Menu::WIDGET_CHECK_BUTTON_UNCHECKED_STR("[ ]"),
-	Menu::WIDGET_CHECK_BUTTON_CHECKED_STR("[x]"),
+	Menu::WIDGET_BUTTON_STR("(*)   "),
+
+	Menu::WIDGET_CHECK_BUTTON_UNCHECKED_STR("[ ]   "),
+	Menu::WIDGET_CHECK_BUTTON_CHECKED_STR("[x]   "),
 
 	Menu::WIDGET_HORIZ_PICKER_LEFT_STR("["),
 	Menu::WIDGET_HORIZ_PICKER_INNER_BLANK_STR("   "),
-	Menu::WIDGET_HORIZ_PICKER_RIGHT_STR("]");
+	Menu::WIDGET_HORIZ_PICKER_RIGHT_STR("] ");
 
 const std::string
 	Menu::START_NODE_KEY("<start>"),
@@ -246,20 +221,20 @@ Menu::Node::Node(const std::string& s_text, Kind s_kind, u32 s_flags,
 {
 }
 
-// This constructor takes a `DataActionParamFunc` for `s_data`
-Menu::Node::Node(const std::string& s_text, Kind s_kind, u32 s_flags,
-	const std::string& s_up, const std::string& s_down,
-	const DataActionParamFunc& s_data, int s_variable,
-	const OnUpdateFunc& s_on_update_func)
-	: text(s_text),
-	kind(s_kind),
-	flags(s_flags),
-	up(s_up), down(s_down),
-	data(s_data),
-	variable(s_variable),
-	on_update_func(s_on_update_func)
-{
-}
+//// This constructor takes a `DataActionParamFunc` for `s_data`
+//Menu::Node::Node(const std::string& s_text, Kind s_kind, u32 s_flags,
+//	const std::string& s_up, const std::string& s_down,
+//	const DataActionParamFunc& s_data, int s_variable,
+//	const OnUpdateFunc& s_on_update_func)
+//	: text(s_text),
+//	kind(s_kind),
+//	flags(s_flags),
+//	up(s_up), down(s_down),
+//	data(s_data),
+//	variable(s_variable),
+//	on_update_func(s_on_update_func)
+//{
+//}
 Menu::Node::~Node()
 {
 }
@@ -302,9 +277,93 @@ Menu::Menu(const std::string& s_sel_key, const SizeVec2& s_size_2d,
 
 Menu::operator MsgLog() const
 {
-	RopeDeque ret_rd;
+	RopeDeque ret_data;
 
-	return MsgLog(ret_rd, size_2d());
+	for (const std::string* key=&at(Menu::START_NODE_KEY).down;
+		(*key)!=Menu::END_NODE_KEY;
+		key=&at(*key).down)
+	{
+		const FgBgColorPair COLOR_PAIR
+			= ((*key) != _sel_key)
+			? WIDGET_UNSELECTED_COLOR_PAIR
+			: WIDGET_SELECTED_COLOR_PAIR;
+		const std::string CURR_WIDGET_SELECTED_STR
+			= ((*key) != _sel_key)
+			? MsgLog::WIDGET_SELECTED_SPACING_STR
+			: WIDGET_SELECTED_STR;
+		const auto& NODE = at(*key);
+
+		switch (NODE.kind)
+		{
+		//--------
+		case Node::Kind::Start:
+			fprintf(stderr,
+				"game_engine::Menu::operator MsgLog(): Internal error.\n");
+			exit(1);
+			break;
+		case Node::Kind::End:
+			fprintf(stderr,
+				"game_engine::Menu::operator MsgLog(): Internal error.\n");
+			exit(1);
+			break;
+
+		case Node::Kind::TextOnly:
+			ret_data.push_back(Rope
+				({
+					RopePart
+					({
+						.str=sconcat(CURR_WIDGET_SELECTED_STR,
+							MsgLog::WIDGET_SPACING_STR, NODE.text), 
+						.color_pair=COLOR_PAIR,
+						.gs_color_pair=COLOR_PAIR
+					})
+				}));
+			break;
+
+		case Node::Kind::ActionButton:
+			ret_data.push_back(Rope
+				({
+					RopePart
+					({
+						.str=sconcat(CURR_WIDGET_SELECTED_STR,
+							Menu::WIDGET_BUTTON_STR, NODE.text), 
+						.color_pair=COLOR_PAIR,
+						.gs_color_pair=COLOR_PAIR
+					})
+				}));
+			break;
+		//case Node::Kind::ActionButtonParam:
+		//	break;
+
+		case Node::Kind::ExitButton:
+			break;
+
+		case Node::Kind::HorizPicker:
+			ret_data.push_back(Rope
+				({
+					RopePart
+					({
+						.str=sconcat(CURR_WIDGET_SELECTED_STR,
+							NODE.widget_horiz_picker_str(), NODE.text), 
+						.color_pair=COLOR_PAIR,
+						.gs_color_pair=COLOR_PAIR
+					})
+				}));
+			break;
+		//case Node::Kind::HorizPickerWrap:
+		//	break;
+
+		default:
+			fprintf(stderr,
+				"game_engine::Menu::operator MsgLog(): "
+				"Internal error.\n");
+			exit(1);
+			break;
+		//--------
+		}
+	}
+
+	return MsgLog(ret_data, size_2d(), true);
 }
 //--------
 } // namespace game_engine
