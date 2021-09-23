@@ -107,7 +107,7 @@ public:		// constants
 		TAB_SPACING_STR,
 		WIDGET_SELECTED_SPACING_STR,
 		WIDGET_SPACING_STR;
-	static constexpr size_t DEFAULT_INTERNAL_HEIGHT = 128;
+	static constexpr size_t DEFAULT_INTERNAL_HEIGHT = 256;
 private:		// variables
 	RopeDeque _data;
 

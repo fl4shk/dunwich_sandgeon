@@ -198,23 +198,48 @@ void Engine::tick()
 	//		" true.\n");
 	//}
 
-	if (key_status.key_went_down_just_now(KeyStatus::UpL)
-		&& (!key_status.at(KeyStatus::DownL)()))
+	//if (key_status.key_went_down_just_now(KeyStatus::UpL)
+	//	&& (!key_status.at(KeyStatus::DownL)()))
+	//{
+	//	////printout("Engine::tick(): key_went_down_now(): up\n");
+	//	//if (yes_no_menu.sel_key() == "no")
+	//	//{
+	//	//	yes_no_menu.set_sel_key("yes");
+	//	//}
+	//}
+	//else if (key_status.key_went_down_just_now(KeyStatus::DownL)
+	//	&& (!key_status.at(KeyStatus::UpL)()))
+	//{
+	//	////printout("Engine::tick(): key_went_down_now(): down\n");
+	//	//if (yes_no_menu.sel_key() == "yes")
+	//	//{
+	//	//	yes_no_menu.set_sel_key("no");
+	//	//}
+	//}
+
+	switch (game_mode)
 	{
-		////printout("Engine::tick(): key_went_down_now(): up\n");
-		//if (yes_no_menu.sel_key() == "no")
-		//{
-		//	yes_no_menu.set_sel_key("yes");
-		//}
-	}
-	else if (key_status.key_went_down_just_now(KeyStatus::DownL)
-		&& (!key_status.at(KeyStatus::UpL)()))
-	{
-		////printout("Engine::tick(): key_went_down_now(): down\n");
-		//if (yes_no_menu.sel_key() == "yes")
-		//{
-		//	yes_no_menu.set_sel_key("no");
-		//}
+	//--------
+	case GameMode::AuxTitleScreen:
+		break;
+	case GameMode::AuxGameOptions:
+		break;
+	case GameMode::AuxCredits:
+		break;
+
+	case GameMode::MainInGame:
+		break;
+
+	case GameMode::PopupShop:
+		break;
+
+	case GameMode::YesNoShop:
+		break;
+
+	//case GameMode::LimGameMode:
+	default:
+		break;
+	//--------
 	}
 }
 

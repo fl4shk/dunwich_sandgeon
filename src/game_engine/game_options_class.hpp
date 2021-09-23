@@ -13,10 +13,10 @@
 // You should have received a copy of the GNU General Public License along
 // with Dungwich Sandeon.  If not, see <https://www.gnu.org/licenses/>.
 
-#ifndef src_game_engine_options_class_hpp
-#define src_game_engine_options_class_hpp
+#ifndef src_game_engine_game_options_class_hpp
+#define src_game_engine_game_options_class_hpp
 
-// src/game_engine/options_class.hpp
+// src/game_engine/game_options_class.hpp
 
 #include "../misc_includes.hpp"
 
@@ -25,7 +25,7 @@ namespace dungwich_sandeon
 namespace game_engine
 {
 
-class Options final
+class GameOptions final
 {
 public:		// variables
 };
@@ -33,4 +33,4 @@ public:		// variables
 } // namespace game_engine
 } // namespace dungwich_sandeon
 
-#endif		// src_game_engine_options_class_hpp
+#endif		// src_game_engine_game_options_class_hpp

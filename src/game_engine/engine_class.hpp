@@ -22,7 +22,7 @@
 #include "../input_kind_enum.hpp"
 #include "basic_window_classes.hpp"
 #include "menu_etc_classes.hpp"
-#include "options_class.hpp"
+#include "game_options_class.hpp"
 #include "comp/general_comp_classes.hpp"
 #include "comp/block_comp_classes.hpp"
 #include "comp/ui_etc_comp_classes.hpp"
@@ -139,6 +139,23 @@ public:		// functions
 	}
 }; 
 
+// An `enum` to specify which `game_engine::Window` is the
+// currently-selected one, as well as what game mode the game is in.
+enum class GameMode
+{
+	AuxTitleScreen,
+	AuxGameOptions,
+	AuxCredits,
+
+	MainInGame,
+
+	PopupShop,
+
+	YesNoShop,
+
+	LimGameMode,
+};
+
 template<typename ObjType>
 concept EngineErrWhenEntNullIdObj
 	= requires(ObjType obj)
@@ -151,6 +168,7 @@ class Engine final
 public:		// types
 	using EntIdSetVec2d
 		= std::vector<std::vector<ecs::EntIdSet>>;
+
 public:		// constants
 	static const PosVec2
 		PLAYFIELD_WINDOW_POS, PLAYFIELD_WINDOW_END_POS;
@@ -169,6 +187,8 @@ public:		// constants
 		NUM_FLOORS = abs(HIGHEST_FLOOR - LOWEST_FLOOR) + 1;
 
 public:		// variables
+	GameMode game_mode = GameMode::AuxTitleScreen;
+
 	ecs::Engine ecs_engine;
 	Window 
 		// The `Window` that contains the entities to display on screen 
