@@ -41,12 +41,12 @@ public:		// types
 	class Data final
 	{
 	public:		// variables
-		int c;
+		int c = ' ';
 		FgBgColorPair
-			color_pair,
+			color_pair = FontColor::White,
 
 			// Grayscale color pair
-			gs_color_pair;
+			gs_color_pair = FontColor::White;
 	public:		// functions
 		inline bool operator == (Data to_cmp) const
 		{
@@ -60,9 +60,7 @@ public:		// types
 		}
 	};
 private:		// variables
-	Data _data{.c=' ',
-		.color_pair=FontColor::White,
-		.gs_color_pair=FontColor::White};
+	Data _data;
 	FgBgColorPair
 		_non_blink_color_pair = FontColor::White,
 		_non_blink_gs_color_pair = FontColor::White;

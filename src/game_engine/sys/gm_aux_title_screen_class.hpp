@@ -13,30 +13,36 @@
 // You should have received a copy of the GNU General Public License along
 // with Dungwich Sandeon.  If not, see <https://www.gnu.org/licenses/>.
 
-#ifndef src_game_engine_game_options_class_hpp
-#define src_game_engine_game_options_class_hpp
+#ifndef src_game_engine_sys_gm_aux_title_screen_class_hpp
+#define src_game_engine_sys_gm_aux_title_screen_class_hpp
 
-// src/game_engine/game_options_class.hpp
+// src/game_engine/sys/gm_aux_title_screen_class.hpp
 
-#include "../misc_includes.hpp"
+#include "../../misc_includes.hpp"
 
 namespace dungwich_sandeon
 {
 namespace game_engine
 {
-
-class GameOptions final
+namespace sys
 {
-public:		// variables
-	bool grayscale = false;
+
+// Game Mode AUX Title Screen
+class GmAuxTitleScreen final: public ecs::Sys 
+{
+public:		// constants
+	static const std::string KIND_STR;
 public:		// functions
-	GameOptions();
-	GameOptions(bool s_grayscale);
-	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(GameOptions);
-	~GameOptions();
+	GmAuxTitleScreen() = default;
+	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(GmAuxTitleScreen);
+	virtual ~GmAuxTitleScreen() = default;
+
+	virtual std::string kind_str() const;
+	virtual void tick(ecs::Engine* ecs_engine);
 };
 
+} // namespace sys
 } // namespace game_engine
 } // namespace dungwich_sandeon
 
-#endif		// src_game_engine_game_options_class_hpp
+#endif		// src_game_engine_sys_gm_aux_title_screen_class_hpp

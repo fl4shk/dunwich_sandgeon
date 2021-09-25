@@ -281,7 +281,6 @@ void Window::draw(const MsgLog& msg_log)
 		const auto& ROPE = msg_log.data().at(j);
 
 		SizeVec2 temp_pos(0, j - msg_log.scroll());
-		//SizeVec2 temp_pos(0, j + msg_log.scroll());
 
 		auto draw_at_temp_pos
 			= [this, &temp_pos](comp::Drawable::Data drawable_data) -> void

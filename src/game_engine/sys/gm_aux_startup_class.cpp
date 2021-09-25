@@ -13,30 +13,41 @@
 // You should have received a copy of the GNU General Public License along
 // with Dungwich Sandeon.  If not, see <https://www.gnu.org/licenses/>.
 
-#ifndef src_game_engine_game_options_class_hpp
-#define src_game_engine_game_options_class_hpp
-
-// src/game_engine/game_options_class.hpp
-
-#include "../misc_includes.hpp"
+#include "gm_aux_startup_class.hpp"
+#include "../engine_class.hpp"
 
 namespace dungwich_sandeon
 {
 namespace game_engine
 {
-
-class GameOptions final
+namespace sys
 {
-public:		// variables
-	bool grayscale = false;
-public:		// functions
-	GameOptions();
-	GameOptions(bool s_grayscale);
-	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(GameOptions);
-	~GameOptions();
-};
 
+const std::string
+	GmAuxStartup::KIND_STR("GmAuxStartup");
+
+std::string GmAuxStartup::kind_str() const
+{
+	return KIND_STR;
+}
+
+void GmAuxStartup::tick(ecs::Engine* ecs_engine)
+{
+	auto engine = game_engine::engine;
+
+	if (engine->game_mode == GameMode::AuxStartup)
+	{
+		printout("GmAuxStartup::tick(): testificate\n");
+
+		auto
+			& screen_window = engine->screen_window,
+			& aux_window = engine->aux_window;
+
+		screen_window.clear();
+		screen_window.draw(aux_window);
+	}
+}
+
+} // namespace sys
 } // namespace game_engine
 } // namespace dungwich_sandeon
-
-#endif		// src_game_engine_game_options_class_hpp

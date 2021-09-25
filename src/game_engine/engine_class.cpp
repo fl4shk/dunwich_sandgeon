@@ -14,11 +14,44 @@
 // with Dungwich Sandeon.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "engine_class.hpp"
+#include "comp/block_comp_classes.hpp"
+#include "comp/ui_etc_comp_classes.hpp"
+#include "sys/gm_aux_title_screen_class.hpp"
 
 namespace dungwich_sandeon
 {
 namespace game_engine
 {
+//--------
+KeyStatus::KeyStatus()
+{
+	auto init_state = [&](KeyKind key_kind) -> void
+	{
+		state_map[key_kind] = PrevCurrPair<bool>();
+		state_map.at(key_kind)() = false;
+		state_map.at(key_kind).back_up();
+	};
+
+	init_state(LeftL);
+	init_state(UpL);
+	init_state(RightL);
+	init_state(DownL);
+
+	init_state(LeftR);
+	init_state(UpR);
+	init_state(RightR);
+	init_state(DownR);
+
+	init_state(ShoulderL);
+	init_state(ShoulderR);
+
+	init_state(Start);
+	init_state(Select);
+}
+KeyStatus::~KeyStatus()
+{
+}
+//--------
 
 const PosVec2 
 	Engine::PLAYFIELD_WINDOW_POS(0, 0),
@@ -79,7 +112,7 @@ Engine::Engine()
 	popup_window(this, POPUP_WINDOW_POS, POPUP_WINDOW_END_POS),
 	yes_no_window(this, YES_NO_WINDOW_POS, YES_NO_WINDOW_END_POS),
 
-	_playfield_ent_id_v3d(NUM_FLOORS,
+	playfield_ent_id_v3d(NUM_FLOORS,
 		EntIdSetVec2d(PLAYFIELD_WINDOW_SIZE_2D.y,
 			std::vector<std::set<ecs::EntId>>(PLAYFIELD_WINDOW_SIZE_2D.x)))
 {
@@ -217,37 +250,37 @@ void Engine::tick()
 	//	//}
 	//}
 
-	switch (game_mode)
-	{
-	//--------
-	case GameMode::AuxTitleScreen:
-		break;
-	case GameMode::AuxGameOptions:
-		break;
-	case GameMode::AuxCredits:
-		break;
+	//switch (game_mode)
+	//{
+	////--------
+	//case GameMode::AuxTitleScreen:
+	//	break;
+	//case GameMode::AuxGameOptions:
+	//	break;
+	//case GameMode::AuxCredits:
+	//	break;
 
-	case GameMode::MainInGame:
-		break;
+	//case GameMode::MainInGame:
+	//	break;
 
-	case GameMode::PopupShop:
-		break;
+	//case GameMode::PopupShop:
+	//	break;
 
-	case GameMode::YesNoShop:
-		break;
+	//case GameMode::YesNoShop:
+	//	break;
 
-	//case GameMode::LimGameMode:
-	default:
-		break;
-	//--------
-	}
+	////case GameMode::LimGameMode:
+	//default:
+	//	break;
+	////--------
+	//}
 }
 
 void Engine::position_ctor_callback(comp::Position* obj)
 {
 	_err_when_ent_id_is_null(obj, "position_ctor_callback");
 
-	auto& ent_id_set = _playfield_ent_id_v3d.at(obj->pos().z)
+	auto& ent_id_set = playfield_ent_id_v3d.at(obj->pos().z)
 		.at(obj->pos().y).at(obj->pos().x);
 	if (ent_id_set.contains(obj->ent_id()))
 	{
@@ -262,7 +295,7 @@ void Engine::position_dtor_callback(comp::Position* obj)
 {
 	_err_when_ent_id_is_null(obj, "position_dtor_callback");
 
-	auto& ent_id_set = _playfield_ent_id_v3d.at(obj->pos().z)
+	auto& ent_id_set = playfield_ent_id_v3d.at(obj->pos().z)
 		.at(obj->pos().y).at(obj->pos().x);
 	if (!ent_id_set.contains(obj->ent_id()))
 	{
@@ -294,6 +327,6 @@ void Engine::_yes_no_menu_act_no(Engine* self)
 }
 
 Engine* engine = nullptr;
-
+//--------
 } // namespace game_engine
 } // namespace dungwich_sandeon
