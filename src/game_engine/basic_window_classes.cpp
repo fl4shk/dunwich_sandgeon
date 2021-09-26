@@ -272,77 +272,102 @@ void Window::draw(const MsgLog& msg_log)
 	//for (size_t j=msg_log.scroll(); j<msg_log.data().size(); ++j)
 	//for (size_t j=msg_log.scroll(); j<msg_log.window_size_2d().y; ++j)
 
-	std::vector<PosVec2> temp_pos_start_vec;
+	//std::vector<PosVec2> temp_pos_start_vec;
 
-	auto loop_continue_cond = [&msg_log](size_t j) -> bool
+	//bool decrement = true;
+
+	//for (size_t j=msg_log.scroll(); cond(j); ++j)
+	//{
+	//	if (msg_log.center()
+	//		&& (msg_log.data().size() < msg_log.window_size_2d().y))
+	//	{
+	//		if (decrement)
+	//		{
+	//			decrement = false;
+
+	//			if (temp_pos_start_vec.size() == 0)
+	//			{
+	//				temp_pos_start_vec.push_back
+	//					(PosVec2(0, msg_log.window_size_2d().y / 2));
+	//			}
+	//			else
+	//			{
+	//				for (size_t i=0; i<temp_pos_start_vec.size(); ++i)
+	//				{
+	//					--temp_pos_start_vec.at(i).y;
+	//				}
+	//			}
+	//		}
+	//		else // if (!decrement)
+	//		{
+	//			decrement = true;
+
+	//			if (temp_pos_start_vec.size() == 0)
+	//			{
+	//				temp_pos_start_vec.push_back
+	//					(PosVec2(0, msg_log.window_size_2d().y / 2));
+	//			}
+	//		}
+
+	//		temp_pos_start_vec.push_back
+	//			(PosVec2(0, temp_pos_start_vec.back().y + 1));
+	//	}
+	//	else
+	//	{
+	//		temp_pos_start_vec.push_back(PosVec2(0, j - msg_log.scroll()));
+	//	}
+	//}
+
+	PosVec2 temp_pos(0, 0);
+
+	if (msg_log.center().y
+		&& (msg_log.data().size() < msg_log.window_size_2d().y))
 	{
-		return (((j - msg_log.scroll()) < msg_log.window_size_2d().y)
-			&& (j < msg_log.internal_height())
-			&& (j < msg_log.data().size()));
-	};
-
-	bool horiz_dir_is_right = false, vert_dir_is_down = false;
-
-	for (size_t j=msg_log.scroll(); loop_continue_cond(j); ++j)
-	{
-		if (msg_log.center()
-			&& (msg_log.data().size() < msg_log.window_size_2d().y))
-		{
-			if (vert_dir_is_down)
-			{
-				vert_dir_is_down = false;
-
-				if (temp_pos_start_vec.size() == 0)
-				{
-					temp_pos_start_vec.push_back
-						(PosVec2(0, msg_log.window_size_2d().y / 2));
-				}
-				else
-				{
-					for (size_t i=0; i<temp_pos_start_vec.size(); ++i)
-					{
-						--temp_pos_start_vec.at(i).y;
-					}
-					//temp_pos_start_vec.push_back
-					//	(PosVec2(0, temp_pos_start_vec.back().y + 1));
-				}
-			}
-			else // if (!vert_dir_is_down)
-			{
-				vert_dir_is_down = true;
-
-				if (temp_pos_start_vec.size() == 0)
-				{
-					temp_pos_start_vec.push_back
-						(PosVec2(0, msg_log.window_size_2d().y / 2));
-				}
-				//else
-				//{
-				//	for (size_t i=0; i<temp_pos_start_vec.size(); ++i)
-				//	{
-				//		++temp_pos_start_vec.at(i).y;
-				//	}
-				//	//temp_pos_start_vec.push_back
-				//	//	(PosVec2(0, temp_pos_start_vec.back().y + 1));
-				//}
-			}
-
-			temp_pos_start_vec.push_back
-				(PosVec2(0, temp_pos_start_vec.back().y + 1));
-		}
-		else
-		{
-			temp_pos_start_vec.push_back(PosVec2(0, j - msg_log.scroll()));
-		}
+		temp_pos.y
+			= ((msg_log.window_size_2d().y - msg_log.data().size()) / 2);
 	}
 
-	for (size_t j=msg_log.scroll(); loop_continue_cond(j); ++j)
+	for (size_t j=msg_log.scroll();
+		((j - msg_log.scroll()) < msg_log.window_size_2d().y)
+			&& (j < msg_log.internal_height())
+			&& (j < msg_log.data().size());
+		++j, ++temp_pos.y)
 	{
 		const auto& ROPE = msg_log.data().at(j);
 
 		//SizeVec2 temp_pos(0, j - msg_log.scroll());
 		//SizeVec2 temp_pos(0, temp_pos_start_vec.at(j - msg_log.scroll()).y);
-		auto temp_pos = temp_pos_start_vec.at(j - msg_log.scroll());
+		//auto temp_pos = temp_pos_start_vec.at(j - msg_log.scroll());
+
+		size_t rope_size = 0;
+
+		for (size_t i=0; i<ROPE.size(); ++i)
+		{
+			rope_size += ROPE.at(i).str.size();
+
+			if ((!msg_log.keep_sep()) && ((i + 1) < ROPE.size()))
+			{
+				++rope_size;
+			}
+		}
+		//printout("rope_size: ", rope_size, " ", 
+		//	std::string("This is a red str. asdf asdf asdf asdf").size(),
+		//	"\n");
+		//for (size_t i=0; i<ROPE.size(); ++i)
+		//{
+		//	printout("testificate: ",
+		//		ROPE.at(i).str.size(), "; ", ROPE.at(i).str, "\n");
+		//}
+
+		if (msg_log.center().x
+			&& (rope_size < msg_log.window_size_2d().x))
+		{
+			temp_pos.x = ((msg_log.window_size_2d().x - rope_size) / 2);
+		}
+		else
+		{
+			temp_pos.x = 0;
+		}
 
 		auto draw_at_temp_pos
 			= [this, &temp_pos](comp::Drawable::Data drawable_data) -> void

@@ -190,7 +190,8 @@ Engine::Engine()
 						nullptr					// on_update_func
 					)
 				},
-			})
+			}),
+			Vec2(true, true)
 		);
 
 	//printout("Engine::Engine()\n");
@@ -263,13 +264,12 @@ void Engine::tick()
 	//case GameMode::MainInGame:
 	//	break;
 
-	//case GameMode::PopupShop:
-	//	break;
+	////case GameMode::PopupShop:
+	////	break;
 
-	//case GameMode::YesNoShop:
-	//	break;
+	////case GameMode::YesNoShop:
+	////	break;
 
-	////case GameMode::LimGameMode:
 	//default:
 	//	break;
 	////--------

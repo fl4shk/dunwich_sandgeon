@@ -126,10 +126,10 @@ int RealMainSdl::run()
 		(
 			{
 				{
-					RopePart("This is a red str.", FontColor::Red,
+					RopePart("This is a red str. asdf asdf asdf asdf", FontColor::Red,
 						FontColor::Gray),
-					RopePart("Red string 2", FontColor::Red,
-						FontColor::Gray),
+					//RopePart("Red string 2", FontColor::Red,
+					//	FontColor::Gray),
 				},
 				{
 					RopePart("This is a green str.", FontColor::Green,
@@ -139,18 +139,18 @@ int RealMainSdl::run()
 					RopePart("asdf jkl;", FontColor::Brown,
 						FontColor::White),
 				},
-				{
-					RopePart("Blue str!", FontColor::Blue,
-						FontColor::Gray),
-				},
-				{
-					RopePart("Gray str!", FontColor::Gray,
-						FontColor::Gray),
-				},
+				//{
+				//	RopePart("Blue str!", FontColor::Blue,
+				//		FontColor::Gray),
+				//},
+				//{
+				//	RopePart("Gray str! This is a gray string!",
+				//		FontColor::Gray, FontColor::Gray),
+				//},
 			},
 			MsgLog::DEFAULT_INTERNAL_HEIGHT,
 			log_window.size_2d(),
-			true
+			Vec2(true, true)
 		);
 	//msg_log.set_scroll(2);
 	log_window.draw(msg_log);

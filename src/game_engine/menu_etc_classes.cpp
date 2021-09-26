@@ -113,7 +113,7 @@ const std::string
 	MsgLog::WIDGET_SPACING_STR(spaces_str(MsgLog::WIDGET_SPACING_SIZE));
 
 MsgLog::MsgLog(const RopeDeque& s_data, size_t s_internal_height,
-	const SizeVec2& s_window_size_2d, bool s_center,
+	const SizeVec2& s_window_size_2d, Vec2<bool> s_center,
 	bool s_keep_sep)
 {
 	_internal_height = s_internal_height;
@@ -268,13 +268,13 @@ std::string Menu::Node::widget_horiz_picker_str() const
 }
 
 Menu::Menu(const std::string& s_sel_key, const SizeVec2& s_size_2d,
-	const NodeMap& s_node_map, bool s_center)
+	const NodeMap& s_node_map, Vec2<bool> s_center)
 	: _sel_key(s_sel_key), _size_2d(s_size_2d), _node_map(s_node_map),
 	_center(s_center)
 {
 }
 Menu::Menu(const std::string& s_sel_key, const SizeVec2& s_size_2d,
-	NodeMap&& s_node_map, bool s_center)
+	NodeMap&& s_node_map, Vec2<bool> s_center)
 	: _sel_key(s_sel_key), _size_2d(s_size_2d),
 	_node_map(std::move(s_node_map)), _center(s_center)
 {

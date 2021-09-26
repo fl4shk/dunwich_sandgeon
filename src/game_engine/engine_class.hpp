@@ -124,9 +124,9 @@ enum class GameMode
 
 	MainInGame,
 
-	PopupShop,
+	//PopupShop,
 
-	YesNoShop,
+	//YesNoShop,
 };
 //--------
 template<typename ObjType>
