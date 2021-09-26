@@ -113,10 +113,12 @@ const std::string
 	MsgLog::WIDGET_SPACING_STR(spaces_str(MsgLog::WIDGET_SPACING_SIZE));
 
 MsgLog::MsgLog(const RopeDeque& s_data, size_t s_internal_height,
-	const SizeVec2& s_window_size_2d, bool s_keep_sep)
+	const SizeVec2& s_window_size_2d, bool s_center,
+	bool s_keep_sep)
 {
 	_internal_height = s_internal_height;
 	_window_size_2d = s_window_size_2d;
+	_center = s_center;
 	_keep_sep = s_keep_sep;
 
 	for (const auto& rope: s_data)
@@ -266,14 +268,15 @@ std::string Menu::Node::widget_horiz_picker_str() const
 }
 
 Menu::Menu(const std::string& s_sel_key, const SizeVec2& s_size_2d,
-	const NodeMap& s_node_map)
-	: _sel_key(s_sel_key), _size_2d(s_size_2d), _node_map(s_node_map)
+	const NodeMap& s_node_map, bool s_center)
+	: _sel_key(s_sel_key), _size_2d(s_size_2d), _node_map(s_node_map),
+	_center(s_center)
 {
 }
 Menu::Menu(const std::string& s_sel_key, const SizeVec2& s_size_2d,
-	NodeMap&& s_node_map)
+	NodeMap&& s_node_map, bool s_center)
 	: _sel_key(s_sel_key), _size_2d(s_size_2d),
-	_node_map(std::move(s_node_map))
+	_node_map(std::move(s_node_map)), _center(s_center)
 {
 }
 
@@ -365,7 +368,8 @@ Menu::operator MsgLog() const
 		}
 	}
 
-	MsgLog ret(ret_data, MsgLog::DEFAULT_INTERNAL_HEIGHT, size_2d(), true);
+	MsgLog ret(ret_data, MsgLog::DEFAULT_INTERNAL_HEIGHT, size_2d(),
+		center(), true);
 	ret.set_scroll(1);
 	return ret;
 }

@@ -117,19 +117,20 @@ private:		// variables
 		_scroll = 0;
 
 	SizeVec2 _window_size_2d = Window::SCREEN_SIZE_2D;
-	bool _keep_sep = false;
+	bool _center = false, _keep_sep = false;
 public:		// functions
 	inline MsgLog(size_t s_internal_height=DEFAULT_INTERNAL_HEIGHT,
 		const SizeVec2& s_window_size_2d=Window::SCREEN_SIZE_2D,
-		bool s_keep_sep=false)
+		bool s_center=false, bool s_keep_sep=false)
 		: _internal_height(s_internal_height),
-		_window_size_2d(s_window_size_2d), _keep_sep(s_keep_sep)
+		_window_size_2d(s_window_size_2d), _center(s_center),
+		_keep_sep(s_keep_sep)
 	{
 	}
 	MsgLog(const RopeDeque& s_data,
 		size_t s_internal_height=DEFAULT_INTERNAL_HEIGHT,
 		const SizeVec2& s_window_size_2d=Window::SCREEN_SIZE_2D,
-		bool s_keep_sep=false);
+		bool s_center=false, bool s_keep_sep=false);
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(MsgLog);
 	inline ~MsgLog() = default;
 
@@ -145,6 +146,7 @@ public:		// functions
 	GEN_GETTER_BY_VAL(internal_height);
 	GEN_GETTER_AND_SETTER_BY_VAL(scroll);
 	GEN_GETTER_BY_CON_REF(window_size_2d);
+	GEN_GETTER_BY_VAL(center);
 	GEN_GETTER_BY_VAL(keep_sep);
 };
 
@@ -335,12 +337,13 @@ private:		// variables
 
 	SizeVec2 _size_2d = Window::SCREEN_SIZE_2D;
 	NodeMap _node_map;
+	bool _center = false;
 public:		// functions
 	Menu() = default;
 	Menu(const std::string& s_sel_key, const SizeVec2& s_size_2d,
-		const NodeMap& s_node_map);
+		const NodeMap& s_node_map, bool s_center=false);
 	Menu(const std::string& s_sel_key, const SizeVec2& s_size_2d,
-		NodeMap&& s_node_map);
+		NodeMap&& s_node_map, bool s_center=false);
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Menu);
 	~Menu() = default;
 
@@ -371,6 +374,7 @@ public:		// functions
 	GEN_GETTER_AND_SETTER_BY_CON_REF(sel_key);
 	GEN_GETTER_BY_CON_REF(size_2d);
 	GEN_GETTER_BY_CON_REF(node_map);
+	GEN_GETTER_BY_VAL(center);
 };
 
 //class Hud final

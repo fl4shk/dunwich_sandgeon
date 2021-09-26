@@ -121,30 +121,39 @@ int RealMainSdl::run()
 		& hud_window = _engine.hud_window,
 		& popup_window = _engine.popup_window,
 		& yes_no_window = _engine.yes_no_window;
-	//MsgLog
-	//	msg_log
-	//	(
-	//		{
-	//			{
-	//				RopePart("This is a red str.", FontColor::Red,
-	//					FontColor::Gray),
-	//				RopePart("Red string 2", FontColor::Red,
-	//					FontColor::Gray),
-	//			},
-	//			{
-	//				RopePart("This is a green str.", FontColor::Green,
-	//					FontColor::Gray),
-	//			},
-	//			{
-	//				RopePart("asdf jkl;", FontColor::Brown,
-	//					FontColor::White),
-	//			},
-	//		},
-	//		MsgLog::DEFAULT_INTERNAL_HEIGHT,
-	//		playfield_window.size_2d()
-	//	);
-	////msg_log.set_scroll(2);
-	//playfield_window.draw(msg_log);
+	MsgLog
+		msg_log
+		(
+			{
+				{
+					RopePart("This is a red str.", FontColor::Red,
+						FontColor::Gray),
+					RopePart("Red string 2", FontColor::Red,
+						FontColor::Gray),
+				},
+				{
+					RopePart("This is a green str.", FontColor::Green,
+						FontColor::Gray),
+				},
+				{
+					RopePart("asdf jkl;", FontColor::Brown,
+						FontColor::White),
+				},
+				{
+					RopePart("Blue str!", FontColor::Blue,
+						FontColor::Gray),
+				},
+				{
+					RopePart("Gray str!", FontColor::Gray,
+						FontColor::Gray),
+				},
+			},
+			MsgLog::DEFAULT_INTERNAL_HEIGHT,
+			log_window.size_2d(),
+			true
+		);
+	//msg_log.set_scroll(2);
+	log_window.draw(msg_log);
 	//--------
 	bool quit = false;
 	while (!quit)
@@ -236,16 +245,16 @@ int RealMainSdl::run()
 		//yes_no_window.clear();
 		//yes_no_window.draw(_engine.yes_no_menu);
 
-		//screen_window.clear();
-		////playfield_window.draw(msg_log);
+		screen_window.clear();
+		//playfield_window.draw(msg_log);
 
-		//// Temporary drawing into `screen_window`.
-		//screen_window.draw(playfield_window, true);
-		//screen_window.draw(log_window, true);
-		//screen_window.draw(hud_window, true);
-		//////screen_window.draw(aux_window);
-		//////screen_window.draw(popup_window);
-		////screen_window.draw(yes_no_window);
+		// Temporary drawing into `screen_window`.
+		screen_window.draw(playfield_window, true);
+		screen_window.draw(log_window, true);
+		screen_window.draw(hud_window, true);
+		////screen_window.draw(aux_window);
+		////screen_window.draw(popup_window);
+		//screen_window.draw(yes_no_window);
 
 		for (size_t j=0; j<screen_window.with_border_size_2d().y; ++j)
 		{
