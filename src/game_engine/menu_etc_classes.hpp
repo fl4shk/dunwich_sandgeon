@@ -28,6 +28,8 @@ namespace dungwich_sandeon
 namespace game_engine
 {
 
+class KeyStatus;
+
 class RopePart final
 {
 public:		// types
@@ -87,10 +89,15 @@ public:		// variables
 
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(RopePart);
 	inline ~RopePart() = default;
+
 };
+
+std::ostream& operator << (std::ostream& os, const RopePart& rope_part);
 
 using Rope = std::deque<RopePart>;
 using RopeDeque = std::deque<Rope>;
+
+std::ostream& operator << (std::ostream& os, const Rope& rope);
 
 Rope split_rope_by_whitespace(const Rope& rope, bool keep_sep=false);
 RopeDeque wrap_rope(const Rope& rope, size_t row_length,
@@ -369,6 +376,16 @@ public:		// functions
 
 		return _node_map.at(key);
 	}
+
+	inline Node& next_node(const KeyStatus& key_status)
+	{
+		return at(next_sel_key(key_status));
+	}
+	inline const Node& next_node(const KeyStatus& key_status) const
+	{
+		return at(next_sel_key(key_status));
+	}
+	const std::string& next_sel_key(const KeyStatus& key_status) const;
 
 	operator MsgLog () const;
 

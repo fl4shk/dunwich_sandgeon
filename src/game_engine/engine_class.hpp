@@ -117,7 +117,7 @@ public:		// functions
 // currently-selected one, as well as what game mode the game is in.
 enum class GameMode
 {
-	AuxStartup,
+	//AuxStartup,
 	AuxTitleScreen,
 	AuxSetGameOptions,
 	AuxCredits,
@@ -160,7 +160,7 @@ public:		// constants
 		NUM_FLOORS = abs(HIGHEST_FLOOR - LOWEST_FLOOR) + 1;
 
 public:		// variables
-	GameMode game_mode = GameMode::AuxStartup;
+	GameMode game_mode = GameMode::AuxTitleScreen;
 	GameOptions game_options;
 
 	ecs::Engine ecs_engine;
@@ -245,6 +245,79 @@ public:		// functions
 	void position_dtor_callback(comp::Position* obj);
 	void position_set_pos_callback(comp::Position* obj,
 		const PosVec3& n_pos);
+
+	template<typename SelfType>
+	inline Menu build_yes_no_menu(SelfType* self,
+		const std::function<void(SelfType*)>& yes_func,
+		const std::function<void(SelfType*)>& no_func)
+	{
+		return Menu
+		(
+			"yes",
+			yes_no_window.size_2d(),
+			Menu::NodeMap
+			({
+				{
+					Menu::START_NODE_KEY,
+					Menu::Node
+					(
+						Menu::START_NODE_KEY,		// text
+						Menu::Node::Kind::Start,	// kind
+						0x0,						// flags
+						"", "yes",					// where
+						std::monostate(),			// data
+						0x0,						// variable
+						nullptr						// on_update_func
+					)
+				},
+				{
+					"yes",
+					Menu::Node
+					(
+						"Yes",							// text
+						Menu::Node::Kind::ActionButton, // kind
+						0x0,							// flags
+						Menu::START_NODE_KEY, "no",		// where
+						std::function<void()>			// data
+							(Menu::ActionButtonFunctor<SelfType>
+								(self, yes_func)),
+						0x0,							// variable
+						nullptr							// on_update_func
+					)
+				},
+				{
+					"no",
+					Menu::Node
+					(
+						"No",							// text
+						Menu::Node::Kind::ActionButton, // kind
+						0x0,							// flags
+						"yes", Menu::END_NODE_KEY,		// where
+						std::function<void()>			// data
+							(Menu::ActionButtonFunctor<SelfType>
+								(self, no_func)),
+						0x0,							// variable
+						nullptr							// on_update_func
+					)
+				},
+				{
+					Menu::END_NODE_KEY,
+					Menu::Node
+					(
+						Menu::END_NODE_KEY,		// text
+						Menu::Node::Kind::End,	// kind
+						0x0,					// flags
+						"no", "",				// where
+						std::monostate(),		// data
+						0x0,					// variable
+						nullptr					// on_update_func
+					)
+				},
+			}),
+			Vec2(true, true)
+		);
+	}
+
 private:		// functions
 	static void _yes_no_menu_act_yes(Engine* self);
 	static void _yes_no_menu_act_no(Engine* self);

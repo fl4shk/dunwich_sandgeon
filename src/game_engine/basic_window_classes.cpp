@@ -268,55 +268,7 @@ void Window::draw(const Menu& menu)
 
 void Window::draw(const MsgLog& msg_log)
 {
-	//for (size_t j=0; j<msg_log.data().size(); ++j)
-	//for (size_t j=msg_log.scroll(); j<msg_log.data().size(); ++j)
-	//for (size_t j=msg_log.scroll(); j<msg_log.window_size_2d().y; ++j)
-
-	//std::vector<PosVec2> temp_pos_start_vec;
-
-	//bool decrement = true;
-
-	//for (size_t j=msg_log.scroll(); cond(j); ++j)
-	//{
-	//	if (msg_log.center()
-	//		&& (msg_log.data().size() < msg_log.window_size_2d().y))
-	//	{
-	//		if (decrement)
-	//		{
-	//			decrement = false;
-
-	//			if (temp_pos_start_vec.size() == 0)
-	//			{
-	//				temp_pos_start_vec.push_back
-	//					(PosVec2(0, msg_log.window_size_2d().y / 2));
-	//			}
-	//			else
-	//			{
-	//				for (size_t i=0; i<temp_pos_start_vec.size(); ++i)
-	//				{
-	//					--temp_pos_start_vec.at(i).y;
-	//				}
-	//			}
-	//		}
-	//		else // if (!decrement)
-	//		{
-	//			decrement = true;
-
-	//			if (temp_pos_start_vec.size() == 0)
-	//			{
-	//				temp_pos_start_vec.push_back
-	//					(PosVec2(0, msg_log.window_size_2d().y / 2));
-	//			}
-	//		}
-
-	//		temp_pos_start_vec.push_back
-	//			(PosVec2(0, temp_pos_start_vec.back().y + 1));
-	//	}
-	//	else
-	//	{
-	//		temp_pos_start_vec.push_back(PosVec2(0, j - msg_log.scroll()));
-	//	}
-	//}
+	//printout("game_engine::Window::draw(const MsgLog&): testificate\n");
 
 	PosVec2 temp_pos(0, 0);
 
@@ -335,10 +287,6 @@ void Window::draw(const MsgLog& msg_log)
 	{
 		const auto& ROPE = msg_log.data().at(j);
 
-		//SizeVec2 temp_pos(0, j - msg_log.scroll());
-		//SizeVec2 temp_pos(0, temp_pos_start_vec.at(j - msg_log.scroll()).y);
-		//auto temp_pos = temp_pos_start_vec.at(j - msg_log.scroll());
-
 		size_t rope_size = 0;
 
 		for (size_t i=0; i<ROPE.size(); ++i)
@@ -351,18 +299,31 @@ void Window::draw(const MsgLog& msg_log)
 			}
 		}
 		//printout("rope_size: ", rope_size, " ", 
-		//	std::string("This is a red str. asdf asdf asdf asdf").size(),
+		//	//std::string("This is a red str. asdf asdf asdf asdf").size(),
 		//	"\n");
 		//for (size_t i=0; i<ROPE.size(); ++i)
 		//{
-		//	printout("testificate: ",
-		//		ROPE.at(i).str.size(), "; ", ROPE.at(i).str, "\n");
+		//	size_t temp_rope_size = ROPE.at(i).str.size();
+
+		//	if ((!msg_log.keep_sep()) && ((i + 1) < ROPE.size()))
+		//	{
+		//		++temp_rope_size;
+		//	}
+
+		//	printout(temp_rope_size, " ",
+		//		"\"", ROPE.at(i).str, "\"", "; ");
 		//}
+		//printout("\n\n");
 
 		if (msg_log.center().x
-			&& (rope_size < msg_log.window_size_2d().x))
+			&& ((rope_size - 1) < msg_log.window_size_2d().x))
 		{
-			temp_pos.x = ((msg_log.window_size_2d().x - rope_size) / 2);
+			//printout("testificate asdf: ",
+			//	(rope_size + 2), " ", msg_log.window_size_2d().x, "\n");
+			//temp_pos.x 
+			//	= ((msg_log.window_size_2d().x - rope_size) / 2) - 1;
+			temp_pos.x 
+				= ((msg_log.window_size_2d().x - rope_size) / 2);
 		}
 		else
 		{
@@ -398,7 +359,7 @@ void Window::draw(const MsgLog& msg_log)
 				//	temp_pos.x, "\n");
 			}
 
-			if (temp_pos.x < size_2d().x)
+			if ((!msg_log.keep_sep()) && (temp_pos.x < size_2d().x))
 			{
 				draw_at_temp_pos
 				(

@@ -97,10 +97,10 @@ const PosVec2
 		Window::WITH_BORDER_SCREEN_SIZE_2D.y / 2),
 
 	Engine::YES_NO_WINDOW_END_POS
-		(Engine::YES_NO_WINDOW_POS.x + 3 +
-		MsgLog::WIDGET_SELECTED_SPACING_SIZE + Menu::WIDGET_SPACING_SIZE
+		(Engine::YES_NO_WINDOW_POS.x + 3
+		+ MsgLog::WIDGET_SELECTED_SPACING_SIZE + Menu::WIDGET_SPACING_SIZE
 		+ 1,
-		Engine::YES_NO_WINDOW_POS.y + 2 + 1 + 2); // "+ 4" is temporary
+		Engine::YES_NO_WINDOW_POS.y + 2 + 1 + 2);
 
 Engine::Engine()
 	: screen_window(this, PosVec2(), Window::WITH_BORDER_SCREEN_SIZE_2D),
@@ -126,73 +126,9 @@ Engine::Engine()
 	yes_no_window.init_set_border();
 
 	yes_no_menu
-		= Menu
-		(
-			"yes",
-			yes_no_window.size_2d(),
-			Menu::NodeMap
-			({
-				{
-					Menu::START_NODE_KEY,
-					Menu::Node
-					(
-						Menu::START_NODE_KEY,		// text
-						Menu::Node::Kind::Start,	// kind
-						0x0,						// flags
-						"", "yes",					// where
-						std::monostate(),			// data
-						0x0,						// variable
-						nullptr						// on_update_func
-					)
-				},
-				{
-					"yes",
-					Menu::Node
-					(
-						"Yes",							// text
-						Menu::Node::Kind::ActionButton, // kind
-						0x0,							// flags
-						Menu::START_NODE_KEY, "no",		// where
-						std::function<void()>			// data
-							(Menu::ActionButtonFunctor<Engine>
-								(this, 
-								&Engine::_yes_no_menu_act_yes)),
-						0x0,							// variable
-						nullptr							// on_update_func
-					)
-				},
-				{
-					"no",
-					Menu::Node
-					(
-						"No",							// text
-						Menu::Node::Kind::ActionButton, // kind
-						0x0,							// flags
-						"yes", Menu::END_NODE_KEY,		// where
-						std::function<void()>			// data
-							(Menu::ActionButtonFunctor<Engine>
-								(this, 
-								&Engine::_yes_no_menu_act_no)),
-						0x0,							// variable
-						nullptr							// on_update_func
-					)
-				},
-				{
-					Menu::END_NODE_KEY,
-					Menu::Node
-					(
-						Menu::END_NODE_KEY,		// text
-						Menu::Node::Kind::End,	// kind
-						0x0,					// flags
-						"no", "",				// where
-						std::monostate(),		// data
-						0x0,					// variable
-						nullptr					// on_update_func
-					)
-				},
-			}),
-			Vec2(true, true)
-		);
+		= build_yes_no_menu(this,
+			std::function<void(Engine*)>(&Engine::_yes_no_menu_act_yes),
+			std::function<void(Engine*)>(&Engine::_yes_no_menu_act_no));
 
 	//printout("Engine::Engine()\n");
 	//dbg_check_ecs_engine();
@@ -250,6 +186,20 @@ void Engine::tick()
 	//	//	yes_no_menu.set_sel_key("no");
 	//	//}
 	//}
+
+	if (game_mode == GameMode::AuxTitleScreen)
+	{
+		printout("game_engine::Engine::tick(): ",
+			"Temporary title screen code\n");
+
+		yes_no_menu.set_sel_key(yes_no_menu.next_sel_key(key_status));
+
+		yes_no_window.clear();
+		yes_no_window.draw(yes_no_menu);
+
+		screen_window.clear();
+		screen_window.draw(yes_no_window);
+	}
 
 	//switch (game_mode)
 	//{

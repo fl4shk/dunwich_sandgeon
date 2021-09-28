@@ -14,6 +14,7 @@
 // with Dungwich Sandeon.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "menu_etc_classes.hpp"
+#include "engine_class.hpp"
 #include <cctype>
 
 namespace dungwich_sandeon
@@ -21,6 +22,27 @@ namespace dungwich_sandeon
 namespace game_engine
 {
 //--------
+std::ostream& operator << (std::ostream& os, const RopePart& rope_part)
+{
+	return osprintout(os,
+		rope_part.str.size(), " ",
+		"\"", rope_part.str, "\"");
+}
+
+std::ostream& operator << (std::ostream& os, const Rope& rope)
+{
+	for (size_t i=0; i<rope.size(); ++i)
+	{
+		os << rope.at(i);
+
+		if ((i + 1) < rope.size())
+		{
+			os << "; ";
+		}
+	}
+
+	return os;
+}
 Rope split_rope_by_whitespace(const Rope& rope, bool keep_sep)
 {
 	// Create a new `Rope` that consists of the contents of `rope` split by
@@ -33,12 +55,17 @@ Rope split_rope_by_whitespace(const Rope& rope, bool keep_sep)
 	{
 		auto str_vec = split_str_by_whitespace(rope_part.str, keep_sep);
 
+		//printout("split_rope_by_whitespace(): ",
+		//	"\"", rope_part.str, "\"", "\n");
 		for (const auto& str: str_vec)
 		{
+			//printout(str.size(), " ",
+			//	"\"", str, "\"; ");
 			ret.push_back(RopePart({.str=str,
 				.color_pair=rope_part.color_pair,
 				.gs_color_pair=rope_part.gs_color_pair}));
 		}
+		//printout("\n");
 	}
 
 	return ret;
@@ -53,6 +80,16 @@ RopeDeque wrap_rope(const Rope& rope, size_t row_length, bool keep_sep)
 	}
 
 	Rope split_rope(split_rope_by_whitespace(rope, keep_sep));
+
+	//printout("wrap_rope():\n");
+	//for (const auto& rope_part: split_rope)
+	//{
+	//	printout(rope_part.str.size(), " ",
+	//		"\"", rope_part.str, "\"; ");
+	//}
+	//printout("\n");
+
+	//printout("row_length: ", row_length, "\n");
 
 	if (split_rope.size() == 0)
 	{
@@ -80,11 +117,15 @@ RopeDeque wrap_rope(const Rope& rope, size_t row_length, bool keep_sep)
 		added_rope = false;
 
 		ret.back().push_back(std::move(rope_part));
-		const size_t j = ret.back().size() - 1;
+		//const size_t j = ret.back().size() - 1;
 
 		if (((i + 1) < split_rope.size())
-			&& ((col + split_rope.at(i + 1).str.size()) >= row_length))
+			&& ((col + split_rope.at(i + 1).str.size()) > row_length))
 		{
+			//printout("add rope 2: ",
+			//	col, "; ", i, "\n",
+			//	rope, "\n");
+
 			ret.push_back(Rope());
 			col = 0;
 			added_rope = true;
@@ -92,15 +133,15 @@ RopeDeque wrap_rope(const Rope& rope, size_t row_length, bool keep_sep)
 
 		if ((!keep_sep) && (col > 0))
 		{
+			//printout("(!keep_sep) && (col > 0)\n");
 			++col;
 		}
-		//else // if (keep_sep)
-		//{
-		//	if (!added_rope)
-		//	{
-		//	}
-		//}
 	}
+
+	//printout("wrap_rope() (continued):\n");
+	//for (const auto& rope: ret)
+	//{
+	//}
 
 	return ret;
 }
@@ -280,9 +321,48 @@ Menu::Menu(const std::string& s_sel_key, const SizeVec2& s_size_2d,
 {
 }
 
+const std::string& Menu::next_sel_key(const KeyStatus& key_status) const
+{
+	const auto& curr_node = at(sel_key());
+
+	if (key_status.key_went_down_just_now(KeyStatus::UpL)
+		&& (!key_status.at(KeyStatus::DownL)()))
+	{
+		if (curr_node.up == Menu::START_NODE_KEY)
+		{
+			return sel_key();
+		}
+		else
+		{
+			return curr_node.up;
+		}
+	}
+	else if (key_status.key_went_down_just_now(KeyStatus::DownL)
+		&& (!key_status.at(KeyStatus::UpL)()))
+	{
+		if (curr_node.down == Menu::END_NODE_KEY)
+		{
+			return sel_key();
+		}
+		else
+		{
+			return curr_node.down;
+		}
+	}
+	else
+	{
+		return sel_key();
+	}
+}
 Menu::operator MsgLog() const
 {
 	RopeDeque ret_data;
+
+	//printout("game_engine::Menu::operator MsgLog(): ",
+	//	MsgLog::WIDGET_SELECTED_SPACING_STR.size(), " ",
+	//	"\"", MsgLog::WIDGET_SELECTED_SPACING_STR, "\"; ",
+	//	WIDGET_SELECTED_STR.size(), " ",
+	//	"\"", WIDGET_SELECTED_STR, "\"", "\n");
 
 	for (const std::string* key=&at(Menu::START_NODE_KEY).down;
 		(*key)!=Menu::END_NODE_KEY;
@@ -317,11 +397,24 @@ Menu::operator MsgLog() const
 				({
 					RopePart
 					({
-						.str=sconcat(CURR_WIDGET_SELECTED_STR,
-							MsgLog::WIDGET_SPACING_STR, NODE.text), 
+						.str=sconcat
+							(spaces_str(CURR_WIDGET_SELECTED_STR.size()),
+							MsgLog::WIDGET_SPACING_STR, NODE.text),
 						.color_pair=COLOR_PAIR,
 						.gs_color_pair=COLOR_PAIR
-					})
+					}),
+					//RopePart
+					//({
+					//	.str=MsgLog::WIDGET_SPACING_STR,
+					//	.color_pair=COLOR_PAIR,
+					//	.gs_color_pair=COLOR_PAIR,
+					//}),
+					//RopePart
+					//({
+					//	.str=NODE.text,
+					//	.color_pair=COLOR_PAIR,
+					//	.gs_color_pair=COLOR_PAIR,
+					//}),
 				}));
 			break;
 
@@ -331,10 +424,24 @@ Menu::operator MsgLog() const
 					RopePart
 					({
 						.str=sconcat(CURR_WIDGET_SELECTED_STR,
-							Menu::WIDGET_BUTTON_STR, NODE.text), 
+							Menu::WIDGET_BUTTON_STR, NODE.text),
+						//.str=sconcat(CURR_WIDGET_SELECTED_STR,
+						//	Menu::WIDGET_BUTTON_STR, "Z"),
 						.color_pair=COLOR_PAIR,
 						.gs_color_pair=COLOR_PAIR
-					})
+					}),
+					//RopePart
+					//({
+					//	.str=,
+					//	.color_pair=COLOR_PAIR,
+					//	.gs_color_pair=COLOR_PAIR
+					//}),
+					//RopePart
+					//({
+					//	.str=NODE.text,
+					//	.color_pair=COLOR_PAIR,
+					//	.gs_color_pair=COLOR_PAIR
+					//}),
 				}));
 			break;
 		//case Node::Kind::ActionButtonParam:
@@ -349,10 +456,22 @@ Menu::operator MsgLog() const
 					RopePart
 					({
 						.str=sconcat(CURR_WIDGET_SELECTED_STR,
-							NODE.widget_horiz_picker_str(), NODE.text), 
+							NODE.widget_horiz_picker_str(), NODE.text),
 						.color_pair=COLOR_PAIR,
 						.gs_color_pair=COLOR_PAIR
-					})
+					}),
+					//RopePart
+					//({
+					//	.str=NODE.widget_horiz_picker_str(),
+					//	.color_pair=COLOR_PAIR,
+					//	.gs_color_pair=COLOR_PAIR
+					//}),
+					//RopePart
+					//({
+					//	.str=NODE.text,
+					//	.color_pair=COLOR_PAIR,
+					//	.gs_color_pair=COLOR_PAIR
+					//}),
 				}));
 			break;
 		//case Node::Kind::HorizPickerWrap:
@@ -370,7 +489,25 @@ Menu::operator MsgLog() const
 
 	MsgLog ret(ret_data, MsgLog::DEFAULT_INTERNAL_HEIGHT, size_2d(),
 		center(), true);
-	ret.set_scroll(1);
+
+	//printout("game_engine::Menu::operator MsgLog(): testificate\n");
+	//for (size_t j=0; j<ret.data().size(); ++j)
+	//{
+	//	const auto& ROPE = ret.data().at(j);
+
+	//	for (size_t i=0; i<ROPE.size(); ++i)
+	//	{
+	//		printout(ROPE.at(i).str.size(), " ",
+	//			"\"", ROPE.at(i).str, "\"; ");
+	//	}
+	//	printout("\n");
+	//}
+
+	//MsgLog ret(ret_data, MsgLog::DEFAULT_INTERNAL_HEIGHT, size_2d(),
+	//	center(), center().x);
+	//MsgLog ret(ret_data, MsgLog::DEFAULT_INTERNAL_HEIGHT, size_2d(),
+	//	center(), !center().x);
+	//ret.set_scroll(1);
 	return ret;
 }
 //--------
