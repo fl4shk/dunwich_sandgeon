@@ -31,6 +31,12 @@ std::string GmAuxTitleScreen::kind_str() const
 	return KIND_STR;
 }
 
+void GmAuxTitleScreen::init(ecs::Engine* ecs_engine)
+{
+	did_init = true;
+
+	//engine->aux_menu = 
+}
 void GmAuxTitleScreen::tick(ecs::Engine* ecs_engine)
 {
 	auto engine = game_engine::engine;
@@ -39,9 +45,19 @@ void GmAuxTitleScreen::tick(ecs::Engine* ecs_engine)
 	{
 		printout("GmAuxTitleScreen::tick(): testificate\n");
 
+		if (!did_init)
+		{
+			init(ecs_engine);
+		}
+
 		auto
 			& screen_window = engine->screen_window,
 			& aux_window = engine->aux_window;
+
+		auto& aux_menu = engine->aux_menu;
+
+		aux_window.clear();
+		aux_window.draw(aux_menu);
 
 		screen_window.clear();
 		screen_window.draw(aux_window);

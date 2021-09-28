@@ -38,6 +38,7 @@ public:		// functions
 	virtual ~GmAuxTitleScreen() = default;
 
 	virtual std::string kind_str() const;
+	virtual void init(ecs::Engine* ecs_engine);
 	virtual void tick(ecs::Engine* ecs_engine);
 };
 

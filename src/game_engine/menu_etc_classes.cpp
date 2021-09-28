@@ -265,6 +265,18 @@ Menu::Node::Node(const std::string& s_text, Kind s_kind, u32 s_flags,
 	on_update_func(s_on_update_func)
 {
 }
+Menu::Node::Node(const NoConn& s_most_args, const std::string& s_up,
+	const std::string& s_down)
+{
+	text = s_most_args.text;
+	kind = s_most_args.kind;
+	flags = s_most_args.flags;
+	up = s_up;
+	down = s_down;
+	data = s_most_args.data;
+	variable = s_most_args.variable;
+	on_update_func = s_most_args.on_update_func;
+}
 
 //// This constructor takes a `DataActionParamFunc` for `s_data`
 //Menu::Node::Node(const std::string& s_text, Kind s_kind, u32 s_flags,
@@ -353,6 +365,69 @@ const std::string& Menu::next_sel_key(const KeyStatus& key_status) const
 	{
 		return sel_key();
 	}
+}
+
+Menu::Node Menu::build_start_node(const std::string& down_key)
+{
+	return Node
+	(
+		START_NODE_KEY,		// text
+		Node::Kind::Start,	// kind
+		0x0,				// flags
+		"", down_key,		// where
+		std::monostate(),	// data
+		0x0,				// variable
+		nullptr				// on_update_func
+	);
+}
+Menu::Node Menu::build_end_node(const std::string& up_key)
+{
+	return Node
+	(
+		END_NODE_KEY,		// text
+		Node::Kind::End,	// kind
+		0x0,				// flags
+		up_key, "",			// where
+		std::monostate(),	// data
+		0x0,				// variable
+		nullptr				// on_update_func
+	);
+}
+
+Menu::NodeMap Menu::build_node_map
+	(const std::vector<std::pair<std::string, Node::NoConn>>& vec)
+{
+	NodeMap ret;
+
+	ret[START_NODE_KEY] = build_start_node(vec.front().first);
+	ret[END_NODE_KEY] = build_end_node(vec.back().first);
+
+	for (size_t i=0; i<vec.size(); ++i)
+	{
+		std::string s_up, s_down;
+
+		if (i == 0)
+		{
+			s_up = START_NODE_KEY;
+		}
+		else // if (i > 0)
+		{
+			s_up = vec.at(i - 1).first;
+		}
+
+		if ((i + 1) == vec.size())
+		{
+			s_down = END_NODE_KEY;
+		}
+		else // if ((i + 1) < vec.size())
+		{
+			s_down = vec.at(i + 1).first;
+		}
+
+		ret[vec.at(i).first] = Node(vec.at(i).second, s_up, s_down);
+	}
+
+	return ret;
 }
 Menu::operator MsgLog() const
 {

@@ -271,9 +271,30 @@ public:		// types
 
 		//// Button action with parameter
 		//using DataActionParamFunc = std::function<void(int)>;
+
+		using DataVariant 
+			= std::variant
+			<
+				std::monostate,
+				DataValue,
+				DataActionFunc
+				//DataActionParamFunc
+			>;
 		//--------
 		// When it's updated at all
 		using OnUpdateFunc = std::function<void()>;
+		//--------
+		// No connections
+		class NoConn final
+		{
+		public:		// variables
+			std::string text;
+			Kind kind;
+			u32 flags = 0;
+			DataVariant data = std::monostate();
+			int variable = 0;
+			OnUpdateFunc on_update_func = nullptr;
+		};
 		//--------
 	public:		// variables
 		//--------
@@ -288,14 +309,7 @@ public:		// types
 		//std::string left, right, up, down;
 		std::string up, down;
 		//--------
-		std::variant
-		<
-			std::monostate,
-			DataValue,
-			DataActionFunc
-			//DataActionParamFunc
-		>
-			data = std::monostate();
+		DataVariant data = std::monostate();
 		//--------
 		// Various uses
 		int variable = 0;
@@ -329,6 +343,9 @@ public:		// types
 		//	const std::string& s_up, const std::string& s_down,
 		//	const DataActionParamFunc& s_data, int s_variable,
 		//	const OnUpdateFunc& s_on_update_func);
+
+		Node(const NoConn& s_most_args, const std::string& s_up="",
+			const std::string& s_down="");
 
 		GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Node);
 
@@ -386,6 +403,12 @@ public:		// functions
 		return at(next_sel_key(key_status));
 	}
 	const std::string& next_sel_key(const KeyStatus& key_status) const;
+
+	static Node build_start_node(const std::string& down_key);
+	static Node build_end_node(const std::string& up_key);
+
+	static NodeMap build_node_map
+		(const std::vector<std::pair<std::string, Node::NoConn>>& vec);
 
 	operator MsgLog () const;
 

@@ -230,6 +230,10 @@ public:		// functions
 
 	//void dbg_check_ecs_engine(const PosVec2& wb_pos=PosVec2(0, 0));
 
+	//inline void tick()
+	//{
+	//	ecs_engine.tick();
+	//}
 	void tick();
 
 	inline EntIdSetVec2d& curr_floor_playfield_ent_id_v2d()
@@ -255,63 +259,33 @@ public:		// functions
 		(
 			"yes",
 			yes_no_window.size_2d(),
-			Menu::NodeMap
+			Menu::build_node_map
 			({
 				{
-					Menu::START_NODE_KEY,
-					Menu::Node
-					(
-						Menu::START_NODE_KEY,		// text
-						Menu::Node::Kind::Start,	// kind
-						0x0,						// flags
-						"", "yes",					// where
-						std::monostate(),			// data
-						0x0,						// variable
-						nullptr						// on_update_func
-					)
-				},
-				{
 					"yes",
-					Menu::Node
-					(
-						"Yes",							// text
-						Menu::Node::Kind::ActionButton, // kind
-						0x0,							// flags
-						Menu::START_NODE_KEY, "no",		// where
-						std::function<void()>			// data
+					{
+						.text="Yes",
+						.kind=Menu::Node::Kind::ActionButton,
+						.flags=0x0,
+						.data=std::function<void()>
 							(Menu::ActionButtonFunctor<SelfType>
 								(self, yes_func)),
-						0x0,							// variable
-						nullptr							// on_update_func
-					)
+						.variable=0x0,
+						.on_update_func=nullptr
+					}
 				},
 				{
 					"no",
-					Menu::Node
-					(
-						"No",							// text
-						Menu::Node::Kind::ActionButton, // kind
-						0x0,							// flags
-						"yes", Menu::END_NODE_KEY,		// where
-						std::function<void()>			// data
+					{
+						.text="No",
+						.kind=Menu::Node::Kind::ActionButton,
+						.flags=0x0,
+						.data=std::function<void()>
 							(Menu::ActionButtonFunctor<SelfType>
 								(self, no_func)),
-						0x0,							// variable
-						nullptr							// on_update_func
-					)
-				},
-				{
-					Menu::END_NODE_KEY,
-					Menu::Node
-					(
-						Menu::END_NODE_KEY,		// text
-						Menu::Node::Kind::End,	// kind
-						0x0,					// flags
-						"no", "",				// where
-						std::monostate(),		// data
-						0x0,					// variable
-						nullptr					// on_update_func
-					)
+						.variable=0x0,
+						.on_update_func=nullptr
+					}
 				},
 			}),
 			Vec2(true, true)

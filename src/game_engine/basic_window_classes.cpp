@@ -272,8 +272,10 @@ void Window::draw(const MsgLog& msg_log)
 
 	PosVec2 temp_pos(0, 0);
 
+	//if (msg_log.center().y
+	//	&& (msg_log.data().size() < msg_log.window_size_2d().y))
 	if (msg_log.center().y
-		&& (msg_log.data().size() < msg_log.window_size_2d().y))
+		&& (msg_log.data().size() <= msg_log.window_size_2d().y))
 	{
 		temp_pos.y
 			= ((msg_log.window_size_2d().y - msg_log.data().size()) / 2);
@@ -315,8 +317,10 @@ void Window::draw(const MsgLog& msg_log)
 		//}
 		//printout("\n\n");
 
+		//if (msg_log.center().x
+		//	&& ((rope_size - 1) < msg_log.window_size_2d().x))
 		if (msg_log.center().x
-			&& ((rope_size - 1) < msg_log.window_size_2d().x))
+			&& (rope_size <= msg_log.window_size_2d().x))
 		{
 			//printout("testificate asdf: ",
 			//	(rope_size + 2), " ", msg_log.window_size_2d().x, "\n");
