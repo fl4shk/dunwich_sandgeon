@@ -107,11 +107,9 @@ class MsgLog final
 {
 public:		// constants
 	static constexpr size_t
-		TAB_SPACING_SIZE = 4u,
 		WIDGET_SELECTED_SPACING_SIZE = 3u,
 		WIDGET_SPACING_SIZE = 6u;
 	static const std::string
-		TAB_SPACING_STR,
 		WIDGET_SELECTED_SPACING_STR,
 		WIDGET_SPACING_STR;
 	static constexpr size_t DEFAULT_INTERNAL_HEIGHT = 256;
@@ -186,6 +184,11 @@ public:		// constants
 	static const std::string
 		START_NODE_KEY, END_NODE_KEY;
 
+	static constexpr size_t
+		TAB_SIZE = 4u;
+	static const std::string
+		TAB_STR;
+
 public:		// types
 	template<typename SelfType>
 	class ActionButtonFunctor final
@@ -245,6 +248,11 @@ public:		// types
 			// Just display text on this line.
 			TextOnly,
 
+			// Just display text on this line, but with leading whitespace
+			// to match start of non-UI stuff of, for example,
+			// `ActionButton`
+			TextOnlyWithLeadingSpaces,
+
 			// Push button triggers the function pointer
 			ActionButton,
 
@@ -252,8 +260,8 @@ public:		// types
 			//// passes in value
 			//ActionButtonParam,
 
-			// When picked, set the dialog exit type to `variable`
-			ExitButton,
+			//// When picked, set the dialog exit type to `variable`
+			//ExitButton,
 
 			// Pick between multiple options, from zero to max defined in
 			// `variable` (so use the highest allowed value +1)
@@ -290,7 +298,6 @@ public:		// types
 		public:		// variables
 			std::string text;
 			Kind kind;
-			u32 flags = 0;
 			DataVariant data = std::monostate();
 			int variable = 0;
 			OnUpdateFunc on_update_func = nullptr;
@@ -302,8 +309,6 @@ public:		// types
 		std::string text;
 		//--------
 		Kind kind;
-		//--------
-		u32 flags = 0;
 		//--------
 		// Where to go, using keyboard or controller; "" if nowhere
 		//std::string left, right, up, down;
@@ -321,25 +326,25 @@ public:		// types
 		Node();
 
 		// This constructor takes an `std::monostate` for `s_data`
-		Node(const std::string& s_text, Kind s_kind, u32 s_flags,
+		Node(const std::string& s_text, Kind s_kind,
 			const std::string& s_up, const std::string& s_down,
 			std::monostate s_data, int s_variable,
 			const OnUpdateFunc& s_on_update_func);
 
 		// This constructor takes a `DataValue` for `s_data`
-		Node(const std::string& s_text, Kind s_kind, u32 s_flags,
+		Node(const std::string& s_text, Kind s_kind,
 			const std::string& s_up, const std::string& s_down,
 			const DataValue& s_data, int s_variable,
 			const OnUpdateFunc& s_on_update_func);
 
 		// This constructor takes a `DataActionFunc` for `s_data`
-		Node(const std::string& s_text, Kind s_kind, u32 s_flags,
+		Node(const std::string& s_text, Kind s_kind,
 			const std::string& s_up, const std::string& s_down,
 			const DataActionFunc& s_data, int s_variable,
 			const OnUpdateFunc& s_on_update_func);
 
 		//// This constructor takes a `DataActionParamFunc` for `s_data`
-		//Node(const std::string& s_text, Kind s_kind, u32 s_flags,
+		//Node(const std::string& s_text, Kind s_kind,
 		//	const std::string& s_up, const std::string& s_down,
 		//	const DataActionParamFunc& s_data, int s_variable,
 		//	const OnUpdateFunc& s_on_update_func);
@@ -356,6 +361,7 @@ public:		// types
 	};
 
 	using NodeMap = std::map<std::string, Node>;
+	using KncPair = std::pair<std::string, Node::NoConn>;
 private:		// variables
 	// The currently-selected `Node`'s key
 	std::string _sel_key = "";
@@ -363,12 +369,15 @@ private:		// variables
 	SizeVec2 _size_2d = Window::SCREEN_SIZE_2D;
 	NodeMap _node_map;
 	Vec2<bool> _center = Vec2(false, false);
+	size_t _tab_amount = 0;
 public:		// functions
 	Menu() = default;
 	Menu(const std::string& s_sel_key, const SizeVec2& s_size_2d,
-		const NodeMap& s_node_map, Vec2<bool> s_center=Vec2(false, false));
+		const NodeMap& s_node_map, Vec2<bool> s_center=Vec2(false, false),
+		size_t s_tab_amount=0);
 	Menu(const std::string& s_sel_key, const SizeVec2& s_size_2d,
-		NodeMap&& s_node_map, Vec2<bool> s_center=Vec2(false, false));
+		NodeMap&& s_node_map, Vec2<bool> s_center=Vec2(false, false),
+		size_t s_tab_amount=0);
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Menu);
 	~Menu() = default;
 
@@ -402,13 +411,22 @@ public:		// functions
 	{
 		return at(next_sel_key(key_status));
 	}
-	const std::string& next_sel_key(const KeyStatus& key_status) const;
+	inline const std::string& next_sel_key(const KeyStatus& key_status)
+		const
+	{
+		return _inner_next_sel_key(sel_key(), key_status);
+	}
+private:		// functions
+	const std::string& _inner_next_sel_key(const std::string& some_sel_key,
+		const KeyStatus& key_status) const;
 
-	static Node build_start_node(const std::string& down_key);
-	static Node build_end_node(const std::string& up_key);
+public:		// functions
+	inline std::string tab_amount_str() const
+	{
+		return spaces_str(tab_amount() * TAB_SIZE);
+	}
 
-	static NodeMap build_node_map
-		(const std::vector<std::pair<std::string, Node::NoConn>>& vec);
+	void tick(const KeyStatus& key_status);
 
 	operator MsgLog () const;
 
@@ -416,6 +434,35 @@ public:		// functions
 	GEN_GETTER_BY_CON_REF(size_2d);
 	GEN_GETTER_BY_CON_REF(node_map);
 	GEN_GETTER_BY_CON_REF(center);
+	GEN_GETTER_BY_VAL(tab_amount);
+
+public:		// static builder functions
+	static Node build_start_node(const std::string& down_key);
+	static Node build_end_node(const std::string& up_key);
+
+	static KncPair build_text_only_knc_pair(const std::string& key,
+		const std::string& s_text);;
+	static KncPair build_spaces_knc_pair(size_t i);
+
+	template<typename SelfType>
+	static inline KncPair build_basic_action_button_knc_pair
+		(const std::string& key, const std::string& s_text,
+		SelfType* self, const std::function<void(SelfType*)>& button_func)
+	{
+		return
+		{
+			key,
+			{
+				.text=s_text,
+				.kind=Node::Kind::ActionButton,
+				.data=ActionButtonFunctor<SelfType>(self, button_func),
+				.variable=0x0,
+				.on_update_func=nullptr,
+			}
+		};
+	}
+
+	static NodeMap build_node_map(const std::vector<KncPair>& vec);
 };
 
 //class Hud final

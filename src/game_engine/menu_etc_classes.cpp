@@ -67,6 +67,7 @@ Rope split_rope_by_whitespace(const Rope& rope, bool keep_sep)
 		}
 		//printout("\n");
 	}
+	//printout("\n");
 
 	return ret;
 }
@@ -147,8 +148,6 @@ RopeDeque wrap_rope(const Rope& rope, size_t row_length, bool keep_sep)
 }
 //--------
 const std::string
-	MsgLog::TAB_SPACING_STR(spaces_str(MsgLog::TAB_SPACING_SIZE)),
-
 	MsgLog::WIDGET_SELECTED_SPACING_STR(spaces_str
 		(MsgLog::WIDGET_SELECTED_SPACING_SIZE)),
 	MsgLog::WIDGET_SPACING_STR(spaces_str(MsgLog::WIDGET_SPACING_SIZE));
@@ -217,18 +216,21 @@ const std::string
 	Menu::START_NODE_KEY("<start>"),
 	Menu::END_NODE_KEY("<end>");
 
+const std::string
+	Menu::TAB_STR(spaces_str(Menu::TAB_SIZE));
+
+
 Menu::Node::Node()
 {
 }
 
 // This constructor takes an `std::monostate` for `s_data`
-Menu::Node::Node(const std::string& s_text, Kind s_kind, u32 s_flags,
+Menu::Node::Node(const std::string& s_text, Kind s_kind,
 	const std::string& s_up, const std::string& s_down,
 	std::monostate s_data, int s_variable,
 	const OnUpdateFunc& s_on_update_func)
 	: text(s_text),
 	kind(s_kind),
-	flags(s_flags),
 	up(s_up), down(s_down),
 	data(s_data),
 	variable(s_variable),
@@ -237,13 +239,12 @@ Menu::Node::Node(const std::string& s_text, Kind s_kind, u32 s_flags,
 }
 
 // This constructor takes a `DataValue` for `s_data`
-Menu::Node::Node(const std::string& s_text, Kind s_kind, u32 s_flags,
+Menu::Node::Node(const std::string& s_text, Kind s_kind,
 	const std::string& s_up, const std::string& s_down,
 	const DataValue& s_data, int s_variable,
 	const OnUpdateFunc& s_on_update_func)
 	: text(s_text),
 	kind(s_kind),
-	flags(s_flags),
 	up(s_up), down(s_down),
 	data(s_data),
 	variable(s_variable),
@@ -252,46 +253,44 @@ Menu::Node::Node(const std::string& s_text, Kind s_kind, u32 s_flags,
 }
 
 // This constructor takes a `DataActionFunc` for `s_data`
-Menu::Node::Node(const std::string& s_text, Kind s_kind, u32 s_flags,
+Menu::Node::Node(const std::string& s_text, Kind s_kind,
 	const std::string& s_up, const std::string& s_down,
 	const DataActionFunc& s_data, int s_variable,
 	const OnUpdateFunc& s_on_update_func)
 	: text(s_text),
 	kind(s_kind),
-	flags(s_flags),
 	up(s_up), down(s_down),
 	data(s_data),
 	variable(s_variable),
 	on_update_func(s_on_update_func)
 {
 }
-Menu::Node::Node(const NoConn& s_most_args, const std::string& s_up,
-	const std::string& s_down)
-{
-	text = s_most_args.text;
-	kind = s_most_args.kind;
-	flags = s_most_args.flags;
-	up = s_up;
-	down = s_down;
-	data = s_most_args.data;
-	variable = s_most_args.variable;
-	on_update_func = s_most_args.on_update_func;
-}
 
 //// This constructor takes a `DataActionParamFunc` for `s_data`
-//Menu::Node::Node(const std::string& s_text, Kind s_kind, u32 s_flags,
+//Menu::Node::Node(const std::string& s_text, Kind s_kind,
 //	const std::string& s_up, const std::string& s_down,
 //	const DataActionParamFunc& s_data, int s_variable,
 //	const OnUpdateFunc& s_on_update_func)
 //	: text(s_text),
 //	kind(s_kind),
-//	flags(s_flags),
 //	up(s_up), down(s_down),
 //	data(s_data),
 //	variable(s_variable),
 //	on_update_func(s_on_update_func)
 //{
 //}
+
+Menu::Node::Node(const NoConn& s_most_args, const std::string& s_up,
+	const std::string& s_down)
+{
+	text = s_most_args.text;
+	kind = s_most_args.kind;
+	up = s_up;
+	down = s_down;
+	data = s_most_args.data;
+	variable = s_most_args.variable;
+	on_update_func = s_most_args.on_update_func;
+}
 Menu::Node::~Node()
 {
 }
@@ -321,32 +320,47 @@ std::string Menu::Node::widget_horiz_picker_str() const
 }
 
 Menu::Menu(const std::string& s_sel_key, const SizeVec2& s_size_2d,
-	const NodeMap& s_node_map, Vec2<bool> s_center)
+	const NodeMap& s_node_map, Vec2<bool> s_center, size_t s_tab_amount)
 	: _sel_key(s_sel_key), _size_2d(s_size_2d), _node_map(s_node_map),
-	_center(s_center)
+	_center(s_center), _tab_amount(s_tab_amount)
 {
 }
 Menu::Menu(const std::string& s_sel_key, const SizeVec2& s_size_2d,
-	NodeMap&& s_node_map, Vec2<bool> s_center)
+	NodeMap&& s_node_map, Vec2<bool> s_center, size_t s_tab_amount)
 	: _sel_key(s_sel_key), _size_2d(s_size_2d),
-	_node_map(std::move(s_node_map)), _center(s_center)
+	_node_map(std::move(s_node_map)), _center(s_center),
+	_tab_amount(s_tab_amount)
 {
 }
 
-const std::string& Menu::next_sel_key(const KeyStatus& key_status) const
+const std::string& Menu::_inner_next_sel_key
+	(const std::string& some_sel_key, const KeyStatus& key_status) const
 {
-	const auto& curr_node = at(sel_key());
+	const auto& curr_node = at(some_sel_key);
+
+	auto temp_func = [&](const std::string& up_or_down)
+		-> const std::string&
+	{
+		const auto& temp_sel_key = _inner_next_sel_key(up_or_down,
+			key_status);
+
+		const auto& temp_node = at(temp_sel_key);
+
+		return ((temp_node.kind == Node::Kind::ActionButton)
+			|| (temp_node.kind == Node::Kind::HorizPicker))
+			? temp_sel_key : some_sel_key;
+	};
 
 	if (key_status.key_went_down_just_now(KeyStatus::UpL)
 		&& (!key_status.at(KeyStatus::DownL)()))
 	{
 		if (curr_node.up == Menu::START_NODE_KEY)
 		{
-			return sel_key();
+			return some_sel_key;
 		}
 		else
 		{
-			return curr_node.up;
+			return temp_func(curr_node.up);
 		}
 	}
 	else if (key_status.key_went_down_just_now(KeyStatus::DownL)
@@ -354,81 +368,93 @@ const std::string& Menu::next_sel_key(const KeyStatus& key_status) const
 	{
 		if (curr_node.down == Menu::END_NODE_KEY)
 		{
-			return sel_key();
+			return some_sel_key;
 		}
 		else
 		{
-			return curr_node.down;
+			return temp_func(curr_node.down);
 		}
 	}
 	else
 	{
-		return sel_key();
+		return some_sel_key;
 	}
 }
-
-Menu::Node Menu::build_start_node(const std::string& down_key)
+void Menu::tick(const KeyStatus& key_status)
 {
-	return Node
-	(
-		START_NODE_KEY,		// text
-		Node::Kind::Start,	// kind
-		0x0,				// flags
-		"", down_key,		// where
-		std::monostate(),	// data
-		0x0,				// variable
-		nullptr				// on_update_func
-	);
-}
-Menu::Node Menu::build_end_node(const std::string& up_key)
-{
-	return Node
-	(
-		END_NODE_KEY,		// text
-		Node::Kind::End,	// kind
-		0x0,				// flags
-		up_key, "",			// where
-		std::monostate(),	// data
-		0x0,				// variable
-		nullptr				// on_update_func
-	);
-}
+	set_sel_key(next_sel_key(key_status));
 
-Menu::NodeMap Menu::build_node_map
-	(const std::vector<std::pair<std::string, Node::NoConn>>& vec)
-{
-	NodeMap ret;
+	Node& sel_node = at(sel_key());
 
-	ret[START_NODE_KEY] = build_start_node(vec.front().first);
-	ret[END_NODE_KEY] = build_end_node(vec.back().first);
-
-	for (size_t i=0; i<vec.size(); ++i)
+	switch (sel_node.kind)
 	{
-		std::string s_up, s_down;
-
-		if (i == 0)
+	//--------
+	case Node::Kind::ActionButton:
+		if (!std::holds_alternative<Node::DataActionFunc>(sel_node.data))
 		{
-			s_up = START_NODE_KEY;
-		}
-		else // if (i > 0)
-		{
-			s_up = vec.at(i - 1).first;
-		}
-
-		if ((i + 1) == vec.size())
-		{
-			s_down = END_NODE_KEY;
-		}
-		else // if ((i + 1) < vec.size())
-		{
-			s_down = vec.at(i + 1).first;
+			fprintf(stderr,
+				"game_engine::Menu::tick() ActionButton: "
+				"Internal error.\n");
+			exit(1);
 		}
 
-		ret[vec.at(i).first] = Node(vec.at(i).second, s_up, s_down);
+		if (key_status.key_went_down_just_now(KeyStatus::DownR))
+		{
+			std::get<Node::DataActionFunc>(sel_node.data)();
+		}
+
+		break;
+
+	case Node::Kind::HorizPicker:
+		if (!std::holds_alternative<Node::DataValue>(sel_node.data))
+		{
+			fprintf(stderr,
+				"game_engine::Menu::tick() HorizPicker: "
+				"Internal error.\n");
+			exit(1);
+		}
+
+		if (key_status.key_went_down_just_now(KeyStatus::LeftL)
+			&& (!key_status.at(KeyStatus::RightL)()))
+		{
+			auto& value = std::get<Node::DataValue>(sel_node.data);
+			const int temp_value = value() - 1;
+
+			value.back_up_and_update
+			(
+				(temp_value < 0) ? sel_node.variable : temp_value
+			);
+
+			if (sel_node.on_update_func)
+			{
+				sel_node.on_update_func();
+			}
+		}
+		else if (key_status.key_went_down_just_now(KeyStatus::RightL)
+			&& (!key_status.at(KeyStatus::LeftL)()))
+		{
+			auto& value = std::get<Node::DataValue>(sel_node.data);
+			const int temp_value = value() + 1;
+
+			value.back_up_and_update
+			(
+				(temp_value > sel_node.variable) ? 0 : temp_value
+			);
+
+			if (sel_node.on_update_func)
+			{
+				sel_node.on_update_func();
+			}
+		}
+		break;
+
+	default:
+		// Don't need to do anything in this case.
+		break;
+	//--------
 	}
-
-	return ret;
 }
+
 Menu::operator MsgLog() const
 {
 	RopeDeque ret_data;
@@ -472,8 +498,20 @@ Menu::operator MsgLog() const
 				({
 					RopePart
 					({
-						.str=sconcat
-							(spaces_str(CURR_WIDGET_SELECTED_STR.size()),
+						.str=sconcat(tab_amount_str(), NODE.text),
+						.color_pair=COLOR_PAIR,
+						.gs_color_pair=COLOR_PAIR
+					}),
+				}));
+			break;
+
+		case Node::Kind::TextOnlyWithLeadingSpaces:
+			ret_data.push_back(Rope
+				({
+					RopePart
+					({
+						.str=sconcat(tab_amount_str(),
+							spaces_str(CURR_WIDGET_SELECTED_STR.size()),
 							MsgLog::WIDGET_SPACING_STR, NODE.text),
 						.color_pair=COLOR_PAIR,
 						.gs_color_pair=COLOR_PAIR
@@ -498,7 +536,8 @@ Menu::operator MsgLog() const
 				({
 					RopePart
 					({
-						.str=sconcat(CURR_WIDGET_SELECTED_STR,
+						.str=sconcat(tab_amount_str(),
+							CURR_WIDGET_SELECTED_STR,
 							Menu::WIDGET_BUTTON_STR, NODE.text),
 						//.str=sconcat(CURR_WIDGET_SELECTED_STR,
 						//	Menu::WIDGET_BUTTON_STR, "Z"),
@@ -522,15 +561,16 @@ Menu::operator MsgLog() const
 		//case Node::Kind::ActionButtonParam:
 		//	break;
 
-		case Node::Kind::ExitButton:
-			break;
+		//case Node::Kind::ExitButton:
+		//	break;
 
 		case Node::Kind::HorizPicker:
 			ret_data.push_back(Rope
 				({
 					RopePart
 					({
-						.str=sconcat(CURR_WIDGET_SELECTED_STR,
+						.str=sconcat(tab_amount_str(),
+							CURR_WIDGET_SELECTED_STR,
 							NODE.widget_horiz_picker_str(), NODE.text),
 						.color_pair=COLOR_PAIR,
 						.gs_color_pair=COLOR_PAIR
@@ -554,7 +594,7 @@ Menu::operator MsgLog() const
 
 		default:
 			fprintf(stderr,
-				"game_engine::Menu::operator MsgLog(): "
+				"game_engine::Menu::operator game_engine::MsgLog(): "
 				"Internal error.\n");
 			exit(1);
 			break;
@@ -583,6 +623,122 @@ Menu::operator MsgLog() const
 	//MsgLog ret(ret_data, MsgLog::DEFAULT_INTERNAL_HEIGHT, size_2d(),
 	//	center(), !center().x);
 	//ret.set_scroll(1);
+	return ret;
+}
+
+auto Menu::build_start_node(const std::string& down_key) -> Node
+{
+	return Node
+	(
+		START_NODE_KEY,		// text
+		Node::Kind::Start,	// kind
+		"", down_key,		// where
+		std::monostate(),	// data
+		0x0,				// variable
+		nullptr				// on_update_func
+	);
+}
+auto Menu::build_end_node(const std::string& up_key) -> Node
+{
+	return Node
+	(
+		END_NODE_KEY,		// text
+		Node::Kind::End,	// kind
+		up_key, "",			// where
+		std::monostate(),	// data
+		0x0,				// variable
+		nullptr				// on_update_func
+	);
+}
+
+
+auto Menu::build_text_only_knc_pair(const std::string& key,
+	const std::string& s_text) -> KncPair 
+{
+	return
+	{
+		key,
+		{
+			.text=s_text,
+			.kind=Menu::Node::Kind::TextOnly,
+		}
+	};
+}
+auto Menu::build_spaces_knc_pair(size_t i) -> KncPair 
+{
+	return build_text_only_knc_pair(sconcat("<blank[", i, "]>"), " ");
+}
+auto Menu::build_node_map(const std::vector<KncPair>& vec)-> NodeMap 
+{
+	NodeMap ret;
+
+	ret[START_NODE_KEY] = build_start_node(vec.front().first);
+	ret[END_NODE_KEY] = build_end_node(vec.back().first);
+
+	for (size_t i=0; i<vec.size(); ++i)
+	{
+		std::string s_up, s_down;
+
+		if (i == 0)
+		{
+			s_up = START_NODE_KEY;
+		}
+		else // if (i > 0)
+		{
+			s_up = vec.at(i - 1).first;
+
+			if (s_up == START_NODE_KEY)
+			{
+				fprintf(stderr,
+					"game_engine::Menu::build_node_map(): "
+					"`s_up == START_NODE_KEY` Internal error.\n");
+				exit(1);
+			}
+			else if (s_up == END_NODE_KEY)
+			{
+				fprintf(stderr,
+					"game_engine::Menu::build_node_map(): "
+					"`s_up == END_NODE_KEY` Internal error.\n");
+				exit(1);
+			}
+		}
+
+		if ((i + 1) == vec.size())
+		{
+			s_down = END_NODE_KEY;
+		}
+		else // if ((i + 1) < vec.size())
+		{
+			s_down = vec.at(i + 1).first;
+
+			if (s_down == START_NODE_KEY)
+			{
+				fprintf(stderr,
+					"game_engine::Menu::build_node_map(): "
+					"`s_down == START_NODE_KEY` Internal error.\n");
+				exit(1);
+			}
+			else if (s_down == END_NODE_KEY)
+			{
+				fprintf(stderr,
+					"game_engine::Menu::build_node_map(): "
+					"`s_down == END_NODE_KEY` Internal error.\n");
+				exit(1);
+			}
+		}
+
+		if (ret.contains(vec.at(i).first))
+		{
+			fprintf(stderr,
+				"game_engine::Menu::build_node_map(): "
+				"`ret.contains(%s)` Internal error.\n",
+				vec.at(i).first.c_str());
+			exit(1);
+		}
+
+		ret[vec.at(i).first] = Node(vec.at(i).second, s_up, s_down);
+	}
+
 	return ret;
 }
 //--------

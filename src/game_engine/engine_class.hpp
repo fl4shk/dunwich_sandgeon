@@ -261,32 +261,20 @@ public:		// functions
 			yes_no_window.size_2d(),
 			Menu::build_node_map
 			({
-				{
+				Menu::build_basic_action_button_knc_pair
+				(
 					"yes",
-					{
-						.text="Yes",
-						.kind=Menu::Node::Kind::ActionButton,
-						.flags=0x0,
-						.data=std::function<void()>
-							(Menu::ActionButtonFunctor<SelfType>
-								(self, yes_func)),
-						.variable=0x0,
-						.on_update_func=nullptr
-					}
-				},
-				{
+					"Yes",
+					self,
+					yes_func
+				),
+				Menu::build_basic_action_button_knc_pair
+				(
 					"no",
-					{
-						.text="No",
-						.kind=Menu::Node::Kind::ActionButton,
-						.flags=0x0,
-						.data=std::function<void()>
-							(Menu::ActionButtonFunctor<SelfType>
-								(self, no_func)),
-						.variable=0x0,
-						.on_update_func=nullptr
-					}
-				},
+					"No",
+					self,
+					no_func
+				),
 			}),
 			Vec2(true, true)
 		);

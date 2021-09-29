@@ -40,6 +40,9 @@ public:		// functions
 	virtual std::string kind_str() const;
 	virtual void init(ecs::Engine* ecs_engine);
 	virtual void tick(ecs::Engine* ecs_engine);
+private:		// functions
+	static void _aux_menu_start_game_func(GmAuxTitleScreen* self);
+	static void _aux_menu_options_func(GmAuxTitleScreen* self);
 };
 
 } // namespace sys

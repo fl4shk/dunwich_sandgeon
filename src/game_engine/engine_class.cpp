@@ -125,10 +125,17 @@ Engine::Engine()
 	popup_window.init_set_border();
 	yes_no_window.init_set_border();
 
-	yes_no_menu
-		= build_yes_no_menu(this,
-			std::function<void(Engine*)>(&Engine::_yes_no_menu_act_yes),
-			std::function<void(Engine*)>(&Engine::_yes_no_menu_act_no));
+	//yes_no_menu
+	//	= build_yes_no_menu(this,
+	//		std::function<void(Engine*)>(&Engine::_yes_no_menu_act_yes),
+	//		std::function<void(Engine*)>(&Engine::_yes_no_menu_act_no));
+
+	if (ecs_engine.insert_sys(ecs::SysUptr(new sys::GmAuxTitleScreen())))
+	{
+		fprintf(stderr, "game_engine::Engine::Engine(): "
+			"GmAuxTitleScreen internal error\n");
+		exit(1);
+	}
 
 	//printout("Engine::Engine()\n");
 	//dbg_check_ecs_engine();
@@ -159,70 +166,22 @@ Engine::~Engine()
 
 void Engine::tick()
 {
+	ecs_engine.tick();
 	//printout("Ticking the game engine: ", _tick_counter, "\n");
 	//++_tick_counter;
 
-	//if (key_status.has_changed())
+	//if (game_mode == GameMode::AuxTitleScreen)
 	//{
-	//	printout("game_engine::Engine::tick(): key_status.has_changed()",
-	//		" true.\n");
-	//}
+	//	printout("game_engine::Engine::tick(): ",
+	//		"Temporary title screen code\n");
 
-	//if (key_status.key_went_down_just_now(KeyStatus::UpL)
-	//	&& (!key_status.at(KeyStatus::DownL)()))
-	//{
-	//	////printout("Engine::tick(): key_went_down_now(): up\n");
-	//	//if (yes_no_menu.sel_key() == "no")
-	//	//{
-	//	//	yes_no_menu.set_sel_key("yes");
-	//	//}
-	//}
-	//else if (key_status.key_went_down_just_now(KeyStatus::DownL)
-	//	&& (!key_status.at(KeyStatus::UpL)()))
-	//{
-	//	////printout("Engine::tick(): key_went_down_now(): down\n");
-	//	//if (yes_no_menu.sel_key() == "yes")
-	//	//{
-	//	//	yes_no_menu.set_sel_key("no");
-	//	//}
-	//}
+	//	yes_no_menu.tick(key_status);
 
-	if (game_mode == GameMode::AuxTitleScreen)
-	{
-		printout("game_engine::Engine::tick(): ",
-			"Temporary title screen code\n");
+	//	yes_no_window.clear();
+	//	yes_no_window.draw(yes_no_menu);
 
-		yes_no_menu.set_sel_key(yes_no_menu.next_sel_key(key_status));
-
-		yes_no_window.clear();
-		yes_no_window.draw(yes_no_menu);
-
-		screen_window.clear();
-		screen_window.draw(yes_no_window);
-	}
-
-	//switch (game_mode)
-	//{
-	////--------
-	//case GameMode::AuxTitleScreen:
-	//	break;
-	//case GameMode::AuxGameOptions:
-	//	break;
-	//case GameMode::AuxCredits:
-	//	break;
-
-	//case GameMode::MainInGame:
-	//	break;
-
-	////case GameMode::PopupShop:
-	////	break;
-
-	////case GameMode::YesNoShop:
-	////	break;
-
-	//default:
-	//	break;
-	////--------
+	//	screen_window.clear();
+	//	screen_window.draw(yes_no_window);
 	//}
 }
 

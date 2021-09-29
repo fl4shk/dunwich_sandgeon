@@ -35,7 +35,43 @@ void GmAuxTitleScreen::init(ecs::Engine* ecs_engine)
 {
 	did_init = true;
 
-	//engine->aux_menu = 
+	size_t i = 0;
+	engine->aux_menu = Menu
+	(
+		"start_game",
+		engine->aux_window.size_2d(),
+		Menu::build_node_map
+		({
+			Menu::build_text_only_knc_pair("title", "Dungwich Sandeon"),
+			Menu::build_spaces_knc_pair(i++),
+			Menu::build_text_only_knc_pair("author", "A game by FL4SHK"),
+			Menu::build_spaces_knc_pair(i++),
+			Menu::build_spaces_knc_pair(i++),
+			Menu::build_spaces_knc_pair(i++),
+			Menu::build_basic_action_button_knc_pair
+			(
+				"start_game",
+				"Start Game!",
+				this,
+				std::function<void(GmAuxTitleScreen*)>
+					(&GmAuxTitleScreen::_aux_menu_start_game_func)
+			),
+			//Menu::build_text_only_knc_pair("testificate[0]",
+			//	"Testificate"),
+			Menu::build_basic_action_button_knc_pair
+			(
+				"options",
+				"Options",
+				this,
+				std::function<void(GmAuxTitleScreen*)>
+					(&GmAuxTitleScreen::_aux_menu_options_func)
+			),
+			//Menu::build_text_only_knc_pair("testificate[1]",
+			//	"Testificate"),
+		}),
+		Vec2(false, true),
+		7
+	);
 }
 void GmAuxTitleScreen::tick(ecs::Engine* ecs_engine)
 {
@@ -43,7 +79,7 @@ void GmAuxTitleScreen::tick(ecs::Engine* ecs_engine)
 
 	if (engine->game_mode == GameMode::AuxTitleScreen)
 	{
-		printout("GmAuxTitleScreen::tick(): testificate\n");
+		//printout("GmAuxTitleScreen::tick(): testificate\n");
 
 		if (!did_init)
 		{
@@ -56,12 +92,26 @@ void GmAuxTitleScreen::tick(ecs::Engine* ecs_engine)
 
 		auto& aux_menu = engine->aux_menu;
 
+		aux_menu.tick(engine->key_status);
+
 		aux_window.clear();
 		aux_window.draw(aux_menu);
 
 		screen_window.clear();
 		screen_window.draw(aux_window);
 	}
+}
+
+void GmAuxTitleScreen::_aux_menu_start_game_func(GmAuxTitleScreen* self)
+{
+	printout("game_engine::sys::GmAuxTitleScreen::",
+		"_aux_menu_start_game_func(): testificate\n");
+}
+
+void GmAuxTitleScreen::_aux_menu_options_func(GmAuxTitleScreen* self)
+{
+	printout("game_engine::sys::GmAuxTitleScreen::",
+		"_aux_menu_options_func(): testificate\n");
 }
 
 } // namespace sys

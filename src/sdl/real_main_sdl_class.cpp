@@ -242,10 +242,11 @@ int RealMainSdl::run()
 
 		// Draw tiles/graphics here.
 
-		////yes_no_window.clear();
-		////yes_no_window.draw(_engine.yes_no_menu);
+		//yes_no_window.clear();
+		//yes_no_window.draw(_engine.yes_no_menu);
 
 		//screen_window.clear();
+		//screen_window.draw(yes_no_window);
 		////playfield_window.draw(msg_log);
 
 		//// Temporary drawing into `screen_window`.
