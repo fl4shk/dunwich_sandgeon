@@ -13,7 +13,7 @@
 // You should have received a copy of the GNU General Public License along
 // with Dungwich Sandeon.  If not, see <https://www.gnu.org/licenses/>.
 
-#include "gm_aux_title_screen_class.hpp"
+#include "gm_title_screen_class.hpp"
 #include "../engine_class.hpp"
 
 namespace dungwich_sandeon
@@ -24,14 +24,14 @@ namespace sys
 {
 
 const std::string
-	GmAuxTitleScreen::KIND_STR("GmAuxTitleScreen");
+	GmTitleScreen::KIND_STR("GmTitleScreen");
 
-std::string GmAuxTitleScreen::kind_str() const
+std::string GmTitleScreen::kind_str() const
 {
 	return KIND_STR;
 }
 
-void GmAuxTitleScreen::init(ecs::Engine* ecs_engine)
+void GmTitleScreen::init(ecs::Engine* ecs_engine)
 {
 	did_init = true;
 
@@ -48,23 +48,23 @@ void GmAuxTitleScreen::init(ecs::Engine* ecs_engine)
 			Menu::build_spaces_knc_pair(i++),
 			Menu::build_spaces_knc_pair(i++),
 			Menu::build_spaces_knc_pair(i++),
-			Menu::build_basic_action_button_knc_pair
+			Menu::build_action_button_knc_pair
 			(
 				"start_game",
 				"Start Game!",
 				this,
-				std::function<void(GmAuxTitleScreen*)>
-					(&GmAuxTitleScreen::_aux_menu_start_game_func)
+				std::function<void(GmTitleScreen*)>
+					(&GmTitleScreen::_aux_menu_start_game_func)
 			),
 			//Menu::build_text_only_knc_pair("testificate[0]",
 			//	"Testificate"),
-			Menu::build_basic_action_button_knc_pair
+			Menu::build_action_button_knc_pair
 			(
 				"options",
 				"Options",
 				this,
-				std::function<void(GmAuxTitleScreen*)>
-					(&GmAuxTitleScreen::_aux_menu_options_func)
+				std::function<void(GmTitleScreen*)>
+					(&GmTitleScreen::_aux_menu_options_func)
 			),
 			//Menu::build_text_only_knc_pair("testificate[1]",
 			//	"Testificate"),
@@ -73,13 +73,13 @@ void GmAuxTitleScreen::init(ecs::Engine* ecs_engine)
 		7
 	);
 }
-void GmAuxTitleScreen::tick(ecs::Engine* ecs_engine)
+void GmTitleScreen::tick(ecs::Engine* ecs_engine)
 {
 	auto engine = game_engine::engine;
 
-	if (engine->game_mode == GameMode::AuxTitleScreen)
+	if (engine->game_mode() == GameMode::TitleScreen)
 	{
-		//printout("GmAuxTitleScreen::tick(): testificate\n");
+		//printout("GmTitleScreen::tick(): testificate\n");
 
 		if (!did_init)
 		{
@@ -102,16 +102,20 @@ void GmAuxTitleScreen::tick(ecs::Engine* ecs_engine)
 	}
 }
 
-void GmAuxTitleScreen::_aux_menu_start_game_func(GmAuxTitleScreen* self)
+void GmTitleScreen::_aux_menu_start_game_func(GmTitleScreen* self)
 {
-	printout("game_engine::sys::GmAuxTitleScreen::",
+	printout("game_engine::sys::GmTitleScreen::",
 		"_aux_menu_start_game_func(): testificate\n");
+
+	//game_engine::engine->set_game_mode(GameMode::PrepareBeforeGame);
 }
 
-void GmAuxTitleScreen::_aux_menu_options_func(GmAuxTitleScreen* self)
+void GmTitleScreen::_aux_menu_options_func(GmTitleScreen* self)
 {
-	printout("game_engine::sys::GmAuxTitleScreen::",
+	printout("game_engine::sys::GmTitleScreen::",
 		"_aux_menu_options_func(): testificate\n");
+
+	game_engine::engine->set_game_mode(GameMode::Options);
 }
 
 } // namespace sys

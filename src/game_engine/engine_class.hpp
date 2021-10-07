@@ -20,10 +20,11 @@
 
 #include "../misc_includes.hpp"
 #include "../input_kind_enum.hpp"
-#include "basic_window_classes.hpp"
+#include "window_class.hpp"
 #include "menu_etc_classes.hpp"
 #include "game_options_class.hpp"
 #include "comp/general_comp_classes.hpp"
+#include "window_size_2d_constants.hpp"
 
 namespace dungwich_sandeon
 {
@@ -113,20 +114,27 @@ public:		// functions
 	}
 }; 
 //--------
+#define LIST_OF_GAME_MODES(X) \
+	/* X(AuxStartup) */ \
+	X(TitleScreen) \
+	X(Options) \
+	\
+	/* X(Credits) */ \
+	\
+	/* X(PrepareBeforeGame) */ \
+	/* X(Main) */ \
+	\
+	/* X(PopupShop) */ \
+	/* X(YesNoShop) */ \
+
 // An `enum` to specify which `game_engine::Window` is the
 // currently-selected one, as well as what game mode the game is in.
 enum class GameMode
 {
-	//AuxStartup,
-	AuxTitleScreen,
-	AuxSetGameOptions,
-	AuxCredits,
-
-	MainInGame,
-
-	//PopupShop,
-
-	//YesNoShop,
+	#define X(arg) \
+		arg,
+	LIST_OF_GAME_MODES(X)
+	#undef X
 };
 //--------
 template<typename ObjType>
@@ -143,24 +151,14 @@ public:		// types
 		= std::vector<std::vector<ecs::EntIdSet>>;
 
 public:		// constants
-	static const PosVec2
-		PLAYFIELD_WINDOW_POS, PLAYFIELD_WINDOW_END_POS;
-	static const SizeVec2
-		PLAYFIELD_WINDOW_SIZE_2D;
-
-	static const PosVec2
-		LOG_WINDOW_POS, LOG_WINDOW_END_POS,
-		HUD_WINDOW_POS, HUD_WINDOW_END_POS,
-		POPUP_WINDOW_POS, POPUP_WINDOW_END_POS,
-		YES_NO_WINDOW_POS, YES_NO_WINDOW_END_POS;
-
 	// These are basement floors, going from B1F down to B50F
 	static constexpr int
 		LOWEST_FLOOR = 50, HIGHEST_FLOOR = 1,
 		NUM_FLOORS = abs(HIGHEST_FLOOR - LOWEST_FLOOR) + 1;
 
+private:		// variables
+	GameMode _game_mode = GameMode::TitleScreen;
 public:		// variables
-	GameMode game_mode = GameMode::AuxTitleScreen;
 	GameOptions game_options;
 
 	ecs::Engine ecs_engine;
@@ -261,14 +259,14 @@ public:		// functions
 			yes_no_window.size_2d(),
 			Menu::build_node_map
 			({
-				Menu::build_basic_action_button_knc_pair
+				Menu::build_action_button_knc_pair
 				(
 					"yes",
 					"Yes",
 					self,
 					yes_func
 				),
-				Menu::build_basic_action_button_knc_pair
+				Menu::build_action_button_knc_pair
 				(
 					"no",
 					"No",
@@ -279,6 +277,9 @@ public:		// functions
 			Vec2(true, true)
 		);
 	}
+
+	GameMode& set_game_mode(GameMode n_game_mode);
+	GEN_GETTER_BY_VAL(game_mode);
 
 private:		// functions
 	static void _yes_no_menu_act_yes(Engine* self);

@@ -16,7 +16,8 @@
 #include "engine_class.hpp"
 #include "comp/block_comp_classes.hpp"
 #include "comp/ui_etc_comp_classes.hpp"
-#include "sys/gm_aux_title_screen_class.hpp"
+#include "sys/gm_title_screen_class.hpp"
+#include "sys/gm_options_class.hpp"
 
 namespace dungwich_sandeon
 {
@@ -53,58 +54,9 @@ KeyStatus::~KeyStatus()
 }
 //--------
 
-const PosVec2 
-	Engine::PLAYFIELD_WINDOW_POS(0, 0),
-
-	Engine::PLAYFIELD_WINDOW_END_POS
-		(Window::WITH_BORDER_SCREEN_SIZE_2D.x - 1 - 20,
-		Window::WITH_BORDER_SCREEN_SIZE_2D.y - 1 - 10);
-
-const SizeVec2
-	Engine::PLAYFIELD_WINDOW_SIZE_2D
-		(Engine::PLAYFIELD_WINDOW_END_POS.x
-			- Engine::PLAYFIELD_WINDOW_POS.x + 1,
-		Engine::PLAYFIELD_WINDOW_END_POS.y
-			- Engine::PLAYFIELD_WINDOW_POS.y + 1);
-
-const PosVec2 
-	Engine::LOG_WINDOW_POS
-		(0,
-		Engine::PLAYFIELD_WINDOW_END_POS.y),
-
-	Engine::LOG_WINDOW_END_POS
-		(Engine::PLAYFIELD_WINDOW_END_POS.x,
-		Window::WITH_BORDER_SCREEN_SIZE_2D.y - 1),
-
-	Engine::HUD_WINDOW_POS
-		(Engine::PLAYFIELD_WINDOW_END_POS.x,
-		Engine::PLAYFIELD_WINDOW_POS.y),
-
-	Engine::HUD_WINDOW_END_POS
-		(Window::WITH_BORDER_SCREEN_SIZE_2D.x - 1,
-		Window::WITH_BORDER_SCREEN_SIZE_2D.y - 1),
-
-	Engine::POPUP_WINDOW_POS
-		(13,
-		10),
-
-	Engine::POPUP_WINDOW_END_POS
-		(Engine::HUD_WINDOW_POS.x - 1,
-		Window::WITH_BORDER_SCREEN_SIZE_2D.y - 15),
-
-	Engine::YES_NO_WINDOW_POS
-		(2,
-		Window::WITH_BORDER_SCREEN_SIZE_2D.y / 2),
-
-	Engine::YES_NO_WINDOW_END_POS
-		(Engine::YES_NO_WINDOW_POS.x + 3
-		+ MsgLog::WIDGET_SELECTED_SPACING_SIZE + Menu::WIDGET_SPACING_SIZE
-		+ 1,
-		Engine::YES_NO_WINDOW_POS.y + 2 + 1 + 2);
-
 Engine::Engine()
-	: screen_window(this, PosVec2(), Window::WITH_BORDER_SCREEN_SIZE_2D),
-	aux_window(this, PosVec2(), Window::WITH_BORDER_SCREEN_SIZE_2D),
+	: screen_window(this, PosVec2(), WITH_BORDER_SCREEN_SIZE_2D),
+	aux_window(this, PosVec2(), WITH_BORDER_SCREEN_SIZE_2D),
 
 	playfield_window(this, PLAYFIELD_WINDOW_POS, PLAYFIELD_WINDOW_END_POS),
 	log_window(this, LOG_WINDOW_POS, LOG_WINDOW_END_POS),
@@ -130,12 +82,15 @@ Engine::Engine()
 	//		std::function<void(Engine*)>(&Engine::_yes_no_menu_act_yes),
 	//		std::function<void(Engine*)>(&Engine::_yes_no_menu_act_no));
 
-	if (ecs_engine.insert_sys(ecs::SysUptr(new sys::GmAuxTitleScreen())))
-	{
-		fprintf(stderr, "game_engine::Engine::Engine(): "
-			"GmAuxTitleScreen internal error\n");
-		exit(1);
-	}
+	#define X(arg) \
+		if (ecs_engine.insert_sys(ecs::SysUptr(new sys::Gm ## arg()))) \
+		{ \
+			fprintf(stderr, "game_engine::Engine::Engine(): " \
+				#arg " internal error\n"); \
+			exit(1); \
+		}
+	LIST_OF_GAME_MODES(X)
+	#undef X
 
 	//printout("Engine::Engine()\n");
 	//dbg_check_ecs_engine();
@@ -224,6 +179,31 @@ void Engine::position_set_pos_callback(comp::Position* obj,
 	position_dtor_callback(obj);
 	obj->_pos = n_pos;
 	position_ctor_callback(obj);
+}
+
+GameMode& Engine::set_game_mode(GameMode n_game_mode)
+{
+	_game_mode = n_game_mode;
+
+	switch (game_mode())
+	{
+	//--------
+	#define X(arg) \
+		case GameMode::arg: \
+			ecs_engine.sys_map().at(sys::Gm##arg::KIND_STR) \
+				->did_init = false; \
+			break;
+	LIST_OF_GAME_MODES(X)
+	#undef X
+	default:
+		fprintf(stderr,
+			"game_engine::Engine::set_game_mode(): Internal error!\n");
+		exit(1);
+		break;
+	//--------
+	}
+
+	return _game_mode;
 }
 
 void Engine::_yes_no_menu_act_yes(Engine* self)

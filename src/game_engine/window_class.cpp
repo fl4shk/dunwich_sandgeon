@@ -13,7 +13,7 @@
 // You should have received a copy of the GNU General Public License along
 // with Dungwich Sandeon.  If not, see <https://www.gnu.org/licenses/>.
 
-#include "basic_window_classes.hpp"
+#include "window_class.hpp"
 #include "engine_class.hpp"
 #include "menu_etc_classes.hpp"
 #include "comp/drawable_data_map.hpp"
@@ -25,11 +25,6 @@ namespace dungwich_sandeon
 namespace game_engine
 {
 //--------
-const SizeVec2
-	Window::WITH_BORDER_SCREEN_SIZE_2D(82, 62),
-
-	Window::SCREEN_SIZE_2D
-		(Window::WITH_BORDER_SCREEN_SIZE_2D - SizeVec2(2, 2));
 //const SizeVec2 Window::SCREEN_SIZE_2D(82, 62);
 //const SizeVec2 Window::SCREEN_SIZE_2D(60, 50);
 

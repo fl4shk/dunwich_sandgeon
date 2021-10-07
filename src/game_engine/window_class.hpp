@@ -13,10 +13,10 @@
 // You should have received a copy of the GNU General Public License along
 // with Dungwich Sandeon.  If not, see <https://www.gnu.org/licenses/>.
 
-#ifndef src_game_engine_basic_window_classeses_hpp
-#define src_game_engine_basic_window_classeses_hpp
+#ifndef src_game_engine_window_classes_hpp
+#define src_game_engine_window_classes_hpp
 
-// src/game_engine/basic_window_classeses.hpp
+// src/game_engine/window_classes.hpp
 
 #include "../misc_includes.hpp"
 #include "../misc_types.hpp"
@@ -42,9 +42,6 @@ class MsgLog;
 class Window
 {
 public:		// constants
-	// This constant has values in the amount of tilemap entries
-	static const SizeVec2 WITH_BORDER_SCREEN_SIZE_2D, SCREEN_SIZE_2D;
-
 	static const std::string
 		BORDER_CORNER_KIND_STR,
 		BORDER_HORIZ_KIND_STR,
@@ -190,4 +187,4 @@ public:		// functions
 } // namespace game_engine
 } // namespace dungwich_sandeon
 
-#endif		// src_game_engine_basic_window_classeses_hpp
+#endif		// src_game_engine_window_classes_hpp

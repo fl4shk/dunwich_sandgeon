@@ -13,12 +13,14 @@
 // You should have received a copy of the GNU General Public License along
 // with Dungwich Sandeon.  If not, see <https://www.gnu.org/licenses/>.
 
-#ifndef src_game_engine_sys_gm_aux_startup_class_hpp
-#define src_game_engine_sys_gm_aux_startup_class_hpp
+#ifndef src_game_engine_sys_gm_options_class_hpp
+#define src_game_engine_sys_gm_options_class_hpp
 
-// src/game_engine/sys/gm_aux_startup_class.hpp
+// src/game_engine/sys/gm_options_class.hpp
 
 #include "../../misc_includes.hpp"
+#include "../menu_etc_classes.hpp"
+#include "../game_options_class.hpp"
 
 namespace dungwich_sandeon
 {
@@ -27,23 +29,30 @@ namespace game_engine
 namespace sys
 {
 
-// Game Mode AUX Startup
-class GmAuxStartup final: public ecs::Sys
+// Game Mode: Options
+class GmOptions final: public ecs::Sys
 {
 public:		// constants
 	static const std::string KIND_STR;
+private:		// variables
+	GameOptions _game_options;
 public:		// functions
-	GmAuxStartup() = default;
-	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(GmAuxStartup);
-	virtual ~GmAuxStartup() = default;
+	GmOptions() = default;
+	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(GmOptions);
+	virtual ~GmOptions() = default;
 
 	virtual std::string kind_str() const;
+	virtual void init(ecs::Engine* ecs_engine);
 	virtual void tick(ecs::Engine* ecs_engine);
+private:		// functions
+	static void _aux_menu_grayscale_func(GmOptions* self,
+		Menu::Node* node);
+	static void _aux_menu_save_and_exit_func(GmOptions* self);
+	static void _aux_menu_exit_wo_save_func(GmOptions* self);
 };
 
 } // namespace sys
 } // namespace game_engine
 } // namespace dungwich_sandeon
 
-
-#endif		// src_game_engine_sys_gm_aux_startup_class_hpp
+#endif		// src_game_engine_sys_gm_options_class_hpp

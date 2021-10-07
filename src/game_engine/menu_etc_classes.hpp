@@ -20,14 +20,13 @@
 
 #include "../misc_includes.hpp"
 #include "font_color_enum.hpp"
-#include "basic_window_classes.hpp"
+#include "window_size_2d_constants.hpp"
 #include "comp/general_comp_classes.hpp"
 
 namespace dungwich_sandeon
 {
 namespace game_engine
 {
-
 class KeyStatus;
 
 class RopePart final
@@ -121,12 +120,12 @@ private:		// variables
 		_internal_height = DEFAULT_INTERNAL_HEIGHT,
 		_scroll = 0;
 
-	SizeVec2 _window_size_2d = Window::SCREEN_SIZE_2D;
+	SizeVec2 _window_size_2d = SCREEN_SIZE_2D;
 	Vec2<bool> _center = Vec2(false, false);
 	bool _keep_sep = false;
 public:		// functions
 	inline MsgLog(size_t s_internal_height=DEFAULT_INTERNAL_HEIGHT,
-		const SizeVec2& s_window_size_2d=Window::SCREEN_SIZE_2D,
+		const SizeVec2& s_window_size_2d=SCREEN_SIZE_2D,
 		Vec2<bool> s_center=Vec2(false, false), bool s_keep_sep=false)
 		: _internal_height(s_internal_height),
 		_window_size_2d(s_window_size_2d), _center(s_center),
@@ -135,7 +134,7 @@ public:		// functions
 	}
 	MsgLog(const RopeDeque& s_data,
 		size_t s_internal_height=DEFAULT_INTERNAL_HEIGHT,
-		const SizeVec2& s_window_size_2d=Window::SCREEN_SIZE_2D,
+		const SizeVec2& s_window_size_2d=SCREEN_SIZE_2D,
 		Vec2<bool> s_center=Vec2(false, false), bool s_keep_sep=false);
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(MsgLog);
 	inline ~MsgLog() = default;
@@ -166,7 +165,10 @@ public:		// constants
 
 	static constexpr FgBgColorPair
 		WIDGET_UNSELECTED_COLOR_PAIR = FontColor::Gray,
-		WIDGET_SELECTED_COLOR_PAIR = FontColor::White;
+		WIDGET_SELECTED_COLOR_PAIR = FontColor::White,
+
+		TEXT_ONLY_COLOR_PAIR = FontColor::Brown,
+		TEXT_ONLY_GS_COLOR_PAIR = FontColor::White;
 	static const std::string
 		WIDGET_SELECTED_STR,
 
@@ -190,49 +192,6 @@ public:		// constants
 		TAB_STR;
 
 public:		// types
-	template<typename SelfType>
-	class ActionButtonFunctor final
-	{
-	protected:		// variables
-		SelfType* _self = nullptr;
-		std::function<void(SelfType*)> _func = nullptr;
-	public:		// functions
-		inline ActionButtonFunctor() = default;
-		inline ActionButtonFunctor(SelfType* s_self,
-			const std::function<void(SelfType*)>& s_func)
-			: _self(s_self), _func(s_func)
-		{
-		}
-		GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(ActionButtonFunctor);
-		inline ~ActionButtonFunctor() = default;
-
-		inline void operator () () const
-		{
-			_func(_self);
-		}
-	};
-	//template<typename SelfType>
-	//class ActionButtonParamFunctor final
-	//{
-	//protected:		// variables
-	//	SelfType* _self = nullptr;
-	//	std::function<void(SelfType*, int)> _func = nullptr;
-	//public:		// functions
-	//	inline ActionButtonParamFunctor() = default;
-	//	inline ActionButtonParamFunctor(SelfType* s_self,
-	//		const std::function<void(SelfType*, int)>& s_func)
-	//		: _self(s_self), _func(s_func)
-	//	{
-	//	}
-	//	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(ActionButtonParamFunctor);
-	//	inline ~ActionButtonParamFunctor() = default;
-
-	//	inline void operator () (int param) const
-	//	{
-	//		_func(_self, param);
-	//	}
-	//};
-
 	class Node final
 	{
 	public:		// types
@@ -260,6 +219,9 @@ public:		// types
 			//// passes in value
 			//ActionButtonParam,
 
+			// Check button triggers the `on_update_func`
+			CheckButton,
+
 			//// When picked, set the dialog exit type to `variable`
 			//ExitButton,
 
@@ -284,13 +246,14 @@ public:		// types
 			= std::variant
 			<
 				std::monostate,
-				DataValue,
-				DataActionFunc
-				//DataActionParamFunc
+				bool,					// CheckButton
+				DataValue,				// HorizPicker
+				DataActionFunc			// ActionButton
+				//DataActionParamFunc	// ActionButtonParam
 			>;
 		//--------
 		// When it's updated at all
-		using OnUpdateFunc = std::function<void()>;
+		using OnUpdateFunc = std::function<void(Node*)>;
 		//--------
 		// No connections
 		class NoConn final
@@ -302,6 +265,12 @@ public:		// types
 			int variable = 0;
 			OnUpdateFunc on_update_func = nullptr;
 		};
+		class CtorArgs final
+		{
+		public:		// variables
+			NoConn no_conn;
+			std::string up, down;
+		};
 		//--------
 	public:		// variables
 		//--------
@@ -310,10 +279,6 @@ public:		// types
 		//--------
 		Kind kind;
 		//--------
-		// Where to go, using keyboard or controller; "" if nowhere
-		//std::string left, right, up, down;
-		std::string up, down;
-		//--------
 		DataVariant data = std::monostate();
 		//--------
 		// Various uses
@@ -321,43 +286,104 @@ public:		// types
 		//--------
 		OnUpdateFunc on_update_func = nullptr;
 		//--------
+		// Where to go, using keyboard or controller; "" if nowhere
+		//std::string left, right, up, down;
+		std::string up = "", down = "";
+		//--------
 	public:		// functions
 		//--------
 		Node();
 
 		// This constructor takes an `std::monostate` for `s_data`
-		Node(const std::string& s_text, Kind s_kind,
-			const std::string& s_up, const std::string& s_down,
-			std::monostate s_data, int s_variable,
-			const OnUpdateFunc& s_on_update_func);
-
-		// This constructor takes a `DataValue` for `s_data`
-		Node(const std::string& s_text, Kind s_kind,
-			const std::string& s_up, const std::string& s_down,
-			const DataValue& s_data, int s_variable,
-			const OnUpdateFunc& s_on_update_func);
-
-		// This constructor takes a `DataActionFunc` for `s_data`
-		Node(const std::string& s_text, Kind s_kind,
-			const std::string& s_up, const std::string& s_down,
-			const DataActionFunc& s_data, int s_variable,
-			const OnUpdateFunc& s_on_update_func);
-
-		//// This constructor takes a `DataActionParamFunc` for `s_data`
-		//Node(const std::string& s_text, Kind s_kind,
-		//	const std::string& s_up, const std::string& s_down,
-		//	const DataActionParamFunc& s_data, int s_variable,
-		//	const OnUpdateFunc& s_on_update_func);
+		template<typename SomeDataVariant>
+		inline Node(const std::string& s_text, Kind s_kind,
+			const SomeDataVariant& s_data, int s_variable,
+			const OnUpdateFunc& s_on_update_func,
+			const std::string& s_up, const std::string& s_down)
+		: text(s_text),
+			kind(s_kind),
+			data(s_data),
+			variable(s_variable),
+			on_update_func(s_on_update_func),
+			up(s_up), down(s_down)
+		{
+		}
 
 		Node(const NoConn& s_most_args, const std::string& s_up="",
 			const std::string& s_down="");
+		Node(const CtorArgs& ctor_args);
 
 		GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Node);
 
 		~Node();
 		//--------
 		std::string widget_horiz_picker_str() const;
+		std::string widget_check_button_str() const;
 		//--------
+	};
+
+	template<typename SelfType>
+	class ActionButtonFunctor final
+	{
+	private:		// variables
+		SelfType* _self = nullptr;
+		std::function<void(SelfType*)> _func = nullptr;
+	public:		// functions
+		ActionButtonFunctor() = default;
+		inline ActionButtonFunctor(SelfType* s_self,
+			const std::function<void(SelfType*)>& s_func)
+			: _self(s_self), _func(s_func)
+		{
+		}
+		GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(ActionButtonFunctor);
+		~ActionButtonFunctor() = default;
+
+		inline void operator () () const
+		{
+			_func(_self);
+		}
+	};
+	//template<typename SelfType>
+	//class ActionButtonParamFunctor final
+	//{
+	//protected:		// variables
+	//	SelfType* _self = nullptr;
+	//	std::function<void(SelfType*, int)> _func = nullptr;
+	//public:		// functions
+	//	inline ActionButtonParamFunctor() = default;
+	//	inline ActionButtonParamFunctor(SelfType* s_self,
+	//		const std::function<void(SelfType*, int)>& s_func)
+	//		: _self(s_self), _func(s_func)
+	//	{
+	//	}
+	//	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(ActionButtonParamFunctor);
+	//	inline ~ActionButtonParamFunctor() = default;
+
+	//	inline void operator () (int param) const
+	//	{
+	//		_func(_self, param);
+	//	}
+	//};
+	template<typename SelfType>
+	class OnUpdateFunctor final
+	{
+	private:		// variables
+		SelfType* _self = nullptr;
+		std::function<void(SelfType*, Node*)> _on_update_func = nullptr;
+	public:		// functions
+		OnUpdateFunctor() = default;
+		inline OnUpdateFunctor(SelfType* s_self,
+			const std::function<void(SelfType*, Node*)> s_on_update_func)
+			: _self(s_self), _on_update_func(s_on_update_func)
+		{
+		}
+		GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(OnUpdateFunctor);
+		~OnUpdateFunctor() = default;
+
+		inline void operator () (Node* node) const
+		{
+			_on_update_func(_self, node);
+		}
 	};
 
 	using NodeMap = std::map<std::string, Node>;
@@ -366,7 +392,7 @@ private:		// variables
 	// The currently-selected `Node`'s key
 	std::string _sel_key = "";
 
-	SizeVec2 _size_2d = Window::SCREEN_SIZE_2D;
+	SizeVec2 _size_2d = SCREEN_SIZE_2D;
 	NodeMap _node_map;
 	Vec2<bool> _center = Vec2(false, false);
 	size_t _tab_amount = 0;
@@ -414,11 +440,15 @@ public:		// functions
 	inline const std::string& next_sel_key(const KeyStatus& key_status)
 		const
 	{
-		return _inner_next_sel_key(sel_key(), key_status);
+		bool did_find = false;
+		const std::string& maybe_ret = _inner_next_sel_key(sel_key(),
+			key_status, did_find);
+
+		return did_find ? maybe_ret : sel_key();
 	}
 private:		// functions
 	const std::string& _inner_next_sel_key(const std::string& some_sel_key,
-		const KeyStatus& key_status) const;
+		const KeyStatus& key_status, bool& did_find) const;
 
 public:		// functions
 	inline std::string tab_amount_str() const
@@ -441,11 +471,12 @@ public:		// static builder functions
 	static Node build_end_node(const std::string& up_key);
 
 	static KncPair build_text_only_knc_pair(const std::string& key,
-		const std::string& s_text);;
+		const std::string& s_text);
+	static KncPair build_separator_knc_pair(size_t i);
 	static KncPair build_spaces_knc_pair(size_t i);
 
 	template<typename SelfType>
-	static inline KncPair build_basic_action_button_knc_pair
+	static inline KncPair build_action_button_knc_pair
 		(const std::string& key, const std::string& s_text,
 		SelfType* self, const std::function<void(SelfType*)>& button_func)
 	{
@@ -458,6 +489,44 @@ public:		// static builder functions
 				.data=ActionButtonFunctor<SelfType>(self, button_func),
 				.variable=0x0,
 				.on_update_func=nullptr,
+			}
+		};
+	}
+	template<typename SelfType>
+	static inline KncPair build_check_button_knc_pair
+		(const std::string& key, const std::string& s_text, bool s_data,
+		SelfType* self,
+		const std::function<void(SelfType*, Node*)>& s_on_update_func)
+	{
+		return
+		{
+			key,
+			{
+				.text=s_text,
+				.kind=Node::Kind::CheckButton,
+				.data=s_data,
+				.variable=0x0,
+				.on_update_func=OnUpdateFunctor<SelfType>(self,
+					s_on_update_func),
+			}
+		};
+	}
+	template<typename SelfType>
+	static inline KncPair build_horiz_picker_knc_pair
+		(const std::string& key, const std::string& s_text,
+		int s_variable, SelfType* self,
+		const std::function<void(SelfType*, Node*)>& s_on_update_func)
+	{
+		return
+		{
+			key,
+			{
+				.text=s_text,
+				.kind=Node::Kind::HorizPicker,
+				.data=Node::DataValue(),
+				.variable=s_variable,
+				.on_update_func=OnUpdateFunctor<SelfType>(self,
+					s_on_update_func),
 			}
 		};
 	}

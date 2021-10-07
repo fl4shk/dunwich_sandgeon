@@ -13,41 +13,35 @@
 // You should have received a copy of the GNU General Public License along
 // with Dungwich Sandeon.  If not, see <https://www.gnu.org/licenses/>.
 
-#include "gm_aux_startup_class.hpp"
-#include "../engine_class.hpp"
+#ifndef src_game_engine_window_size_2d_constants_hpp
+#define src_game_engine_window_size_2d_constants_hpp
+
+// src/game_engine/window_size_2d_constants.hpp
+
+#include "../misc_includes.hpp"
+#include "../misc_types.hpp"
 
 namespace dungwich_sandeon
 {
 namespace game_engine
 {
-namespace sys
-{
 
-const std::string
-	GmAuxStartup::KIND_STR("GmAuxStartup");
+// This constant has values in the amount of tilemap entries
+extern const SizeVec2
+	WITH_BORDER_SCREEN_SIZE_2D,
+	SCREEN_SIZE_2D;
+extern const PosVec2
+	PLAYFIELD_WINDOW_POS, PLAYFIELD_WINDOW_END_POS;
+extern const SizeVec2
+	PLAYFIELD_WINDOW_SIZE_2D;
 
-std::string GmAuxStartup::kind_str() const
-{
-	return KIND_STR;
-}
+extern const PosVec2
+	LOG_WINDOW_POS, LOG_WINDOW_END_POS,
+	HUD_WINDOW_POS, HUD_WINDOW_END_POS,
+	POPUP_WINDOW_POS, POPUP_WINDOW_END_POS,
+	YES_NO_WINDOW_POS, YES_NO_WINDOW_END_POS;
 
-void GmAuxStartup::tick(ecs::Engine* ecs_engine)
-{
-	auto engine = game_engine::engine;
-
-	if (engine->game_mode == GameMode::AuxStartup)
-	{
-		printout("GmAuxStartup::tick(): testificate\n");
-
-		auto
-			& screen_window = engine->screen_window,
-			& aux_window = engine->aux_window;
-
-		screen_window.clear();
-		screen_window.draw(aux_window);
-	}
-}
-
-} // namespace sys
 } // namespace game_engine
 } // namespace dungwich_sandeon
+
+#endif		// src_game_engine_window_size_2d_constants_hpp

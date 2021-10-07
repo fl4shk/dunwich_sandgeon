@@ -224,62 +224,6 @@ Menu::Node::Node()
 {
 }
 
-// This constructor takes an `std::monostate` for `s_data`
-Menu::Node::Node(const std::string& s_text, Kind s_kind,
-	const std::string& s_up, const std::string& s_down,
-	std::monostate s_data, int s_variable,
-	const OnUpdateFunc& s_on_update_func)
-	: text(s_text),
-	kind(s_kind),
-	up(s_up), down(s_down),
-	data(s_data),
-	variable(s_variable),
-	on_update_func(s_on_update_func)
-{
-}
-
-// This constructor takes a `DataValue` for `s_data`
-Menu::Node::Node(const std::string& s_text, Kind s_kind,
-	const std::string& s_up, const std::string& s_down,
-	const DataValue& s_data, int s_variable,
-	const OnUpdateFunc& s_on_update_func)
-	: text(s_text),
-	kind(s_kind),
-	up(s_up), down(s_down),
-	data(s_data),
-	variable(s_variable),
-	on_update_func(s_on_update_func)
-{
-}
-
-// This constructor takes a `DataActionFunc` for `s_data`
-Menu::Node::Node(const std::string& s_text, Kind s_kind,
-	const std::string& s_up, const std::string& s_down,
-	const DataActionFunc& s_data, int s_variable,
-	const OnUpdateFunc& s_on_update_func)
-	: text(s_text),
-	kind(s_kind),
-	up(s_up), down(s_down),
-	data(s_data),
-	variable(s_variable),
-	on_update_func(s_on_update_func)
-{
-}
-
-//// This constructor takes a `DataActionParamFunc` for `s_data`
-//Menu::Node::Node(const std::string& s_text, Kind s_kind,
-//	const std::string& s_up, const std::string& s_down,
-//	const DataActionParamFunc& s_data, int s_variable,
-//	const OnUpdateFunc& s_on_update_func)
-//	: text(s_text),
-//	kind(s_kind),
-//	up(s_up), down(s_down),
-//	data(s_data),
-//	variable(s_variable),
-//	on_update_func(s_on_update_func)
-//{
-//}
-
 Menu::Node::Node(const NoConn& s_most_args, const std::string& s_up,
 	const std::string& s_down)
 {
@@ -290,6 +234,10 @@ Menu::Node::Node(const NoConn& s_most_args, const std::string& s_up,
 	data = s_most_args.data;
 	variable = s_most_args.variable;
 	on_update_func = s_most_args.on_update_func;
+}
+Menu::Node::Node(const CtorArgs& ctor_args)
+{
+	*this = Node(ctor_args.no_conn, ctor_args.up, ctor_args.down);
 }
 Menu::Node::~Node()
 {
@@ -318,6 +266,12 @@ std::string Menu::Node::widget_horiz_picker_str() const
 
 	return ret;
 }
+std::string Menu::Node::widget_check_button_str() const
+{
+	return (!std::get<bool>(data))
+		? WIDGET_CHECK_BUTTON_UNCHECKED_STR
+		: WIDGET_CHECK_BUTTON_CHECKED_STR;
+}
 
 Menu::Menu(const std::string& s_sel_key, const SizeVec2& s_size_2d,
 	const NodeMap& s_node_map, Vec2<bool> s_center, size_t s_tab_amount)
@@ -334,21 +288,32 @@ Menu::Menu(const std::string& s_sel_key, const SizeVec2& s_size_2d,
 }
 
 const std::string& Menu::_inner_next_sel_key
-	(const std::string& some_sel_key, const KeyStatus& key_status) const
+	(const std::string& some_sel_key, const KeyStatus& key_status,
+	bool& did_find) const
 {
 	const auto& curr_node = at(some_sel_key);
 
 	auto temp_func = [&](const std::string& up_or_down)
 		-> const std::string&
 	{
-		const auto& temp_sel_key = _inner_next_sel_key(up_or_down,
-			key_status);
+		//const auto& temp_sel_key = _inner_next_sel_key(up_or_down,
+		//	key_status);
 
-		const auto& temp_node = at(temp_sel_key);
+		//const auto& temp_node = at(temp_sel_key);
 
-		return ((temp_node.kind == Node::Kind::ActionButton)
+		const auto& temp_node = at(up_or_down);
+
+		if ((temp_node.kind == Node::Kind::ActionButton)
+			|| (temp_node.kind == Node::Kind::CheckButton)
 			|| (temp_node.kind == Node::Kind::HorizPicker))
-			? temp_sel_key : some_sel_key;
+		{
+			did_find = true;
+			return up_or_down;
+		}
+		else
+		{
+			return _inner_next_sel_key(up_or_down, key_status, did_find);
+		}
 	};
 
 	if (key_status.key_went_down_just_now(KeyStatus::UpL)
@@ -401,8 +366,34 @@ void Menu::tick(const KeyStatus& key_status)
 		if (key_status.key_went_down_just_now(KeyStatus::DownR))
 		{
 			std::get<Node::DataActionFunc>(sel_node.data)();
+
+			if (sel_node.on_update_func)
+			{
+				sel_node.on_update_func(&sel_node);
+			}
 		}
 
+		break;
+
+	case Node::Kind::CheckButton:
+		if (!std::holds_alternative<bool>(sel_node.data))
+		{
+			fprintf(stderr,
+				"game_engine::Menu::tick() CheckButton: "
+				"Internal error.\n");
+			exit(1);
+		}
+
+		if (key_status.key_went_down_just_now(KeyStatus::DownR))
+		{
+			auto& data = std::get<bool>(sel_node.data);
+			data = !data;
+
+			if (sel_node.on_update_func)
+			{
+				sel_node.on_update_func(&sel_node);
+			}
+		}
 		break;
 
 	case Node::Kind::HorizPicker:
@@ -427,7 +418,7 @@ void Menu::tick(const KeyStatus& key_status)
 
 			if (sel_node.on_update_func)
 			{
-				sel_node.on_update_func();
+				sel_node.on_update_func(&sel_node);
 			}
 		}
 		else if (key_status.key_went_down_just_now(KeyStatus::RightL)
@@ -443,7 +434,7 @@ void Menu::tick(const KeyStatus& key_status)
 
 			if (sel_node.on_update_func)
 			{
-				sel_node.on_update_func();
+				sel_node.on_update_func(&sel_node);
 			}
 		}
 		break;
@@ -499,8 +490,9 @@ Menu::operator MsgLog() const
 					RopePart
 					({
 						.str=sconcat(tab_amount_str(), NODE.text),
-						.color_pair=COLOR_PAIR,
-						.gs_color_pair=COLOR_PAIR
+						//.color_pair=COLOR_PAIR,
+						.color_pair=TEXT_ONLY_COLOR_PAIR,
+						.gs_color_pair=TEXT_ONLY_GS_COLOR_PAIR
 					}),
 				}));
 			break;
@@ -513,21 +505,9 @@ Menu::operator MsgLog() const
 						.str=sconcat(tab_amount_str(),
 							spaces_str(CURR_WIDGET_SELECTED_STR.size()),
 							MsgLog::WIDGET_SPACING_STR, NODE.text),
-						.color_pair=COLOR_PAIR,
-						.gs_color_pair=COLOR_PAIR
+						.color_pair=TEXT_ONLY_COLOR_PAIR,
+						.gs_color_pair=TEXT_ONLY_GS_COLOR_PAIR
 					}),
-					//RopePart
-					//({
-					//	.str=MsgLog::WIDGET_SPACING_STR,
-					//	.color_pair=COLOR_PAIR,
-					//	.gs_color_pair=COLOR_PAIR,
-					//}),
-					//RopePart
-					//({
-					//	.str=NODE.text,
-					//	.color_pair=COLOR_PAIR,
-					//	.gs_color_pair=COLOR_PAIR,
-					//}),
 				}));
 			break;
 
@@ -544,18 +524,6 @@ Menu::operator MsgLog() const
 						.color_pair=COLOR_PAIR,
 						.gs_color_pair=COLOR_PAIR
 					}),
-					//RopePart
-					//({
-					//	.str=,
-					//	.color_pair=COLOR_PAIR,
-					//	.gs_color_pair=COLOR_PAIR
-					//}),
-					//RopePart
-					//({
-					//	.str=NODE.text,
-					//	.color_pair=COLOR_PAIR,
-					//	.gs_color_pair=COLOR_PAIR
-					//}),
 				}));
 			break;
 		//case Node::Kind::ActionButtonParam:
@@ -575,22 +543,24 @@ Menu::operator MsgLog() const
 						.color_pair=COLOR_PAIR,
 						.gs_color_pair=COLOR_PAIR
 					}),
-					//RopePart
-					//({
-					//	.str=NODE.widget_horiz_picker_str(),
-					//	.color_pair=COLOR_PAIR,
-					//	.gs_color_pair=COLOR_PAIR
-					//}),
-					//RopePart
-					//({
-					//	.str=NODE.text,
-					//	.color_pair=COLOR_PAIR,
-					//	.gs_color_pair=COLOR_PAIR
-					//}),
 				}));
 			break;
 		//case Node::Kind::HorizPickerWrap:
 		//	break;
+
+		case Node::Kind::CheckButton:
+			ret_data.push_back(Rope
+				({
+					RopePart
+					({
+						.str=sconcat(tab_amount_str(),
+							CURR_WIDGET_SELECTED_STR,
+							NODE.widget_check_button_str(), NODE.text),
+						.color_pair=COLOR_PAIR,
+						.gs_color_pair=COLOR_PAIR,
+					}),
+				}));
+			break;
 
 		default:
 			fprintf(stderr,
@@ -632,10 +602,10 @@ auto Menu::build_start_node(const std::string& down_key) -> Node
 	(
 		START_NODE_KEY,		// text
 		Node::Kind::Start,	// kind
-		"", down_key,		// where
 		std::monostate(),	// data
 		0x0,				// variable
-		nullptr				// on_update_func
+		nullptr,				// on_update_func
+		"", down_key		// where
 	);
 }
 auto Menu::build_end_node(const std::string& up_key) -> Node
@@ -644,10 +614,10 @@ auto Menu::build_end_node(const std::string& up_key) -> Node
 	(
 		END_NODE_KEY,		// text
 		Node::Kind::End,	// kind
-		up_key, "",			// where
 		std::monostate(),	// data
 		0x0,				// variable
-		nullptr				// on_update_func
+		nullptr,			// on_update_func
+		up_key, ""			// where
 	);
 }
 
@@ -663,6 +633,11 @@ auto Menu::build_text_only_knc_pair(const std::string& key,
 			.kind=Menu::Node::Kind::TextOnly,
 		}
 	};
+}
+auto Menu::build_separator_knc_pair(size_t i) -> KncPair
+{
+	return build_text_only_knc_pair(sconcat("<separator[", i, "]>"),
+		"================");
 }
 auto Menu::build_spaces_knc_pair(size_t i) -> KncPair 
 {
@@ -738,6 +713,22 @@ auto Menu::build_node_map(const std::vector<KncPair>& vec)-> NodeMap
 
 		ret[vec.at(i).first] = Node(vec.at(i).second, s_up, s_down);
 	}
+
+	//if (vec.back().first == "exit_wo_save")
+	//{
+	//	printout("Menu::build_node_map() start\n");
+
+	//	for (std::string key=ret.at(START_NODE_KEY).down;
+	//		key!=END_NODE_KEY;
+	//		key=ret.at(key).down)
+	//	{
+	//		printout("\"", key, "\"; ",
+	//			"up: \"", ret.at(key).up, "\"; ",
+	//			"down: \"", ret.at(key).down, "\"", "\n");
+	//	}
+
+	//	printout("Menu::build_node_map() end\n");
+	//}
 
 	return ret;
 }

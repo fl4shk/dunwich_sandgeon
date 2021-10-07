@@ -14,7 +14,7 @@
 // with Dungwich Sandeon.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "drawable_data_map.hpp"
-#include "../basic_window_classes.hpp"
+#include "../window_class.hpp"
 #include "player_comp_class.hpp"
 #include "block_comp_classes.hpp"
 
