@@ -67,9 +67,9 @@ public:		// constants
 		FONT_CYAN_STCM_G = 0xdd,
 		FONT_CYAN_STCM_B = 0xdd,
 
-		FONT_GRAY_STCM_R = 0x98,
-		FONT_GRAY_STCM_G = 0x98,
-		FONT_GRAY_STCM_B = 0x98,
+		FONT_GRAY_STCM_R = 0x88,
+		FONT_GRAY_STCM_G = 0x88,
+		FONT_GRAY_STCM_B = 0x88,
 
 		//FONT_LIGHT_GRAY_STCM_R = 0xb0,
 		//FONT_LIGHT_GRAY_STCM_G = 0xb0,

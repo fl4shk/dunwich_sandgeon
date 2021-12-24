@@ -41,8 +41,9 @@ public:		// functions
 	virtual void init(ecs::Engine* ecs_engine);
 	virtual void tick(ecs::Engine* ecs_engine);
 private:		// functions
-	static void _aux_menu_start_game_func(GmTitleScreen* self);
+	static void _aux_menu_file_select_func(GmTitleScreen* self);
 	static void _aux_menu_options_func(GmTitleScreen* self);
+	static void _aux_menu_quit_game_func(GmTitleScreen* self);
 };
 
 } // namespace sys

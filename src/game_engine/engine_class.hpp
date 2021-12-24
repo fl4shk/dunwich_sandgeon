@@ -121,7 +121,7 @@ public:		// functions
 	\
 	/* X(Credits) */ \
 	\
-	/* X(PrepareBeforeGame) */ \
+	X(FileSelect) \
 	/* X(Main) */ \
 	\
 	/* X(PopupShop) */ \
@@ -182,8 +182,12 @@ public:		// variables
 		// A popup window for various tasks (inventory, shops, etc.)
 		popup_window,
 
-		// A window containing "yes" and "no" buttons.
-		yes_no_window;
+		// A window containing just "yes" and "no" buttons.
+		yes_no_window,
+
+		// A larger-than-`yes_no_window` window containing "yes" and "no"
+		// buttons, and also some text at the top.
+		text_yes_no_window;
 
 	Menu 
 		// `Menu` for various tasks that take up the whole game window
@@ -192,8 +196,11 @@ public:		// variables
 		// The popup window's menu
 		popup_menu,
 
-		// The yes-no window's menu
-		yes_no_menu;
+		// The small yes-no window's menu
+		yes_no_menu,
+
+		// The with-text yes-no window's menu
+		text_yes_no_menu;
 
 	MsgLog
 		log_msg_log,
@@ -233,6 +240,8 @@ public:		// functions
 	//	ecs_engine.tick();
 	//}
 	void tick();
+	void save_and_quit();
+	void save_and_return_to_title();
 
 	inline EntIdSetVec2d& curr_floor_playfield_ent_id_v2d()
 	{
@@ -274,16 +283,54 @@ public:		// functions
 					no_func
 				),
 			}),
-			Vec2(true, true)
+			Vec2(false, true)
 		);
 	}
+	template<typename SelfType>
+	inline Menu build_text_yes_no_menu(SelfType* self,
+		const std::string& s_text,
+		const std::function<void(SelfType*)>& yes_func,
+		const std::function<void(SelfType*)>& no_func,
+		size_t s_tab_amount=0)
+	{
+		return Menu
+		(
+			"yes",
+			yes_no_window.size_2d(),
+			Menu::build_node_map
+			({
+				Menu::build_text_only_knc_pair
+				(
+					"<text[0]>",
+					s_text
+				),
+				Menu::build_action_button_knc_pair
+				(
+					"yes",
+					"Yes",
+					self,
+					yes_func
+				),
+				Menu::build_action_button_knc_pair
+				(
+					"no",
+					"No",
+					self,
+					no_func
+				),
+			}),
+			Vec2(false, true),
+			s_tab_amount
+		);
+	}
+
 
 	GameMode& set_game_mode(GameMode n_game_mode);
 	GEN_GETTER_BY_VAL(game_mode);
 
 private:		// functions
-	static void _yes_no_menu_act_yes(Engine* self);
-	static void _yes_no_menu_act_no(Engine* self);
+	//static void _yes_no_menu_act_yes(Engine* self);
+	//static void _yes_no_menu_act_no(Engine* self);
 	template<EngineErrWhenEntNullIdObj ObjType>
 	inline void _err_when_ent_id_is_null(ObjType* obj,
 		const std::string& func_name) const
@@ -296,6 +343,8 @@ private:		// functions
 			exit(1);
 		}
 	}
+
+	void _save();
 };
 
 extern Engine* engine;

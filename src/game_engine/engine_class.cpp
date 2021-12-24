@@ -18,6 +18,7 @@
 #include "comp/ui_etc_comp_classes.hpp"
 #include "sys/gm_title_screen_class.hpp"
 #include "sys/gm_options_class.hpp"
+#include "sys/gm_file_select_class.hpp"
 
 namespace dungwich_sandeon
 {
@@ -63,6 +64,8 @@ Engine::Engine()
 	hud_window(this, HUD_WINDOW_POS, HUD_WINDOW_END_POS),
 	popup_window(this, POPUP_WINDOW_POS, POPUP_WINDOW_END_POS),
 	yes_no_window(this, YES_NO_WINDOW_POS, YES_NO_WINDOW_END_POS),
+	text_yes_no_window(this, TEXT_YES_NO_WINDOW_POS,
+		TEXT_YES_NO_WINDOW_END_POS),
 
 	playfield_ent_id_v3d(NUM_FLOORS,
 		EntIdSetVec2d(PLAYFIELD_WINDOW_SIZE_2D.y,
@@ -76,6 +79,7 @@ Engine::Engine()
 	hud_window.init_set_border();
 	popup_window.init_set_border();
 	yes_no_window.init_set_border();
+	text_yes_no_window.init_set_border();
 
 	//yes_no_menu
 	//	= build_yes_no_menu(this,
@@ -91,6 +95,8 @@ Engine::Engine()
 		}
 	LIST_OF_GAME_MODES(X)
 	#undef X
+
+	//printout("testificate\n");
 
 	//printout("Engine::Engine()\n");
 	//dbg_check_ecs_engine();
@@ -140,6 +146,22 @@ void Engine::tick()
 	//}
 }
 
+void Engine::save_and_quit()
+{
+	printout("game_engine::Engine::save_and_quit(): testificate\n");
+
+	_save();
+	exit(0);
+}
+void Engine::save_and_return_to_title()
+{
+	printout("game_engine::Engine::save_and_return_to_title(): ",
+		"testificate\n");
+
+	_save();
+	set_game_mode(GameMode::TitleScreen);
+}
+
 void Engine::position_ctor_callback(comp::Position* obj)
 {
 	_err_when_ent_id_is_null(obj, "position_ctor_callback");
@@ -184,14 +206,15 @@ void Engine::position_set_pos_callback(comp::Position* obj,
 GameMode& Engine::set_game_mode(GameMode n_game_mode)
 {
 	_game_mode = n_game_mode;
+	//printout("new _game_mode: ", (int)_game_mode, "\n");
 
 	switch (game_mode())
 	{
 	//--------
 	#define X(arg) \
 		case GameMode::arg: \
-			ecs_engine.sys_map().at(sys::Gm##arg::KIND_STR) \
-				->did_init = false; \
+			ecs_engine.sys_map().at(sys::Gm##arg::KIND_STR)->did_init \
+				= false; \
 			break;
 	LIST_OF_GAME_MODES(X)
 	#undef X
@@ -206,13 +229,17 @@ GameMode& Engine::set_game_mode(GameMode n_game_mode)
 	return _game_mode;
 }
 
-void Engine::_yes_no_menu_act_yes(Engine* self)
+//void Engine::_yes_no_menu_act_yes(Engine* self)
+//{
+//	printout("yes_no_menu: \"Yes\" button activated!\n");
+//}
+//void Engine::_yes_no_menu_act_no(Engine* self)
+//{
+//	printout("yes_no_menu: \"No\" button activated!\n");
+//}
+
+void Engine::_save()
 {
-	printout("yes_no_menu: \"Yes\" button activated!\n");
-}
-void Engine::_yes_no_menu_act_no(Engine* self)
-{
-	printout("yes_no_menu: \"No\" button activated!\n");
 }
 
 Engine* engine = nullptr;

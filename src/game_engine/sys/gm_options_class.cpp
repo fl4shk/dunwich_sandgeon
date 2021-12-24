@@ -76,7 +76,7 @@ void GmOptions::init(ecs::Engine* ecs_engine)
 				_game_options.grayscale,
 				this,
 				std::function<void(GmOptions*, Menu::Node*)>
-					(&GmOptions::_aux_menu_grayscale_func)
+					(&_aux_menu_grayscale_func)
 			),
 			Menu::build_separator_knc_pair(i++),
 			Menu::build_action_button_knc_pair
@@ -85,7 +85,7 @@ void GmOptions::init(ecs::Engine* ecs_engine)
 				"Save And Exit",
 				this,
 				std::function<void(GmOptions*)>
-					(&GmOptions::_aux_menu_save_and_exit_func)
+					(&_aux_menu_save_and_exit_func)
 			),
 			Menu::build_action_button_knc_pair
 			(
@@ -93,7 +93,7 @@ void GmOptions::init(ecs::Engine* ecs_engine)
 				"Exit Without Saving",
 				this,
 				std::function<void(GmOptions*)>
-					(&GmOptions::_aux_menu_exit_wo_save_func)
+					(&_aux_menu_exit_wo_save_func)
 			),
 		}),
 		Vec2(false, true),

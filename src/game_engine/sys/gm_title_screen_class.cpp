@@ -38,7 +38,7 @@ void GmTitleScreen::init(ecs::Engine* ecs_engine)
 	size_t i = 0;
 	engine->aux_menu = Menu
 	(
-		"start_game",
+		"file_select",
 		engine->aux_window.size_2d(),
 		Menu::build_node_map
 		({
@@ -50,24 +50,28 @@ void GmTitleScreen::init(ecs::Engine* ecs_engine)
 			Menu::build_spaces_knc_pair(i++),
 			Menu::build_action_button_knc_pair
 			(
-				"start_game",
-				"Start Game!",
+				"file_select",
+				"File Select",
 				this,
 				std::function<void(GmTitleScreen*)>
-					(&GmTitleScreen::_aux_menu_start_game_func)
+					(&_aux_menu_file_select_func)
 			),
-			//Menu::build_text_only_knc_pair("testificate[0]",
-			//	"Testificate"),
 			Menu::build_action_button_knc_pair
 			(
 				"options",
 				"Options",
 				this,
 				std::function<void(GmTitleScreen*)>
-					(&GmTitleScreen::_aux_menu_options_func)
+					(&_aux_menu_options_func)
 			),
-			//Menu::build_text_only_knc_pair("testificate[1]",
-			//	"Testificate"),
+			Menu::build_action_button_knc_pair
+			(
+				"quit_game",
+				"Quit Game",
+				this,
+				std::function<void(GmTitleScreen*)>
+					(&_aux_menu_quit_game_func)
+			),
 		}),
 		Vec2(false, true),
 		7
@@ -102,20 +106,27 @@ void GmTitleScreen::tick(ecs::Engine* ecs_engine)
 	}
 }
 
-void GmTitleScreen::_aux_menu_start_game_func(GmTitleScreen* self)
+void GmTitleScreen::_aux_menu_file_select_func(GmTitleScreen* self)
 {
-	printout("game_engine::sys::GmTitleScreen::",
-		"_aux_menu_start_game_func(): testificate\n");
+	//printout("game_engine::sys::GmTitleScreen::",
+	//	"_aux_menu_start_game_func(): testificate\n");
 
-	//game_engine::engine->set_game_mode(GameMode::PrepareBeforeGame);
+	game_engine::engine->set_game_mode(GameMode::FileSelect);
 }
 
 void GmTitleScreen::_aux_menu_options_func(GmTitleScreen* self)
 {
-	printout("game_engine::sys::GmTitleScreen::",
-		"_aux_menu_options_func(): testificate\n");
+	//printout("game_engine::sys::GmTitleScreen::",
+	//	"_aux_menu_options_func(): testificate\n");
 
 	game_engine::engine->set_game_mode(GameMode::Options);
+}
+void GmTitleScreen::_aux_menu_quit_game_func(GmTitleScreen* self)
+{
+	//printout("game_engine::sys::GmTitleScreen::",
+	//	"_aux_menu_quit_game_func(): testificate\n");
+
+	game_engine::engine->save_and_quit();
 }
 
 } // namespace sys

@@ -118,6 +118,10 @@ Window::~Window()
 {
 }
 
+// This function exists and is called outside of the constructor because in
+// the `game_engine::engine` class, the `game_engine::Window`s are
+// constructed before the `game_engine::Engine` that is passed to the
+// `game_engine::Window` constructor.
 void Window::init_set_border()
 {
 	ecs::EntId id = ecs::ENT_NULL_ID;

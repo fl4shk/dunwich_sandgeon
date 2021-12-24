@@ -74,7 +74,15 @@ const PosVec2
 		(YES_NO_WINDOW_POS.x + 3
 		+ MsgLog::WIDGET_SELECTED_SPACING_SIZE + Menu::WIDGET_SPACING_SIZE
 		+ 1,
-		YES_NO_WINDOW_POS.y + 2 + 1 + 2);
+		YES_NO_WINDOW_POS.y + 2 + 1 + 2),
+
+	TEXT_YES_NO_WINDOW_POS
+		(2,
+		WITH_BORDER_SCREEN_SIZE_2D.y / 2),
+
+	TEXT_YES_NO_WINDOW_END_POS
+		(TEXT_YES_NO_WINDOW_POS.x + 30 + 1 + 2,
+		TEXT_YES_NO_WINDOW_POS.y + 4 + 1 + 2);
 
 } // namespace game_engine
 } // namespace dungwich_sandeon
