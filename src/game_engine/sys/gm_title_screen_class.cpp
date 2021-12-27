@@ -83,26 +83,33 @@ void GmTitleScreen::tick(ecs::Engine* ecs_engine)
 
 	if (engine->game_mode() == GameMode::TitleScreen)
 	{
-		//printout("GmTitleScreen::tick(): testificate\n");
-
-		if (!did_init)
+		if (active() && active.has_changed())
 		{
-			init(ecs_engine);
+			active.back_up();
 		}
+		else if (active())
+		{
+			//printout("GmTitleScreen::tick(): testificate\n");
 
-		auto
-			& screen_window = engine->screen_window,
-			& aux_window = engine->aux_window;
+			if (!did_init)
+			{
+				init(ecs_engine);
+			}
 
-		auto& aux_menu = engine->aux_menu;
+			auto
+				& screen_window = engine->screen_window,
+				& aux_window = engine->aux_window;
 
-		aux_menu.tick(engine->key_status);
+			auto& aux_menu = engine->aux_menu;
 
-		aux_window.clear();
-		aux_window.draw(aux_menu);
+			aux_menu.tick(engine->key_status);
 
-		screen_window.clear();
-		screen_window.draw(aux_window);
+			aux_window.clear();
+			aux_window.draw(aux_menu);
+
+			screen_window.clear();
+			screen_window.draw(aux_window);
+		}
 	}
 }
 

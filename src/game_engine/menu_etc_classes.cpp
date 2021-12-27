@@ -365,14 +365,15 @@ void Menu::tick(const KeyStatus& key_status)
 
 		if (key_status.key_went_down_just_now(KeyStatus::DownR))
 		{
+			printout("testificate\n");
 			std::get<Node::DataActionFunc>(sel_node.data)();
 
 			if (sel_node.on_update_func)
 			{
+				printout("testificate 2\n");
 				sel_node.on_update_func(&sel_node);
 			}
 		}
-
 		break;
 
 	case Node::Kind::CheckButton:

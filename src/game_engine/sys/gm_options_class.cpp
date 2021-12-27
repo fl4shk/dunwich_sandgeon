@@ -106,24 +106,30 @@ void GmOptions::tick(ecs::Engine* ecs_engine)
 
 	if (engine->game_mode() == GameMode::Options)
 	{
-		if (!did_init)
+		if (active() && active.has_changed())
 		{
-			init(ecs_engine);
+			active.back_up();
 		}
+		else if (active())
+		{
+			if (!did_init)
+			{
+				init(ecs_engine);
+			}
+			auto
+				& screen_window = engine->screen_window,
+				& aux_window = engine->aux_window;
 
-		auto
-			& screen_window = engine->screen_window,
-			& aux_window = engine->aux_window;
+			auto& aux_menu = engine->aux_menu;
 
-		auto& aux_menu = engine->aux_menu;
+			aux_menu.tick(engine->key_status);
 
-		aux_menu.tick(engine->key_status);
+			aux_window.clear();
+			aux_window.draw(aux_menu);
 
-		aux_window.clear();
-		aux_window.draw(aux_menu);
-
-		screen_window.clear();
-		screen_window.draw(aux_window);
+			screen_window.clear();
+			screen_window.draw(aux_window);
+		}
 	}
 }
 

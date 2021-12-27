@@ -39,7 +39,7 @@ void GmFileSelect::init(ecs::Engine* ecs_engine)
 	size_t i = 0;
 	engine->aux_menu = Menu
 	(
-		"start_game",
+		"file_qmark",
 		engine->aux_window.size_2d(),
 		Menu::build_node_map
 		({
@@ -100,42 +100,54 @@ void GmFileSelect::tick(ecs::Engine* ecs_engine)
 {
 	auto engine = game_engine::engine;
 
+	//if (active() && active.has_changed())
+	//{
+	//	active.back_up_and_update(true);
+	//}
+	//else if (active())
 	if (engine->game_mode() == GameMode::FileSelect)
 	{
-		if (!did_init)
+		if (active() && active.has_changed())
 		{
-			init(ecs_engine);
+			active.back_up();
 		}
-
-		auto
-			& screen_window = engine->screen_window,
-			& aux_window = engine->aux_window,
-			& popup_window = engine->popup_window;
-
-		auto
-			& aux_menu = engine->aux_menu,
-			& popup_menu = engine->popup_menu;
-
-		if (!_show_popup_window)
+		else if (active())
 		{
-			aux_menu.tick(engine->key_status);
-		}
-		else // if (_show_popup_window)
-		{
-			popup_menu.tick(engine->key_status);
-		}
+			if (!did_init)
+			{
+				init(ecs_engine);
+			}
 
-		screen_window.clear();
+			auto
+				& screen_window = engine->screen_window,
+				& aux_window = engine->aux_window,
+				& popup_window = engine->popup_window;
 
-		aux_window.clear();
-		aux_window.draw(aux_menu);
-		screen_window.draw(aux_window);
+			auto
+				& aux_menu = engine->aux_menu,
+				& popup_menu = engine->popup_menu;
 
-		if (_show_popup_window)
-		{
-			popup_window.clear();
-			popup_window.draw(popup_menu);
-			screen_window.draw(popup_window);
+			if (!_show_popup_window)
+			{
+				aux_menu.tick(engine->key_status);
+			}
+			else // if (_show_popup_window)
+			{
+				popup_menu.tick(engine->key_status);
+			}
+
+			screen_window.clear();
+
+			aux_window.clear();
+			aux_window.draw(aux_menu);
+			screen_window.draw(aux_window);
+
+			if (_show_popup_window)
+			{
+				popup_window.clear();
+				popup_window.draw(popup_menu);
+				screen_window.draw(popup_window);
+			}
 		}
 	}
 }

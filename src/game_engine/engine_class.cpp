@@ -96,6 +96,8 @@ Engine::Engine()
 	LIST_OF_GAME_MODES(X)
 	#undef X
 
+	set_game_mode(GameMode::TitleScreen);
+
 	//printout("testificate\n");
 
 	//printout("Engine::Engine()\n");
@@ -215,6 +217,10 @@ GameMode& Engine::set_game_mode(GameMode n_game_mode)
 		case GameMode::arg: \
 			ecs_engine.sys_map().at(sys::Gm##arg::KIND_STR)->did_init \
 				= false; \
+			ecs_engine.sys_map().at(sys::Gm##arg::KIND_STR)->active \
+				.back_up_and_update(false); \
+			ecs_engine.sys_map().at(sys::Gm##arg::KIND_STR)->active \
+				.back_up_and_update(true); \
 			break;
 	LIST_OF_GAME_MODES(X)
 	#undef X
