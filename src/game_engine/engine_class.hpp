@@ -344,6 +344,7 @@ private:		// functions
 		}
 	}
 
+	void _load();
 	void _save();
 };
 

@@ -161,6 +161,7 @@ void GmFileSelect::_aux_menu_start_game_func(GmFileSelect* self)
 }
 void GmFileSelect::_aux_menu_copy_file_func(GmFileSelect* self)
 {
+	self->_show_popup_window = true;
 }
 void GmFileSelect::_aux_menu_erase_file_func(GmFileSelect* self)
 {

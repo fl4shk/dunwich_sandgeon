@@ -244,6 +244,9 @@ GameMode& Engine::set_game_mode(GameMode n_game_mode)
 //	printout("yes_no_menu: \"No\" button activated!\n");
 //}
 
+void Engine::_load()
+{
+}
 void Engine::_save()
 {
 }
