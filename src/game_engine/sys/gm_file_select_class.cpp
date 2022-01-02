@@ -155,6 +155,7 @@ void GmFileSelect::tick(ecs::Engine* ecs_engine)
 void GmFileSelect::_aux_menu_file_qmark_hpick_func(GmFileSelect* self,
 	Menu::Node* node)
 {
+	self->_src_file_num = std::get<Menu::Node::DataValue>(node->data)();
 }
 void GmFileSelect::_aux_menu_start_game_func(GmFileSelect* self)
 {
@@ -162,6 +163,50 @@ void GmFileSelect::_aux_menu_start_game_func(GmFileSelect* self)
 void GmFileSelect::_aux_menu_copy_file_func(GmFileSelect* self)
 {
 	self->_show_popup_window = true;
+
+	size_t i = 0;
+	engine->popup_menu = Menu
+	(
+		"dst_file_qmark",
+		engine->popup_menu.size_2d(),
+		Menu::build_node_map
+		({
+			//--------
+			Menu::build_text_only_knc_pair("title", sconcat("Copy File ",
+				self->_src_file_num, " To?")),
+			//--------
+			Menu::build_separator_knc_pair(i++),
+			//--------
+			Menu::build_horiz_picker_knc_pair
+			(
+				"dst_file_qmark",
+				"Destination File?",
+				NUM_FILES,
+				self,
+				std::function<void(GmFileSelect*, Menu::Node*)>
+					(&_popup_menu_dest_file_qmark_hpick_func)
+			),
+			Menu::build_action_button_knc_pair
+			(
+				"do_the_copy",
+				"Do The Copy",
+				self,
+				std::function<void(GmFileSelect*)>
+					(&_popup_menu_do_the_copy_func)
+			),
+			Menu::build_action_button_knc_pair
+			(
+				"cancel",
+				"Cancel",
+				self,
+				std::function<void(GmFileSelect*)>
+					(&_popup_menu_cancel_func)
+			)
+			//--------
+		}),
+		Vec2(false, true),
+		0
+	);
 }
 void GmFileSelect::_aux_menu_erase_file_func(GmFileSelect* self)
 {
@@ -173,12 +218,16 @@ void GmFileSelect::_aux_menu_exit_func(GmFileSelect* self)
 void GmFileSelect::_popup_menu_dest_file_qmark_hpick_func
 	(GmFileSelect* self, Menu::Node* node)
 {
+	self->_copy_dst_file_num
+		= std::get<Menu::Node::DataValue>(node->data)();
 }
-void GmFileSelect::_popup_menu_do_copy_file_func(GmFileSelect* self)
+void GmFileSelect::_popup_menu_do_the_copy_func(GmFileSelect* self)
 {
+	self->_show_popup_window = false;
 }
-void GmFileSelect::_popup_menu_cancel_copy_file_func(GmFileSelect* self)
+void GmFileSelect::_popup_menu_cancel_func(GmFileSelect* self)
 {
+	self->_show_popup_window = false;
 }
 //--------
 } // namespace sys

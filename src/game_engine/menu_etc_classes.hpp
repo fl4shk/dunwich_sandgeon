@@ -245,7 +245,7 @@ public:		// types
 		using DataVariant 
 			= std::variant
 			<
-				std::monostate,
+				std::monostate,			// Sorry, nothing
 				bool,					// CheckButton
 				DataValue,				// HorizPicker
 				DataActionFunc			// ActionButton

@@ -37,9 +37,10 @@ public:		// constants
 	static constexpr int
 		NUM_FILES = 9;
 private:		// variables
+	// File numbers selected via HorizPickers
 	int
-		_file = 0,
-		_copy_from_file = 0;
+		_src_file_num = 0,
+		_copy_dst_file_num = 0;
 
 	bool _show_popup_window = false;
 public:		// functions
@@ -62,8 +63,8 @@ private:		// functions
 	// The popup window is used as the file copying window
 	static void _popup_menu_dest_file_qmark_hpick_func
 		(GmFileSelect* self, Menu::Node* node);
-	static void _popup_menu_do_copy_file_func(GmFileSelect* self);
-	static void _popup_menu_cancel_copy_file_func(GmFileSelect* self);
+	static void _popup_menu_do_the_copy_func(GmFileSelect* self);
+	static void _popup_menu_cancel_func(GmFileSelect* self);
 	//--------
 };
 

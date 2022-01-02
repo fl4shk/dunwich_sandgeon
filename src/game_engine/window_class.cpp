@@ -267,8 +267,6 @@ void Window::draw(const Menu& menu)
 
 void Window::draw(const MsgLog& msg_log)
 {
-	//printout("game_engine::Window::draw(const MsgLog&): testificate\n");
-
 	PosVec2 temp_pos(0, 0);
 
 	//if (msg_log.center().y
@@ -321,8 +319,6 @@ void Window::draw(const MsgLog& msg_log)
 		if (msg_log.center().x
 			&& (rope_size <= msg_log.window_size_2d().x))
 		{
-			//printout("testificate asdf: ",
-			//	(rope_size + 2), " ", msg_log.window_size_2d().x, "\n");
 			//temp_pos.x 
 			//	= ((msg_log.window_size_2d().x - rope_size) / 2) - 1;
 			temp_pos.x 
@@ -356,10 +352,6 @@ void Window::draw(const MsgLog& msg_log)
 						.gs_color_pair=rope_part.gs_color_pair
 					}
 				);
-				//printout("testificate: ",
-				//	"\"", rope_part.str, "\"",
-				//	" ", rope_part.str.size(), " ",
-				//	temp_pos.x, "\n");
 			}
 
 			if ((!msg_log.keep_sep()) && (temp_pos.x < size_2d().x))
@@ -373,10 +365,6 @@ void Window::draw(const MsgLog& msg_log)
 						.gs_color_pair=rope_part.gs_color_pair
 					}
 				);
-				//printout("testificate 2: ",
-				//	"\"", rope_part.str, "\"",
-				//	" ", rope_part.str.size(), " ",
-				//	temp_pos.x, "\n");
 
 				++temp_pos.x;
 			}
@@ -392,8 +380,6 @@ void Window::draw(const MsgLog& msg_log)
 					.gs_color_pair=FontColor::Black
 				}
 			);
-
-			//printout("testificate 3: ", temp_pos.x, "\n");
 		}
 	}
 }

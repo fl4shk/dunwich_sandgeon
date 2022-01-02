@@ -365,12 +365,10 @@ void Menu::tick(const KeyStatus& key_status)
 
 		if (key_status.key_went_down_just_now(KeyStatus::DownR))
 		{
-			printout("testificate\n");
 			std::get<Node::DataActionFunc>(sel_node.data)();
 
 			if (sel_node.on_update_func)
 			{
-				printout("testificate 2\n");
 				sel_node.on_update_func(&sel_node);
 			}
 		}
@@ -576,7 +574,6 @@ Menu::operator MsgLog() const
 	MsgLog ret(ret_data, MsgLog::DEFAULT_INTERNAL_HEIGHT, size_2d(),
 		center(), true);
 
-	//printout("game_engine::Menu::operator MsgLog(): testificate\n");
 	//for (size_t j=0; j<ret.data().size(); ++j)
 	//{
 	//	const auto& ROPE = ret.data().at(j);

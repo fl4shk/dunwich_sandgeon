@@ -89,8 +89,6 @@ void GmTitleScreen::tick(ecs::Engine* ecs_engine)
 		}
 		else if (active())
 		{
-			//printout("GmTitleScreen::tick(): testificate\n");
-
 			if (!did_init)
 			{
 				init(ecs_engine);
@@ -115,24 +113,15 @@ void GmTitleScreen::tick(ecs::Engine* ecs_engine)
 
 void GmTitleScreen::_aux_menu_file_select_func(GmTitleScreen* self)
 {
-	//printout("game_engine::sys::GmTitleScreen::",
-	//	"_aux_menu_start_game_func(): testificate\n");
-
 	game_engine::engine->set_game_mode(GameMode::FileSelect);
 }
 
 void GmTitleScreen::_aux_menu_options_func(GmTitleScreen* self)
 {
-	//printout("game_engine::sys::GmTitleScreen::",
-	//	"_aux_menu_options_func(): testificate\n");
-
 	game_engine::engine->set_game_mode(GameMode::Options);
 }
 void GmTitleScreen::_aux_menu_quit_game_func(GmTitleScreen* self)
 {
-	//printout("game_engine::sys::GmTitleScreen::",
-	//	"_aux_menu_quit_game_func(): testificate\n");
-
 	game_engine::engine->save_and_quit();
 }
 

@@ -159,8 +159,6 @@ int RealMainSdl::run()
 	bool quit = false;
 	while (!quit)
 	{
-		//printout("while (!quit) testificate\n");
-
 		_mouse_right_button_state.back_up();
 
 		bool tick_engine_now = false,
@@ -391,15 +389,9 @@ void RealMainSdl::_update_engine_key_status()
 	{
 		if (_key_status_map.contains(sym))
 		{
-			//printout("_update_engine_key_status(): ",
-			//	key_status_down.prev(), " ", key_status_down(), "\n");
 			//key_status_down() = _key_status_map.at(sym).down.prev();
 			key_status_down.back_up_and_update
 				(_key_status_map.at(sym).down());
-			//printout("testificate: ", key_status_down.has_changed(), "; ",
-			//	key_status_down.prev(), " ", key_status_down(), "\n");
-			//printout("_update_engine_key_status() next: ",
-			//	key_status_down.prev(), " ", key_status_down(), "\n");
 		}
 	};
 	// Hard code the keybindings for now.
@@ -418,16 +410,6 @@ void RealMainSdl::_update_engine_key_status()
 
 	update_key_status(key_status.at(KeyStatus::Start), SDLK_RETURN);
 	update_key_status(key_status.at(KeyStatus::Select), SDLK_ESCAPE);
-
-	//if (_key_status_map.contains(SDLK_s)
-	//	&& _key_status_map.at(SDLK_s).down.has_changed())
-	//if (_key_status_map.contains(SDLK_s))
-	//{
-	//	printout("testificate: ", key_status.at(KeyStatus::LeftL).prev(),
-	//		" ", key_status.at(KeyStatus::LeftL)(), "\n");
-	//	printout("testificate 2: ", _key_status_map.at(SDLK_s).down.prev(),
-	//		" ", _key_status_map.at(SDLK_s).down.curr(), "\n");
-	//}
 
 }
 

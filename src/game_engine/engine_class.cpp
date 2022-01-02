@@ -98,8 +98,6 @@ Engine::Engine()
 
 	set_game_mode(GameMode::TitleScreen);
 
-	//printout("testificate\n");
-
 	//printout("Engine::Engine()\n");
 	//dbg_check_ecs_engine();
 }
