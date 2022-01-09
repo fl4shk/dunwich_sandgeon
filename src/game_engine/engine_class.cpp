@@ -146,6 +146,9 @@ void Engine::tick()
 	//}
 }
 
+//void Engine::load_file()
+//{
+//}
 void Engine::save_and_quit()
 {
 	printout("game_engine::Engine::save_and_quit(): testificate\n");
@@ -242,9 +245,6 @@ GameMode& Engine::set_game_mode(GameMode n_game_mode)
 //	printout("yes_no_menu: \"No\" button activated!\n");
 //}
 
-void Engine::_load()
-{
-}
 void Engine::_save()
 {
 }

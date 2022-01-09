@@ -240,6 +240,7 @@ public:		// functions
 	//	ecs_engine.tick();
 	//}
 	void tick();
+	//void load_file();
 	void save_and_quit();
 	void save_and_return_to_title();
 
@@ -344,7 +345,6 @@ private:		// functions
 		}
 	}
 
-	void _load();
 	void _save();
 };
 

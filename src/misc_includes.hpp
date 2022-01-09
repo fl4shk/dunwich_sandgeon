@@ -30,6 +30,7 @@
 #include "liborangepower_src/containers/vec2_classes.hpp"
 #include "liborangepower_src/containers/vec3_classes.hpp"
 #include "liborangepower_src/containers/prev_curr_pair_classes.hpp"
+#include "liborangepower_src/json_stuff/json_stuff.hpp"
 #include "liborangepower_src/game_stuff/ecs_classes.hpp"
 
 #include "liborangepower_src/sdl2/sdl.hpp"
@@ -47,6 +48,7 @@ using namespace liborangepower::misc_util;
 using namespace liborangepower::bitwise;
 using namespace liborangepower::strings;
 using namespace liborangepower::containers;
+using namespace liborangepower::json;
 namespace sdl = liborangepower::sdl;
 using sdl::KeycModPair, sdl::KeyStatus;
 namespace ecs = liborangepower::game::ecs;

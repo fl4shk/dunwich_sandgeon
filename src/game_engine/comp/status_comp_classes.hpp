@@ -45,6 +45,7 @@ public:		// functions
 	virtual ~StatusOnFire() = default;
 
 	virtual std::string kind_str() const;
+	virtual operator Json::Value () const;
 };
 
 // Take damage slowly
@@ -64,6 +65,7 @@ public:		// functions
 	virtual ~StatusPoisoned() = default;
 
 	virtual std::string kind_str() const;
+	virtual operator Json::Value () const;
 };
 
 // Can do nothing
@@ -83,6 +85,7 @@ public:		// functions
 	virtual ~StatusAsleep() = default;
 
 	virtual std::string kind_str() const;
+	virtual operator Json::Value () const;
 };
 
 // Speed of movement
@@ -103,6 +106,7 @@ public:		// functions
 	virtual ~StatusTravelSpeed() = default;
 
 	virtual std::string kind_str() const;
+	virtual operator Json::Value () const;
 };
 
 // Speed of actions besides movement
@@ -123,6 +127,7 @@ public:		// functions
 	virtual ~StatusActionSpeed() = default;
 
 	virtual std::string kind_str() const;
+	virtual operator Json::Value () const;
 };
 
 } // namespace comp

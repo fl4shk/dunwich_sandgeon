@@ -39,6 +39,7 @@ namespace comp
 //	virtual ~InBetweenWalls() = default;
 //
 //	virtual std::string kind_str() const;
+//	virtual operator Json::Value () const;
 //};
 
 class Wall final: public ecs::Comp
@@ -51,6 +52,7 @@ public:		// functions
 	virtual ~Wall() = default;
 
 	virtual std::string kind_str() const;
+	virtual operator Json::Value () const;
 };
 
 class Floor final: public ecs::Comp
@@ -63,6 +65,7 @@ public:		// functions
 	virtual ~Floor() = default;
 
 	virtual std::string kind_str() const;
+	virtual operator Json::Value () const;
 };
 
 class DownStairs final: public ecs::Comp
@@ -75,6 +78,7 @@ public:		// functions
 	virtual ~DownStairs() = default;
 
 	virtual std::string kind_str() const;
+	virtual operator Json::Value () const;
 };
 
 class UpStairs final: public ecs::Comp
@@ -87,6 +91,7 @@ public:		// functions
 	virtual ~UpStairs() = default;
 
 	virtual std::string kind_str() const;
+	virtual operator Json::Value () const;
 };
 
 } // namespace comp

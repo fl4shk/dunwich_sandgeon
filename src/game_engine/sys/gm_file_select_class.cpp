@@ -213,6 +213,7 @@ void GmFileSelect::_aux_menu_erase_file_func(GmFileSelect* self)
 }
 void GmFileSelect::_aux_menu_exit_func(GmFileSelect* self)
 {
+	game_engine::engine->set_game_mode(GameMode::TitleScreen);
 }
 
 void GmFileSelect::_popup_menu_dest_file_qmark_hpick_func

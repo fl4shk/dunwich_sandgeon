@@ -22,6 +22,7 @@
 #include "../../misc_types.hpp"
 #include "../font_color_enum.hpp"
 #include "../playfield_layer_prio_enum.hpp"
+#include "base_class.hpp"
 
 namespace dungwich_sandeon
 {
@@ -33,7 +34,7 @@ class Engine;
 namespace comp
 {
 
-class Drawable final: public ecs::Comp
+class Drawable final: public Base
 {
 public:		// constants
 	static const std::string KIND_STR;
@@ -79,6 +80,7 @@ public:		// functions
 	virtual ~Drawable() = default;
 
 	virtual std::string kind_str() const;
+	virtual operator Json::Value () const;
 
 	void blink()
 	{
@@ -110,7 +112,7 @@ public:		// functions
 
 // Note that this is a 3D position within the game world.
 // Which floor the entity is on is what the Z axis represents.
-class Position final: public ecs::Comp
+class Position final: public Base
 {
 	friend class dungwich_sandeon::game_engine::Engine;
 public:		// constants
@@ -128,13 +130,14 @@ public:		// functions
 	virtual ~Position();
 
 	virtual std::string kind_str() const;
+	virtual operator Json::Value () const;
 
 	GEN_GETTER_BY_VAL(ent_id);
 	GEN_GETTER_BY_CON_REF(pos);
 	void set_pos(const PosVec3& n_pos);
 };
 
-class Weight final: public ecs::Comp
+class Weight final: public Base
 {
 public:		// constants
 	static const std::string KIND_STR;
@@ -150,9 +153,10 @@ public:		// functions
 	virtual ~Weight() = default;
 
 	virtual std::string kind_str() const;
+	virtual operator Json::Value () const;
 };
 
-class BaseStats final: public ecs::Comp
+class BaseStats final: public Base
 {
 public:		// constants
 	static const std::string KIND_STR;
@@ -180,6 +184,7 @@ public:		// functions
 	virtual ~BaseStats() = default;
 
 	virtual std::string kind_str() const;
+	virtual operator Json::Value () const;
 };
 
 
