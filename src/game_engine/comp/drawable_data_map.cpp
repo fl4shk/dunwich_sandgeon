@@ -39,6 +39,7 @@ const std::map<std::string, Drawable::Data> DRAWABLE_DATA_MAP
 			.gs_color_pair=FontColor::Black
 		}
 	},
+
 	// '#', 35
 	{
 		Wall::KIND_STR,
@@ -60,6 +61,7 @@ const std::map<std::string, Drawable::Data> DRAWABLE_DATA_MAP
 			.gs_color_pair=FontColor::White
 		}
 	},
+
 	// '-', 45
 	{
 		Window::BORDER_HORIZ_KIND_STR,
@@ -82,31 +84,31 @@ const std::map<std::string, Drawable::Data> DRAWABLE_DATA_MAP
 		}
 	},
 
+	// '<', 60
+	{
+		DownStairs::KIND_STR,
+		{
+			.c='<',
+			.color_pair=FontColor::White,
+			.gs_color_pair=FontColor::White
+		}
+	},
+
+	// '>', 62
+	{
+		UpStairs::KIND_STR,
+		{
+			.c='>',
+			.color_pair=FontColor::White,
+			.gs_color_pair=FontColor::White
+		}
+	},
+
 	// '@', 64
 	{
 		Player::KIND_STR,
 		{
 			.c='@',
-			.color_pair=FontColor::White,
-			.gs_color_pair=FontColor::White
-		}
-	},
-
-	// 'S', 83
-	{
-		UpStairs::KIND_STR,
-		{
-			.c='S',
-			.color_pair=FontColor::White,
-			.gs_color_pair=FontColor::White
-		}
-	},
-
-	// 's', 115
-	{
-		DownStairs::KIND_STR,
-		{
-			.c='s',
 			.color_pair=FontColor::White,
 			.gs_color_pair=FontColor::White
 		}

@@ -28,27 +28,55 @@ namespace comp
 //}
 
 const std::string Wall::KIND_STR("Wall");
+Wall::Wall(const Json::Value& jv)
+{
+}
 std::string Wall::kind_str() const
 {
 	return KIND_STR;
 }
+Wall::operator Json::Value () const
+{
+	return Json::Value();
+}
 
 const std::string Floor::KIND_STR("Floor");
+Floor::Floor(const Json::Value& jv)
+{
+}
 std::string Floor::kind_str() const
 {
 	return KIND_STR;
 }
+Floor::operator Json::Value () const
+{
+	return Json::Value();
+}
 
 const std::string DownStairs::KIND_STR("DownStairs");
+DownStairs::DownStairs(const Json::Value& jv)
+{
+}
 std::string DownStairs::kind_str() const
 {
 	return KIND_STR;
 }
+DownStairs::operator Json::Value () const
+{
+	return Json::Value();
+}
 
 const std::string UpStairs::KIND_STR("UpStairs");
+UpStairs::UpStairs(const Json::Value& jv)
+{
+}
 std::string UpStairs::kind_str() const
 {
 	return KIND_STR;
+}
+UpStairs::operator Json::Value () const
+{
+	return Json::Value();
 }
 
 } // namespace comp

@@ -19,7 +19,7 @@
 // src/game_engine/comp/player_comp_class.hpp
 
 #include "../../misc_includes.hpp"
-#include "general_comp_classes.hpp"
+#include "base_class.hpp"
 
 namespace dungwich_sandeon
 {
@@ -28,12 +28,13 @@ namespace game_engine
 namespace comp
 {
 
-class Player final: public ecs::Comp
+class Player final: public Base
 {
 public:		// constants
 	static const std::string KIND_STR;
 public:		// functions
 	inline Player() = default;
+	Player(const Json::Value& jv);
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Player);
 	virtual ~Player() = default;
 

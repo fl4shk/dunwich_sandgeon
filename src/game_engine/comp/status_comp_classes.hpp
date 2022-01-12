@@ -19,6 +19,7 @@
 // src/game_engine/comp/status_comp_classes.hpp
 
 #include "../../misc_includes.hpp"
+#include "base_class.hpp"
 
 namespace dungwich_sandeon
 {
@@ -29,7 +30,7 @@ namespace comp
 
 static constexpr int STATUS_TIMER_DEFAULT_VAL = 20;
 
-class StatusOnFire final: public ecs::Comp
+class StatusOnFire final: public Base
 {
 public:		// constants
 	static const std::string KIND_STR;
@@ -41,6 +42,7 @@ public:		// functions
 		: timer(s_timer)
 	{
 	}
+	StatusOnFire(const Json::Value& jv);
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(StatusOnFire);
 	virtual ~StatusOnFire() = default;
 
@@ -49,7 +51,7 @@ public:		// functions
 };
 
 // Take damage slowly
-class StatusPoisoned final: public ecs::Comp
+class StatusPoisoned final: public Base
 {
 public:		// constants
 	static const std::string KIND_STR;
@@ -61,6 +63,7 @@ public:		// functions
 		: timer(s_timer)
 	{
 	}
+	StatusPoisoned(const Json::Value& jv);
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(StatusPoisoned);
 	virtual ~StatusPoisoned() = default;
 
@@ -69,7 +72,7 @@ public:		// functions
 };
 
 // Can do nothing
-class StatusAsleep final: public ecs::Comp
+class StatusAsleep final: public Base
 {
 public:		// constants
 	static const std::string KIND_STR;
@@ -81,6 +84,7 @@ public:		// functions
 		: timer(s_timer)
 	{
 	}
+	StatusAsleep(const Json::Value& jv);
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(StatusAsleep);
 	virtual ~StatusAsleep() = default;
 
@@ -89,19 +93,20 @@ public:		// functions
 };
 
 // Speed of movement
-class StatusTravelSpeed final: public ecs::Comp
+class StatusTravelSpeed final: public Base
 {
 public:		// constants
 	static const std::string KIND_STR;
 	static constexpr int ABS_MIN_MAX_VAL = 6;
 public:		// variables
-	int val = 0;
+	int timer = STATUS_TIMER_DEFAULT_VAL, val = 0;
 public:		// functions
 	StatusTravelSpeed() = default;
-	inline StatusTravelSpeed(int s_val)
-		: val(s_val)
+	inline StatusTravelSpeed(int s_timer, int s_val)
+		: timer(s_timer), val(s_val)
 	{
 	}
+	StatusTravelSpeed(const Json::Value& jv);
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(StatusTravelSpeed);
 	virtual ~StatusTravelSpeed() = default;
 
@@ -110,19 +115,20 @@ public:		// functions
 };
 
 // Speed of actions besides movement
-class StatusActionSpeed final: public ecs::Comp
+class StatusActionSpeed final: public Base
 {
 public:		// constants
 	static const std::string KIND_STR;
 	static constexpr int ABS_MIN_MAX_VAL = 6;
 public:		// variables
-	int val = 0;
+	int timer = STATUS_TIMER_DEFAULT_VAL, val = 0;
 public:		// functions
 	StatusActionSpeed() = default;
-	inline StatusActionSpeed(int s_val)
-		: val(s_val)
+	inline StatusActionSpeed(int s_timer, int s_val)
+		: timer(s_timer), val(s_val)
 	{
 	}
+	StatusActionSpeed(const Json::Value& jv);
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(StatusActionSpeed);
 	virtual ~StatusActionSpeed() = default;
 

@@ -81,6 +81,11 @@ public:		// functions
 		: fg(s_fg), bg(s_bg)
 	{
 	}
+	constexpr inline FgBgColorPair(const Json::Value& jv)
+	{
+		fg = static_cast<FontColor>(jv["fg"].asUInt());
+		bg = static_cast<FontColor>(jv["bg"].asUInt());
+	}
 	GEN_CONSTEXPR_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(FgBgColorPair);
 	constexpr inline ~FgBgColorPair() = default;
 
@@ -89,6 +94,15 @@ public:		// functions
 		fg = n_fg;
 		bg = DEFAULT_BG;
 		return *this;
+	}
+	inline operator Json::Value () const
+	{
+		Json::Value ret;
+
+		ret["fg"] = static_cast<u32>(fg);
+		ret["bg"] = static_cast<u32>(bg);
+
+		return ret;
 	}
 
 	constexpr inline bool operator == (const FgBgColorPair& other) const

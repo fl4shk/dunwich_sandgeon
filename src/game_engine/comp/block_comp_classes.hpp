@@ -28,7 +28,7 @@ namespace game_engine
 namespace comp
 {
 
-//class InBetweenWalls final: public ecs::Comp
+//class InBetweenWalls final: public Base
 //{
 //public:		// constants
 //	static constexpr Drawable::Data
@@ -42,12 +42,13 @@ namespace comp
 //	virtual operator Json::Value () const;
 //};
 
-class Wall final: public ecs::Comp
+class Wall final: public Base
 {
 public:		// constants
 	static const std::string KIND_STR;
 public:		// functions
 	Wall() = default;
+	Wall(const Json::Value& jv);
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Wall);
 	virtual ~Wall() = default;
 
@@ -55,12 +56,13 @@ public:		// functions
 	virtual operator Json::Value () const;
 };
 
-class Floor final: public ecs::Comp
+class Floor final: public Base
 {
 public:		// constants
 	static const std::string KIND_STR;
 public:		// functions
 	Floor() = default;
+	Floor(const Json::Value& jv);
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Floor);
 	virtual ~Floor() = default;
 
@@ -68,12 +70,13 @@ public:		// functions
 	virtual operator Json::Value () const;
 };
 
-class DownStairs final: public ecs::Comp
+class DownStairs final: public Base
 {
 public:		// constants
 	static const std::string KIND_STR;
 public:		// functions
 	DownStairs() = default;
+	DownStairs(const Json::Value& jv);
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(DownStairs);
 	virtual ~DownStairs() = default;
 
@@ -81,12 +84,13 @@ public:		// functions
 	virtual operator Json::Value () const;
 };
 
-class UpStairs final: public ecs::Comp
+class UpStairs final: public Base
 {
 public:		// constants
 	static const std::string KIND_STR;
 public:		// functions
 	UpStairs() = default;
+	UpStairs(const Json::Value& jv);
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(UpStairs);
 	virtual ~UpStairs() = default;
 

@@ -13,29 +13,45 @@
 // You should have received a copy of the GNU General Public License along
 // with Dungwich Sandeon.  If not, see <https://www.gnu.org/licenses/>.
 
-#include "player_comp_class.hpp"
+#ifndef src_misc_funcs_hpp
+#define src_misc_funcs_hpp
 
+// src/misc_funcs.hpp
+
+#include "misc_includes.hpp"
 
 namespace dungwich_sandeon
 {
-namespace game_engine
-{
-namespace comp
-{
 
-const std::string Player::KIND_STR("Player");
-Player::Player(const Json::Value& jv)
+template<typename Type>
+inline Type val_from_jv(const Json::Value& jv)
 {
-}
-std::string Player::kind_str() const
-{
-	return KIND_STR;
-}
-Player::operator Json::Value () const
-{
-	return Json::Value();
+	if constexpr (std::is_same<Type, int>())
+	{
+		return jv.asInt();
+	}
+	else if constexpr (std::is_same<Type, uint>())
+	{
+		return jv.asUInt();
+	}
+	else if constexpr (std::is_same<Type, float>())
+	{
+		return jv.asFloat();
+	}
+	else if constexpr (std::is_same<Type, double>())
+	{
+		return jv.asDouble();
+	}
+	else if constexpr (std::is_same<Type, bool>())
+	{
+		return jv.asBool();
+	}
+	else
+	{
+		return Type(jv);
+	}
 }
 
-} // namespace comp
-} // namespace game_engine
 } // namespace dungwich_sandeon
+
+#endif		// src_misc_funcs_hpp

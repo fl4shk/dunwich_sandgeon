@@ -49,6 +49,22 @@ public:		// types
 			// Grayscale color pair
 			gs_color_pair = FontColor::White;
 	public:		// functions
+		static inline Data from_jv(const Json::Value& jv)
+		{
+			Data ret;
+
+			ret.c = val_from_jv<decltype(ret.c)>(jv["c"]);
+
+			ret.color_pair
+				= val_from_jv<decltype(ret.color_pair)>(jv["color_pair"]);
+			ret.gs_color_pair
+				= val_from_jv<decltype(ret.gs_color_pair)>
+					(jv["color_pair"]);
+
+			return ret;
+		}
+		operator Json::Value () const;
+
 		inline bool operator == (Data to_cmp) const
 		{
 			return ((c == to_cmp.c)
@@ -76,6 +92,7 @@ public:		// functions
 	{
 		set_data(s_data);
 	}
+	Drawable(const Json::Value& jv);
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Drawable);
 	virtual ~Drawable() = default;
 
@@ -126,6 +143,7 @@ public:		// functions
 	Position() = default;
 	Position(ecs::EntId s_ent_id, const PosVec3& s_pos,
 		PlayfieldLayerPrio s_priority);
+	Position(const Json::Value& jv);
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Position);
 	virtual ~Position();
 
@@ -149,6 +167,7 @@ public:		// functions
 		: val(s_val)
 	{
 	}
+	Weight(const Json::Value& jv);
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Weight);
 	virtual ~Weight() = default;
 
@@ -180,6 +199,7 @@ public:		// functions
 		mag_def(s_mag_def)
 	{
 	}
+	BaseStats(const Json::Value& jv);
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(BaseStats);
 	virtual ~BaseStats() = default;
 

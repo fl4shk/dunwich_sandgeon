@@ -23,33 +23,97 @@ namespace comp
 {
 
 const std::string StatusOnFire::KIND_STR("StatusOnFire");
+StatusOnFire::StatusOnFire(const Json::Value& jv)
+{
+	timer = val_from_jv<decltype(timer)>(jv["timer"]);
+}
 std::string StatusOnFire::kind_str() const
 {
 	return KIND_STR;
 }
+StatusOnFire::operator Json::Value () const
+{
+	Json::Value ret;
+
+	ret["timer"] = timer;
+
+	return ret;
+}
 
 const std::string StatusPoisoned::KIND_STR("StatusPoisoned");
+StatusPoisoned::StatusPoisoned(const Json::Value& jv)
+{
+	timer = val_from_jv<decltype(timer)>(jv["timer"]);
+}
 std::string StatusPoisoned::kind_str() const
 {
 	return KIND_STR;
 }
+StatusPoisoned::operator Json::Value () const
+{
+	Json::Value ret;
+
+	ret["timer"] = timer;
+
+	return ret;
+}
 
 const std::string StatusAsleep::KIND_STR("StatusAsleep");
+StatusAsleep::StatusAsleep(const Json::Value& jv)
+{
+	timer = val_from_jv<decltype(timer)>(jv["timer"]);
+}
 std::string StatusAsleep::kind_str() const
 {
 	return KIND_STR;
 }
+StatusAsleep::operator Json::Value () const
+{
+	Json::Value ret;
+
+	ret["timer"] = timer;
+
+	return ret;
+}
 
 const std::string StatusTravelSpeed::KIND_STR("StatusTravelSpeed");
+StatusTravelSpeed::StatusTravelSpeed(const Json::Value& jv)
+{
+	timer = val_from_jv<decltype(timer)>(jv["timer"]);
+	val = val_from_jv<decltype(val)>(jv["val"]);
+}
 std::string StatusTravelSpeed::kind_str() const
 {
 	return KIND_STR;
 }
+StatusTravelSpeed::operator Json::Value () const
+{
+	Json::Value ret;
+
+	ret["timer"] = timer;
+	ret["val"] = val;
+
+	return ret;
+}
 
 const std::string StatusActionSpeed::KIND_STR("StatusActionSpeed");
+StatusActionSpeed::StatusActionSpeed(const Json::Value& jv)
+{
+	timer = val_from_jv<decltype(timer)>(jv["timer"]);
+	val = val_from_jv<decltype(val)>(jv["val"]);
+}
 std::string StatusActionSpeed::kind_str() const
 {
 	return KIND_STR;
+}
+StatusActionSpeed::operator Json::Value () const
+{
+	Json::Value ret;
+
+	ret["timer"] = timer;
+	ret["val"] = val;
+
+	return ret;
 }
 
 } // namespace comp
