@@ -46,6 +46,8 @@ class Wall final: public Base
 {
 public:		// constants
 	static const std::string KIND_STR;
+public:		// variables
+	#define COMP_LIST_WALL(X)
 public:		// functions
 	Wall() = default;
 	Wall(const Json::Value& jv);
@@ -60,6 +62,8 @@ class Floor final: public Base
 {
 public:		// constants
 	static const std::string KIND_STR;
+public:		// variables
+	#define COMP_LIST_FLOOR(X)
 public:		// functions
 	Floor() = default;
 	Floor(const Json::Value& jv);
@@ -74,6 +78,8 @@ class DownStairs final: public Base
 {
 public:		// constants
 	static const std::string KIND_STR;
+public:		// variables
+	#define COMP_LIST_DOWN_STAIRS(X)
 public:		// functions
 	DownStairs() = default;
 	DownStairs(const Json::Value& jv);
@@ -88,6 +94,8 @@ class UpStairs final: public Base
 {
 public:		// constants
 	static const std::string KIND_STR;
+public:		// variables
+	#define COMP_LIST_UP_STAIRS(X)
 public:		// functions
 	UpStairs() = default;
 	UpStairs(const Json::Value& jv);

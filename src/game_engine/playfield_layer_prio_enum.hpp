@@ -25,7 +25,7 @@ namespace dungwich_sandeon
 namespace game_engine
 {
 
-enum class PlayfieldLayerPrio: size_t
+enum class PlayfieldLayerPrio: uint
 {
 	Block,
 	Item,

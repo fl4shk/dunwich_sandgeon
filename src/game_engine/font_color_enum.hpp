@@ -99,8 +99,8 @@ public:		// functions
 	{
 		Json::Value ret;
 
-		ret["fg"] = static_cast<u32>(fg);
-		ret["bg"] = static_cast<u32>(bg);
+		ret["fg"] = static_cast<uint>(fg);
+		ret["bg"] = static_cast<uint>(bg);
 
 		return ret;
 	}

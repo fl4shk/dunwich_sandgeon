@@ -29,8 +29,11 @@ namespace comp
 {
 
 #define COMP_SERIALIZE(name) \
-	jv[#name] = 
-#define COMP_DESERIALIZE(name)
+	set_jv_memb(ret, #name, name);
+#define COMP_DESERIALIZE(name) \
+	name = get_jv_memb<decltype(name)>(jv, #name);
+#define COMP_FROM_JV_DESERIALIZE(name) \
+	ret.name = get_jv_memb<decltype(ret.name)>(jv, #name);
 
 class Base: public ecs::Comp
 {

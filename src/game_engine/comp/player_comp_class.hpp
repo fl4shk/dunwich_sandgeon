@@ -45,6 +45,11 @@ public:		// constants
 		MAX_WEIGHT = 100,
 		DEFAULT_WEIGHT = 0;
 public:		// variables
+	#define COMP_LIST_PLAYER(X) \
+		X(level) \
+		X(exp) \
+		X(hunger) \
+		X(weight)
 	uint
 		level = DEFAULT_LEVEL,
 		exp = DEFAULT_EXP,

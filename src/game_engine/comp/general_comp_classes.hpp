@@ -42,6 +42,10 @@ public:		// types
 	class Data final
 	{
 	public:		// variables
+		#define COMP_LIST_DRAWABLE_DATA(X) \
+			X(c) \
+			X(color_pair) \
+			X(gs_color_pair)
 		int c = ' ';
 		FgBgColorPair
 			color_pair = FontColor::White,
@@ -53,13 +57,7 @@ public:		// types
 		{
 			Data ret;
 
-			ret.c = val_from_jv<decltype(ret.c)>(jv["c"]);
-
-			ret.color_pair
-				= val_from_jv<decltype(ret.color_pair)>(jv["color_pair"]);
-			ret.gs_color_pair
-				= val_from_jv<decltype(ret.gs_color_pair)>
-					(jv["color_pair"]);
+			COMP_LIST_DRAWABLE_DATA(COMP_FROM_JV_DESERIALIZE);
 
 			return ret;
 		}
@@ -77,6 +75,11 @@ public:		// types
 		}
 	};
 private:		// variables
+	#define COMP_LIST_DRAWABLE(X) \
+		X(_data) \
+		X(_non_blink_color_pair) \
+		X(_non_blink_gs_color_pair) \
+		X(_in_blink)
 	Data _data;
 	FgBgColorPair
 		_non_blink_color_pair = FontColor::White,
@@ -134,6 +137,9 @@ class Position final: public Base
 public:		// constants
 	static const std::string KIND_STR;
 private:		// variables
+	#define COMP_MAIN_LIST_POSITION(X) \
+		X(_ent_id) \
+		X(_pos)
 	ecs::EntId _ent_id = ecs::ENT_NULL_ID;
 	PosVec3 _pos;
 public:		// variables
@@ -187,14 +193,12 @@ public:		// constants
 		DEFAULT_MAG_ATK = 20,
 		DEFAULT_MAG_DEF = 0;
 public:		// variables
-	#ifndef COMP_LIST_BASE_STATS
 	#define COMP_LIST_BASE_STATS(X) \
 		X(hp) \
 		X(atk) \
 		X(def) \
 		X(mag_atk) \
 		X(mag_def)
-	#endif		// COMP_LIST_BASE_STATS
 	uint
 		hp = DEFAULT_HP,
 		atk = DEFAULT_ATK,
