@@ -37,7 +37,8 @@ Drawable::Data::operator Json::Value () const
 const std::string Drawable::KIND_STR("Drawable");
 Drawable::Drawable(const Json::Value& jv)
 {
-	_data = Data::from_jv(jv["_data"]);
+	//_data = Data::from_jv(jv["_data"]);
+	_data = val_from_jv<decltype(_data)>(jv["_data"]);
 	_non_blink_color_pair = val_from_jv<decltype(_non_blink_color_pair)>
 		(jv["_non_blink_color_pair"]);
 	_non_blink_gs_color_pair
@@ -101,23 +102,23 @@ Position::operator Json::Value () const
 	return ret;
 }
 
-const std::string Weight::KIND_STR("Weight");
-Weight::Weight(const Json::Value& jv)
-{
-	val = val_from_jv<decltype(val)>(jv["val"]);
-}
-std::string Weight::kind_str() const
-{
-	return KIND_STR;
-}
-Weight::operator Json::Value () const
-{
-	Json::Value ret;
-
-	ret["val"] = val;
-
-	return ret;
-}
+//const std::string Weight::KIND_STR("Weight");
+//Weight::Weight(const Json::Value& jv)
+//{
+//	val = val_from_jv<decltype(val)>(jv["val"]);
+//}
+//std::string Weight::kind_str() const
+//{
+//	return KIND_STR;
+//}
+//Weight::operator Json::Value () const
+//{
+//	Json::Value ret;
+//
+//	ret["val"] = val;
+//
+//	return ret;
+//}
 
 const std::string BaseStats::KIND_STR("BaseStats");
 BaseStats::BaseStats(const Json::Value& jv)

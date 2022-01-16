@@ -32,6 +32,7 @@
 #include "liborangepower_src/containers/prev_curr_pair_classes.hpp"
 #include "liborangepower_src/json_stuff/json_stuff.hpp"
 #include "liborangepower_src/game_stuff/ecs_classes.hpp"
+#include "liborangepower_src/metaprog_defines.hpp"
 
 #include "liborangepower_src/sdl2/sdl.hpp"
 #include "liborangepower_src/sdl2/dpi_stuff.hpp"

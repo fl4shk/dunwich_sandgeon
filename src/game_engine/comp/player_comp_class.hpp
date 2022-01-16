@@ -32,6 +32,24 @@ class Player final: public Base
 {
 public:		// constants
 	static const std::string KIND_STR;
+	static constexpr uint
+		MAX_LEVEL = 100,
+		DEFAULT_LEVEL = 1,
+
+		MAX_EXP = 99,
+		DEFAULT_EXP = 0,
+
+		MAX_HUNGER = 100,
+		DEFAULT_HUNGER = 100,
+
+		MAX_WEIGHT = 100,
+		DEFAULT_WEIGHT = 0;
+public:		// variables
+	uint
+		level = DEFAULT_LEVEL,
+		exp = DEFAULT_EXP,
+		hunger = DEFAULT_HUNGER,
+		weight = DEFAULT_WEIGHT;
 public:		// functions
 	inline Player() = default;
 	Player(const Json::Value& jv);

@@ -124,7 +124,6 @@ public:		// functions
 		return _data;
 	}
 	GEN_GETTER_BY_CON_REF(data);
-	
 };
 
 // Note that this is a 3D position within the game world.
@@ -155,38 +154,49 @@ public:		// functions
 	void set_pos(const PosVec3& n_pos);
 };
 
-class Weight final: public Base
-{
-public:		// constants
-	static const std::string KIND_STR;
-public:		// variables
-	uint val = 0;
-public:		// functions
-	Weight() = default;
-	inline Weight(uint s_val)
-		: val(s_val)
-	{
-	}
-	Weight(const Json::Value& jv);
-	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Weight);
-	virtual ~Weight() = default;
+//class Weight final: public Base
+//{
+//public:		// constants
+//	static const std::string KIND_STR;
+//public:		// variables
+//	uint val = 0;
+//public:		// functions
+//	Weight() = default;
+//	inline Weight(uint s_val)
+//		: val(s_val)
+//	{
+//	}
+//	Weight(const Json::Value& jv);
+//	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Weight);
+//	virtual ~Weight() = default;
+//
+//	virtual std::string kind_str() const;
+//	virtual operator Json::Value () const;
+//};
 
-	virtual std::string kind_str() const;
-	virtual operator Json::Value () const;
-};
-
+// These are stats that increase or stay the same upon level up.
 class BaseStats final: public Base
 {
 public:		// constants
 	static const std::string KIND_STR;
-	static constexpr uint MAX_VAL = 999,
+	static constexpr uint
+		MAX_VAL = 999,
 		DEFAULT_HP = 50,
 		DEFAULT_ATK = 20,
-		DEFAULT_DEF = 20,
+		DEFAULT_DEF = 0,
 		DEFAULT_MAG_ATK = 20,
-		DEFAULT_MAG_DEF = 20;
+		DEFAULT_MAG_DEF = 0;
 public:		// variables
-	uint hp = DEFAULT_HP,
+	#ifndef COMP_LIST_BASE_STATS
+	#define COMP_LIST_BASE_STATS(X) \
+		X(hp) \
+		X(atk) \
+		X(def) \
+		X(mag_atk) \
+		X(mag_def)
+	#endif		// COMP_LIST_BASE_STATS
+	uint
+		hp = DEFAULT_HP,
 		atk = DEFAULT_ATK,
 		def = DEFAULT_DEF,
 		mag_atk = DEFAULT_MAG_ATK,
@@ -206,6 +216,21 @@ public:		// functions
 	virtual std::string kind_str() const;
 	virtual operator Json::Value () const;
 };
+
+//class OtherStats final: public Base
+//{
+//public:		// constants
+//	static const std::string KIND_STR;
+//	static constexpr uint
+//		MAX_VAL = 999,
+//		DEFAULT_WEIGHT = 40;
+//public:		// variables
+//	uint
+//		weight = DEFAULT_WEIGHT;
+//public:		// functions
+//	OtherStats
+//};
+
 
 
 } // namespace comp

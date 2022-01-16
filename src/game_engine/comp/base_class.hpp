@@ -28,6 +28,10 @@ namespace game_engine
 namespace comp
 {
 
+#define COMP_SERIALIZE(name) \
+	jv[#name] = 
+#define COMP_DESERIALIZE(name)
+
 class Base: public ecs::Comp
 {
 public:		// constants

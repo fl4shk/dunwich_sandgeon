@@ -28,50 +28,6 @@ using PosVec2 = Vec2<int>;
 using PosVec3 = Vec3<int>;
 using SizeVec2 = Vec2<uint>;
 
-template<typename Type>
-inline Vec2<Type> vec2_from_jv(const Json::Value& jv)
-{
-	return 
-		Vec2<Type>
-		(
-			val_from_jv<Type>(jv["x"]),
-			val_from_jv<Type>(jv["y"])
-		);
-}
-template<typename Type>
-inline Json::Value vec2_to_jv(const Vec2<Type> vec)
-{
-	Json::Value ret;
-
-	ret["x"] = vec.x;
-	ret["y"] = vec.y;
-
-	return ret;
-}
-
-template<typename Type>
-inline Vec3<Type> vec3_from_jv(const Json::Value& jv)
-{
-	return
-		Vec3<Type>
-		(
-			val_from_jv<Type>(jv["x"]),
-			val_from_jv<Type>(jv["y"]),
-			val_from_jv<Type>(jv["z"])
-		);
-}
-template<typename Type>
-inline Json::Value vec3_to_jv(const Vec3<Type> vec)
-{
-	Json::Value ret;
-
-	ret["x"] = vec.x;
-	ret["y"] = vec.y;
-	ret["z"] = vec.z;
-
-	return ret;
-}
-
 } // namespace dungwich_sandeon
 
 #endif		// src_misc_types_hpp
