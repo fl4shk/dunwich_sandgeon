@@ -1,5 +1,7 @@
 // This file is part of Dungwich Sandeon.
 // 
+// Copyright 2022 FL4SHK
+//
 // Dungwich Sandeon is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by the
 // Free Software Foundation, either version 3 of the License, or (at your
@@ -14,7 +16,6 @@
 // with Dungwich Sandeon.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "player_comp_class.hpp"
-
 
 namespace dungwich_sandeon
 {

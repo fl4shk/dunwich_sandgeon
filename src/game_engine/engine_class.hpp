@@ -1,5 +1,7 @@
 // This file is part of Dungwich Sandeon.
 // 
+// Copyright 2022 FL4SHK
+//
 // Dungwich Sandeon is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by the
 // Free Software Foundation, either version 3 of the License, or (at your
@@ -156,6 +158,11 @@ public:		// constants
 		LOWEST_FLOOR = 50, HIGHEST_FLOOR = 1,
 		NUM_FLOORS = abs(HIGHEST_FLOOR - LOWEST_FLOOR) + 1;
 
+	static const std::string
+		SAVE_FILE_NAME;
+
+	static constexpr int
+		NUM_FILES = 9;
 private:		// variables
 	GameMode _game_mode = GameMode::TitleScreen;
 public:		// variables
@@ -224,6 +231,12 @@ public:		// variables
 
 	// dimensions: floor, y, x
 	std::vector<EntIdSetVec2d> playfield_ent_id_v3d;
+
+public:		// constants
+	// File numbers selected via HorizPickers
+	int
+		src_file_num = 0,
+		copy_dst_file_num = 0;
 private:		// variables
 
 	//u64 _tick_counter = 0;
@@ -240,10 +253,16 @@ public:		// functions
 	//	ecs_engine.tick();
 	//}
 	void tick();
-	//void load_file();
+
 	void save_and_quit();
 	void save_and_return_to_title();
 
+	void load_file();
+	void copy_file();
+	void erase_file();
+private:		// functions
+	void _save_file();
+public:		// functions
 	inline EntIdSetVec2d& curr_floor_playfield_ent_id_v2d()
 	{
 		return playfield_ent_id_v3d.at(floor);
@@ -344,8 +363,6 @@ private:		// functions
 			exit(1);
 		}
 	}
-
-	void _save();
 };
 
 extern Engine* engine;

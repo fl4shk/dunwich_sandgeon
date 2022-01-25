@@ -1,5 +1,7 @@
 // This file is part of Dungwich Sandeon.
 // 
+// Copyright 2022 FL4SHK
+//
 // Dungwich Sandeon is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by the
 // Free Software Foundation, either version 3 of the License, or (at your
@@ -53,7 +55,7 @@ void GmFileSelect::init(ecs::Engine* ecs_engine)
 			(
 				"file_qmark",
 				"File?",
-				NUM_FILES,
+				game_engine::Engine::NUM_FILES,
 				this,
 				std::function<void(GmFileSelect*, Menu::Node*)>
 					(&_aux_menu_file_qmark_hpick_func)
@@ -144,6 +146,8 @@ void GmFileSelect::tick(ecs::Engine* ecs_engine)
 
 			if (_show_popup_window)
 			{
+				//printout("testificate: ", popup_window.size_2d().x,
+				//	" ", popup_window.size_2d().y, "\n");
 				popup_window.clear();
 				popup_window.draw(popup_menu);
 				screen_window.draw(popup_window);
@@ -155,7 +159,7 @@ void GmFileSelect::tick(ecs::Engine* ecs_engine)
 void GmFileSelect::_aux_menu_file_qmark_hpick_func(GmFileSelect* self,
 	Menu::Node* node)
 {
-	self->_src_file_num = std::get<Menu::Node::DataValue>(node->data)();
+	engine->src_file_num = std::get<Menu::Node::DataValue>(node->data)();
 }
 void GmFileSelect::_aux_menu_start_game_func(GmFileSelect* self)
 {
@@ -168,12 +172,12 @@ void GmFileSelect::_aux_menu_copy_file_func(GmFileSelect* self)
 	engine->popup_menu = Menu
 	(
 		"dst_file_qmark",
-		engine->popup_menu.size_2d(),
+		engine->popup_window.size_2d(),
 		Menu::build_node_map
 		({
 			//--------
 			Menu::build_text_only_knc_pair("title", sconcat("Copy File ",
-				self->_src_file_num, " To?")),
+				engine->src_file_num, " To?")),
 			//--------
 			Menu::build_separator_knc_pair(i++),
 			//--------
@@ -181,7 +185,7 @@ void GmFileSelect::_aux_menu_copy_file_func(GmFileSelect* self)
 			(
 				"dst_file_qmark",
 				"Destination File?",
-				NUM_FILES,
+				game_engine::Engine::NUM_FILES,
 				self,
 				std::function<void(GmFileSelect*, Menu::Node*)>
 					(&_popup_menu_dest_file_qmark_hpick_func)
@@ -219,7 +223,7 @@ void GmFileSelect::_aux_menu_exit_func(GmFileSelect* self)
 void GmFileSelect::_popup_menu_dest_file_qmark_hpick_func
 	(GmFileSelect* self, Menu::Node* node)
 {
-	self->_copy_dst_file_num
+	engine->copy_dst_file_num
 		= std::get<Menu::Node::DataValue>(node->data)();
 }
 void GmFileSelect::_popup_menu_do_the_copy_func(GmFileSelect* self)

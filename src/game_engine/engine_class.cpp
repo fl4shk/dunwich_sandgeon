@@ -1,5 +1,7 @@
 // This file is part of Dungwich Sandeon.
 // 
+// Copyright 2022 FL4SHK
+//
 // Dungwich Sandeon is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by the
 // Free Software Foundation, either version 3 of the License, or (at your
@@ -54,6 +56,8 @@ KeyStatus::~KeyStatus()
 {
 }
 //--------
+
+const std::string Engine::SAVE_FILE_NAME("save_file.json");
 
 Engine::Engine()
 	: screen_window(this, PosVec2(), WITH_BORDER_SCREEN_SIZE_2D),
@@ -149,20 +153,34 @@ void Engine::tick()
 //void Engine::load_file()
 //{
 //}
+
 void Engine::save_and_quit()
 {
-	printout("game_engine::Engine::save_and_quit(): testificate\n");
+	//printout("game_engine::Engine::save_and_quit(): testificate\n");
 
-	_save();
+	_save_file();
 	exit(0);
 }
 void Engine::save_and_return_to_title()
 {
-	printout("game_engine::Engine::save_and_return_to_title(): ",
-		"testificate\n");
+	//printout("game_engine::Engine::save_and_return_to_title(): ",
+	//	"testificate\n");
 
-	_save();
+	_save_file();
 	set_game_mode(GameMode::TitleScreen);
+}
+
+void Engine::load_file()
+{
+}
+void Engine::copy_file()
+{
+}
+void Engine::erase_file()
+{
+}
+void Engine::_save_file()
+{
 }
 
 void Engine::position_ctor_callback(comp::Position* obj)
@@ -245,9 +263,9 @@ GameMode& Engine::set_game_mode(GameMode n_game_mode)
 //	printout("yes_no_menu: \"No\" button activated!\n");
 //}
 
-void Engine::_save()
-{
-}
+//void Engine::_save()
+//{
+//}
 
 Engine* engine = nullptr;
 //--------

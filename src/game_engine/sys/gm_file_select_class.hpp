@@ -1,5 +1,7 @@
 // This file is part of Dungwich Sandeon.
 // 
+// Copyright 2022 FL4SHK
+//
 // Dungwich Sandeon is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by the
 // Free Software Foundation, either version 3 of the License, or (at your
@@ -34,14 +36,7 @@ class GmFileSelect final: public ecs::Sys
 public:		// constants
 	static const std::string KIND_STR;
 
-	static constexpr int
-		NUM_FILES = 9;
 private:		// variables
-	// File numbers selected via HorizPickers
-	int
-		_src_file_num = 0,
-		_copy_dst_file_num = 0;
-
 	bool _show_popup_window = false;
 public:		// functions
 	GmFileSelect() = default;
