@@ -44,7 +44,7 @@ public:		// types
 	class Data final
 	{
 	public:		// variables
-		#define COMP_LIST_DRAWABLE_DATA(X) \
+		#define MEMB_LIST_COMP_DRAWABLE_DATA(X) \
 			X(c) \
 			X(color_pair) \
 			X(gs_color_pair)
@@ -59,7 +59,7 @@ public:		// types
 		{
 			Data ret;
 
-			COMP_LIST_DRAWABLE_DATA(COMP_FROM_JV_DESERIALIZE);
+			MEMB_LIST_COMP_DRAWABLE_DATA(MEMB_FROM_JV_DESERIALIZE);
 
 			return ret;
 		}
@@ -77,7 +77,7 @@ public:		// types
 		}
 	};
 private:		// variables
-	#define COMP_LIST_DRAWABLE(X) \
+	#define MEMB_LIST_COMP_DRAWABLE(X) \
 		X(_data) \
 		X(_non_blink_color_pair) \
 		X(_non_blink_gs_color_pair) \
@@ -195,7 +195,7 @@ public:		// constants
 		DEFAULT_MAG_ATK = 20,
 		DEFAULT_MAG_DEF = 0;
 public:		// variables
-	#define COMP_LIST_BASE_STATS(X) \
+	#define MEMB_LIST_COMP_BASE_STATS(X) \
 		X(hp) \
 		X(atk) \
 		X(def) \

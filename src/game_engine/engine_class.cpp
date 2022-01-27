@@ -156,15 +156,15 @@ void Engine::tick()
 
 void Engine::save_and_quit()
 {
-	//printout("game_engine::Engine::save_and_quit(): testificate\n");
+	printout("game_engine::Engine::save_and_quit(): testificate\n");
 
 	_save_file();
 	exit(0);
 }
 void Engine::save_and_return_to_title()
 {
-	//printout("game_engine::Engine::save_and_return_to_title(): ",
-	//	"testificate\n");
+	printout("game_engine::Engine::save_and_return_to_title(): ",
+		"testificate\n");
 
 	_save_file();
 	set_game_mode(GameMode::TitleScreen);

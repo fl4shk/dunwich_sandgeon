@@ -30,6 +30,8 @@ namespace game_engine
 class GameOptions final
 {
 public:		// variables
+	#define VAR_LIST_GAME_OPTIONS(X) \
+		X(grayscale)
 	bool grayscale = false;
 public:		// functions
 	GameOptions();

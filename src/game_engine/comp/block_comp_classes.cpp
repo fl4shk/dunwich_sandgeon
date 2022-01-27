@@ -32,7 +32,7 @@ namespace comp
 const std::string Wall::KIND_STR("Wall");
 Wall::Wall(const Json::Value& jv)
 {
-	COMP_LIST_WALL(COMP_DESERIALIZE);
+	MEMB_LIST_COMP_WALL(MEMB_DESERIALIZE);
 }
 std::string Wall::kind_str() const
 {
@@ -42,7 +42,7 @@ Wall::operator Json::Value () const
 {
 	Json::Value ret;
 
-	COMP_LIST_WALL(COMP_SERIALIZE);
+	MEMB_LIST_COMP_WALL(MEMB_SERIALIZE);
 
 	return ret;
 }
@@ -50,7 +50,7 @@ Wall::operator Json::Value () const
 const std::string Floor::KIND_STR("Floor");
 Floor::Floor(const Json::Value& jv)
 {
-	COMP_LIST_FLOOR(COMP_DESERIALIZE);
+	MEMB_LIST_COMP_FLOOR(MEMB_DESERIALIZE);
 }
 std::string Floor::kind_str() const
 {
@@ -60,7 +60,7 @@ Floor::operator Json::Value () const
 {
 	Json::Value ret;
 
-	COMP_LIST_FLOOR(COMP_SERIALIZE);
+	MEMB_LIST_COMP_FLOOR(MEMB_SERIALIZE);
 
 	return ret;
 }
@@ -68,7 +68,7 @@ Floor::operator Json::Value () const
 const std::string DownStairs::KIND_STR("DownStairs");
 DownStairs::DownStairs(const Json::Value& jv)
 {
-	COMP_LIST_DOWN_STAIRS(COMP_DESERIALIZE);
+	MEMB_LIST_COMP_DOWN_STAIRS(MEMB_DESERIALIZE);
 }
 std::string DownStairs::kind_str() const
 {
@@ -78,7 +78,7 @@ DownStairs::operator Json::Value () const
 {
 	Json::Value ret;
 
-	COMP_LIST_DOWN_STAIRS(COMP_SERIALIZE);
+	MEMB_LIST_COMP_DOWN_STAIRS(MEMB_SERIALIZE);
 
 	return ret;
 }
@@ -86,7 +86,7 @@ DownStairs::operator Json::Value () const
 const std::string UpStairs::KIND_STR("UpStairs");
 UpStairs::UpStairs(const Json::Value& jv)
 {
-	COMP_LIST_UP_STAIRS(COMP_DESERIALIZE);
+	MEMB_LIST_COMP_UP_STAIRS(MEMB_DESERIALIZE);
 }
 std::string UpStairs::kind_str() const
 {
@@ -96,7 +96,7 @@ UpStairs::operator Json::Value () const
 {
 	Json::Value ret;
 
-	COMP_LIST_UP_STAIRS(COMP_SERIALIZE);
+	MEMB_LIST_COMP_UP_STAIRS(MEMB_SERIALIZE);
 
 	return ret;
 }

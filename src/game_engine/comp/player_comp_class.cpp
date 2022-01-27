@@ -30,7 +30,7 @@ Player::Player(const Json::Value& jv)
 	//level = val_from_jv<decltype(level)>(jv["level"]);
 	//exp = val_from_jv<decltype(exp)>(jv["exp"]);
 	//hunger = val_from_jv<decltype(hunger)>(jv["hunger"]);
-	COMP_LIST_PLAYER(COMP_DESERIALIZE);
+	MEMB_LIST_COMP_PLAYER(MEMB_DESERIALIZE);
 }
 std::string Player::kind_str() const
 {
@@ -43,7 +43,7 @@ Player::operator Json::Value () const
 	//ret["level"] = level;
 	//ret["exp"] = exp;
 	//ret["hunger"] = hunger;
-	COMP_LIST_PLAYER(COMP_SERIALIZE);
+	MEMB_LIST_COMP_PLAYER(MEMB_SERIALIZE);
 
 	return ret;
 }

@@ -47,7 +47,7 @@ public:		// constants
 		MAX_WEIGHT = 100,
 		DEFAULT_WEIGHT = 0;
 public:		// variables
-	#define COMP_LIST_PLAYER(X) \
+	#define MEMB_LIST_COMP_PLAYER(X) \
 		X(level) \
 		X(exp) \
 		X(hunger) \

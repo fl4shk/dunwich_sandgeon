@@ -37,7 +37,7 @@ class StatusOnFire final: public Base
 public:		// constants
 	static const std::string KIND_STR;
 public:		// variables
-	#define COMP_LIST_STATUS_ON_FIRE(X) \
+	#define MEMB_LIST_COMP_STATUS_ON_FIRE(X) \
 		X(timer)
 	int timer = STATUS_TIMER_DEFAULT_VAL;
 public:		// functions
@@ -60,7 +60,7 @@ class StatusPoisoned final: public Base
 public:		// constants
 	static const std::string KIND_STR;
 public:		// variables
-	#define COMP_LIST_STATUS_POISONED(X) \
+	#define MEMB_LIST_COMP_STATUS_POISONED(X) \
 		X(timer)
 	int timer = STATUS_TIMER_DEFAULT_VAL;
 public:		// functions
@@ -83,7 +83,7 @@ class StatusAsleep final: public Base
 public:		// constants
 	static const std::string KIND_STR;
 public:		// variables
-	#define COMP_LIST_STATUS_ASLEEP(X) \
+	#define MEMB_LIST_COMP_STATUS_ASLEEP(X) \
 		X(timer)
 	int timer = STATUS_TIMER_DEFAULT_VAL;
 public:		// functions
@@ -107,7 +107,7 @@ public:		// constants
 	static const std::string KIND_STR;
 	static constexpr int ABS_MIN_MAX_VAL = 6;
 public:		// variables
-	#define COMP_LIST_STATUS_TRAVEL_SPEED(X) \
+	#define MEMB_LIST_COMP_STATUS_TRAVEL_SPEED(X) \
 		X(timer) \
 		X(val)
 	int
@@ -134,7 +134,7 @@ public:		// constants
 	static const std::string KIND_STR;
 	static constexpr int ABS_MIN_MAX_VAL = 6;
 public:		// variables
-	#define COMP_LIST_STATUS_ACTION_SPEED(X) \
+	#define MEMB_LIST_COMP_STATUS_ACTION_SPEED(X) \
 		X(timer) \
 		X(val)
 	int

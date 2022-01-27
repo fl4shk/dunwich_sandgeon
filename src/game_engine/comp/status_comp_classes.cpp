@@ -28,7 +28,7 @@ const std::string StatusOnFire::KIND_STR("StatusOnFire");
 StatusOnFire::StatusOnFire(const Json::Value& jv)
 {
 	//timer = val_from_jv<decltype(timer)>(jv["timer"]);
-	COMP_LIST_STATUS_ON_FIRE(COMP_DESERIALIZE);
+	MEMB_LIST_COMP_STATUS_ON_FIRE(MEMB_DESERIALIZE);
 }
 std::string StatusOnFire::kind_str() const
 {
@@ -39,7 +39,7 @@ StatusOnFire::operator Json::Value () const
 	Json::Value ret;
 
 	//ret["timer"] = timer;
-	COMP_LIST_STATUS_ON_FIRE(COMP_SERIALIZE);
+	MEMB_LIST_COMP_STATUS_ON_FIRE(MEMB_SERIALIZE);
 
 	return ret;
 }
@@ -48,7 +48,7 @@ const std::string StatusPoisoned::KIND_STR("StatusPoisoned");
 StatusPoisoned::StatusPoisoned(const Json::Value& jv)
 {
 	//timer = val_from_jv<decltype(timer)>(jv["timer"]);
-	COMP_LIST_STATUS_POISONED(COMP_DESERIALIZE);
+	MEMB_LIST_COMP_STATUS_POISONED(MEMB_DESERIALIZE);
 }
 std::string StatusPoisoned::kind_str() const
 {
@@ -59,7 +59,7 @@ StatusPoisoned::operator Json::Value () const
 	Json::Value ret;
 
 	//ret["timer"] = timer;
-	COMP_LIST_STATUS_POISONED(COMP_SERIALIZE);
+	MEMB_LIST_COMP_STATUS_POISONED(MEMB_SERIALIZE);
 
 	return ret;
 }
@@ -68,7 +68,7 @@ const std::string StatusAsleep::KIND_STR("StatusAsleep");
 StatusAsleep::StatusAsleep(const Json::Value& jv)
 {
 	//timer = val_from_jv<decltype(timer)>(jv["timer"]);
-	COMP_LIST_STATUS_ASLEEP(COMP_DESERIALIZE);
+	MEMB_LIST_COMP_STATUS_ASLEEP(MEMB_DESERIALIZE);
 }
 std::string StatusAsleep::kind_str() const
 {
@@ -79,7 +79,7 @@ StatusAsleep::operator Json::Value () const
 	Json::Value ret;
 
 	//ret["timer"] = timer;
-	COMP_LIST_STATUS_ASLEEP(COMP_SERIALIZE);
+	MEMB_LIST_COMP_STATUS_ASLEEP(MEMB_SERIALIZE);
 
 	return ret;
 }
@@ -89,7 +89,7 @@ StatusTravelSpeed::StatusTravelSpeed(const Json::Value& jv)
 {
 	//timer = val_from_jv<decltype(timer)>(jv["timer"]);
 	//val = val_from_jv<decltype(val)>(jv["val"]);
-	COMP_LIST_STATUS_TRAVEL_SPEED(COMP_DESERIALIZE);
+	MEMB_LIST_COMP_STATUS_TRAVEL_SPEED(MEMB_DESERIALIZE);
 }
 std::string StatusTravelSpeed::kind_str() const
 {
@@ -101,7 +101,7 @@ StatusTravelSpeed::operator Json::Value () const
 
 	//ret["timer"] = timer;
 	//ret["val"] = val;
-	COMP_LIST_STATUS_TRAVEL_SPEED(COMP_SERIALIZE);
+	MEMB_LIST_COMP_STATUS_TRAVEL_SPEED(MEMB_SERIALIZE);
 
 	return ret;
 }
@@ -111,7 +111,7 @@ StatusActionSpeed::StatusActionSpeed(const Json::Value& jv)
 {
 	//timer = val_from_jv<decltype(timer)>(jv["timer"]);
 	//val = val_from_jv<decltype(val)>(jv["val"]);
-	COMP_LIST_STATUS_ACTION_SPEED(COMP_DESERIALIZE);
+	MEMB_LIST_COMP_STATUS_ACTION_SPEED(MEMB_DESERIALIZE);
 }
 std::string StatusActionSpeed::kind_str() const
 {
@@ -123,7 +123,7 @@ StatusActionSpeed::operator Json::Value () const
 
 	//ret["timer"] = timer;
 	//ret["val"] = val;
-	COMP_LIST_STATUS_ACTION_SPEED(COMP_SERIALIZE);
+	MEMB_LIST_COMP_STATUS_ACTION_SPEED(MEMB_SERIALIZE);
 
 	return ret;
 }
