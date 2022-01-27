@@ -24,6 +24,24 @@ namespace dungwich_sandeon
 namespace game_engine
 {
 //--------
+RopePart::RopePart(const Json::Value& jv)
+{
+	MEMB_LIST_ROPE_PART(MEMB_DESERIALIZE);
+}
+RopePart::operator Json::Value () const
+{
+	Json::Value ret;
+
+	MEMB_LIST_ROPE_PART(MEMB_SERIALIZE);
+
+	return ret;
+}
+RopePart& RopePart::operator = (const Json::Value& jv)
+{
+	*this = RopePart(jv);
+
+	return *this;
+}
 std::ostream& operator << (std::ostream& os, const RopePart& rope_part)
 {
 	return osprintout(os,
@@ -167,6 +185,19 @@ MsgLog::MsgLog(const RopeDeque& s_data, size_t s_internal_height,
 	{
 		push_back(rope);
 	}
+}
+MsgLog::MsgLog(const Json::Value& jv)
+{
+	MEMB_LIST_MSG_LOG(MEMB_DESERIALIZE);
+}
+
+MsgLog::operator Json::Value () const
+{
+	Json::Value ret;
+
+	MEMB_LIST_MSG_LOG(MEMB_SERIALIZE);
+
+	return ret;
 }
 
 void MsgLog::clear()

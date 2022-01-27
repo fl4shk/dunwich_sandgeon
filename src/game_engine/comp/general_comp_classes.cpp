@@ -81,7 +81,7 @@ Position::Position(const Json::Value& jv)
 	//	| static_cast<u64>(jv["_ent_id.low"].asUInt());
 	//_pos = get_jv_memb<decltype(_pos.x)>(jv["_pos"]);
 
-	COMP_MAIN_LIST_POSITION(MEMB_DESERIALIZE);
+	MEMB_AUTOSER_LIST_COMP_POSITION(MEMB_DESERIALIZE);
 	priority = static_cast<PlayfieldLayerPrio>
 		(get_jv_memb<uint>(jv, "priority"));
 
@@ -103,7 +103,7 @@ Position::operator Json::Value () const
 {
 	Json::Value ret;
 
-	COMP_MAIN_LIST_POSITION(MEMB_SERIALIZE);
+	MEMB_AUTOSER_LIST_COMP_POSITION(MEMB_SERIALIZE);
 	ret["priority"] = static_cast<uint>(priority);
 
 	return ret;

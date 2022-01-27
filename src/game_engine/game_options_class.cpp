@@ -31,8 +31,22 @@ GameOptions::GameOptions(bool s_grayscale)
 {
 }
 
+GameOptions::GameOptions(const Json::Value& jv)
+{
+	MEMB_LIST_GAME_OPTIONS(MEMB_DESERIALIZE);
+}
+
 GameOptions::~GameOptions()
 {
+}
+
+GameOptions::operator Json::Value () const
+{
+	Json::Value ret;
+
+	MEMB_LIST_GAME_OPTIONS(MEMB_SERIALIZE);
+
+	return ret;
 }
 
 } // namespace game_engine

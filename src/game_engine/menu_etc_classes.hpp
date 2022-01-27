@@ -43,6 +43,10 @@ public:		// types
 			gs_color_pair;
 	};
 public:		// variables
+	#define MEMB_LIST_ROPE_PART(X) \
+		X(str) \
+		X(color_pair) \
+		X(gs_color_pair)
 	std::string str;
 	FgBgColorPair
 		color_pair = FontColor::White,
@@ -87,9 +91,14 @@ public:		// variables
 	{
 		str += c;
 	}
+	RopePart(const Json::Value& jv);
 
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(RopePart);
 	inline ~RopePart() = default;
+
+	RopePart& operator = (const Json::Value& jv);
+
+	operator Json::Value () const;
 
 };
 
@@ -115,6 +124,14 @@ public:		// constants
 		WIDGET_SPACING_STR;
 	static constexpr size_t DEFAULT_INTERNAL_HEIGHT = 256;
 private:		// variables
+	#define MEMB_LIST_MSG_LOG(X) \
+		X(_data) \
+		X(_internal_height) \
+		X(_scroll) \
+		X(_window_size_2d) \
+		X(_center) \
+		X(_keep_sep)
+
 	RopeDeque _data;
 
 	size_t
@@ -138,8 +155,11 @@ public:		// functions
 		size_t s_internal_height=DEFAULT_INTERNAL_HEIGHT,
 		const SizeVec2& s_window_size_2d=SCREEN_SIZE_2D,
 		Vec2<bool> s_center=Vec2(false, false), bool s_keep_sep=false);
+	MsgLog(const Json::Value& jv);
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(MsgLog);
 	inline ~MsgLog() = default;
+
+	operator Json::Value () const;
 
 	void clear();
 

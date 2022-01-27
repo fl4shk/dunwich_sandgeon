@@ -30,14 +30,17 @@ namespace game_engine
 class GameOptions final
 {
 public:		// variables
-	#define VAR_LIST_GAME_OPTIONS(X) \
+	#define MEMB_LIST_GAME_OPTIONS(X) \
 		X(grayscale)
 	bool grayscale = false;
 public:		// functions
 	GameOptions();
 	GameOptions(bool s_grayscale);
+	GameOptions(const Json::Value& jv);
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(GameOptions);
 	~GameOptions();
+
+	operator Json::Value () const;
 };
 
 } // namespace game_engine

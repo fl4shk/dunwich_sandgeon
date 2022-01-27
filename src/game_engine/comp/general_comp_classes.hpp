@@ -139,7 +139,7 @@ class Position final: public Base
 public:		// constants
 	static const std::string KIND_STR;
 private:		// variables
-	#define COMP_MAIN_LIST_POSITION(X) \
+	#define MEMB_AUTOSER_LIST_COMP_POSITION(X) \
 		X(_ent_id) \
 		X(_pos)
 	ecs::EntId _ent_id = ecs::ENT_NULL_ID;
