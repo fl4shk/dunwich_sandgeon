@@ -27,9 +27,6 @@ namespace comp
 const std::string Player::KIND_STR("Player");
 Player::Player(const Json::Value& jv)
 {
-	//level = val_from_jv<decltype(level)>(jv["level"]);
-	//exp = val_from_jv<decltype(exp)>(jv["exp"]);
-	//hunger = val_from_jv<decltype(hunger)>(jv["hunger"]);
 	MEMB_LIST_COMP_PLAYER(MEMB_DESERIALIZE);
 }
 std::string Player::kind_str() const
@@ -40,9 +37,6 @@ Player::operator Json::Value () const
 {
 	Json::Value ret;
 
-	//ret["level"] = level;
-	//ret["exp"] = exp;
-	//ret["hunger"] = hunger;
 	MEMB_LIST_COMP_PLAYER(MEMB_SERIALIZE);
 
 	return ret;

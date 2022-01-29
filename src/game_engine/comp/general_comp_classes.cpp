@@ -29,9 +29,6 @@ Drawable::Data::operator Json::Value () const
 {
 	Json::Value ret;
 
-	//ret["c"] = c;
-	//ret["color_pair"] = color_pair;
-	//ret["gs_color_pair"] = gs_color_pair;
 	MEMB_LIST_COMP_DRAWABLE_DATA(MEMB_SERIALIZE);
 
 	return ret;
@@ -40,14 +37,6 @@ Drawable::Data::operator Json::Value () const
 const std::string Drawable::KIND_STR("Drawable");
 Drawable::Drawable(const Json::Value& jv)
 {
-	////_data = Data::from_jv(jv["_data"]);
-	//_data = val_from_jv<decltype(_data)>(jv["_data"]);
-	//_non_blink_color_pair = val_from_jv<decltype(_non_blink_color_pair)>
-	//	(jv["_non_blink_color_pair"]);
-	//_non_blink_gs_color_pair
-	//	= val_from_jv<decltype(_non_blink_gs_color_pair)>
-	//		(jv["_non_blink_color_pair"]);
-	//_in_blink = val_from_jv<decltype(_in_blink)>(jv["_in_blink"]);
 	MEMB_LIST_COMP_DRAWABLE(MEMB_DESERIALIZE);
 }
 std::string Drawable::kind_str() const
@@ -58,10 +47,6 @@ Drawable::operator Json::Value () const
 {
 	Json::Value ret;
 
-	//ret["_data"] = _data;
-	//ret["_non_blink_color_pair"] = _non_blink_color_pair;
-	//ret["_non_blink_gs_color_pair"] = _non_blink_gs_color_pair;
-	//ret["_in_blink"] = _in_blink;
 	MEMB_LIST_COMP_DRAWABLE(MEMB_SERIALIZE);
 
 	return ret;
@@ -76,11 +61,6 @@ Position::Position(ecs::EntId s_ent_id, const PosVec3& s_pos,
 }
 Position::Position(const Json::Value& jv)
 {
-	//_ent_id 
-	//	= (static_cast<u64>(jv["_ent_id.high"].asUInt()) << 32u)
-	//	| static_cast<u64>(jv["_ent_id.low"].asUInt());
-	//_pos = get_jv_memb<decltype(_pos.x)>(jv["_pos"]);
-
 	MEMB_AUTOSER_LIST_COMP_POSITION(MEMB_DESERIALIZE);
 	priority = static_cast<PlayfieldLayerPrio>
 		(get_jv_memb<uint>(jv, "priority"));
@@ -130,11 +110,6 @@ Position::operator Json::Value () const
 const std::string BaseStats::KIND_STR("BaseStats");
 BaseStats::BaseStats(const Json::Value& jv)
 {
-	//hp = val_from_jv<decltype(hp)>(jv["hp"]);
-	//atk = val_from_jv<decltype(atk)>(jv["atk"]);
-	//def = val_from_jv<decltype(def)>(jv["def"]);
-	//mag_atk = val_from_jv<decltype(mag_atk)>(jv["mag_atk"]);
-	//mag_def = val_from_jv<decltype(mag_def)>(jv["mag_def"]);
 	MEMB_LIST_COMP_BASE_STATS(MEMB_DESERIALIZE);
 }
 std::string BaseStats::kind_str() const
@@ -145,11 +120,6 @@ BaseStats::operator Json::Value () const
 {
 	Json::Value ret;
 
-	//ret["hp"] = hp;
-	//ret["atk"] = atk;
-	//ret["def"] = def;
-	//ret["mag_atk"] = mag_atk;
-	//ret["mag_def"] = mag_def;
 	MEMB_LIST_COMP_BASE_STATS(MEMB_SERIALIZE);
 
 	return ret;
