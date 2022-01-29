@@ -21,7 +21,6 @@
 // src/game_engine/comp/player_comp_class.hpp
 
 #include "../../misc_includes.hpp"
-#include "base_class.hpp"
 
 namespace dungwich_sandeon
 {
@@ -30,7 +29,7 @@ namespace game_engine
 namespace comp
 {
 
-class Player final: public Base
+class Player final: public ecs::Comp
 {
 public:		// constants
 	static const std::string KIND_STR;

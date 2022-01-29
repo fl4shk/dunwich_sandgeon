@@ -21,7 +21,6 @@
 // src/game_engine/comp/status_comp_classes.hpp
 
 #include "../../misc_includes.hpp"
-#include "base_class.hpp"
 
 namespace dungwich_sandeon
 {
@@ -32,7 +31,7 @@ namespace comp
 
 static constexpr int STATUS_TIMER_DEFAULT_VAL = 20;
 
-class StatusOnFire final: public Base
+class StatusOnFire final: public ecs::Comp
 {
 public:		// constants
 	static const std::string KIND_STR;
@@ -55,7 +54,7 @@ public:		// functions
 };
 
 // Take damage slowly
-class StatusPoisoned final: public Base
+class StatusPoisoned final: public ecs::Comp
 {
 public:		// constants
 	static const std::string KIND_STR;
@@ -78,7 +77,7 @@ public:		// functions
 };
 
 // Can do nothing
-class StatusAsleep final: public Base
+class StatusAsleep final: public ecs::Comp
 {
 public:		// constants
 	static const std::string KIND_STR;
@@ -101,7 +100,7 @@ public:		// functions
 };
 
 // Speed of movement
-class StatusTravelSpeed final: public Base
+class StatusTravelSpeed final: public ecs::Comp
 {
 public:		// constants
 	static const std::string KIND_STR;
@@ -128,7 +127,7 @@ public:		// functions
 };
 
 // Speed of actions besides movement
-class StatusActionSpeed final: public Base
+class StatusActionSpeed final: public ecs::Comp
 {
 public:		// constants
 	static const std::string KIND_STR;

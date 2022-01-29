@@ -40,7 +40,7 @@ void GmOptions::init(ecs::Engine* ecs_engine)
 
 	did_init = true;
 
-	size_t i = 0;
+	uint i = 0;
 	engine->aux_menu = Menu
 	(
 		"grayscale",

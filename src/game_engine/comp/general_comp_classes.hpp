@@ -24,7 +24,6 @@
 #include "../../misc_types.hpp"
 #include "../font_color_enum.hpp"
 #include "../playfield_layer_prio_enum.hpp"
-#include "base_class.hpp"
 
 namespace dungwich_sandeon
 {
@@ -36,7 +35,7 @@ class Engine;
 namespace comp
 {
 
-class Drawable final: public Base
+class Drawable final: public ecs::Comp
 {
 public:		// constants
 	static const std::string KIND_STR;
@@ -133,7 +132,7 @@ public:		// functions
 
 // Note that this is a 3D position within the game world.
 // Which floor the entity is on is what the Z axis represents.
-class Position final: public Base
+class Position final: public ecs::Comp
 {
 	friend class dungwich_sandeon::game_engine::Engine;
 public:		// constants
@@ -162,7 +161,7 @@ public:		// functions
 	void set_pos(const PosVec3& n_pos);
 };
 
-//class Weight final: public Base
+//class Weight final: public ecs::Comp
 //{
 //public:		// constants
 //	static const std::string KIND_STR;
@@ -183,7 +182,7 @@ public:		// functions
 //};
 
 // These are stats that increase or stay the same upon level up.
-class BaseStats final: public Base
+class BaseStats final: public ecs::Comp
 {
 public:		// constants
 	static const std::string KIND_STR;
@@ -223,7 +222,7 @@ public:		// functions
 	virtual operator Json::Value () const;
 };
 
-//class OtherStats final: public Base
+//class OtherStats final: public ecs::Comp
 //{
 //public:		// constants
 //	static const std::string KIND_STR;

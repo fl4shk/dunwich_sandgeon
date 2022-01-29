@@ -30,7 +30,7 @@ namespace game_engine
 namespace comp
 {
 
-//class InBetweenWalls final: public Base
+//class InBetweenWalls final: public ecs::Comp
 //{
 //public:		// constants
 //	static constexpr Drawable::Data
@@ -44,7 +44,7 @@ namespace comp
 //	virtual operator Json::Value () const;
 //};
 
-class Wall final: public Base
+class Wall final: public ecs::Comp
 {
 public:		// constants
 	static const std::string KIND_STR;
@@ -60,7 +60,7 @@ public:		// functions
 	virtual operator Json::Value () const;
 };
 
-class Floor final: public Base
+class Floor final: public ecs::Comp
 {
 public:		// constants
 	static const std::string KIND_STR;
@@ -76,7 +76,7 @@ public:		// functions
 	virtual operator Json::Value () const;
 };
 
-class DownStairs final: public Base
+class DownStairs final: public ecs::Comp
 {
 public:		// constants
 	static const std::string KIND_STR;
@@ -92,7 +92,7 @@ public:		// functions
 	virtual operator Json::Value () const;
 };
 
-class UpStairs final: public Base
+class UpStairs final: public ecs::Comp
 {
 public:		// constants
 	static const std::string KIND_STR;

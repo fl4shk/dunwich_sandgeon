@@ -51,7 +51,7 @@ std::ostream& operator << (std::ostream& os, const RopePart& rope_part)
 
 std::ostream& operator << (std::ostream& os, const Rope& rope)
 {
-	for (size_t i=0; i<rope.size(); ++i)
+	for (uint i=0; i<rope.size(); ++i)
 	{
 		os << rope.at(i);
 
@@ -91,7 +91,7 @@ Rope split_rope_by_whitespace(const Rope& rope, bool keep_sep)
 
 	return ret;
 }
-RopeDeque wrap_rope(const Rope& rope, size_t row_length, bool keep_sep)
+RopeDeque wrap_rope(const Rope& rope, uint row_length, bool keep_sep)
 {
 	RopeDeque ret;
 
@@ -119,11 +119,11 @@ RopeDeque wrap_rope(const Rope& rope, size_t row_length, bool keep_sep)
 
 	ret.push_back(Rope());
 
-	size_t col = 0;
+	uint col = 0;
 
 	bool added_rope = false;
 
-	for (size_t i=0; i<split_rope.size(); ++i)
+	for (uint i=0; i<split_rope.size(); ++i)
 	{
 		auto& rope_part = split_rope.at(i);
 
@@ -138,7 +138,7 @@ RopeDeque wrap_rope(const Rope& rope, size_t row_length, bool keep_sep)
 		added_rope = false;
 
 		ret.back().push_back(std::move(rope_part));
-		//const size_t j = ret.back().size() - 1;
+		//const uint j = ret.back().size() - 1;
 
 		if (((i + 1) < split_rope.size())
 			&& ((col + split_rope.at(i + 1).str.size()) > row_length))
@@ -172,7 +172,7 @@ const std::string
 		(MsgLog::WIDGET_SELECTED_SPACING_SIZE)),
 	MsgLog::WIDGET_SPACING_STR(spaces_str(MsgLog::WIDGET_SPACING_SIZE));
 
-MsgLog::MsgLog(const RopeDeque& s_data, size_t s_internal_height,
+MsgLog::MsgLog(const RopeDeque& s_data, uint s_internal_height,
 	const SizeVec2& s_window_size_2d, Vec2<bool> s_center,
 	bool s_keep_sep)
 {
@@ -285,7 +285,7 @@ std::string Menu::Node::widget_horiz_picker_str() const
 	const std::string DATA_STR
 		= sconcat(std::get<DataValue>(data)());
 	{
-		size_t i;
+		uint i;
 		for (i=0; i<DATA_STR.size(); ++i)
 		{
 			ret += DATA_STR.at(i);
@@ -307,13 +307,13 @@ std::string Menu::Node::widget_check_button_str() const
 }
 
 Menu::Menu(const std::string& s_sel_key, const SizeVec2& s_size_2d,
-	const NodeMap& s_node_map, Vec2<bool> s_center, size_t s_tab_amount)
+	const NodeMap& s_node_map, Vec2<bool> s_center, uint s_tab_amount)
 	: _sel_key(s_sel_key), _size_2d(s_size_2d), _node_map(s_node_map),
 	_center(s_center), _tab_amount(s_tab_amount)
 {
 }
 Menu::Menu(const std::string& s_sel_key, const SizeVec2& s_size_2d,
-	NodeMap&& s_node_map, Vec2<bool> s_center, size_t s_tab_amount)
+	NodeMap&& s_node_map, Vec2<bool> s_center, uint s_tab_amount)
 	: _sel_key(s_sel_key), _size_2d(s_size_2d),
 	_node_map(std::move(s_node_map)), _center(s_center),
 	_tab_amount(s_tab_amount)
@@ -607,11 +607,11 @@ Menu::operator MsgLog() const
 	MsgLog ret(ret_data, MsgLog::DEFAULT_INTERNAL_HEIGHT, size_2d(),
 		center(), true);
 
-	//for (size_t j=0; j<ret.data().size(); ++j)
+	//for (uint j=0; j<ret.data().size(); ++j)
 	//{
 	//	const auto& ROPE = ret.data().at(j);
 
-	//	for (size_t i=0; i<ROPE.size(); ++i)
+	//	for (uint i=0; i<ROPE.size(); ++i)
 	//	{
 	//		printout(ROPE.at(i).str.size(), " ",
 	//			"\"", ROPE.at(i).str, "\"; ");
@@ -665,12 +665,12 @@ auto Menu::build_text_only_knc_pair(const std::string& key,
 		}
 	};
 }
-auto Menu::build_separator_knc_pair(size_t i) -> KncPair
+auto Menu::build_separator_knc_pair(uint i) -> KncPair
 {
 	return build_text_only_knc_pair(sconcat("<separator[", i, "]>"),
 		"================");
 }
-auto Menu::build_spaces_knc_pair(size_t i) -> KncPair 
+auto Menu::build_spaces_knc_pair(uint i) -> KncPair 
 {
 	return build_text_only_knc_pair(sconcat("<blank[", i, "]>"), " ");
 }
@@ -681,7 +681,7 @@ auto Menu::build_node_map(const std::vector<KncPair>& vec)-> NodeMap
 	ret[START_NODE_KEY] = build_start_node(vec.front().first);
 	ret[END_NODE_KEY] = build_end_node(vec.back().first);
 
-	for (size_t i=0; i<vec.size(); ++i)
+	for (uint i=0; i<vec.size(); ++i)
 	{
 		std::string s_up, s_down;
 

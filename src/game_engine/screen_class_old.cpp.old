@@ -50,7 +50,7 @@ void Screen::draw(const Window& win)
 void Screen::draw(const LayeredWindow& layered_win)
 {
 	// This might need `std::greater` instead of `std::less`
-	std::priority_queue<std::pair<size_t, std::string>> pq;
+	std::priority_queue<std::pair<uint, std::string>> pq;
 
 	for (const auto& pair: layered_win.layer_prio_map())
 	{

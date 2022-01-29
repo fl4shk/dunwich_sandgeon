@@ -40,6 +40,10 @@ private:		// variables
 	GameOptions _game_options;
 public:		// functions
 	GmOptions() = default;
+	inline GmOptions(const Json::Value& jv)
+		: ecs::Sys(jv)
+	{
+	}
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(GmOptions);
 	virtual ~GmOptions() = default;
 

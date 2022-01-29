@@ -133,9 +133,9 @@ void Window::init_set_border()
 		_engine->ecs_engine.insert_comp(id,
 			ecs::CompUptr(new comp::Drawable(drawable_data)));
 	};
-	for (size_t j=0; j<with_border_size_2d().y; ++j)
+	for (uint j=0; j<with_border_size_2d().y; ++j)
 	{
-		for (size_t i=0; i<with_border_size_2d().x; ++i)
+		for (uint i=0; i<with_border_size_2d().x; ++i)
 		{
 			if ((j == 0) || (j == (with_border_size_2d().y - 1)))
 			{
@@ -280,7 +280,7 @@ void Window::draw(const MsgLog& msg_log)
 			= ((msg_log.window_size_2d().y - msg_log.data().size()) / 2);
 	}
 
-	for (size_t j=msg_log.scroll();
+	for (uint j=msg_log.scroll();
 		((j - msg_log.scroll()) < msg_log.window_size_2d().y)
 			&& (j < msg_log.internal_height())
 			&& (j < msg_log.data().size());
@@ -288,9 +288,9 @@ void Window::draw(const MsgLog& msg_log)
 	{
 		const auto& ROPE = msg_log.data().at(j);
 
-		size_t rope_size = 0;
+		uint rope_size = 0;
 
-		for (size_t i=0; i<ROPE.size(); ++i)
+		for (uint i=0; i<ROPE.size(); ++i)
 		{
 			rope_size += ROPE.at(i).str.size();
 
@@ -302,9 +302,9 @@ void Window::draw(const MsgLog& msg_log)
 		//printout("rope_size: ", rope_size, " ", 
 		//	//std::string("This is a red str. asdf asdf asdf asdf").size(),
 		//	"\n");
-		//for (size_t i=0; i<ROPE.size(); ++i)
+		//for (uint i=0; i<ROPE.size(); ++i)
 		//{
-		//	size_t temp_rope_size = ROPE.at(i).str.size();
+		//	uint temp_rope_size = ROPE.at(i).str.size();
 
 		//	if ((!msg_log.keep_sep()) && ((i + 1) < ROPE.size()))
 		//	{
@@ -343,7 +343,7 @@ void Window::draw(const MsgLog& msg_log)
 
 		for (const auto& rope_part: ROPE)
 		{
-			for (size_t i=0; i<rope_part.str.size(); ++i, ++temp_pos.x)
+			for (uint i=0; i<rope_part.str.size(); ++i, ++temp_pos.x)
 			{
 				draw_at_temp_pos
 				(
@@ -393,7 +393,7 @@ void Window::draw(const MsgLog& msg_log)
 //void Window::draw(const LayeredWindow& layered_win)
 //{
 //	// This might need `std::greater` instead of `std::less`
-//	std::priority_queue<std::pair<size_t, std::string>> pq;
+//	std::priority_queue<std::pair<uint, std::string>> pq;
 //
 //	for (const auto& pair: layered_win.layer_prio_map())
 //	{
@@ -412,7 +412,7 @@ void Window::draw(const MsgLog& msg_log)
 //}
 //LayeredWindow::LayeredWindow(const PosVec2& s_pos,
 //	const SizeVec2& s_size_2d,
-//	const std::map<std::string, size_t>& s_layer_prio_map)
+//	const std::map<std::string, uint>& s_layer_prio_map)
 //	: _layer_prio_map(s_layer_prio_map)
 //{
 //	for (const auto& pair: layer_prio_map())

@@ -40,6 +40,10 @@ private:		// variables
 	bool _show_popup_window = false;
 public:		// functions
 	GmFileSelect() = default;
+	inline GmFileSelect(const Json::Value& jv)
+		: ecs::Sys(jv)
+	{
+	}
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(GmFileSelect);
 	virtual ~GmFileSelect() = default;
 

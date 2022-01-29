@@ -155,11 +155,11 @@ public:		// functions
 //{
 //protected:		// variables
 //	std::map<std::string, Window> _layer_map;
-//	std::map<std::string, size_t> _layer_prio_map;
+//	std::map<std::string, uint> _layer_prio_map;
 //public:		// functions
 //	LayeredWindow();
 //	LayeredWindow(const PosVec2& s_pos, const SizeVec2& s_size_2d,
-//		const std::map<std::string, size_t>& s_layer_prio_map);
+//		const std::map<std::string, uint>& s_layer_prio_map);
 //	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(LayeredWindow);
 //	virtual ~LayeredWindow();
 //

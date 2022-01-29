@@ -140,8 +140,7 @@ enum class GameMode
 };
 //--------
 template<typename ObjType>
-concept EngineErrWhenEntNullIdObj
-	= requires(ObjType obj)
+concept EngineErrWhenEntNullIdObj = requires(ObjType obj)
 {
 	{ obj.ent_id() } -> std::same_as<ecs::EntId>;
 };
@@ -163,13 +162,42 @@ public:		// constants
 
 	static constexpr int
 		NUM_FILES = 9;
-private:		// variables
-	GameMode _game_mode = GameMode::TitleScreen;
-public:		// variables
+public:		// serialized variables
+	ecs::Engine ecs_engine;
+	KeyStatus key_status;
+
+	#define MEMB_AUTOSER_LIST_ENGINE(X) \
+		X(game_options) \
+		X(log_msg_log) \
+		X(hud_msg_log) \
+		X(floor) \
+		X(playfield_ent_id_v3d)
+
 	GameOptions game_options;
 
-	ecs::Engine ecs_engine;
-	Window 
+	MsgLog
+		log_msg_log,
+		hud_msg_log;
+
+	////InputKind initial_input_kind = InputKind::None,
+	////	final_input_kind = InputKind::None;
+	//InputKind input_kind;
+
+
+	//struct
+	//{
+	//	bool req_start = false;
+	//	std::string text;
+	//} text_input;
+
+	int floor = HIGHEST_FLOOR;
+
+	// dimensions: floor, y, x
+	std::vector<EntIdSetVec2d> playfield_ent_id_v3d;
+private:		// variables
+	GameMode _game_mode = GameMode::TitleScreen;
+public:		// non-serialized variables
+	Window
 		// The `Window` that contains the entities to display on screen 
 		screen_window,
 
@@ -196,7 +224,7 @@ public:		// variables
 		// buttons, and also some text at the top.
 		text_yes_no_window;
 
-	Menu 
+	Menu
 		// `Menu` for various tasks that take up the whole game window
 		aux_menu,
 
@@ -209,30 +237,6 @@ public:		// variables
 		// The with-text yes-no window's menu
 		text_yes_no_menu;
 
-	MsgLog
-		log_msg_log,
-		hud_msg_log;
-
-	////InputKind initial_input_kind = InputKind::None,
-	////	final_input_kind = InputKind::None;
-	//InputKind input_kind;
-
-	KeyStatus key_status;
-
-	//struct
-	//{
-	//	bool req_start = false;
-	//	std::string text;
-	//} text_input;
-
-	int floor = HIGHEST_FLOOR;
-
-	//bool grayscale = true;
-
-	// dimensions: floor, y, x
-	std::vector<EntIdSetVec2d> playfield_ent_id_v3d;
-
-public:		// constants
 	// File numbers selected via HorizPickers
 	int
 		src_file_num = 0,
@@ -311,7 +315,7 @@ public:		// functions
 		const std::string& s_text,
 		const std::function<void(SelfType*)>& yes_func,
 		const std::function<void(SelfType*)>& no_func,
-		size_t s_tab_amount=0)
+		uint s_tab_amount=0)
 	{
 		return Menu
 		(

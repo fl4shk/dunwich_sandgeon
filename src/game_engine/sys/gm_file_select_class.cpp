@@ -38,7 +38,7 @@ void GmFileSelect::init(ecs::Engine* ecs_engine)
 	did_init = true;
 	_show_popup_window = false;
 
-	size_t i = 0;
+	uint i = 0;
 	engine->aux_menu = Menu
 	(
 		"file_qmark",
@@ -168,7 +168,7 @@ void GmFileSelect::_aux_menu_copy_file_func(GmFileSelect* self)
 {
 	self->_show_popup_window = true;
 
-	size_t i = 0;
+	uint i = 0;
 	engine->popup_menu = Menu
 	(
 		"dst_file_qmark",

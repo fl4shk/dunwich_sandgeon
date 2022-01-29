@@ -258,9 +258,9 @@ int RealMainSdl::run()
 		//////screen_window.draw(popup_window);
 		////screen_window.draw(yes_no_window);
 
-		for (size_t j=0; j<screen_window.with_border_size_2d().y; ++j)
+		for (uint j=0; j<screen_window.with_border_size_2d().y; ++j)
 		{
-			for (size_t i=0; i<screen_window.with_border_size_2d().x; ++i)
+			for (uint i=0; i<screen_window.with_border_size_2d().x; ++i)
 			{
 				auto& ecs_engine = _engine.ecs_engine;
 				const PosVec2 wb_pos(i, j);
