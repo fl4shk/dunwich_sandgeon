@@ -16,8 +16,17 @@
 // with Dungwich Sandeon.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "engine_class.hpp"
+
+#include "comp/list_of_comp_defines.hpp"
+
+#include "comp/general_comp_classes.hpp"
+#include "comp/player_comp_class.hpp"
 #include "comp/block_comp_classes.hpp"
-#include "comp/ui_etc_comp_classes.hpp"
+#include "comp/status_comp_classes.hpp"
+//#include "comp/ui_etc_comp_classes.hpp"
+
+#include "sys/list_of_sys_defines.hpp"
+
 #include "sys/gm_title_screen_class.hpp"
 #include "sys/gm_options_class.hpp"
 #include "sys/gm_file_select_class.hpp"
@@ -56,11 +65,14 @@ KeyStatus::~KeyStatus()
 {
 }
 //--------
-
 const std::string Engine::SAVE_FILE_NAME("save_file.json");
 
 Engine::Engine()
-	: screen_window(this, PosVec2(), WITH_BORDER_SCREEN_SIZE_2D),
+	: playfield_ent_id_v3d(NUM_FLOORS,
+		EntIdSetVec2d(PLAYFIELD_WINDOW_SIZE_2D.y,
+			std::vector<std::set<ecs::EntId>>
+				(PLAYFIELD_WINDOW_SIZE_2D.x))),
+	screen_window(this, PosVec2(), WITH_BORDER_SCREEN_SIZE_2D),
 	aux_window(this, PosVec2(), WITH_BORDER_SCREEN_SIZE_2D),
 
 	playfield_window(this, PLAYFIELD_WINDOW_POS, PLAYFIELD_WINDOW_END_POS),
@@ -69,11 +81,7 @@ Engine::Engine()
 	popup_window(this, POPUP_WINDOW_POS, POPUP_WINDOW_END_POS),
 	yes_no_window(this, YES_NO_WINDOW_POS, YES_NO_WINDOW_END_POS),
 	text_yes_no_window(this, TEXT_YES_NO_WINDOW_POS,
-		TEXT_YES_NO_WINDOW_END_POS),
-
-	playfield_ent_id_v3d(NUM_FLOORS,
-		EntIdSetVec2d(PLAYFIELD_WINDOW_SIZE_2D.y,
-			std::vector<std::set<ecs::EntId>>(PLAYFIELD_WINDOW_SIZE_2D.x)))
+		TEXT_YES_NO_WINDOW_END_POS)
 {
 	screen_window.init_set_border();
 	aux_window.init_set_border();
@@ -84,6 +92,18 @@ Engine::Engine()
 	popup_window.init_set_border();
 	yes_no_window.init_set_border();
 	text_yes_no_window.init_set_border();
+
+	ecs_engine.init_comp_deserialize
+	<
+		//EVAL(DEFER(MAP_INDIRECT)()(ID, COMMA, LIST_OF_COMP))
+		LIST_OF_COMP
+	>();
+
+	ecs_engine.init_sys_deserialize
+	<
+		//EVAL(DEFER(MAP_INDIRECT)()(ID, COMMA, LIST_OF_SYS))
+		LIST_OF_SYS
+	>();
 
 	//yes_no_menu
 	//	= build_yes_no_menu(this,
