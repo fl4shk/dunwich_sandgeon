@@ -30,6 +30,7 @@
 #include "sys/gm_title_screen_class.hpp"
 #include "sys/gm_options_class.hpp"
 #include "sys/gm_file_select_class.hpp"
+#include "sys/gm_dungeon_gen_class.hpp"
 
 namespace dungwich_sandeon
 {

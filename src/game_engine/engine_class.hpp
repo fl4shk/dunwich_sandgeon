@@ -124,6 +124,7 @@ public:		// functions
 	/* X(Credits) */ \
 	\
 	X(FileSelect) \
+	X(DungeonGen) \
 	/* X(Main) */ \
 	\
 	/* X(PopupShop) */ \
@@ -162,38 +163,38 @@ public:		// constants
 
 	static constexpr int
 		NUM_FILES = 9;
-public:		// serialized variables
+public:		// per-file serialized variables
 	ecs::Engine ecs_engine;
-	KeyStatus key_status;
 
-	#define MEMB_AUTOSER_LIST_ENGINE(X) \
-		X(game_options) \
-		X(log_msg_log) \
-		X(hud_msg_log) \
-		X(floor) \
-		X(playfield_ent_id_v3d)
-
-	GameOptions game_options;
+	//#define MEMB_AUTOSER_LIST_ENGINE(X) \
+	//	X(game_options) \
+	//	X(log_msg_log) \
+	//	X(hud_msg_log) \
+	//	X(floor) \
+	//	X(playfield_ent_id_v3d)
 
 	MsgLog
 		log_msg_log,
 		hud_msg_log;
 
+	int floor = HIGHEST_FLOOR;
+
+	// dimensions: floor, y, x
+	std::vector<EntIdSetVec2d> playfield_ent_id_v3d;
+public:		// globally serialized variables
+	GameOptions game_options;
+public:		// non-serialized variables
+	KeyStatus key_status;
+
 	////InputKind initial_input_kind = InputKind::None,
 	////	final_input_kind = InputKind::None;
 	//InputKind input_kind;
-
 
 	//struct
 	//{
 	//	bool req_start = false;
 	//	std::string text;
 	//} text_input;
-
-	int floor = HIGHEST_FLOOR;
-
-	// dimensions: floor, y, x
-	std::vector<EntIdSetVec2d> playfield_ent_id_v3d;
 private:		// variables
 	GameMode _game_mode = GameMode::TitleScreen;
 public:		// non-serialized variables

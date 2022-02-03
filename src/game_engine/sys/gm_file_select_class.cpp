@@ -35,7 +35,8 @@ std::string GmFileSelect::kind_str() const
 
 void GmFileSelect::init(ecs::Engine* ecs_engine)
 {
-	did_init = true;
+	_init_start();
+
 	_show_popup_window = false;
 
 	uint i = 0;
@@ -102,56 +103,40 @@ void GmFileSelect::tick(ecs::Engine* ecs_engine)
 {
 	auto engine = game_engine::engine;
 
-	//if (active() && active.has_changed())
-	//{
-	//	active.back_up_and_update(true);
-	//}
-	//else if (active())
-	if (engine->game_mode() == GameMode::FileSelect)
+	if (_tick_helper(ecs_engine,
+		engine->game_mode() == GameMode::FileSelect))
 	{
-		if (active() && active.has_changed())
+		auto
+			& screen_window = engine->screen_window,
+			& aux_window = engine->aux_window,
+			& popup_window = engine->popup_window;
+
+		auto
+			& aux_menu = engine->aux_menu,
+			& popup_menu = engine->popup_menu;
+
+		if (!_show_popup_window)
 		{
-			active.back_up();
+			aux_menu.tick(engine->key_status);
 		}
-		else if (active())
+		else // if (_show_popup_window)
 		{
-			if (!did_init)
-			{
-				init(ecs_engine);
-			}
+			popup_menu.tick(engine->key_status);
+		}
 
-			auto
-				& screen_window = engine->screen_window,
-				& aux_window = engine->aux_window,
-				& popup_window = engine->popup_window;
+		screen_window.clear();
 
-			auto
-				& aux_menu = engine->aux_menu,
-				& popup_menu = engine->popup_menu;
+		aux_window.clear();
+		aux_window.draw(aux_menu);
+		screen_window.draw(aux_window);
 
-			if (!_show_popup_window)
-			{
-				aux_menu.tick(engine->key_status);
-			}
-			else // if (_show_popup_window)
-			{
-				popup_menu.tick(engine->key_status);
-			}
-
-			screen_window.clear();
-
-			aux_window.clear();
-			aux_window.draw(aux_menu);
-			screen_window.draw(aux_window);
-
-			if (_show_popup_window)
-			{
-				//printout("testificate: ", popup_window.size_2d().x,
-				//	" ", popup_window.size_2d().y, "\n");
-				popup_window.clear();
-				popup_window.draw(popup_menu);
-				screen_window.draw(popup_window);
-			}
+		if (_show_popup_window)
+		{
+			//printout("testificate: ", popup_window.size_2d().x,
+			//	" ", popup_window.size_2d().y, "\n");
+			popup_window.clear();
+			popup_window.draw(popup_menu);
+			screen_window.draw(popup_window);
 		}
 	}
 }
