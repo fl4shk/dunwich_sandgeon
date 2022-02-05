@@ -35,9 +35,19 @@ class GmFileSelect final: public ecs::Sys
 {
 public:		// constants
 	static const std::string KIND_STR;
-
+public:		// types
+	enum class WinState: uint
+	{
+		Aux,
+		Popup,
+		TextYesNoCopy,
+		TextYesNoErase,
+	};
 private:		// variables
-	bool _show_popup_window = false;
+	//bool
+	//	_show_popup_window = false,
+	//	_show_text_yes_no_window = false;
+	WinState _win_state = WinState::Aux;
 public:		// functions
 	GmFileSelect() = default;
 	inline GmFileSelect(const Json::Value& jv)
@@ -64,6 +74,11 @@ private:		// functions
 		(GmFileSelect* self, Menu::Node* node);
 	static void _popup_menu_do_the_copy_func(GmFileSelect* self);
 	static void _popup_menu_cancel_func(GmFileSelect* self);
+	//--------
+	static void _text_yes_no_menu_copy_yes_func(GmFileSelect* self);
+	static void _text_yes_no_menu_copy_no_func(GmFileSelect* self);
+	static void _text_yes_no_menu_erase_yes_func(GmFileSelect* self);
+	static void _text_yes_no_menu_erase_no_func(GmFileSelect* self);
 	//--------
 };
 

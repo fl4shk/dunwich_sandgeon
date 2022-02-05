@@ -267,7 +267,26 @@ public:		// functions
 	void erase_file();
 private:		// functions
 	void _save_file();
+
+	void _inner_draw_menu_w_pre_clear(Window& window, Menu& menu);
 public:		// functions
+	inline void draw_aux_menu_w_pre_clear()
+	{
+		_inner_draw_menu_w_pre_clear(aux_window, aux_menu);
+	}
+	inline void draw_popup_menu_w_pre_clear()
+	{
+		_inner_draw_menu_w_pre_clear(popup_window, popup_menu);
+	}
+	inline void draw_yes_no_menu_w_pre_clear()
+	{
+		_inner_draw_menu_w_pre_clear(yes_no_window, yes_no_menu);
+	}
+	inline void draw_text_yes_no_menu_w_pre_clear()
+	{
+		_inner_draw_menu_w_pre_clear(text_yes_no_window, text_yes_no_menu);
+	}
+
 	inline EntIdSetVec2d& curr_floor_playfield_ent_id_v2d()
 	{
 		return playfield_ent_id_v3d.at(floor);
@@ -321,7 +340,7 @@ public:		// functions
 		return Menu
 		(
 			"yes",
-			yes_no_window.size_2d(),
+			text_yes_no_window.size_2d(),
 			Menu::build_node_map
 			({
 				Menu::build_text_only_knc_pair

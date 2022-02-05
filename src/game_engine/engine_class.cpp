@@ -193,15 +193,25 @@ void Engine::save_and_return_to_title()
 
 void Engine::load_file()
 {
+	printout("game_engine::Engine::load_file(): testificate\n");
 }
 void Engine::copy_file()
 {
+	printout("game_engine::Engine::copy_file(): testificate\n");
 }
 void Engine::erase_file()
 {
+	printout("game_engine::Engine::erase_file(): testificate\n");
 }
 void Engine::_save_file()
 {
+	printout("game_engine::Engine::_save_file(): testificate\n");
+}
+void Engine::_inner_draw_menu_w_pre_clear(Window& window, Menu& menu)
+{
+	window.clear();
+	window.draw(menu);
+	screen_window.draw(window);
 }
 
 void Engine::position_ctor_callback(comp::Position* obj)
@@ -247,6 +257,7 @@ void Engine::position_set_pos_callback(comp::Position* obj,
 
 GameMode& Engine::set_game_mode(GameMode n_game_mode)
 {
+	//printout("old _game_mode: ", (int)_game_mode, "\n");
 	_game_mode = n_game_mode;
 	//printout("new _game_mode: ", (int)_game_mode, "\n");
 
@@ -255,12 +266,7 @@ GameMode& Engine::set_game_mode(GameMode n_game_mode)
 	//--------
 	#define X(arg) \
 		case GameMode::arg: \
-			ecs_engine.sys_map().at(sys::Gm##arg::KIND_STR)->did_init \
-				= false; \
-			ecs_engine.sys_map().at(sys::Gm##arg::KIND_STR)->active \
-				.back_up_and_update(false); \
-			ecs_engine.sys_map().at(sys::Gm##arg::KIND_STR)->active \
-				.back_up_and_update(true); \
+			ecs_engine.sys_map().at(sys::Gm##arg::KIND_STR)->prep_init(); \
 			break;
 	LIST_OF_GAME_MODES(X)
 	#undef X
