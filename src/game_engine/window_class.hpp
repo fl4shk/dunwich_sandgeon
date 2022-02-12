@@ -77,13 +77,14 @@ protected:		// variables
 	//int _priority = 0;
 	PosVec2 _pos;
 	ecs::EntIdVec2d _ent_id_v2d, _cleared_ent_id_v2d;
+	int _file_num = -1;
 public:		// functions
 	Window();
 	Window(Engine* s_engine, const PosVec2& s_some_pos,
-		const SizeVec2& s_some_size_2d,
+		const SizeVec2& s_some_size_2d, int s_file_num,
 		bool prev_args_are_with_border=true);
 	Window(Engine* s_engine, const PosVec2& s_some_pos,
-		const PosVec2& s_some_end_pos,
+		const PosVec2& s_some_end_pos, int s_file_num,
 		bool prev_args_are_with_border=true);
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Window);
 	virtual ~Window();
@@ -149,6 +150,7 @@ public:		// functions
 	//GEN_GETTER_AND_SETTER_BY_VAL(priority);
 	GEN_GETTER_BY_CON_REF(pos);
 	GEN_GETTER_BY_CON_REF(ent_id_v2d);
+	GEN_GETTER_BY_VAL(file_num);
 };
 
 //class LayeredWindow

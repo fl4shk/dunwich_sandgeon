@@ -34,7 +34,9 @@ namespace sys
 class GmFileSelect final: public ecs::Sys
 {
 public:		// constants
-	static const std::string KIND_STR;
+	static const std::string
+		KIND_STR,
+		AUX_MENU_KEY_FILE_QMARK;
 public:		// types
 	enum class WinState: uint
 	{
@@ -50,10 +52,10 @@ private:		// variables
 	WinState _win_state = WinState::Aux;
 public:		// functions
 	GmFileSelect() = default;
-	inline GmFileSelect(const Json::Value& jv)
-		: ecs::Sys(jv)
-	{
-	}
+	//inline GmFileSelect(const Json::Value& jv)
+	//	: ecs::Sys(jv)
+	//{
+	//}
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(GmFileSelect);
 	virtual ~GmFileSelect() = default;
 

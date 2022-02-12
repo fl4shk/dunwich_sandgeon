@@ -117,13 +117,13 @@ int RealMainSdl::run()
 	};
 	//--------
 	auto
-		& screen_window = _engine.screen_window;
-		//& aux_window = _engine.aux_window,
-		//& playfield_window = _engine.playfield_window,
-		//& log_window = _engine.log_window,
-		//& hud_window = _engine.hud_window,
-		//& popup_window = _engine.popup_window,
-		//& yes_no_window = _engine.yes_no_window;
+		& screen_window = _engine.screen_window();
+		//& aux_window_cfn = _engine.aux_window_cfn(),
+		//& pfield_window_cfn = _engine.pfield_window_cfn(),
+		//& log_window_cfn = _engine.log_window_cfn(),
+		//& hud_window_cfn = _engine.hud_window_cfn(),
+		//& popup_window_cfn = _engine.popup_window_cfn(),
+		//& yes_no_window_cfn = _engine.yes_no_window_cfn();
 	//MsgLog
 	//	msg_log
 	//	(
@@ -152,11 +152,11 @@ int RealMainSdl::run()
 	//			//},
 	//		},
 	//		MsgLog::DEFAULT_INTERNAL_HEIGHT,
-	//		log_window.size_2d(),
+	//		log_window_cfn.size_2d(),
 	//		Vec2(true, true)
 	//	);
 	////msg_log.set_scroll(2);
-	//log_window.draw(msg_log);
+	//log_window_cfn.draw(msg_log);
 	//--------
 	bool quit = false;
 	while (!quit)
@@ -243,21 +243,22 @@ int RealMainSdl::run()
 
 		// Draw tiles/graphics here.
 
-		//yes_no_window.clear();
-		//yes_no_window.draw(_engine.yes_no_menu);
+		//yes_no_window_cfn.clear();
+		//yes_no_window_cfn.draw(_engine.yes_no_menu);
 
 		//screen_window.clear();
-		//screen_window.draw(yes_no_window);
+		//screen_window.draw(yes_no_window_cfn);
 		////playfield_window.draw(msg_log);
 
 		//// Temporary drawing into `screen_window`.
 		//screen_window.draw(playfield_window, true);
-		//screen_window.draw(log_window, true);
-		//screen_window.draw(hud_window, true);
-		//////screen_window.draw(aux_window);
-		//////screen_window.draw(popup_window);
-		////screen_window.draw(yes_no_window);
+		//screen_window.draw(log_window_cfn, true);
+		//screen_window.draw(hud_window_cfn, true);
+		//////screen_window.draw(aux_window_cfn);
+		//////screen_window.draw(popup_window_cfn);
+		////screen_window.draw(yes_no_window_cfn);
 
+		const auto& fn_state_index = _engine.fn_state_index();
 		for (uint j=0; j<screen_window.with_border_size_2d().y; ++j)
 		{
 			for (uint i=0; i<screen_window.with_border_size_2d().x; ++i)
@@ -268,13 +269,14 @@ int RealMainSdl::run()
 					= screen_window.with_border_ent_id_at(wb_pos);
 
 				if (ecs_engine.has_ent_with_comp(id,
-					game_engine::comp::Drawable::KIND_STR))
+					game_engine::comp::Drawable::KIND_STR, fn_state_index))
 				{
 					//auto& drawable = static_cast<comp::Drawable*>
-					//	(ecs_engine.comp_map(id).at
+					//	(ecs_engine.comp_map(id, fn_state_index).at
 					//		(comp::Drawable::KIND_STR).get());
 					auto drawable = ecs_engine
-						.casted_comp_at<game_engine::comp::Drawable>(id);
+						.casted_comp_at<game_engine::comp::Drawable>
+							(id, fn_state_index);
 
 					if (_engine.game_options.grayscale)
 					{

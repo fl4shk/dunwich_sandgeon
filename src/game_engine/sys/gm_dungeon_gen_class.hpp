@@ -36,10 +36,10 @@ public:		// constants
 	static const std::string KIND_STR;
 public:		// functions
 	GmDungeonGen() = default;
-	inline GmDungeonGen(const Json::Value& jv)
-		: ecs::Sys(jv)
-	{
-	}
+	//inline GmDungeonGen(const Json::Value& jv)
+	//	: ecs::Sys(jv)
+	//{
+	//}
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(GmDungeonGen);
 	virtual ~GmDungeonGen() = default;
 

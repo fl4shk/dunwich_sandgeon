@@ -22,10 +22,10 @@
 
 #include "../../misc_includes.hpp"
 
-#define LIST_OF_SYS \
-	sys::GmTitleScreen, \
-	sys::GmOptions, \
-	sys::GmFileSelect, \
-	sys::GmDungeonGen \
+#define LIST_OF_SYS(X) \
+	X(GmTitleScreen) \
+	X(GmOptions) \
+	X(GmFileSelect) \
+	X(GmDungeonGen) \
 
 #endif		// src_game_engine_sys_list_of_sys_defines_hpp
