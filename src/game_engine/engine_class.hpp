@@ -33,88 +33,88 @@ namespace dungwich_sandeon
 namespace game_engine
 {
 //--------
-class KeyStatus final
+enum class KeyKind: int
 {
-public:		// types
-	enum KeyKind
-	{
-		LeftL,
-		UpL,
-		RightL,
-		DownL,
+	LeftL,
+	UpL,
+	RightL,
+	DownL,
 
-		LeftR,
-		UpR,
-		RightR,
-		DownR,
+	LeftR,
+	UpR,
+	RightR,
+	DownR,
 
-		ShoulderL,
-		ShoulderR,
+	ShoulderL,
+	ShoulderR,
 
-		Start,
-		Select,
+	Start,
+	Select,
 
-		LimKeyKind,
-	};
-public:		// variables
-	std::map<KeyKind, PrevCurrPair<bool>> state_map;
-public:		// functions
-	KeyStatus();
-	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(KeyStatus);
-	~KeyStatus();
-
-	inline PrevCurrPair<bool>& at(KeyKind key_kind)
-	{
-		return state_map.at(key_kind);
-	}
-	inline const PrevCurrPair<bool>& at(KeyKind key_kind) const
-	{
-		return state_map.at(key_kind);
-	}
-
-	inline bool key_went_up_just_now(KeyKind key_kind) const
-	{
-		return (at(key_kind).prev() && (!at(key_kind)()));
-	}
-	inline bool key_went_down_just_now(KeyKind key_kind) const
-	{
-		return ((!at(key_kind).prev()) && at(key_kind)());
-	}
-
-	inline bool any_key_went_up_just_now() const
-	{
-		for (const auto& item: state_map)
-		{
-			if (item.second.prev() && (!item.second()))
-			{
-				return true;
-			}
-		}
-		return false;
-	}
-	inline bool any_key_went_down_just_now() const
-	{
-		for (const auto& item: state_map)
-		{
-			if ((!item.second.prev()) && item.second())
-			{
-				return true;
-			}
-		}
-		return false;
-	}
-	inline bool has_changed() const
-	{
-		for (const auto& item: state_map)
-		{
-			if (item.second.has_changed())
-			{
-				return true;
-			}
-		}
-		return false;
-	}
-}; 
+	Lim,
+};
+//class KeyStatus final
+//{
+//public:		// types
+//public:		// variables
+//	std::map<KeyKind, PrevCurrPair<bool>> state_map;
+//public:		// functions
+//	KeyStatus();
+//	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(KeyStatus);
+//	~KeyStatus();
+//
+//	inline PrevCurrPair<bool>& at(KeyKind key_kind)
+//	{
+//		return state_map.at(key_kind);
+//	}
+//	inline const PrevCurrPair<bool>& at(KeyKind key_kind) const
+//	{
+//		return state_map.at(key_kind);
+//	}
+//
+//	inline bool key_went_up_just_now(KeyKind key_kind) const
+//	{
+//		return (at(key_kind).prev() && (!at(key_kind)()));
+//	}
+//	inline bool key_went_down_just_now(KeyKind key_kind) const
+//	{
+//		return ((!at(key_kind).prev()) && at(key_kind)());
+//	}
+//
+//	inline bool any_key_went_up_just_now() const
+//	{
+//		for (const auto& item: state_map)
+//		{
+//			if (item.second.prev() && (!item.second()))
+//			{
+//				return true;
+//			}
+//		}
+//		return false;
+//	}
+//	inline bool any_key_went_down_just_now() const
+//	{
+//		for (const auto& item: state_map)
+//		{
+//			if ((!item.second.prev()) && item.second())
+//			{
+//				return true;
+//			}
+//		}
+//		return false;
+//	}
+//	inline bool has_changed() const
+//	{
+//		for (const auto& item: state_map)
+//		{
+//			if (item.second.has_changed())
+//			{
+//				return true;
+//			}
+//		}
+//		return false;
+//	}
+//}; 
 //--------
 #define LIST_OF_GAME_MODES(X) \
 	/* X(AuxStartup) */ \
@@ -167,7 +167,7 @@ public:		// types
 	class NonEcsSerData final
 	{
 	public:		// variables
-		#define MEMB_AUTOSER_LIST_ENGINE_NON_ECS_SER_DATA(X) \
+		#define MEMB_LIST_ENGINE_NON_ECS_SER_DATA(X) \
 			X(log_msg_log) \
 			X(hud_msg_log) \
 			X(floor) \
@@ -198,7 +198,8 @@ public:		// types
 
 public:		// serialized variables
 	ecs::Engine ecs_engine;
-	#define MEMB_LIST_ENGINE(X) \
+
+	#define MEMB_AUTOSER_LIST_ENGINE(X) \
 		X(game_options) \
 		X(_non_ecs_ser_data_vec) \
 
@@ -206,7 +207,7 @@ public:		// serialized variables
 private:		// serialized variables
 	std::vector<NonEcsSerData> _non_ecs_ser_data_vec;
 public:		// non-serialized variables
-	KeyStatus key_status;
+	EngineKeyStatus key_status;
 
 	////InputKind initial_input_kind = InputKind::None,
 	////	final_input_kind = InputKind::None;
@@ -268,7 +269,6 @@ private:		// non-serialized variables
 	// File numbers selected via HorizPickers, though `curr_file_num` is
 	// also the current file number used for indexing into
 	// `_non_ecs_ser_data_vec`.
-	//int* _curr_file_num = nullptr;
 	int* _curr_file_num = nullptr;
 public:		// non-serialized variables
 	int
@@ -286,12 +286,13 @@ private:		// variables
 	//u64 _tick_counter = 0;
 public:		// functions
 	Engine();
-	Engine(const Json::Value& jv);
+	//Engine(const Json::Value& jv);
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Engine);
 	~Engine();
-
 	//void deserialize(const Json::Value& jv);
 	operator Json::Value () const;
+
+	void deserialize(const Json::Value& jv);
 
 	//void dbg_check_ecs_engine(const PosVec2& wb_pos=PosVec2(0, 0));
 
@@ -306,11 +307,11 @@ public:		// functions
 	void save_and_quit();
 	void save_and_return_to_title();
 
-	void load_file();
 	void copy_file();
 	void erase_file();
 private:		// functions
-	void _save_file();
+	void _load_from_json();
+	void _save_to_json();
 
 	void _inner_draw_menu_w_pre_clear(Window& window, Menu& menu,
 		int file_num);

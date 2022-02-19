@@ -37,7 +37,7 @@ public:		// types
 	using FgBgColorPair = game_engine::FgBgColorPair;
 	using Window = game_engine::Window;
 	using Engine = game_engine::Engine;
-	using KeyStatus = game_engine::KeyStatus;
+	using KeyKind = game_engine::KeyKind;
 
 	using Menu = game_engine::Menu;
 	using MsgLog = game_engine::MsgLog;

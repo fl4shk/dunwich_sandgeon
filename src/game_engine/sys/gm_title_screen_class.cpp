@@ -24,7 +24,7 @@ namespace game_engine
 {
 namespace sys
 {
-
+//--------
 const std::string
 	GmTitleScreen::KIND_STR("GmTitleScreen");
 
@@ -32,7 +32,7 @@ std::string GmTitleScreen::kind_str() const
 {
 	return KIND_STR;
 }
-
+//--------
 void GmTitleScreen::init(ecs::Engine* ecs_engine)
 {
 	_init_start();
@@ -81,7 +81,6 @@ void GmTitleScreen::init(ecs::Engine* ecs_engine)
 }
 void GmTitleScreen::tick(ecs::Engine* ecs_engine)
 {
-	auto engine = game_engine::engine;
 	if (_tick_helper(ecs_engine,
 		engine->game_mode() == GameMode::TitleScreen))
 	{
@@ -100,21 +99,21 @@ void GmTitleScreen::tick(ecs::Engine* ecs_engine)
 		screen_window.draw(aux_window_cfn);
 	}
 }
-
+//--------
 void GmTitleScreen::_aux_menu_file_select_func(GmTitleScreen* self)
 {
-	game_engine::engine->set_game_mode(GameMode::FileSelect);
+	engine->set_game_mode(GameMode::FileSelect);
 }
 
 void GmTitleScreen::_aux_menu_options_func(GmTitleScreen* self)
 {
-	game_engine::engine->set_game_mode(GameMode::Options);
+	engine->set_game_mode(GameMode::Options);
 }
 void GmTitleScreen::_aux_menu_quit_game_func(GmTitleScreen* self)
 {
-	game_engine::engine->save_and_quit();
+	engine->save_and_quit();
 }
-
+//--------
 } // namespace sys
 } // namespace game_engine
 } // namespace dungwich_sandeon

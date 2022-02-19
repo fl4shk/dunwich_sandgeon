@@ -88,7 +88,7 @@ public:		// functions
 		fg = static_cast<FontColor>(jv["fg"].asUInt());
 		bg = static_cast<FontColor>(jv["bg"].asUInt());
 	}
-	GEN_CONSTEXPR_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(FgBgColorPair);
+	GEN_CX_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(FgBgColorPair);
 	constexpr inline ~FgBgColorPair() = default;
 
 	constexpr inline FgBgColorPair& operator = (FontColor n_fg)

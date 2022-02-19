@@ -385,36 +385,55 @@ void RealMainSdl::_update_logical_size_2d()
 
 void RealMainSdl::_update_engine_key_status()
 {
-	auto& key_status = _engine.key_status;
+	//auto& key_status = _engine.key_status;
 
-	auto update_key_status
-		= [this](PrevCurrPair<bool>& key_status_down, SDL_Keycode sym)
-		-> void
-	{
-		if (_key_status_map.contains(sym))
-		{
-			//key_status_down() = _key_status_map.at(sym).down.prev();
-			key_status_down.back_up_and_update
-				(_key_status_map.at(sym).down());
-		}
-	};
+	//auto update_key_status
+	//	= [this](PrevCurrPair<bool>& key_status_down, SDL_Keycode sym)
+	//	-> void
+	//{
+	//	if (_key_status_map.contains(sym))
+	//	{
+	//		//key_status_down() = _key_status_map.at(sym).down.prev();
+	//		key_status_down.back_up_and_update
+	//			(_key_status_map.at(sym).down());
+	//	}
+	//};
 	// Hard code the keybindings for now.
-	update_key_status(key_status.at(KeyStatus::LeftL), SDLK_s);
-	update_key_status(key_status.at(KeyStatus::UpL), SDLK_e);
-	update_key_status(key_status.at(KeyStatus::RightL), SDLK_f);
-	update_key_status(key_status.at(KeyStatus::DownL), SDLK_d);
+	//update_key_status(key_status.at(KeyStatus::LeftL), SDLK_s);
+	//update_key_status(key_status.at(KeyStatus::UpL), SDLK_e);
+	//update_key_status(key_status.at(KeyStatus::RightL), SDLK_f);
+	//update_key_status(key_status.at(KeyStatus::DownL), SDLK_d);
 
-	update_key_status(key_status.at(KeyStatus::LeftR), SDLK_j);
-	update_key_status(key_status.at(KeyStatus::UpR), SDLK_i);
-	update_key_status(key_status.at(KeyStatus::RightR), SDLK_l);
-	update_key_status(key_status.at(KeyStatus::DownR), SDLK_k);
+	//update_key_status(key_status.at(KeyStatus::LeftR), SDLK_j);
+	//update_key_status(key_status.at(KeyStatus::UpR), SDLK_i);
+	//update_key_status(key_status.at(KeyStatus::RightR), SDLK_l);
+	//update_key_status(key_status.at(KeyStatus::DownR), SDLK_k);
 
-	update_key_status(key_status.at(KeyStatus::ShoulderL), SDLK_a);
-	update_key_status(key_status.at(KeyStatus::ShoulderR), SDLK_SEMICOLON);
+	//update_key_status(key_status.at(KeyStatus::ShoulderL), SDLK_a);
+	//update_key_status(key_status.at(KeyStatus::ShoulderR), SDLK_SEMICOLON);
 
-	update_key_status(key_status.at(KeyStatus::Start), SDLK_RETURN);
-	update_key_status(key_status.at(KeyStatus::Select), SDLK_ESCAPE);
+	//update_key_status(key_status.at(KeyStatus::Start), SDLK_RETURN);
+	//update_key_status(key_status.at(KeyStatus::Select), SDLK_ESCAPE);
 
+	_engine.key_status.update(_key_status_map,
+		sdl::EngineKeycMap<KeyKind>
+		({
+			{KeyKind::LeftL, SDLK_s},
+			{KeyKind::UpL, SDLK_e},
+			{KeyKind::RightL, SDLK_f},
+			{KeyKind::DownL, SDLK_d},
+
+			{KeyKind::LeftR, SDLK_j},
+			{KeyKind::UpR, SDLK_i},
+			{KeyKind::RightR, SDLK_l},
+			{KeyKind::DownR, SDLK_k},
+
+			{KeyKind::ShoulderL, SDLK_a},
+			{KeyKind::ShoulderR, SDLK_SEMICOLON},
+
+			{KeyKind::Start, SDLK_RETURN},
+			{KeyKind::Select, SDLK_ESCAPE},
+		}));
 }
 
 } // namespace io

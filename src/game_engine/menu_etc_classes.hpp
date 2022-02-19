@@ -29,8 +29,6 @@ namespace dungwich_sandeon
 {
 namespace game_engine
 {
-class KeyStatus;
-
 class RopePart final
 {
 public:		// types
@@ -451,16 +449,17 @@ public:		// functions
 		return _node_map.at(key);
 	}
 
-	inline Node& next_node(const KeyStatus& key_status)
+	inline Node& next_node(const EngineKeyStatus& key_status)
 	{
 		return at(next_sel_key(key_status));
 	}
-	inline const Node& next_node(const KeyStatus& key_status) const
-	{
-		return at(next_sel_key(key_status));
-	}
-	inline const std::string& next_sel_key(const KeyStatus& key_status)
+	inline const Node& next_node(const EngineKeyStatus& key_status)
 		const
+	{
+		return at(next_sel_key(key_status));
+	}
+	inline const std::string& next_sel_key
+		(const EngineKeyStatus& key_status) const
 	{
 		bool did_find = false;
 		const std::string& maybe_ret = _inner_next_sel_key(sel_key(),
@@ -470,7 +469,7 @@ public:		// functions
 	}
 private:		// functions
 	const std::string& _inner_next_sel_key(const std::string& some_sel_key,
-		const KeyStatus& key_status, bool& did_find) const;
+		const EngineKeyStatus& key_status, bool& did_find) const;
 
 public:		// functions
 	inline std::string tab_amount_str() const
@@ -478,7 +477,7 @@ public:		// functions
 		return spaces_str(tab_amount() * TAB_SIZE);
 	}
 
-	void tick(const KeyStatus& key_status);
+	void tick(const EngineKeyStatus& key_status);
 
 	operator MsgLog () const;
 

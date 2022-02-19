@@ -35,6 +35,7 @@ class GmTitleScreen final: public ecs::Sys
 public:		// constants
 	static const std::string KIND_STR;
 public:		// functions
+	//--------
 	GmTitleScreen() = default;
 	//inline GmTitleScreen(const Json::Value& jv)
 	//	: ecs::Sys(jv)
@@ -44,12 +45,16 @@ public:		// functions
 	virtual ~GmTitleScreen() = default;
 
 	virtual std::string kind_str() const;
+	//--------
 	virtual void init(ecs::Engine* ecs_engine);
 	virtual void tick(ecs::Engine* ecs_engine);
+	//--------
 private:		// functions
+	//--------
 	static void _aux_menu_file_select_func(GmTitleScreen* self);
 	static void _aux_menu_options_func(GmTitleScreen* self);
 	static void _aux_menu_quit_game_func(GmTitleScreen* self);
+	//--------
 };
 
 } // namespace sys

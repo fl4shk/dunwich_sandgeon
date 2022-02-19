@@ -321,7 +321,7 @@ Menu::Menu(const std::string& s_sel_key, const SizeVec2& s_size_2d,
 }
 
 const std::string& Menu::_inner_next_sel_key
-	(const std::string& some_sel_key, const KeyStatus& key_status,
+	(const std::string& some_sel_key, const EngineKeyStatus& key_status,
 	bool& did_find) const
 {
 	const auto& curr_node = at(some_sel_key);
@@ -349,8 +349,8 @@ const std::string& Menu::_inner_next_sel_key
 		}
 	};
 
-	if (key_status.key_went_down_just_now(KeyStatus::UpL)
-		&& (!key_status.at(KeyStatus::DownL)()))
+	if (key_status.key_went_down_just_now(KeyKind::UpL)
+		&& (!key_status.at(KeyKind::DownL)()))
 	{
 		if (curr_node.up == Menu::START_NODE_KEY)
 		{
@@ -361,8 +361,8 @@ const std::string& Menu::_inner_next_sel_key
 			return temp_func(curr_node.up);
 		}
 	}
-	else if (key_status.key_went_down_just_now(KeyStatus::DownL)
-		&& (!key_status.at(KeyStatus::UpL)()))
+	else if (key_status.key_went_down_just_now(KeyKind::DownL)
+		&& (!key_status.at(KeyKind::UpL)()))
 	{
 		if (curr_node.down == Menu::END_NODE_KEY)
 		{
@@ -378,7 +378,7 @@ const std::string& Menu::_inner_next_sel_key
 		return some_sel_key;
 	}
 }
-void Menu::tick(const KeyStatus& key_status)
+void Menu::tick(const EngineKeyStatus& key_status)
 {
 	set_sel_key(next_sel_key(key_status));
 
@@ -396,7 +396,7 @@ void Menu::tick(const KeyStatus& key_status)
 			exit(1);
 		}
 
-		if (key_status.key_went_down_just_now(KeyStatus::DownR))
+		if (key_status.key_went_down_just_now(KeyKind::DownR))
 		{
 			std::get<Node::DataActionFunc>(sel_node.data)();
 
@@ -416,7 +416,7 @@ void Menu::tick(const KeyStatus& key_status)
 			exit(1);
 		}
 
-		if (key_status.key_went_down_just_now(KeyStatus::DownR))
+		if (key_status.key_went_down_just_now(KeyKind::DownR))
 		{
 			auto& data = std::get<bool>(sel_node.data);
 			data = !data;
@@ -437,8 +437,8 @@ void Menu::tick(const KeyStatus& key_status)
 			exit(1);
 		}
 
-		if (key_status.key_went_down_just_now(KeyStatus::LeftL)
-			&& (!key_status.at(KeyStatus::RightL)()))
+		if (key_status.key_went_down_just_now(KeyKind::LeftL)
+			&& (!key_status.at(KeyKind::RightL)()))
 		{
 			auto& value = std::get<Node::DataValue>(sel_node.data);
 			const int temp_value = value() - 1;
@@ -453,8 +453,8 @@ void Menu::tick(const KeyStatus& key_status)
 				sel_node.on_update_func(&sel_node);
 			}
 		}
-		else if (key_status.key_went_down_just_now(KeyStatus::RightL)
-			&& (!key_status.at(KeyStatus::LeftL)()))
+		else if (key_status.key_went_down_just_now(KeyKind::RightL)
+			&& (!key_status.at(KeyKind::LeftL)()))
 		{
 			auto& value = std::get<Node::DataValue>(sel_node.data);
 			const int temp_value = value() + 1;

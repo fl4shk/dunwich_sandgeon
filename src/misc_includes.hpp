@@ -34,6 +34,7 @@
 #include "liborangepower_src/containers/prev_curr_pair_classes.hpp"
 #include "liborangepower_src/json_stuff/json_stuff.hpp"
 #include "liborangepower_src/game_stuff/ecs_classes.hpp"
+#include "liborangepower_src/game_stuff/engine_key_status_class.hpp"
 #include "liborangepower_src/metaprog_defines.hpp"
 
 #include "liborangepower_src/sdl2/sdl.hpp"
@@ -54,6 +55,7 @@ using namespace liborangepower::containers;
 using namespace liborangepower::json;
 namespace sdl = liborangepower::sdl;
 using sdl::KeycModPair, sdl::KeyStatus;
+using liborangepower::game::EngineKeyStatus;
 namespace ecs = liborangepower::game::ecs;
 
 #include <cstdio>

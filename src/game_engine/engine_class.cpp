@@ -37,34 +37,34 @@ namespace dungwich_sandeon
 namespace game_engine
 {
 //--------
-KeyStatus::KeyStatus()
-{
-	auto init_state = [&](KeyKind key_kind) -> void
-	{
-		state_map[key_kind] = PrevCurrPair<bool>();
-		state_map.at(key_kind)() = false;
-		state_map.at(key_kind).back_up();
-	};
-
-	init_state(LeftL);
-	init_state(UpL);
-	init_state(RightL);
-	init_state(DownL);
-
-	init_state(LeftR);
-	init_state(UpR);
-	init_state(RightR);
-	init_state(DownR);
-
-	init_state(ShoulderL);
-	init_state(ShoulderR);
-
-	init_state(Start);
-	init_state(Select);
-}
-KeyStatus::~KeyStatus()
-{
-}
+//KeyStatus::KeyStatus()
+//{
+//	auto init_state = [&](KeyKind key_kind) -> void
+//	{
+//		state_map[key_kind] = PrevCurrPair<bool>();
+//		state_map.at(key_kind)() = false;
+//		state_map.at(key_kind).back_up();
+//	};
+//
+//	init_state(LeftL);
+//	init_state(UpL);
+//	init_state(RightL);
+//	init_state(DownL);
+//
+//	init_state(LeftR);
+//	init_state(UpR);
+//	init_state(RightR);
+//	init_state(DownR);
+//
+//	init_state(ShoulderL);
+//	init_state(ShoulderR);
+//
+//	init_state(Start);
+//	init_state(Select);
+//}
+//KeyStatus::~KeyStatus()
+//{
+//}
 //--------
 const std::string Engine::SAVE_FILE_NAME("save_file.json");
 //--------
@@ -87,6 +87,7 @@ Engine::NonEcsSerData::NonEcsSerData()
 }
 Engine::NonEcsSerData::NonEcsSerData(const Json::Value& jv)
 {
+	MEMB_LIST_ENGINE_NON_ECS_SER_DATA(MEMB_DESERIALIZE);
 }
 
 Engine::NonEcsSerData::~NonEcsSerData()
@@ -97,6 +98,8 @@ Engine::NonEcsSerData::operator Json::Value () const
 {
 	Json::Value ret;
 
+	MEMB_LIST_ENGINE_NON_ECS_SER_DATA(MEMB_SERIALIZE);
+
 	return ret;
 }
 //--------
@@ -104,6 +107,7 @@ Engine::Engine()
 	: ecs_engine(NUM_FILES),
 
 	_non_ecs_ser_data_vec(NUM_FILES, NonEcsSerData()),
+	key_status(static_cast<size_t>(KeyKind::Lim)),
 
 	//screen_window(this, PosVec2(), WITH_BORDER_SCREEN_SIZE_2D,
 	//	USE_CURR_FILE_NUM),
@@ -205,10 +209,10 @@ Engine::Engine()
 	//printout("Engine::Engine()\n");
 	//dbg_check_ecs_engine();
 }
-Engine::Engine(const Json::Value& jv)
-{
-	MEMB_LIST_ENGINE(MEMB_DESERIALIZE);
-}
+//Engine::Engine(const Json::Value& jv)
+//{
+//	MEMB_LIST_ENGINE(MEMB_DESERIALIZE);
+//}
 Engine::~Engine()
 {
 }
@@ -227,9 +231,13 @@ Engine::operator Json::Value () const
 {
 	Json::Value ret;
 
-	MEMB_LIST_ENGINE(MEMB_SERIALIZE);
+	MEMB_SERIALIZE(ecs_engine);
+	MEMB_AUTOSER_LIST_ENGINE(MEMB_SERIALIZE);
 
 	return ret;
+}
+void Engine::deserialize(const Json::Value& jv)
+{
 }
 
 //void Engine::dbg_check_ecs_engine(const PosVec2& wb_pos)
@@ -321,7 +329,7 @@ void Engine::save_and_quit()
 {
 	printout("game_engine::Engine::save_and_quit(): testificate\n");
 
-	_save_file();
+	_save_to_json();
 	exit(0);
 }
 void Engine::save_and_return_to_title()
@@ -329,24 +337,22 @@ void Engine::save_and_return_to_title()
 	printout("game_engine::Engine::save_and_return_to_title(): ",
 		"testificate\n");
 
-	_save_file();
+	_save_to_json();
 	set_game_mode(GameMode::TitleScreen);
 }
 
-void Engine::load_file()
+void Engine::_load_from_json()
 {
 }
 void Engine::copy_file()
 {
 	printout("game_engine::Engine::copy_file(): testificate\n");
-
-	Json::Value root;
 }
 void Engine::erase_file()
 {
 	printout("game_engine::Engine::erase_file(): testificate\n");
 }
-void Engine::_save_file()
+void Engine::_save_to_json()
 {
 	printout("game_engine::Engine::_save_file(): testificate\n");
 }
