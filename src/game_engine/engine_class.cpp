@@ -37,35 +37,6 @@ namespace dungwich_sandeon
 namespace game_engine
 {
 //--------
-//KeyStatus::KeyStatus()
-//{
-//	auto init_state = [&](KeyKind key_kind) -> void
-//	{
-//		state_map[key_kind] = PrevCurrPair<bool>();
-//		state_map.at(key_kind)() = false;
-//		state_map.at(key_kind).back_up();
-//	};
-//
-//	init_state(LeftL);
-//	init_state(UpL);
-//	init_state(RightL);
-//	init_state(DownL);
-//
-//	init_state(LeftR);
-//	init_state(UpR);
-//	init_state(RightR);
-//	init_state(DownR);
-//
-//	init_state(ShoulderL);
-//	init_state(ShoulderR);
-//
-//	init_state(Start);
-//	init_state(Select);
-//}
-//KeyStatus::~KeyStatus()
-//{
-//}
-//--------
 const std::string Engine::SAVE_FILE_NAME("save_file.json");
 //--------
 auto Engine::NonEcsSerData::_gen_blank_pfield_ent_id_v3d()

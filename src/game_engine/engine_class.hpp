@@ -53,68 +53,6 @@ enum class KeyKind: int
 
 	Lim,
 };
-//class KeyStatus final
-//{
-//public:		// types
-//public:		// variables
-//	std::map<KeyKind, PrevCurrPair<bool>> state_map;
-//public:		// functions
-//	KeyStatus();
-//	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(KeyStatus);
-//	~KeyStatus();
-//
-//	inline PrevCurrPair<bool>& at(KeyKind key_kind)
-//	{
-//		return state_map.at(key_kind);
-//	}
-//	inline const PrevCurrPair<bool>& at(KeyKind key_kind) const
-//	{
-//		return state_map.at(key_kind);
-//	}
-//
-//	inline bool key_went_up_just_now(KeyKind key_kind) const
-//	{
-//		return (at(key_kind).prev() && (!at(key_kind)()));
-//	}
-//	inline bool key_went_down_just_now(KeyKind key_kind) const
-//	{
-//		return ((!at(key_kind).prev()) && at(key_kind)());
-//	}
-//
-//	inline bool any_key_went_up_just_now() const
-//	{
-//		for (const auto& item: state_map)
-//		{
-//			if (item.second.prev() && (!item.second()))
-//			{
-//				return true;
-//			}
-//		}
-//		return false;
-//	}
-//	inline bool any_key_went_down_just_now() const
-//	{
-//		for (const auto& item: state_map)
-//		{
-//			if ((!item.second.prev()) && item.second())
-//			{
-//				return true;
-//			}
-//		}
-//		return false;
-//	}
-//	inline bool has_changed() const
-//	{
-//		for (const auto& item: state_map)
-//		{
-//			if (item.second.has_changed())
-//			{
-//				return true;
-//			}
-//		}
-//		return false;
-//	}
-//}; 
 //--------
 #define LIST_OF_GAME_MODES(X) \
 	/* X(AuxStartup) */ \

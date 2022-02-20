@@ -20,6 +20,24 @@
 
 int main(int argc, char* argv[])
 {
+	////static_assert(is_specialization<std::array<int, 5>, std::array>());
+	//static_assert(is_std_array<std::array<std::array<int, 5>, 3>>());
+	//static_assert(is_std_array<std::array<int, 5>>());
+	//static_assert(!is_std_array<std::vector<int>>());
+	////static_assert(is_std_vector<std::vector<int>>());
+	////static_assert(is_std_vector<int>());
+	//static_assert(!is_std_vector<int>());
+
+	////static_assert(is_std_vector<int, std::allocator<int>>());
+	//static_assert(!is_std_vector<int>());
+
+	//static_assert(is_std_vector<std::vector<int>>());
+	////static_assert(!is_std_vector<std::vector<int>>());
+
+	//static_assert(is_std_vector<std::vector<int, std::allocator<int>>>());
+	////static_assert(!is_std_vector<std::vector<int, std::allocator<int>,
+	////	std::allocator<int>>());
+
 	//printout("main()");
 	//dungwich_sandeon::game_engine::engine->dbg_check_ecs_engine();
 	return dungwich_sandeon::io::RealMainSdl().run();
