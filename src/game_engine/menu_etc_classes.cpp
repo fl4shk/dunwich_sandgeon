@@ -26,13 +26,13 @@ namespace game_engine
 //--------
 RopePart::RopePart(const Json::Value& jv)
 {
-	MEMB_LIST_ROPE_PART(MEMB_DESERIALIZE);
+	MEMB_LIST_ROPE_PART(JSON_MEMB_DESERIALIZE);
 }
 RopePart::operator Json::Value () const
 {
 	Json::Value ret;
 
-	MEMB_LIST_ROPE_PART(MEMB_SERIALIZE);
+	MEMB_LIST_ROPE_PART(JSON_MEMB_SERIALIZE);
 
 	return ret;
 }
@@ -188,14 +188,14 @@ MsgLog::MsgLog(const RopeDeque& s_data, uint s_internal_height,
 }
 MsgLog::MsgLog(const Json::Value& jv)
 {
-	MEMB_LIST_MSG_LOG(MEMB_DESERIALIZE);
+	MEMB_LIST_MSG_LOG(JSON_MEMB_DESERIALIZE);
 }
 
 MsgLog::operator Json::Value () const
 {
 	Json::Value ret;
 
-	MEMB_LIST_MSG_LOG(MEMB_SERIALIZE);
+	MEMB_LIST_MSG_LOG(JSON_MEMB_SERIALIZE);
 
 	return ret;
 }
@@ -489,15 +489,15 @@ Menu::operator MsgLog() const
 	//	"\"", WIDGET_SELECTED_STR, "\"", "\n");
 
 	for (const std::string* key=&at(Menu::START_NODE_KEY).down;
-		(*key)!=Menu::END_NODE_KEY;
+		*key!=Menu::END_NODE_KEY;
 		key=&at(*key).down)
 	{
 		const FgBgColorPair COLOR_PAIR
-			= ((*key) != _sel_key)
+			= (*key != _sel_key)
 			? WIDGET_UNSELECTED_COLOR_PAIR
 			: WIDGET_SELECTED_COLOR_PAIR;
 		const std::string CURR_WIDGET_SELECTED_STR
-			= ((*key) != _sel_key)
+			= (*key != _sel_key)
 			? MsgLog::WIDGET_SELECTED_SPACING_STR
 			: WIDGET_SELECTED_STR;
 		const auto& NODE = at(*key);

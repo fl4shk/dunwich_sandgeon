@@ -58,7 +58,7 @@ Engine::NonEcsSerData::NonEcsSerData()
 }
 Engine::NonEcsSerData::NonEcsSerData(const Json::Value& jv)
 {
-	MEMB_LIST_ENGINE_NON_ECS_SER_DATA(MEMB_DESERIALIZE);
+	MEMB_LIST_ENGINE_NON_ECS_SER_DATA(JSON_MEMB_DESERIALIZE);
 }
 
 Engine::NonEcsSerData::~NonEcsSerData()
@@ -69,7 +69,7 @@ Engine::NonEcsSerData::operator Json::Value () const
 {
 	Json::Value ret;
 
-	MEMB_LIST_ENGINE_NON_ECS_SER_DATA(MEMB_SERIALIZE);
+	MEMB_LIST_ENGINE_NON_ECS_SER_DATA(JSON_MEMB_SERIALIZE);
 
 	return ret;
 }
@@ -182,7 +182,7 @@ Engine::Engine()
 }
 //Engine::Engine(const Json::Value& jv)
 //{
-//	MEMB_LIST_ENGINE(MEMB_DESERIALIZE);
+//	MEMB_LIST_ENGINE(JSON_MEMB_DESERIALIZE);
 //}
 Engine::~Engine()
 {
@@ -194,7 +194,7 @@ Engine::~Engine()
 //
 //	ret.ecs_engine.deserialize(jv["ecs_engine"]);
 //
-//	MEMB_DESERIALIZE
+//	JSON_MEMB_DESERIALIZE
 //
 //	return ret;
 //}
@@ -202,13 +202,16 @@ Engine::operator Json::Value () const
 {
 	Json::Value ret;
 
-	MEMB_SERIALIZE(ecs_engine);
-	MEMB_AUTOSER_LIST_ENGINE(MEMB_SERIALIZE);
+	//JSON_MEMB_SERIALIZE(ecs_engine);
+	MEMB_LIST_ENGINE(JSON_MEMB_SERIALIZE);
 
 	return ret;
 }
 void Engine::deserialize(const Json::Value& jv)
 {
+	//JSON_MEMB_DESERIALIZE(ecs_engine);
+	//ecs_engine.deserialize(jv["ecs_engine"]);
+	MEMB_LIST_ENGINE(JSON_MEMB_DESERIALIZE);
 }
 
 //void Engine::dbg_check_ecs_engine(const PosVec2& wb_pos)
@@ -251,13 +254,11 @@ void Engine::tick()
 	//	screen_window().draw(yes_no_window());
 	//}
 }
-
-void Engine::create_save_file_if_needed()
+//--------
+void Engine::_create_save_file_if_needed()
 {
-	printout("game_engine::Engine::create_save_file_if_needed(): ",
+	printout("game_engine::Engine::_create_save_file_if_needed(): ",
 		"testificate\n");
-
-	bool perf_create = false;
 
 	if (auto file=std::fstream(SAVE_FILE_NAME, std::ios_base::in);
 		file.is_open())
@@ -268,12 +269,12 @@ void Engine::create_save_file_if_needed()
 		// If the on-computer JSON file has not been created yet
 		if (file.peek() == decltype(file)::traits_type::eof())
 		{
-			perf_create = true;
+			Engine()._save_to_json();
 		}
 		// Else if there's not a valid JSON file
 		else if (!parse_json(file, &root, &errs))
 		{
-			printerr("game_engine::Engine::create_save_file_if_needed(): ",
+			printerr("game_engine::Engine::_create_save_file_if_needed(): ",
 				"JSON parsing error: ", errs);
 			exit(1);
 		}
@@ -284,16 +285,19 @@ void Engine::create_save_file_if_needed()
 	}
 	else
 	{
-		printerr("game_engine::Engine::create_save_file_if_needed(): ",
+		printerr("game_engine::Engine::_create_save_file_if_needed(): ",
 			"Error opening file called \"", SAVE_FILE_NAME, "\" for ",
 			"reading.\n");
 		exit(1);
 	}
+}
 
-	if (perf_create)
-	{
-		//Json::Value root = Engine();
-	}
+void Engine::_load_from_json()
+{
+}
+void Engine::_save_to_json()
+{
+	printout("game_engine::Engine::_save_file(): testificate\n");
 }
 
 void Engine::save_and_quit()
@@ -312,9 +316,6 @@ void Engine::save_and_return_to_title()
 	set_game_mode(GameMode::TitleScreen);
 }
 
-void Engine::_load_from_json()
-{
-}
 void Engine::copy_file()
 {
 	printout("game_engine::Engine::copy_file(): testificate\n");
@@ -322,10 +323,6 @@ void Engine::copy_file()
 void Engine::erase_file()
 {
 	printout("game_engine::Engine::erase_file(): testificate\n");
-}
-void Engine::_save_to_json()
-{
-	printout("game_engine::Engine::_save_file(): testificate\n");
 }
 void Engine::_inner_draw_menu_w_pre_clear(Window& window, Menu& menu,
 	int file_num)

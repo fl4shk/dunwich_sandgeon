@@ -106,10 +106,10 @@ public:		// types
 	{
 	public:		// variables
 		#define MEMB_LIST_ENGINE_NON_ECS_SER_DATA(X) \
-			X(log_msg_log) \
-			X(hud_msg_log) \
-			X(floor) \
-			X(pfield_ent_id_v3d)
+			X(log_msg_log, 0) \
+			X(hud_msg_log, 0) \
+			X(floor, 0) \
+			X(pfield_ent_id_v3d, 0)
 
 		MsgLog
 			log_msg_log,
@@ -137,9 +137,10 @@ public:		// types
 public:		// serialized variables
 	ecs::Engine ecs_engine;
 
-	#define MEMB_AUTOSER_LIST_ENGINE(X) \
-		X(game_options) \
-		X(_non_ecs_ser_data_vec) \
+	#define MEMB_LIST_ENGINE(X) \
+		X(ecs_engine, 1) \
+		X(game_options, 0) \
+		X(_non_ecs_ser_data_vec, 0) \
 
 	GameOptions game_options;
 private:		// serialized variables
@@ -224,10 +225,8 @@ private:		// variables
 	//u64 _tick_counter = 0;
 public:		// functions
 	Engine();
-	//Engine(const Json::Value& jv);
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Engine);
 	~Engine();
-	//void deserialize(const Json::Value& jv);
 	operator Json::Value () const;
 
 	void deserialize(const Json::Value& jv);
@@ -239,18 +238,17 @@ public:		// functions
 	//	ecs_engine.tick();
 	//}
 	void tick();
-
-	void create_save_file_if_needed();
-
+private:		// functions
+	void _create_save_file_if_needed();
+	void _load_from_json();
+	void _save_to_json();
+public:		// functions
 	void save_and_quit();
 	void save_and_return_to_title();
 
 	void copy_file();
 	void erase_file();
 private:		// functions
-	void _load_from_json();
-	void _save_to_json();
-
 	void _inner_draw_menu_w_pre_clear(Window& window, Menu& menu,
 		int file_num);
 public:		// functions

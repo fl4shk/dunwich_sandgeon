@@ -27,7 +27,7 @@ namespace comp
 const std::string Player::KIND_STR("Player");
 Player::Player(const Json::Value& jv)
 {
-	MEMB_LIST_COMP_PLAYER(MEMB_DESERIALIZE);
+	MEMB_LIST_COMP_PLAYER(JSON_MEMB_DESERIALIZE);
 }
 std::string Player::kind_str() const
 {
@@ -37,7 +37,7 @@ Player::operator Json::Value () const
 {
 	Json::Value ret;
 
-	MEMB_LIST_COMP_PLAYER(MEMB_SERIALIZE);
+	MEMB_LIST_COMP_PLAYER(JSON_MEMB_SERIALIZE);
 
 	return ret;
 }

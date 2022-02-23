@@ -29,7 +29,7 @@ Drawable::Data::operator Json::Value () const
 {
 	Json::Value ret;
 
-	MEMB_LIST_COMP_DRAWABLE_DATA(MEMB_SERIALIZE);
+	MEMB_LIST_COMP_DRAWABLE_DATA(JSON_MEMB_SERIALIZE);
 
 	return ret;
 }
@@ -37,7 +37,7 @@ Drawable::Data::operator Json::Value () const
 const std::string Drawable::KIND_STR("Drawable");
 Drawable::Drawable(const Json::Value& jv)
 {
-	MEMB_LIST_COMP_DRAWABLE(MEMB_DESERIALIZE);
+	MEMB_LIST_COMP_DRAWABLE(JSON_MEMB_DESERIALIZE);
 }
 std::string Drawable::kind_str() const
 {
@@ -47,7 +47,7 @@ Drawable::operator Json::Value () const
 {
 	Json::Value ret;
 
-	MEMB_LIST_COMP_DRAWABLE(MEMB_SERIALIZE);
+	MEMB_LIST_COMP_DRAWABLE(JSON_MEMB_SERIALIZE);
 
 	return ret;
 }
@@ -61,7 +61,7 @@ Position::Position(ecs::EntId s_ent_id, const PosVec3& s_pos,
 }
 Position::Position(const Json::Value& jv)
 {
-	MEMB_AUTOSER_LIST_COMP_POSITION(MEMB_DESERIALIZE);
+	MEMB_AUTOSER_LIST_COMP_POSITION(JSON_MEMB_DESERIALIZE);
 	priority = static_cast<PlayfieldLayerPrio>
 		(get_jv_memb<uint>(jv, "priority"));
 
@@ -83,7 +83,7 @@ Position::operator Json::Value () const
 {
 	Json::Value ret;
 
-	MEMB_AUTOSER_LIST_COMP_POSITION(MEMB_SERIALIZE);
+	MEMB_AUTOSER_LIST_COMP_POSITION(JSON_MEMB_SERIALIZE);
 	ret["priority"] = static_cast<uint>(priority);
 
 	return ret;
@@ -110,7 +110,7 @@ Position::operator Json::Value () const
 const std::string BaseStats::KIND_STR("BaseStats");
 BaseStats::BaseStats(const Json::Value& jv)
 {
-	MEMB_LIST_COMP_BASE_STATS(MEMB_DESERIALIZE);
+	MEMB_LIST_COMP_BASE_STATS(JSON_MEMB_DESERIALIZE);
 }
 std::string BaseStats::kind_str() const
 {
@@ -120,7 +120,7 @@ BaseStats::operator Json::Value () const
 {
 	Json::Value ret;
 
-	MEMB_LIST_COMP_BASE_STATS(MEMB_SERIALIZE);
+	MEMB_LIST_COMP_BASE_STATS(JSON_MEMB_SERIALIZE);
 
 	return ret;
 }

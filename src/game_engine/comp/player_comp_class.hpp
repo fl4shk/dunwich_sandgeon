@@ -47,10 +47,10 @@ public:		// constants
 		DEFAULT_WEIGHT = 0;
 public:		// variables
 	#define MEMB_LIST_COMP_PLAYER(X) \
-		X(level) \
-		X(exp) \
-		X(hunger) \
-		X(weight)
+		X(level, 0) \
+		X(exp, 0) \
+		X(hunger, 0) \
+		X(weight, 0)
 	uint
 		level = DEFAULT_LEVEL,
 		exp = DEFAULT_EXP,

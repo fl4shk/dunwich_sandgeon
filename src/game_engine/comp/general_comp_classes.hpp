@@ -44,9 +44,9 @@ public:		// types
 	{
 	public:		// variables
 		#define MEMB_LIST_COMP_DRAWABLE_DATA(X) \
-			X(c) \
-			X(color_pair) \
-			X(gs_color_pair)
+			X(c, 0) \
+			X(color_pair, 0) \
+			X(gs_color_pair, 0)
 		int c = ' ';
 		FgBgColorPair
 			color_pair = FontColor::White,
@@ -58,7 +58,7 @@ public:		// types
 		{
 			Data ret;
 
-			MEMB_LIST_COMP_DRAWABLE_DATA(MEMB_FROM_JV_DESERIALIZE);
+			MEMB_LIST_COMP_DRAWABLE_DATA(JSON_MEMB_FROM_JV_DESERIALIZE);
 
 			return ret;
 		}
@@ -77,10 +77,10 @@ public:		// types
 	};
 private:		// variables
 	#define MEMB_LIST_COMP_DRAWABLE(X) \
-		X(_data) \
-		X(_non_blink_color_pair) \
-		X(_non_blink_gs_color_pair) \
-		X(_in_blink)
+		X(_data, 0) \
+		X(_non_blink_color_pair, 0) \
+		X(_non_blink_gs_color_pair, 0) \
+		X(_in_blink, 0)
 	Data _data;
 	FgBgColorPair
 		_non_blink_color_pair = FontColor::White,
@@ -139,8 +139,8 @@ public:		// constants
 	static const std::string KIND_STR;
 private:		// variables
 	#define MEMB_AUTOSER_LIST_COMP_POSITION(X) \
-		X(_ent_id) \
-		X(_pos)
+		X(_ent_id, 0) \
+		X(_pos, 0)
 	ecs::EntId _ent_id = ecs::ENT_NULL_ID;
 	PosVec3 _pos;
 public:		// variables
@@ -195,11 +195,11 @@ public:		// constants
 		DEFAULT_MAG_DEF = 0;
 public:		// variables
 	#define MEMB_LIST_COMP_BASE_STATS(X) \
-		X(hp) \
-		X(atk) \
-		X(def) \
-		X(mag_atk) \
-		X(mag_def)
+		X(hp, 0) \
+		X(atk, 0) \
+		X(def, 0) \
+		X(mag_atk, 0) \
+		X(mag_def, 0)
 	uint
 		hp = DEFAULT_HP,
 		atk = DEFAULT_ATK,
