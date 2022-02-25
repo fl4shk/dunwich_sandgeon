@@ -1,19 +1,19 @@
-// This file is part of Dungwich Sandeon.
+// This file is part of Dunwich Sandgeon.
 // 
 // Copyright 2022 FL4SHK
 //
-// Dungwich Sandeon is free software: you can redistribute it and/or modify
+// Dunwich Sandgeon is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by the
 // Free Software Foundation, either version 3 of the License, or (at your
 // option) any later version.
 // 
-// Dungwich Sandeon is distributed in the hope that it will be useful, but
+// Dunwich Sandgeon is distributed in the hope that it will be useful, but
 // WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 // General Public License for more details.
 // 
 // You should have received a copy of the GNU General Public License along
-// with Dungwich Sandeon.  If not, see <https://www.gnu.org/licenses/>.
+// with Dunwich Sandgeon.  If not, see <https://www.gnu.org/licenses/>.
 
 #ifndef src_game_engine_menu_etc_classes_hpp
 #define src_game_engine_menu_etc_classes_hpp
@@ -25,7 +25,7 @@
 #include "window_size_2d_constants.hpp"
 #include "comp/general_comp_classes.hpp"
 
-namespace dungwich_sandeon
+namespace <dunwich_sandgeon>
 {
 namespace game_engine
 {
@@ -315,9 +315,8 @@ public:		// types
 		Node();
 
 		// This constructor takes an `std::monostate` for `s_data`
-		template<typename SomeDataVariant>
 		inline Node(const std::string& s_text, Kind s_kind,
-			const SomeDataVariant& s_data, int s_variable,
+			const auto& s_data, int s_variable,
 			const OnUpdateFunc& s_on_update_func,
 			const std::string& s_up, const std::string& s_down)
 		: text(s_text),
@@ -343,20 +342,21 @@ public:		// types
 	};
 
 	template<typename SelfType>
-	class ActionButtonFunctor final
+	class ActionButtonFuncobj final
 	{
+	public:		// types
+		using Func = std::function<void(SelfType*)>;
 	private:		// variables
 		SelfType* _self = nullptr;
-		std::function<void(SelfType*)> _func = nullptr;
+		Func _func = nullptr;
 	public:		// functions
-		ActionButtonFunctor() = default;
-		inline ActionButtonFunctor(SelfType* s_self,
-			const std::function<void(SelfType*)>& s_func)
+		ActionButtonFuncobj() = default;
+		inline ActionButtonFuncobj(SelfType* s_self, const Func& s_func)
 			: _self(s_self), _func(s_func)
 		{
 		}
-		GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(ActionButtonFunctor);
-		~ActionButtonFunctor() = default;
+		GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(ActionButtonFuncobj);
+		~ActionButtonFuncobj() = default;
 
 		inline void operator () () const
 		{
@@ -364,20 +364,20 @@ public:		// types
 		}
 	};
 	//template<typename SelfType>
-	//class ActionButtonParamFunctor final
+	//class ActionButtonParamFuncobj final
 	//{
 	//protected:		// variables
 	//	SelfType* _self = nullptr;
 	//	std::function<void(SelfType*, int)> _func = nullptr;
 	//public:		// functions
-	//	inline ActionButtonParamFunctor() = default;
-	//	inline ActionButtonParamFunctor(SelfType* s_self,
+	//	inline ActionButtonParamFuncobj() = default;
+	//	inline ActionButtonParamFuncobj(SelfType* s_self,
 	//		const std::function<void(SelfType*, int)>& s_func)
 	//		: _self(s_self), _func(s_func)
 	//	{
 	//	}
-	//	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(ActionButtonParamFunctor);
-	//	inline ~ActionButtonParamFunctor() = default;
+	//	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(ActionButtonParamFuncobj);
+	//	inline ~ActionButtonParamFuncobj() = default;
 
 	//	inline void operator () (int param) const
 	//	{
@@ -385,20 +385,22 @@ public:		// types
 	//	}
 	//};
 	template<typename SelfType>
-	class OnUpdateFunctor final
+	class OnUpdateFuncobj final
 	{
+	public:		// types
+		using Func = std::function<void(SelfType*, Node*)>;
 	private:		// variables
 		SelfType* _self = nullptr;
-		std::function<void(SelfType*, Node*)> _on_update_func = nullptr;
+		Func _on_update_func = nullptr;
 	public:		// functions
-		OnUpdateFunctor() = default;
-		inline OnUpdateFunctor(SelfType* s_self,
-			const std::function<void(SelfType*, Node*)> s_on_update_func)
+		OnUpdateFuncobj() = default;
+		inline OnUpdateFuncobj(SelfType* s_self,
+			const Func& s_on_update_func)
 			: _self(s_self), _on_update_func(s_on_update_func)
 		{
 		}
-		GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(OnUpdateFunctor);
-		~OnUpdateFunctor() = default;
+		GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(OnUpdateFuncobj);
+		~OnUpdateFuncobj() = default;
 
 		inline void operator () (Node* node) const
 		{
@@ -507,7 +509,7 @@ public:		// static builder functions
 			{
 				.text=s_text,
 				.kind=Node::Kind::ActionButton,
-				.data=ActionButtonFunctor<SelfType>(self, button_func),
+				.data=ActionButtonFuncobj<SelfType>(self, button_func),
 				.variable=0x0,
 				.on_update_func=nullptr,
 			}
@@ -527,7 +529,7 @@ public:		// static builder functions
 				.kind=Node::Kind::CheckButton,
 				.data=s_data,
 				.variable=0x0,
-				.on_update_func=OnUpdateFunctor<SelfType>(self,
+				.on_update_func=OnUpdateFuncobj<SelfType>(self,
 					s_on_update_func),
 			}
 		};
@@ -546,7 +548,7 @@ public:		// static builder functions
 				.kind=Node::Kind::HorizPicker,
 				.data=Node::DataValue(),
 				.variable=s_variable,
-				.on_update_func=OnUpdateFunctor<SelfType>(self,
+				.on_update_func=OnUpdateFuncobj<SelfType>(self,
 					s_on_update_func),
 			}
 		};
@@ -561,6 +563,6 @@ public:		// static builder functions
 //};
 
 } // namespace game_engine
-} // namespace dungwich_sandeon
+} // namespace <dunwich_sandgeon>
 
 #endif		// src_game_engine_menu_etc_classes_hpp

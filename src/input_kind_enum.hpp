@@ -1,19 +1,19 @@
-// This file is part of Dungwich Sandeon.
+// This file is part of Dunwich Sandgeon.
 // 
 // Copyright 2022 FL4SHK
 //
-// Dungwich Sandeon is free software: you can redistribute it and/or modify
+// Dunwich Sandgeon is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by the
 // Free Software Foundation, either version 3 of the License, or (at your
 // option) any later version.
 // 
-// Dungwich Sandeon is distributed in the hope that it will be useful, but
+// Dunwich Sandgeon is distributed in the hope that it will be useful, but
 // WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 // General Public License for more details.
 // 
 // You should have received a copy of the GNU General Public License along
-// with Dungwich Sandeon.  If not, see <https://www.gnu.org/licenses/>.
+// with Dunwich Sandgeon.  If not, see <https://www.gnu.org/licenses/>.
 
 #ifndef src_input_kind_enum_hpp
 #define src_input_kind_enum_hpp
@@ -22,7 +22,7 @@
 
 #include "misc_includes.hpp"
 
-namespace dungwich_sandeon
+namespace <dunwich_sandgeon>
 {
 
 enum class InputKind: u32
@@ -64,6 +64,6 @@ inline InputKind input_kind_add(InputKind input_kind, u32 amount)
 
 extern const std::map<InputKind, std::string> INPUT_KIND_TO_STR_MAP;
 
-} // namespace dungwich_sandeon
+} // namespace <dunwich_sandgeon>
 
 #endif		// src_input_kind_enum_hpp
