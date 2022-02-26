@@ -18,7 +18,7 @@
 #include "gm_dungeon_gen_class.hpp"
 #include "../engine_class.hpp"
 
-namespace <dunwich_sandgeon>
+namespace dunwich_sandgeon
 {
 namespace game_engine
 {
@@ -51,4 +51,4 @@ void GmDungeonGen::tick(ecs::Engine* ecs_engine)
 
 } // namespace sys
 } // namespace game_engine
-} // namespace <dunwich_sandgeon>
+} // namespace dunwich_sandgeon

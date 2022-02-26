@@ -19,7 +19,7 @@
 #include "engine_class.hpp"
 #include <cctype>
 
-namespace <dunwich_sandgeon>
+namespace dunwich_sandgeon
 {
 namespace game_engine
 {
@@ -349,8 +349,8 @@ const std::string& Menu::_inner_next_sel_key
 		}
 	};
 
-	if (key_status.key_went_down_just_now(KeyKind::UpL)
-		&& (!key_status.at(KeyKind::DownL)()))
+	if (key_status.key_just_went_down(KeyKind::UpL)
+		&& key_status.key_up_now(KeyKind::DownL))
 	{
 		if (curr_node.up == Menu::START_NODE_KEY)
 		{
@@ -361,8 +361,8 @@ const std::string& Menu::_inner_next_sel_key
 			return temp_func(curr_node.up);
 		}
 	}
-	else if (key_status.key_went_down_just_now(KeyKind::DownL)
-		&& (!key_status.at(KeyKind::UpL)()))
+	else if (key_status.key_just_went_down(KeyKind::DownL)
+		&& key_status.key_up_now(KeyKind::UpL))
 	{
 		if (curr_node.down == Menu::END_NODE_KEY)
 		{
@@ -396,7 +396,7 @@ void Menu::tick(const EngineKeyStatus& key_status)
 			exit(1);
 		}
 
-		if (key_status.key_went_down_just_now(KeyKind::DownR))
+		if (key_status.key_just_went_down(KeyKind::DownR))
 		{
 			std::get<Node::DataActionFunc>(sel_node.data)();
 
@@ -416,7 +416,7 @@ void Menu::tick(const EngineKeyStatus& key_status)
 			exit(1);
 		}
 
-		if (key_status.key_went_down_just_now(KeyKind::DownR))
+		if (key_status.key_just_went_down(KeyKind::DownR))
 		{
 			auto& data = std::get<bool>(sel_node.data);
 			data = !data;
@@ -437,8 +437,8 @@ void Menu::tick(const EngineKeyStatus& key_status)
 			exit(1);
 		}
 
-		if (key_status.key_went_down_just_now(KeyKind::LeftL)
-			&& (!key_status.at(KeyKind::RightL)()))
+		if (key_status.key_just_went_down(KeyKind::LeftL)
+			&& key_status.key_up_now(KeyKind::RightL))
 		{
 			auto& value = std::get<Node::DataValue>(sel_node.data);
 			const int temp_value = value() - 1;
@@ -453,8 +453,8 @@ void Menu::tick(const EngineKeyStatus& key_status)
 				sel_node.on_update_func(&sel_node);
 			}
 		}
-		else if (key_status.key_went_down_just_now(KeyKind::RightL)
-			&& (!key_status.at(KeyKind::LeftL)()))
+		if (key_status.key_just_went_down(KeyKind::RightL)
+			&& key_status.key_up_now(KeyKind::LeftL))
 		{
 			auto& value = std::get<Node::DataValue>(sel_node.data);
 			const int temp_value = value() + 1;
@@ -765,4 +765,4 @@ auto Menu::build_node_map(const std::vector<KncPair>& vec)-> NodeMap
 }
 //--------
 } // namespace game_engine
-} // namespace <dunwich_sandgeon>
+} // namespace dunwich_sandgeon

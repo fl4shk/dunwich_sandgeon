@@ -20,7 +20,7 @@
 #include "player_comp_class.hpp"
 #include "block_comp_classes.hpp"
 
-namespace <dunwich_sandgeon>
+namespace dunwich_sandgeon
 {
 namespace game_engine
 {
@@ -129,4 +129,4 @@ const std::map<std::string, Drawable::Data> DRAWABLE_DATA_MAP
 
 } // namespace comp
 } // namespace game_engine
-} // namespace <dunwich_sandgeon>
+} // namespace dunwich_sandgeon

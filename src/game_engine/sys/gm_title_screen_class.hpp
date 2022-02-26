@@ -22,7 +22,7 @@
 
 #include "../../misc_includes.hpp"
 
-namespace <dunwich_sandgeon>
+namespace dunwich_sandgeon
 {
 namespace game_engine
 {
@@ -59,6 +59,6 @@ private:		// functions
 
 } // namespace sys
 } // namespace game_engine
-} // namespace <dunwich_sandgeon>
+} // namespace dunwich_sandgeon
 
 #endif		// src_game_engine_sys_gm_title_screen_class_hpp

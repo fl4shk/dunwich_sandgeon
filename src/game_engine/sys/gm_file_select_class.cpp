@@ -18,7 +18,7 @@
 #include "gm_file_select_class.hpp"
 #include "../engine_class.hpp"
 
-namespace <dunwich_sandgeon>
+namespace dunwich_sandgeon
 {
 namespace game_engine
 {
@@ -307,4 +307,4 @@ void GmFileSelect::_text_yes_no_menu_erase_no_func(GmFileSelect* self)
 //--------
 } // namespace sys
 } // namespace game_engine
-} // namespace <dunwich_sandgeon>
+} // namespace dunwich_sandgeon

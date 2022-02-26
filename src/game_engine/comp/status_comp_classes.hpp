@@ -22,7 +22,7 @@
 
 #include "../../misc_includes.hpp"
 
-namespace <dunwich_sandgeon>
+namespace dunwich_sandgeon
 {
 namespace game_engine
 {
@@ -155,6 +155,6 @@ public:		// functions
 
 } // namespace comp
 } // namespace game_engine
-} // namespace <dunwich_sandgeon>
+} // namespace dunwich_sandgeon
 
 #endif		// src_game_engine_comp_status_comp_classes_hpp

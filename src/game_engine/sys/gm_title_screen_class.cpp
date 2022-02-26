@@ -18,7 +18,7 @@
 #include "gm_title_screen_class.hpp"
 #include "../engine_class.hpp"
 
-namespace <dunwich_sandgeon>
+namespace dunwich_sandgeon
 {
 namespace game_engine
 {
@@ -116,4 +116,4 @@ void GmTitleScreen::_aux_menu_quit_game_func(GmTitleScreen* self)
 //--------
 } // namespace sys
 } // namespace game_engine
-} // namespace <dunwich_sandgeon>
+} // namespace dunwich_sandgeon

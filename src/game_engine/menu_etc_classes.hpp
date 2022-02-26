@@ -25,7 +25,7 @@
 #include "window_size_2d_constants.hpp"
 #include "comp/general_comp_classes.hpp"
 
-namespace <dunwich_sandgeon>
+namespace dunwich_sandgeon
 {
 namespace game_engine
 {
@@ -341,17 +341,17 @@ public:		// types
 		//--------
 	};
 
-	template<typename SelfType>
+	template<typename SelfT>
 	class ActionButtonFuncobj final
 	{
 	public:		// types
-		using Func = std::function<void(SelfType*)>;
+		using Func = std::function<void(SelfT*)>;
 	private:		// variables
-		SelfType* _self = nullptr;
+		SelfT* _self = nullptr;
 		Func _func = nullptr;
 	public:		// functions
 		ActionButtonFuncobj() = default;
-		inline ActionButtonFuncobj(SelfType* s_self, const Func& s_func)
+		inline ActionButtonFuncobj(SelfT* s_self, const Func& s_func)
 			: _self(s_self), _func(s_func)
 		{
 		}
@@ -363,16 +363,16 @@ public:		// types
 			_func(_self);
 		}
 	};
-	//template<typename SelfType>
+	//template<typename SelfT>
 	//class ActionButtonParamFuncobj final
 	//{
 	//protected:		// variables
-	//	SelfType* _self = nullptr;
-	//	std::function<void(SelfType*, int)> _func = nullptr;
+	//	SelfT* _self = nullptr;
+	//	std::function<void(SelfT*, int)> _func = nullptr;
 	//public:		// functions
 	//	inline ActionButtonParamFuncobj() = default;
-	//	inline ActionButtonParamFuncobj(SelfType* s_self,
-	//		const std::function<void(SelfType*, int)>& s_func)
+	//	inline ActionButtonParamFuncobj(SelfT* s_self,
+	//		const std::function<void(SelfT*, int)>& s_func)
 	//		: _self(s_self), _func(s_func)
 	//	{
 	//	}
@@ -384,17 +384,17 @@ public:		// types
 	//		_func(_self, param);
 	//	}
 	//};
-	template<typename SelfType>
+	template<typename SelfT>
 	class OnUpdateFuncobj final
 	{
 	public:		// types
-		using Func = std::function<void(SelfType*, Node*)>;
+		using Func = std::function<void(SelfT*, Node*)>;
 	private:		// variables
-		SelfType* _self = nullptr;
+		SelfT* _self = nullptr;
 		Func _on_update_func = nullptr;
 	public:		// functions
 		OnUpdateFuncobj() = default;
-		inline OnUpdateFuncobj(SelfType* s_self,
+		inline OnUpdateFuncobj(SelfT* s_self,
 			const Func& s_on_update_func)
 			: _self(s_self), _on_update_func(s_on_update_func)
 		{
@@ -498,10 +498,10 @@ public:		// static builder functions
 	static KncPair build_separator_knc_pair(uint i);
 	static KncPair build_spaces_knc_pair(uint i);
 
-	template<typename SelfType>
+	template<typename SelfT>
 	static inline KncPair build_action_button_knc_pair
 		(const std::string& key, const std::string& s_text,
-		SelfType* self, const std::function<void(SelfType*)>& button_func)
+		SelfT* self, const std::function<void(SelfT*)>& button_func)
 	{
 		return
 		{
@@ -509,17 +509,17 @@ public:		// static builder functions
 			{
 				.text=s_text,
 				.kind=Node::Kind::ActionButton,
-				.data=ActionButtonFuncobj<SelfType>(self, button_func),
+				.data=ActionButtonFuncobj<SelfT>(self, button_func),
 				.variable=0x0,
 				.on_update_func=nullptr,
 			}
 		};
 	}
-	template<typename SelfType>
+	template<typename SelfT>
 	static inline KncPair build_check_button_knc_pair
 		(const std::string& key, const std::string& s_text, bool s_data,
-		SelfType* self,
-		const std::function<void(SelfType*, Node*)>& s_on_update_func)
+		SelfT* self,
+		const std::function<void(SelfT*, Node*)>& s_on_update_func)
 	{
 		return
 		{
@@ -529,16 +529,16 @@ public:		// static builder functions
 				.kind=Node::Kind::CheckButton,
 				.data=s_data,
 				.variable=0x0,
-				.on_update_func=OnUpdateFuncobj<SelfType>(self,
+				.on_update_func=OnUpdateFuncobj<SelfT>(self,
 					s_on_update_func),
 			}
 		};
 	}
-	template<typename SelfType>
+	template<typename SelfT>
 	static inline KncPair build_horiz_picker_knc_pair
 		(const std::string& key, const std::string& s_text,
-		int s_variable, SelfType* self,
-		const std::function<void(SelfType*, Node*)>& s_on_update_func)
+		int s_variable, SelfT* self,
+		const std::function<void(SelfT*, Node*)>& s_on_update_func)
 	{
 		return
 		{
@@ -548,7 +548,7 @@ public:		// static builder functions
 				.kind=Node::Kind::HorizPicker,
 				.data=Node::DataValue(),
 				.variable=s_variable,
-				.on_update_func=OnUpdateFuncobj<SelfType>(self,
+				.on_update_func=OnUpdateFuncobj<SelfT>(self,
 					s_on_update_func),
 			}
 		};
@@ -563,6 +563,6 @@ public:		// static builder functions
 //};
 
 } // namespace game_engine
-} // namespace <dunwich_sandgeon>
+} // namespace dunwich_sandgeon
 
 #endif		// src_game_engine_menu_etc_classes_hpp

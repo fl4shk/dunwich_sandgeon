@@ -22,7 +22,7 @@
 
 #include "../misc_includes.hpp"
 
-namespace <dunwich_sandgeon>
+namespace dunwich_sandgeon
 {
 namespace game_engine
 {
@@ -40,6 +40,6 @@ public:		// functions
 };
 
 } // namespace game_engine
-} // namespace <dunwich_sandgeon>
+} // namespace dunwich_sandgeon
 
 #endif		// src_game_engine_ticker_base_class_hpp

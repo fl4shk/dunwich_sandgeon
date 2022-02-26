@@ -24,7 +24,7 @@
 #include "../menu_etc_classes.hpp"
 #include "../game_options_class.hpp"
 
-namespace <dunwich_sandgeon>
+namespace dunwich_sandgeon
 {
 namespace game_engine
 {
@@ -59,6 +59,6 @@ private:		// functions
 
 } // namespace sys
 } // namespace game_engine
-} // namespace <dunwich_sandgeon>
+} // namespace dunwich_sandgeon
 
 #endif		// src_game_engine_sys_gm_options_class_hpp

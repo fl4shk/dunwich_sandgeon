@@ -32,7 +32,7 @@
 #include "sys/gm_file_select_class.hpp"
 #include "sys/gm_dungeon_gen_class.hpp"
 
-namespace <dunwich_sandgeon>
+namespace dunwich_sandgeon
 {
 namespace game_engine
 {
@@ -417,4 +417,4 @@ GameMode& Engine::set_game_mode(GameMode n_game_mode)
 Engine* engine = nullptr;
 //--------
 } // namespace game_engine
-} // namespace <dunwich_sandgeon>
+} // namespace dunwich_sandgeon

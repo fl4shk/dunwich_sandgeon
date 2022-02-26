@@ -25,7 +25,7 @@
 #include "../font_color_enum.hpp"
 #include "../playfield_layer_prio_enum.hpp"
 
-namespace <dunwich_sandgeon>
+namespace dunwich_sandgeon
 {
 namespace game_engine
 {
@@ -134,7 +134,7 @@ public:		// functions
 // Which floor the entity is on is what the Z axis represents.
 class Position final: public ecs::Comp
 {
-	friend class <dunwich_sandgeon>::game_engine::Engine;
+	friend class dunwich_sandgeon::game_engine::Engine;
 public:		// constants
 	static const std::string KIND_STR;
 private:		// variables
@@ -240,6 +240,6 @@ public:		// functions
 
 } // namespace comp
 } // namespace game_engine
-} // namespace <dunwich_sandgeon>
+} // namespace dunwich_sandgeon
 
 #endif		// src_game_engine_comp_general_comp_classes_hpp

@@ -22,7 +22,7 @@
 
 #include "../misc_includes.hpp"
 
-namespace <dunwich_sandgeon>
+namespace dunwich_sandgeon
 {
 namespace game_engine
 {
@@ -35,6 +35,6 @@ enum class PlayfieldLayerPrio: uint
 };
 
 } // namespace game_engine
-} // namespace <dunwich_sandgeon>
+} // namespace dunwich_sandgeon
 
 #endif		// src_game_engine_playfield_layer_prio_enum_hpp

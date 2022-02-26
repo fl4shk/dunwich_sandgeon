@@ -18,7 +18,7 @@
 #include "window_size_2d_constants.hpp"
 #include "menu_etc_classes.hpp"
 
-namespace <dunwich_sandgeon>
+namespace dunwich_sandgeon
 {
 namespace game_engine
 {
@@ -87,4 +87,4 @@ const PosVec2
 		TEXT_YES_NO_WINDOW_POS.y + 4 + 1 + 2);
 
 } // namespace game_engine
-} // namespace <dunwich_sandgeon>
+} // namespace dunwich_sandgeon

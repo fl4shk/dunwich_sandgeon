@@ -22,10 +22,10 @@
 
 #include "misc_includes.hpp"
 
-namespace <dunwich_sandgeon>
+namespace dunwich_sandgeon
 {
 
 
-} // namespace <dunwich_sandgeon>
+} // namespace dunwich_sandgeon
 
 #endif		// src_misc_funcs_hpp

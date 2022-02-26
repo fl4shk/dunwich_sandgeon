@@ -17,7 +17,7 @@
 
 #include "text_handler_sdl_class.hpp"
 
-namespace <dunwich_sandgeon>
+namespace dunwich_sandgeon
 {
 namespace io
 {
@@ -283,4 +283,4 @@ PosVec2 TextHandlerSdl::_get_draw_char_fg_surface_size_2d() const
 }
 
 } // namespace io
-} // namespace <dunwich_sandgeon>
+} // namespace dunwich_sandgeon

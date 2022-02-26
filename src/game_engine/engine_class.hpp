@@ -28,7 +28,7 @@
 #include "comp/general_comp_classes.hpp"
 #include "window_size_2d_constants.hpp"
 
-namespace <dunwich_sandgeon>
+namespace dunwich_sandgeon
 {
 namespace game_engine
 {
@@ -78,8 +78,8 @@ enum class GameMode
 	#undef X
 };
 //--------
-template<typename ObjType>
-concept EngineErrWhenEntNullIdObj = requires(ObjType obj)
+template<typename ObjT>
+concept EngineErrWhenEntNullIdObj = requires(ObjT obj)
 {
 	{ obj.ent_id() } -> std::same_as<ecs::EntId>;
 };
@@ -647,10 +647,10 @@ public:		// functions
 	void position_set_pos_callback(comp::Position* obj,
 		const PosVec3& n_pos);
 
-	template<typename SelfType>
-	inline Menu build_yes_no_menu(SelfType* self, int file_num,
-		const std::function<void(SelfType*)>& yes_func,
-		const std::function<void(SelfType*)>& no_func)
+	template<typename SelfT>
+	inline Menu build_yes_no_menu(SelfT* self, int file_num,
+		const std::function<void(SelfT*)>& yes_func,
+		const std::function<void(SelfT*)>& no_func)
 	{
 		return Menu
 		(
@@ -676,11 +676,11 @@ public:		// functions
 			Vec2(false, true)
 		);
 	}
-	template<typename SelfType>
-	inline Menu build_text_yes_no_menu(SelfType* self, int file_num,
+	template<typename SelfT>
+	inline Menu build_text_yes_no_menu(SelfT* self, int file_num,
 		const std::string& s_text,
-		const std::function<void(SelfType*)>& yes_func,
-		const std::function<void(SelfType*)>& no_func,
+		const std::function<void(SelfT*)>& yes_func,
+		const std::function<void(SelfT*)>& no_func,
 		uint s_tab_amount=0)
 	{
 		return Menu
@@ -725,8 +725,8 @@ public:		// functions
 private:		// functions
 	//static void _yes_no_menu_act_yes(Engine* self);
 	//static void _yes_no_menu_act_no(Engine* self);
-	template<EngineErrWhenEntNullIdObj ObjType>
-	inline void _err_when_ent_id_is_null(ObjType* obj,
+	template<EngineErrWhenEntNullIdObj ObjT>
+	inline void _err_when_ent_id_is_null(ObjT* obj,
 		const std::string& func_name) const
 	{
 		if (obj->ent_id() == ecs::ENT_NULL_ID)
@@ -742,6 +742,6 @@ private:		// functions
 extern Engine* engine;
 //--------
 } // namespace game_engine
-} // namespace <dunwich_sandgeon>
+} // namespace dunwich_sandgeon
 
 #endif		// src_game_engine_engine_class_hpp

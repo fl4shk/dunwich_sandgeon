@@ -23,7 +23,7 @@
 #include "../../misc_includes.hpp"
 #include "general_comp_classes.hpp"
 
-namespace <dunwich_sandgeon>
+namespace dunwich_sandgeon
 {
 namespace game_engine
 {
@@ -34,6 +34,6 @@ extern const std::map<std::string, Drawable::Data> DRAWABLE_DATA_MAP;
 
 } // namespace comp
 } // namespace game_engine
-} // namespace <dunwich_sandgeon>
+} // namespace dunwich_sandgeon
 
 #endif		// src_game_engine_comp_drawable_data_map_hpp

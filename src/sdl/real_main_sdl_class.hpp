@@ -25,7 +25,7 @@
 #include "../game_engine/engine_class.hpp"
 #include "text_handler_sdl_class.hpp"
 
-namespace <dunwich_sandgeon>
+namespace dunwich_sandgeon
 {
 namespace io
 {
@@ -87,6 +87,6 @@ private:		// functions
 };
 
 } // namespace io
-} // namespace <dunwich_sandgeon>
+} // namespace dunwich_sandgeon
 
 #endif		// src_real_main_sdl_class_hpp

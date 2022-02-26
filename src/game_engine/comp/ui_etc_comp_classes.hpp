@@ -23,7 +23,7 @@
 #include "../../misc_includes.hpp"
 #include "../font_color_enum.hpp"
 
-namespace <dunwich_sandgeon>
+namespace dunwich_sandgeon
 {
 namespace game_engine
 {
@@ -110,7 +110,7 @@ namespace comp
 
 } // namespace comp
 } // namespace game_engine
-} // namespace <dunwich_sandgeon>
+} // namespace dunwich_sandgeon
 
 
 #endif		// src_game_engine_comp_ui_etc_comp_classes_hpp

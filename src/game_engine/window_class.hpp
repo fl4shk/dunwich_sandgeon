@@ -28,7 +28,7 @@
 #include "comp/general_comp_classes.hpp"
 //#include "engine_class.hpp"
 
-namespace <dunwich_sandgeon>
+namespace dunwich_sandgeon
 {
 namespace game_engine
 {
@@ -189,6 +189,6 @@ public:		// functions
 //};
 
 } // namespace game_engine
-} // namespace <dunwich_sandgeon>
+} // namespace dunwich_sandgeon
 
 #endif		// src_game_engine_window_classes_hpp

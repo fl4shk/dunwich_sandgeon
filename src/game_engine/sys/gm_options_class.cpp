@@ -18,7 +18,7 @@
 #include "gm_options_class.hpp"
 #include "../engine_class.hpp"
 
-namespace <dunwich_sandgeon>
+namespace dunwich_sandgeon
 {
 namespace game_engine
 {
@@ -148,4 +148,4 @@ void GmOptions::_aux_menu_exit_wo_save_func(GmOptions* self)
 
 } // namespace sys
 } // namespace game_engine
-} // namespace <dunwich_sandgeon>
+} // namespace dunwich_sandgeon

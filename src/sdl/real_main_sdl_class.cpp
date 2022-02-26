@@ -18,7 +18,7 @@
 #include "real_main_sdl_class.hpp"
 #include "../game_engine/window_size_2d_constants.hpp"
 
-namespace <dunwich_sandgeon>
+namespace dunwich_sandgeon
 {
 namespace io
 {
@@ -437,4 +437,4 @@ void RealMainSdl::_update_engine_key_status()
 }
 
 } // namespace io
-} // namespace <dunwich_sandgeon>
+} // namespace dunwich_sandgeon

@@ -17,7 +17,7 @@
 
 #include "status_comp_classes.hpp"
 
-namespace <dunwich_sandgeon>
+namespace dunwich_sandgeon
 {
 namespace game_engine
 {
@@ -116,4 +116,4 @@ StatusActionSpeed::operator Json::Value () const
 
 } // namespace comp
 } // namespace game_engine
-} // namespace <dunwich_sandgeon>
+} // namespace dunwich_sandgeon

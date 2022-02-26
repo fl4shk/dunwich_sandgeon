@@ -22,7 +22,7 @@
 
 #include <queue>
 
-namespace <dunwich_sandgeon>
+namespace dunwich_sandgeon
 {
 namespace game_engine
 {
@@ -442,4 +442,4 @@ void Window::draw(const MsgLog& msg_log)
 //}
 //--------
 } // namespace game_engine
-} // namespace <dunwich_sandgeon>
+} // namespace dunwich_sandgeon

@@ -24,7 +24,7 @@
 #include "../misc_types.hpp"
 #include "../game_engine/font_color_enum.hpp"
 
-namespace <dunwich_sandgeon>
+namespace dunwich_sandgeon
 {
 namespace io
 {
@@ -116,6 +116,6 @@ private:		// functions
 };
 
 } // namespace io
-} // namespace <dunwich_sandgeon>
+} // namespace dunwich_sandgeon
 
 #endif		// src_sdl_text_handler_sdl_class_hpp

@@ -23,7 +23,7 @@
 #include "../misc_includes.hpp"
 #include "../misc_types.hpp"
 
-namespace <dunwich_sandgeon>
+namespace dunwich_sandgeon
 {
 namespace game_engine
 {
@@ -45,6 +45,6 @@ extern const PosVec2
 	TEXT_YES_NO_WINDOW_POS, TEXT_YES_NO_WINDOW_END_POS;
 
 } // namespace game_engine
-} // namespace <dunwich_sandgeon>
+} // namespace dunwich_sandgeon
 
 #endif		// src_game_engine_window_size_2d_constants_hpp

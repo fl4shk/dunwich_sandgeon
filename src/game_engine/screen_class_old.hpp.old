@@ -21,7 +21,7 @@
 #include "../misc_includes.hpp"
 #include "basic_window_classes.hpp"
 
-namespace <dunwich_sandgeon>
+namespace dunwich_sandgeon
 {
 
 namespace game_engine
@@ -63,6 +63,6 @@ public:		// functions
 
 } // namespace game_engine
 
-} // namespace <dunwich_sandgeon>
+} // namespace dunwich_sandgeon
 
 #endif		// src_game_engine_screen_class_hpp

@@ -39,6 +39,6 @@ int main(int argc, char* argv[])
 	////	std::allocator<int>>());
 
 	//printout("main()");
-	//<dunwich_sandgeon>::game_engine::engine->dbg_check_ecs_engine();
-	return <dunwich_sandgeon>::io::RealMainSdl().run();
+	//dunwich_sandgeon::game_engine::engine->dbg_check_ecs_engine();
+	return dunwich_sandgeon::io::RealMainSdl().run();
 }

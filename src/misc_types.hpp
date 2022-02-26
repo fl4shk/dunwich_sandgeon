@@ -23,13 +23,13 @@
 #include "misc_includes.hpp"
 #include "misc_funcs.hpp"
 
-namespace <dunwich_sandgeon>
+namespace dunwich_sandgeon
 {
 
 using PosVec2 = Vec2<int>;
 using PosVec3 = Vec3<int>;
 using SizeVec2 = Vec2<uint>;
 
-} // namespace <dunwich_sandgeon>
+} // namespace dunwich_sandgeon
 
 #endif		// src_misc_types_hpp

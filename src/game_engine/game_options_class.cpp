@@ -17,7 +17,7 @@
 
 #include "game_options_class.hpp"
 
-namespace <dunwich_sandgeon>
+namespace dunwich_sandgeon
 {
 namespace game_engine
 {
@@ -50,4 +50,4 @@ GameOptions::operator Json::Value () const
 }
 
 } // namespace game_engine
-} // namespace <dunwich_sandgeon>
+} // namespace dunwich_sandgeon

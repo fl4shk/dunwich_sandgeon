@@ -22,7 +22,7 @@
 
 #include "misc_includes.hpp"
 
-namespace <dunwich_sandgeon>
+namespace dunwich_sandgeon
 {
 
 enum class InputKind: u32
@@ -64,6 +64,6 @@ inline InputKind input_kind_add(InputKind input_kind, u32 amount)
 
 extern const std::map<InputKind, std::string> INPUT_KIND_TO_STR_MAP;
 
-} // namespace <dunwich_sandgeon>
+} // namespace dunwich_sandgeon
 
 #endif		// src_input_kind_enum_hpp
