@@ -153,9 +153,8 @@ void GmFileSelect::tick(ecs::Engine* ecs_engine)
 			engine->draw_text_yes_no_menu_w_pre_clear(sfn);
 			break;
 		default:
-			printerr("game_engine::sys::GmFileSelect::tick(): ",
+			engine->err("game_engine::sys::GmFileSelect::tick(): ",
 				"Internal error.\n");
-			exit(1);
 			break;
 		//--------
 		}

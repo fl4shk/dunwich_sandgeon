@@ -72,12 +72,17 @@ public:		// constants
 	static const comp::Drawable::Data& BORDER_HORIZ_DRAWABLE_DATA();
 	static const comp::Drawable::Data& BORDER_VERT_DRAWABLE_DATA();
 	static const comp::Drawable::Data& BLANK_DRAWABLE_DATA();
-protected:		// variables
+protected:		// non-serialized variables
 	Engine* _engine = nullptr;
 	//int _priority = 0;
 	PosVec2 _pos;
-	ecs::EntIdVec2d _ent_id_v2d, _cleared_ent_id_v2d;
 	int _file_num = -1;
+	ecs::EntIdVec2d _ent_id_v2d;
+protected:		// serialized variables
+	#define MEMB_SER_LIST_WINDOW(X) \
+		X(_cleared_ent_id_v2d)
+
+	ecs::EntIdVec2d _cleared_ent_id_v2d;
 public:		// functions
 	Window();
 	Window(Engine* s_engine, const PosVec2& s_some_pos,
@@ -89,6 +94,9 @@ public:		// functions
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Window);
 	virtual ~Window();
 
+	operator Json::Value () const;
+
+	void deserialize(const Json::Value& jv);
 	void init_set_border();
 
 	virtual void tick(InputKind input_kind);

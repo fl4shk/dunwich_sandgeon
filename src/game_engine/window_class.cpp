@@ -62,6 +62,7 @@ Window::Window(Engine* s_engine, const PosVec2& s_some_pos,
 	: _engine(s_engine),
 	_pos(s_some_pos
 		- ((!prev_args_are_with_border) ? PosVec2(1, 1) : PosVec2(0, 0))),
+	_file_num(s_file_num),
 	_ent_id_v2d
 	(
 		s_some_size_2d.y
@@ -83,8 +84,7 @@ Window::Window(Engine* s_engine, const PosVec2& s_some_pos,
 				+ ((!prev_args_are_with_border) ? 2 : 0),
 			ecs::ENT_NULL_ID
 		)
-	),
-	_file_num(s_file_num)
+	)
 {
 	//init_set_border();
 }
@@ -94,6 +94,7 @@ Window::Window(Engine* s_engine, const PosVec2& s_some_pos,
 	: _engine(s_engine),
 	_pos(s_some_pos
 		- ((!prev_args_are_with_border) ? PosVec2(1, 1) : PosVec2(0, 0))),
+	_file_num(s_file_num),
 	_ent_id_v2d
 	(
 		s_some_end_pos.y - s_some_pos.y + 1
@@ -115,13 +116,26 @@ Window::Window(Engine* s_engine, const PosVec2& s_some_pos,
 				+ ((!prev_args_are_with_border) ? 2 : 0),
 			ecs::ENT_NULL_ID
 		)
-	),
-	_file_num(s_file_num)
+	)
 {
 	//init_set_border();
 }
 Window::~Window()
 {
+}
+
+Window::operator Json::Value () const
+{
+	Json::Value ret;
+
+	MEMB_SER_LIST_WINDOW(JSON_MEMB_SERIALIZE);
+
+	return ret;
+}
+
+void Window::deserialize(const Json::Value& jv)
+{
+	MEMB_SER_LIST_WINDOW(JSON_MEMB_DESERIALIZE);
 }
 
 // This function exists and is called outside of the constructor because in
@@ -131,65 +145,72 @@ Window::~Window()
 void Window::init_set_border()
 {
 	ecs::EntId id = ecs::ENT_NULL_ID;
-	auto add_border_drawable
-		= [this, &id](comp::Drawable::Data drawable_data) -> void
-	{
-		_engine->ecs_engine.insert_comp(id,
-			ecs::CompUptr(new comp::Drawable(drawable_data)),
-			file_num());
-	};
+	//auto add_border_drawable
+	//	= [this, &id](comp::Drawable::Data drawable_data) -> void
+	//{
+	//	_engine->ecs_engine.insert_comp(id,
+	//		ecs::CompUptr(new comp::Drawable(drawable_data)),
+	//		file_num());
+	//};
 	for (uint j=0; j<with_border_size_2d().y; ++j)
 	{
 		for (uint i=0; i<with_border_size_2d().x; ++i)
 		{
+			auto add_drawable
+				= [this, &id, j, i](comp::Drawable::Data drawable_data)
+				-> void
+			{
+				id = _engine->ecs_engine.create(file_num());
+				with_border_ent_id_at(PosVec2(i, j)) = id;
+				_engine->ecs_engine.insert_comp(id,
+					ecs::CompUptr(new comp::Drawable(drawable_data)),
+					file_num());
+
+				id = _engine->ecs_engine.create(file_num());
+				_cleared_ent_id_v2d.at(j).at(i) = id;
+				_engine->ecs_engine.insert_comp(id,
+					ecs::CompUptr(new comp::Drawable(drawable_data)),
+					file_num());
+			};
+
 			if ((j == 0) || (j == (with_border_size_2d().y - 1)))
 			{
 				if ((i == 0) || (i == (with_border_size_2d().x - 1)))
 				{
-					id = _engine->ecs_engine.create(file_num());
-					with_border_ent_id_at(PosVec2(i, j)) = id;
-					add_border_drawable(BORDER_CORNER_DRAWABLE_DATA());
+					//id = _engine->ecs_engine.create(file_num());
+					//with_border_ent_id_at(PosVec2(i, j)) = id;
+					//add_border_drawable(BORDER_CORNER_DRAWABLE_DATA());
 
-					id = _engine->ecs_engine.create(file_num());
-					_cleared_ent_id_v2d.at(j).at(i) = id;
-					add_border_drawable(BORDER_CORNER_DRAWABLE_DATA());
+					//id = _engine->ecs_engine.create(file_num());
+					//_cleared_ent_id_v2d.at(j).at(i) = id;
+					//add_border_drawable(BORDER_CORNER_DRAWABLE_DATA());
+					add_drawable(BORDER_CORNER_DRAWABLE_DATA());
 				}
 				else
 				{
-					id = _engine->ecs_engine.create(file_num());
-					with_border_ent_id_at(PosVec2(i, j)) = id;
-					add_border_drawable(BORDER_HORIZ_DRAWABLE_DATA());
-
-					id = _engine->ecs_engine.create(file_num());
-					_cleared_ent_id_v2d.at(j).at(i) = id;
-					add_border_drawable(BORDER_HORIZ_DRAWABLE_DATA());
+					add_drawable(BORDER_HORIZ_DRAWABLE_DATA());
 				}
 			}
 			else if ((i == 0) || (i == (with_border_size_2d().x - 1)))
 			{
-				id = _engine->ecs_engine.create(file_num());
-				with_border_ent_id_at(PosVec2(i, j)) = id;
-				add_border_drawable(BORDER_VERT_DRAWABLE_DATA());
-
-				id = _engine->ecs_engine.create(file_num());
-				_cleared_ent_id_v2d.at(j).at(i) = id;
-				add_border_drawable(BORDER_VERT_DRAWABLE_DATA());
+				add_drawable(BORDER_VERT_DRAWABLE_DATA());
 			}
 			else
 			{
-				id = _engine->ecs_engine.create(file_num());
-				with_border_ent_id_at(PosVec2(i, j)) = id;
-				_engine->ecs_engine.insert_comp(id,
-					ecs::CompUptr(new comp::Drawable
-						(BLANK_DRAWABLE_DATA())),
-					file_num());
+				//id = _engine->ecs_engine.create(file_num());
+				//with_border_ent_id_at(PosVec2(i, j)) = id;
+				//_engine->ecs_engine.insert_comp(id,
+				//	ecs::CompUptr(new comp::Drawable
+				//		(BLANK_DRAWABLE_DATA())),
+				//	file_num());
 
-				id = _engine->ecs_engine.create(file_num());
-				_cleared_ent_id_v2d.at(j).at(i) = id;
-				_engine->ecs_engine.insert_comp(id,
-					ecs::CompUptr(new comp::Drawable
-						(BLANK_DRAWABLE_DATA())),
-					file_num());
+				//id = _engine->ecs_engine.create(file_num());
+				//_cleared_ent_id_v2d.at(j).at(i) = id;
+				//_engine->ecs_engine.insert_comp(id,
+				//	ecs::CompUptr(new comp::Drawable
+				//		(BLANK_DRAWABLE_DATA())),
+				//	file_num());
+				add_drawable(BLANK_DRAWABLE_DATA());
 			}
 		}
 	}

@@ -31,7 +31,7 @@ class GameOptions final
 {
 public:		// variables
 	#define MEMB_LIST_GAME_OPTIONS(X) \
-		X(grayscale, 0)
+		X(grayscale)
 	bool grayscale = false;
 public:		// functions
 	GameOptions();

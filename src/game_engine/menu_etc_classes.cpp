@@ -172,6 +172,9 @@ const std::string
 		(MsgLog::WIDGET_SELECTED_SPACING_SIZE)),
 	MsgLog::WIDGET_SPACING_STR(spaces_str(MsgLog::WIDGET_SPACING_SIZE));
 
+//const uint
+//	MsgLog::DEFAULT_INTERNAL_HEIGHT = SCREEN_SIZE_2D.y;
+
 MsgLog::MsgLog(const RopeDeque& s_data, uint s_internal_height,
 	const SizeVec2& s_window_size_2d, Vec2<bool> s_center,
 	bool s_keep_sep)

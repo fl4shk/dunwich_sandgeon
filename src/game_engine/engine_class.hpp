@@ -93,23 +93,26 @@ public:		// types
 public:		// constants
 	// These are basement floors, going from B1F down to B50F
 	static constexpr int
-		LOWEST_FLOOR = 50, HIGHEST_FLOOR = 1,
-		NUM_FLOORS = abs(HIGHEST_FLOOR - LOWEST_FLOOR) + 1;
+		LOWEST_FLOOR = 25, HIGHEST_FLOOR = 1,
+		//LOWEST_FLOOR = 5, HIGHEST_FLOOR = 1,
+		NUM_FLOORS = std::abs(HIGHEST_FLOOR - LOWEST_FLOOR) + 1;
 
 	static const std::string
 		SAVE_FILE_NAME;
 
 	static constexpr int
-		NUM_FILES = 9;
+		//NUM_FILES = 9;
+		NUM_FILES = 3;
+		//NUM_FILES = 1;
 public:		// types
 	class NonEcsSerData final
 	{
 	public:		// variables
 		#define MEMB_LIST_ENGINE_NON_ECS_SER_DATA(X) \
-			X(log_msg_log, 0) \
-			X(hud_msg_log, 0) \
-			X(floor, 0) \
-			X(pfield_ent_id_v3d, 0)
+			X(log_msg_log) \
+			X(hud_msg_log) \
+			X(floor) \
+			X(pfield_ent_id_v3d)
 
 		MsgLog
 			log_msg_log,
@@ -137,10 +140,18 @@ public:		// types
 public:		// serialized variables
 	ecs::Engine ecs_engine;
 
-	#define MEMB_LIST_ENGINE(X) \
-		X(ecs_engine, 1) \
-		X(game_options, 0) \
-		X(_non_ecs_ser_data_vec, 0) \
+	#define MEMB_SER_LIST_ENGINE(X) \
+		X(ecs_engine) \
+		X(game_options) \
+		X(_non_ecs_ser_data_vec) \
+		\
+		X(_screen_window_vec) \
+		X(_aux_window_vec) \
+		X(_pfield_window_vec) \
+		X(_log_window_vec) \
+		X(_hud_window_vec) \
+		X(_yes_no_window_vec) \
+		X(_text_yes_no_window_vec)
 
 	GameOptions game_options;
 private:		// serialized variables
@@ -224,12 +235,18 @@ public:		// non-serialized variables
 private:		// variables
 	//u64 _tick_counter = 0;
 public:		// functions
-	Engine();
+	Engine(bool do_create_or_load=true);
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Engine);
 	~Engine();
 	operator Json::Value () const;
 
 	void deserialize(const Json::Value& jv);
+
+	inline void err(const auto&... objs) const
+	{
+		printerr(objs...);
+		exit(1);
+	}
 
 	//void dbg_check_ecs_engine(const PosVec2& wb_pos=PosVec2(0, 0));
 
@@ -239,9 +256,9 @@ public:		// functions
 	//}
 	void tick();
 private:		// functions
-	void _create_save_file_if_needed();
-	void _load_from_json();
-	void _save_to_json();
+	void _create_or_load_save_file_etc();
+	//void _load_from_json();
+	void _save_to_json(bool do_create_or_load=false);
 public:		// functions
 	void save_and_quit();
 	void save_and_return_to_title();

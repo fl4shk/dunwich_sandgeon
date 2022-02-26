@@ -45,3 +45,4 @@ types_*.taghl
 dungwich_sandeon
 dungwich_sandeon_debug
 *.elf
+*.json

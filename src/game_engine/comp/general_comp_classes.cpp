@@ -25,6 +25,14 @@ namespace game_engine
 namespace comp
 {
 
+Drawable::Data Drawable::Data::from_jv(const Json::Value& jv)
+{
+	Data ret;
+
+	MEMB_LIST_COMP_DRAWABLE_DATA(JSON_MEMB_FROM_JV_DESERIALIZE);
+
+	return ret;
+}
 Drawable::Data::operator Json::Value () const
 {
 	Json::Value ret;
@@ -62,8 +70,13 @@ Position::Position(ecs::EntId s_ent_id, const PosVec3& s_pos,
 Position::Position(const Json::Value& jv)
 {
 	MEMB_AUTOSER_LIST_COMP_POSITION(JSON_MEMB_DESERIALIZE);
-	priority = static_cast<PlayfieldLayerPrio>
-		(get_jv_memb<uint>(jv, "priority"));
+	//priority = static_cast<PlayfieldLayerPrio>
+	//	(get_jv_memb<uint>(jv, "priority"));
+
+	//priority = static_cast<PlayfieldLayerPrio>(val_from_jv<uint>
+	//	(jv["priority"]));
+
+	get_jv_memb_w_stat_cast<uint>(priority, jv, "priority");
 
 	engine->position_ctor_callback(this);
 }
