@@ -42,9 +42,9 @@ public:		// types
 	};
 public:		// variables
 	#define MEMB_LIST_ROPE_PART(X) \
-		X(str) \
-		X(color_pair) \
-		X(gs_color_pair)
+		X(str, std::nullopt) \
+		X(color_pair, std::nullopt) \
+		X(gs_color_pair, std::nullopt)
 	std::string str;
 	FgBgColorPair
 		color_pair = FontColor::White,
@@ -125,12 +125,12 @@ public:		// constants
 	//static const uint DEFAULT_INTERNAL_HEIGHT;
 private:		// variables
 	#define MEMB_LIST_MSG_LOG(X) \
-		X(_data) \
-		X(_internal_height) \
-		X(_scroll) \
-		X(_window_size_2d) \
-		X(_center) \
-		X(_keep_sep)
+		X(_data, std::nullopt) \
+		X(_internal_height, std::nullopt) \
+		X(_scroll, std::nullopt) \
+		X(_window_size_2d, std::nullopt) \
+		X(_center, std::nullopt) \
+		X(_keep_sep, std::nullopt)
 
 	RopeDeque _data;
 

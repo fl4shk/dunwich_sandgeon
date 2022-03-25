@@ -31,7 +31,7 @@ class GameOptions final
 {
 public:		// variables
 	#define MEMB_LIST_GAME_OPTIONS(X) \
-		X(grayscale)
+		X(grayscale, std::nullopt)
 	bool grayscale = false;
 public:		// functions
 	GameOptions();

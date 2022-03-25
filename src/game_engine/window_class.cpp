@@ -56,24 +56,22 @@ const comp::Drawable::Data& Window::BLANK_DRAWABLE_DATA()
 Window::Window()
 {
 }
-Window::Window(Engine* s_engine, const PosVec2& s_some_pos,
-	const SizeVec2& s_some_size_2d, int s_file_num,
-	bool prev_args_are_with_border)
-	: _engine(s_engine),
-	_pos(s_some_pos
+Window::Window(const PosVec2& s_some_pos, const SizeVec2& s_some_size_2d,
+	int s_file_num, bool prev_args_are_with_border)
+	: _pos(s_some_pos
 		- ((!prev_args_are_with_border) ? PosVec2(1, 1) : PosVec2(0, 0))),
 	_file_num(s_file_num),
-	_ent_id_v2d
-	(
-		s_some_size_2d.y
-			+ ((!prev_args_are_with_border) ? 2 : 0),
-		ecs::EntIdVec
-		(
-			s_some_size_2d.x
-				+ ((!prev_args_are_with_border) ? 2 : 0),
-			ecs::ENT_NULL_ID
-		)
-	),
+	//_ent_id_v2d
+	//(
+	//	s_some_size_2d.y
+	//		+ ((!prev_args_are_with_border) ? 2 : 0),
+	//	ecs::EntIdVec
+	//	(
+	//		s_some_size_2d.x
+	//			+ ((!prev_args_are_with_border) ? 2 : 0),
+	//		ecs::ENT_NULL_ID
+	//	)
+	//),
 	_cleared_ent_id_v2d
 	(
 		s_some_size_2d.y
@@ -87,25 +85,24 @@ Window::Window(Engine* s_engine, const PosVec2& s_some_pos,
 	)
 {
 	//init_set_border();
+	_ent_id_v2d = _cleared_ent_id_v2d;
 }
-Window::Window(Engine* s_engine, const PosVec2& s_some_pos,
-	const PosVec2& s_some_end_pos, int s_file_num,
-	bool prev_args_are_with_border)
-	: _engine(s_engine),
-	_pos(s_some_pos
+Window::Window(const PosVec2& s_some_pos, const PosVec2& s_some_end_pos,
+	int s_file_num, bool prev_args_are_with_border)
+	: _pos(s_some_pos
 		- ((!prev_args_are_with_border) ? PosVec2(1, 1) : PosVec2(0, 0))),
 	_file_num(s_file_num),
-	_ent_id_v2d
-	(
-		s_some_end_pos.y - s_some_pos.y + 1
-			+ ((!prev_args_are_with_border) ? 2 : 0),
-		ecs::EntIdVec
-		(
-			s_some_end_pos.x - s_some_pos.x + 1
-				+ ((!prev_args_are_with_border) ? 2 : 0),
-			ecs::ENT_NULL_ID
-		)
-	),
+	//_ent_id_v2d
+	//(
+	//	s_some_end_pos.y - s_some_pos.y + 1
+	//		+ ((!prev_args_are_with_border) ? 2 : 0),
+	//	ecs::EntIdVec
+	//	(
+	//		s_some_end_pos.x - s_some_pos.x + 1
+	//			+ ((!prev_args_are_with_border) ? 2 : 0),
+	//		ecs::ENT_NULL_ID
+	//	)
+	//),
 	_cleared_ent_id_v2d
 	(
 		s_some_end_pos.y - s_some_pos.y + 1
@@ -119,6 +116,7 @@ Window::Window(Engine* s_engine, const PosVec2& s_some_pos,
 	)
 {
 	//init_set_border();
+	_ent_id_v2d = _cleared_ent_id_v2d;
 }
 Window::~Window()
 {
@@ -135,7 +133,10 @@ Window::operator Json::Value () const
 
 void Window::deserialize(const Json::Value& jv)
 {
+	//printout("Window::deserialize() before: ", engine == nullptr, "\n");
 	MEMB_SER_LIST_WINDOW(JSON_MEMB_DESERIALIZE);
+	_ent_id_v2d = _cleared_ent_id_v2d;
+	//printout("Window::deserialize() after: ", engine == nullptr, "\n");
 }
 
 // This function exists and is called outside of the constructor because in
@@ -148,8 +149,8 @@ void Window::init_set_border()
 	//auto add_border_drawable
 	//	= [this, &id](comp::Drawable::Data drawable_data) -> void
 	//{
-	//	_engine->ecs_engine.insert_comp(id,
-	//		ecs::CompUptr(new comp::Drawable(drawable_data)),
+	//	engine->ecs_engine.insert_comp(id,
+	//		ecs::CompSptr(new comp::Drawable(drawable_data)),
 	//		file_num());
 	//};
 	for (uint j=0; j<with_border_size_2d().y; ++j)
@@ -160,16 +161,16 @@ void Window::init_set_border()
 				= [this, &id, j, i](comp::Drawable::Data drawable_data)
 				-> void
 			{
-				id = _engine->ecs_engine.create(file_num());
+				id = engine->ecs_engine.create(file_num());
 				with_border_ent_id_at(PosVec2(i, j)) = id;
-				_engine->ecs_engine.insert_comp(id,
-					ecs::CompUptr(new comp::Drawable(drawable_data)),
+				engine->ecs_engine.insert_comp(id,
+					ecs::CompSptr(new comp::Drawable(drawable_data)),
 					file_num());
 
-				id = _engine->ecs_engine.create(file_num());
+				id = engine->ecs_engine.create(file_num());
 				_cleared_ent_id_v2d.at(j).at(i) = id;
-				_engine->ecs_engine.insert_comp(id,
-					ecs::CompUptr(new comp::Drawable(drawable_data)),
+				engine->ecs_engine.insert_comp(id,
+					ecs::CompSptr(new comp::Drawable(drawable_data)),
 					file_num());
 			};
 
@@ -177,11 +178,11 @@ void Window::init_set_border()
 			{
 				if ((i == 0) || (i == (with_border_size_2d().x - 1)))
 				{
-					//id = _engine->ecs_engine.create(file_num());
+					//id = engine->ecs_engine.create(file_num());
 					//with_border_ent_id_at(PosVec2(i, j)) = id;
 					//add_border_drawable(BORDER_CORNER_DRAWABLE_DATA());
 
-					//id = _engine->ecs_engine.create(file_num());
+					//id = engine->ecs_engine.create(file_num());
 					//_cleared_ent_id_v2d.at(j).at(i) = id;
 					//add_border_drawable(BORDER_CORNER_DRAWABLE_DATA());
 					add_drawable(BORDER_CORNER_DRAWABLE_DATA());
@@ -197,17 +198,17 @@ void Window::init_set_border()
 			}
 			else
 			{
-				//id = _engine->ecs_engine.create(file_num());
+				//id = engine->ecs_engine.create(file_num());
 				//with_border_ent_id_at(PosVec2(i, j)) = id;
-				//_engine->ecs_engine.insert_comp(id,
-				//	ecs::CompUptr(new comp::Drawable
+				//engine->ecs_engine.insert_comp(id,
+				//	ecs::CompSptr(new comp::Drawable
 				//		(BLANK_DRAWABLE_DATA())),
 				//	file_num());
 
-				//id = _engine->ecs_engine.create(file_num());
+				//id = engine->ecs_engine.create(file_num());
 				//_cleared_ent_id_v2d.at(j).at(i) = id;
-				//_engine->ecs_engine.insert_comp(id,
-				//	ecs::CompUptr(new comp::Drawable
+				//engine->ecs_engine.insert_comp(id,
+				//	ecs::CompSptr(new comp::Drawable
 				//		(BLANK_DRAWABLE_DATA())),
 				//	file_num());
 				add_drawable(BLANK_DRAWABLE_DATA());
@@ -223,6 +224,7 @@ void Window::tick(InputKind input_kind)
 
 void Window::clear()
 {
+	//printout("Window::clear() testificate: ", engine == nullptr, "\n");
 	PosVec2 src_pos;
 	for (src_pos.y=0; src_pos.y<with_border_size_2d().y; ++src_pos.y)
 	{
@@ -233,10 +235,10 @@ void Window::clear()
 					.at(src_pos.x),
 				DST_ENT_ID = with_border_ent_id_at(src_pos);
 			auto
-				src = _engine->ecs_engine
+				src = engine->ecs_engine
 					.casted_comp_at<comp::Drawable>(SRC_ENT_ID,
 						file_num()),
-				dst = _engine->ecs_engine
+				dst = engine->ecs_engine
 					.casted_comp_at<comp::Drawable>(DST_ENT_ID,
 						file_num());
 			*dst = *src;
@@ -256,7 +258,7 @@ void Window::draw(const Window& win, bool leave_corner)
 		{
 			const auto SRC_ENT_ID = win.with_border_ent_id_at(src_pos);
 
-			if (_engine->ecs_engine.has_ent_with_comp
+			if (engine->ecs_engine.has_ent_with_comp
 				(SRC_ENT_ID, comp::Drawable::KIND_STR, file_num()))
 			{
 				const auto DST_POS = win.pos() + src_pos;
@@ -267,20 +269,20 @@ void Window::draw(const Window& win, bool leave_corner)
 				//	"; ", win.with_border_size_2d().x, " ",
 				//	win.with_border_size_2d().y, "\n");
 
-				auto src = _engine->ecs_engine
+				auto src = engine->ecs_engine
 					.casted_comp_at<comp::Drawable>(SRC_ENT_ID,
 						file_num());
 
-				if (!_engine->ecs_engine.comp_map(DST_ENT_ID, file_num())
+				if (!engine->ecs_engine.comp_map(DST_ENT_ID, file_num())
 					.contains(comp::Drawable::KIND_STR))
 				{
-					_engine->ecs_engine.insert_comp(DST_ENT_ID,
-						ecs::CompUptr(new comp::Drawable(src->data())),
+					engine->ecs_engine.insert_comp(DST_ENT_ID,
+						ecs::CompSptr(new comp::Drawable(src->data())),
 						file_num());
 				}
 				else
 				{
-					auto dst = _engine->ecs_engine
+					auto dst = engine->ecs_engine
 						.casted_comp_at<comp::Drawable>(DST_ENT_ID,
 							file_num());
 
@@ -368,7 +370,7 @@ void Window::draw(const MsgLog& msg_log)
 			= [this, &temp_pos](comp::Drawable::Data drawable_data) -> void
 		{
 			const auto DST_ENT_ID = ent_id_at(temp_pos);
-			auto dst = _engine->ecs_engine
+			auto dst = engine->ecs_engine
 				.casted_comp_at<comp::Drawable>(DST_ENT_ID, file_num());
 
 			dst->set_data(drawable_data);

@@ -109,10 +109,10 @@ public:		// types
 	{
 	public:		// variables
 		#define MEMB_LIST_ENGINE_NON_ECS_SER_DATA(X) \
-			X(log_msg_log) \
-			X(hud_msg_log) \
-			X(floor) \
-			X(pfield_ent_id_v3d)
+			X(log_msg_log, std::nullopt) \
+			X(hud_msg_log, std::nullopt) \
+			X(floor, std::nullopt) \
+			X(pfield_ent_id_v3d, std::nullopt)
 
 		MsgLog
 			log_msg_log,
@@ -141,17 +141,17 @@ public:		// serialized variables
 	ecs::Engine ecs_engine;
 
 	#define MEMB_SER_LIST_ENGINE(X) \
-		X(ecs_engine) \
-		X(game_options) \
-		X(_non_ecs_ser_data_vec) \
+		X(ecs_engine, std::nullopt) \
+		X(game_options, std::nullopt) \
+		X(_non_ecs_ser_data_vec, std::nullopt) \
 		\
-		X(_screen_window_vec) \
-		X(_aux_window_vec) \
-		X(_pfield_window_vec) \
-		X(_log_window_vec) \
-		X(_hud_window_vec) \
-		X(_yes_no_window_vec) \
-		X(_text_yes_no_window_vec)
+		X(_screen_window_vec, std::nullopt) \
+		X(_aux_window_vec, std::nullopt) \
+		X(_pfield_window_vec, std::nullopt) \
+		X(_log_window_vec, std::nullopt) \
+		X(_hud_window_vec, std::nullopt) \
+		X(_yes_no_window_vec, std::nullopt) \
+		X(_text_yes_no_window_vec, std::nullopt)
 
 	GameOptions game_options;
 private:		// serialized variables
@@ -216,6 +216,7 @@ public:		// constants
 		USE_SRC_FILE_NUM = -2,
 		USE_COPY_DST_FILE_NUM = -3;
 private:		// non-serialized variables
+	bool _did_init_set_border = false;
 	// File numbers selected via HorizPickers, though `curr_file_num` is
 	// also the current file number used for indexing into
 	// `_non_ecs_ser_data_vec`.
@@ -236,7 +237,7 @@ private:		// variables
 	//u64 _tick_counter = 0;
 public:		// functions
 	Engine(bool do_create_or_load=true);
-	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Engine);
+	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(Engine);
 	~Engine();
 	operator Json::Value () const;
 

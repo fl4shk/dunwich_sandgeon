@@ -47,8 +47,9 @@ auto Engine::NonEcsSerData::_gen_blank_pfield_ent_id_v3d()
 		(
 			NUM_FLOORS,
 			EntIdSetVec2d(PFIELD_WINDOW_SIZE_2D.y,
-				std::vector<std::set<ecs::EntId>>
-					(PFIELD_WINDOW_SIZE_2D.x))
+				std::vector<std::unordered_set<ecs::EntId>>
+					(PFIELD_WINDOW_SIZE_2D.x,
+					std::unordered_set<ecs::EntId>()))
 		);
 }
 
@@ -114,37 +115,32 @@ Engine::Engine(bool do_create_or_load)
 		//--------
 		//_non_ecs_ser_data_vec.push_back(NonEcsSerData());
 		//--------
-		auto add_window = [](auto& vec_etc, Window&& to_push) -> void
-		{
-			vec_etc.push_back(std::move(to_push));
-			vec_etc.back().init_set_border();
-		};
+		//auto add_window = [](auto& vec_etc, Window&& to_push) -> void
+		//{
+		//	//printout("add_window() testificate: ",
+		//	//	to_push.engine() == nullptr, "\n");
+		//	vec_etc.push_back(std::move(to_push));
+		//	//vec_etc.back().init_set_border();
+		//};
 		//--------
-		add_window(_screen_window_vec,
-			Window(this, PosVec2(),
-				WITH_BORDER_SCREEN_SIZE_2D, i));
-		add_window(_aux_window_vec,
-			Window(this, PosVec2(),
-				WITH_BORDER_SCREEN_SIZE_2D, i));
+		_screen_window_vec.push_back
+			(Window(PosVec2(), WITH_BORDER_SCREEN_SIZE_2D, i));
+		_aux_window_vec.push_back
+			(Window(PosVec2(), WITH_BORDER_SCREEN_SIZE_2D, i));
 		//--------
-		add_window(_pfield_window_vec,
-			Window(this,
-				PFIELD_WINDOW_POS, PFIELD_WINDOW_END_POS, i));
-		add_window(_log_window_vec,
-			Window(this,
-				LOG_WINDOW_POS, LOG_WINDOW_END_POS, i));
-		add_window(_hud_window_vec,
-			Window(this,
-				HUD_WINDOW_POS, HUD_WINDOW_END_POS, i));
-		add_window(_popup_window_vec,
-			Window(this,
-				POPUP_WINDOW_POS, POPUP_WINDOW_END_POS, i));
-		add_window(_yes_no_window_vec,
-			Window(this,
-				YES_NO_WINDOW_POS, YES_NO_WINDOW_END_POS, i));
-		add_window(_text_yes_no_window_vec,
-			Window(this,
-				TEXT_YES_NO_WINDOW_POS, TEXT_YES_NO_WINDOW_END_POS, i));
+		_pfield_window_vec.push_back
+			(Window(PFIELD_WINDOW_POS, PFIELD_WINDOW_END_POS, i));
+		_log_window_vec.push_back
+			(Window(LOG_WINDOW_POS, LOG_WINDOW_END_POS, i));
+		_hud_window_vec.push_back
+			(Window(HUD_WINDOW_POS, HUD_WINDOW_END_POS, i));
+		_popup_window_vec.push_back
+			(Window(POPUP_WINDOW_POS, POPUP_WINDOW_END_POS, i));
+		_yes_no_window_vec.push_back
+			(Window(YES_NO_WINDOW_POS, YES_NO_WINDOW_END_POS, i));
+		_text_yes_no_window_vec.push_back
+			(Window(TEXT_YES_NO_WINDOW_POS, TEXT_YES_NO_WINDOW_END_POS,
+				i));
 		//--------
 	}
 
@@ -166,7 +162,7 @@ Engine::Engine(bool do_create_or_load)
 	//		std::function<void(Engine*)>(&Engine::_yes_no_menu_act_no));
 
 	#define X(arg) \
-		if (ecs_engine.insert_sys(ecs::SysUptr(new sys::Gm ## arg()))) \
+		if (ecs_engine.insert_sys(ecs::SysSptr(new sys::Gm ## arg()))) \
 		{ \
 			fprintf(stderr, "game_engine::Engine::Engine(): " \
 				#arg " internal error\n"); \
@@ -216,7 +212,11 @@ void Engine::deserialize(const Json::Value& jv)
 {
 	//JSON_MEMB_DESERIALIZE(ecs_engine);
 	//ecs_engine.deserialize(jv["ecs_engine"]);
+	//printout("Engine::deserialize() before: ",
+	//	aux_window(0).engine() == nullptr, "\n");
 	MEMB_SER_LIST_ENGINE(JSON_MEMB_DESERIALIZE);
+	//printout("Engine::deserialize() after: ",
+	//	aux_window(0).engine() == nullptr, "\n");
 }
 
 //void Engine::dbg_check_ecs_engine(const PosVec2& wb_pos)
@@ -241,6 +241,22 @@ void Engine::deserialize(const Json::Value& jv)
 
 void Engine::tick()
 {
+	if (!_did_init_set_border)
+	{
+		_did_init_set_border = true;
+
+		for (int i=0; i<NUM_FILES; ++i)
+		{
+			_screen_window_vec.at(i).init_set_border();
+			_aux_window_vec.at(i).init_set_border();
+			_pfield_window_vec.at(i).init_set_border();
+			_log_window_vec.at(i).init_set_border();
+			_hud_window_vec.at(i).init_set_border();
+			_popup_window_vec.at(i).init_set_border();
+			_yes_no_window_vec.at(i).init_set_border();
+			_text_yes_no_window_vec.at(i).init_set_border();
+		}
+	}
 	// testing
 
 	ecs_engine.tick();
@@ -317,8 +333,8 @@ void Engine::_create_or_load_save_file_etc()
 		}
 		else
 		{
+			//printout("Testificate: Calling `deserialize()`\n");
 			deserialize(root);
-			return;
 		}
 	}
 	else
@@ -328,6 +344,7 @@ void Engine::_create_or_load_save_file_etc()
 		//	"reading.\n");
 		_save_to_json(true);
 	}
+	printout("Testificate: ", ecs_engine.curr_file_num, "\n");
 }
 
 //void Engine::_load_from_json()

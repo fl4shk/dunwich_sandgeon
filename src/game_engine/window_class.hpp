@@ -73,22 +73,24 @@ public:		// constants
 	static const comp::Drawable::Data& BORDER_VERT_DRAWABLE_DATA();
 	static const comp::Drawable::Data& BLANK_DRAWABLE_DATA();
 protected:		// non-serialized variables
-	Engine* _engine = nullptr;
-	//int _priority = 0;
-	PosVec2 _pos;
-	int _file_num = -1;
+	//Engine* _engine = nullptr;
 	ecs::EntIdVec2d _ent_id_v2d;
 protected:		// serialized variables
 	#define MEMB_SER_LIST_WINDOW(X) \
-		X(_cleared_ent_id_v2d)
+		X(_cleared_ent_id_v2d, std::nullopt) \
+		X(_pos, std::nullopt) \
+		X(_file_num, std::nullopt) \
 
+	//int _priority = 0;
 	ecs::EntIdVec2d _cleared_ent_id_v2d;
+	PosVec2 _pos;
+	int _file_num = -1;
 public:		// functions
 	Window();
-	Window(Engine* s_engine, const PosVec2& s_some_pos,
+	Window(const PosVec2& s_some_pos,
 		const SizeVec2& s_some_size_2d, int s_file_num,
 		bool prev_args_are_with_border=true);
-	Window(Engine* s_engine, const PosVec2& s_some_pos,
+	Window(const PosVec2& s_some_pos,
 		const PosVec2& s_some_end_pos, int s_file_num,
 		bool prev_args_are_with_border=true);
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Window);
@@ -156,6 +158,7 @@ public:		// functions
 	//void draw_text(const PosVec2& where, const std::string& what);
 	
 	//GEN_GETTER_AND_SETTER_BY_VAL(priority);
+	//GEN_GETTER_AND_SETTER_BY_VAL(engine);
 	GEN_GETTER_BY_CON_REF(pos);
 	GEN_GETTER_BY_CON_REF(ent_id_v2d);
 	GEN_GETTER_BY_VAL(file_num);

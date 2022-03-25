@@ -2,6 +2,8 @@
 # Edit these variables if more directories are needed.  
 # Separate each entry by spaces.
 
+#TMPDIR:=$(shell pwd)
+
 
 SHARED_SRC_DIRS:=src \
 	src/game_engine \
@@ -34,6 +36,7 @@ PROJ:=$(shell basename $(CURDIR))$(DEBUG_SUFFIX)
 #VERBOSE_ASM_FLAG:=-fverbose-asm
 
 # Compilers and initial compiler flags
+#CXX:=$(PREFIX)distcc
 CXX:=$(PREFIX)g++
 CXX_FLAGS:=$(CXX_FLAGS) -std=c++20 -fcoroutines -fmodules-ts -Wall \
 	$(shell pkg-config --cflags jsoncpp) \
@@ -73,6 +76,10 @@ LD_FLAGS:=$(LD_FLAGS) $(EXTRA_LD_FLAGS) $(COMMON_LD_FLAGS)
 
 
 # Generated directories
+#OBJDIR:=$(shell pwd)/objs$(DEBUG_SUFFIX)
+#ASMOUTDIR:=$(shell pwd)/asmouts$(DEBUG_SUFFIX)
+#DEPDIR:=$(shell pwd)/deps$(DEBUG_SUFFIX)
+#PREPROCDIR:=$(shell pwd)/preprocs$(DEBUG_SUFFIX)
 OBJDIR:=objs$(DEBUG_SUFFIX)
 ASMOUTDIR:=asmouts$(DEBUG_SUFFIX)
 DEPDIR:=deps$(DEBUG_SUFFIX)

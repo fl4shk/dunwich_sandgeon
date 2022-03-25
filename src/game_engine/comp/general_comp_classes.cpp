@@ -76,7 +76,7 @@ Position::Position(const Json::Value& jv)
 	//priority = static_cast<PlayfieldLayerPrio>(val_from_jv<uint>
 	//	(jv["priority"]));
 
-	get_jv_memb_w_stat_cast<uint>(priority, jv, "priority");
+	get_jv_memb_w_stat_cast<uint>(priority, jv, "priority", std::nullopt);
 
 	engine->position_ctor_callback(this);
 }

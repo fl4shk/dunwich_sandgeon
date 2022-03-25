@@ -42,7 +42,7 @@ disassembly*.armasm
 tags
 types_*.taghl
 *.ignore
-dungwich_sandeon
-dungwich_sandeon_debug
+dunwich_sandgeon
+dunwich_sandgeon_debug
 *.elf
 *.json
