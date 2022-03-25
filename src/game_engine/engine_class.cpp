@@ -271,26 +271,26 @@ void Engine::tick()
 	//{
 	//}
 
-	//if (key_status.key_down_now(KeyKind::ShoulderL)
-	//	&& key_status.key_up_now(KeyKind::ShoulderR))
-	//{
-	//	_save_to_json();
-	//}
-	//else if (key_status.key_down_now(KeyKind::ShoulderR)
-	//	&& key_status.key_up_now(KeyKind::ShoulderL))
-	//{
-	//	_create_or_load_save_file_etc();
-	//	//if (auto file=std::fstream(SAVE_FILE_NAME, std::ios_base::in);
-	//	//	file.is_open())
-	//	//{
-	//	//	Json::Value root;
-	//	//	std::string errs;
+	if (key_status.key_down_now(KeyKind::ShoulderL)
+		&& key_status.key_up_now(KeyKind::ShoulderR))
+	{
+		_save_to_json();
+	}
+	else if (key_status.key_down_now(KeyKind::ShoulderR)
+		&& key_status.key_up_now(KeyKind::ShoulderL))
+	{
+		_create_or_load_save_file_etc();
+		//if (auto file=std::fstream(SAVE_FILE_NAME, std::ios_base::in);
+		//	file.is_open())
+		//{
+		//	Json::Value root;
+		//	std::string errs;
 
-	//	//	parse_json(file, &root, &errs);
+		//	parse_json(file, &root, &errs);
 
-	//	//	deserialize(root);
-	//	//}
-	//}
+		//	deserialize(root);
+		//}
+	}
 	//printout("Ticking the game engine: ", _tick_counter, "\n");
 	//++_tick_counter;
 

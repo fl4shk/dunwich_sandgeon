@@ -61,17 +61,17 @@ Window::Window(const PosVec2& s_some_pos, const SizeVec2& s_some_size_2d,
 	: _pos(s_some_pos
 		- ((!prev_args_are_with_border) ? PosVec2(1, 1) : PosVec2(0, 0))),
 	_file_num(s_file_num),
-	//_ent_id_v2d
-	//(
-	//	s_some_size_2d.y
-	//		+ ((!prev_args_are_with_border) ? 2 : 0),
-	//	ecs::EntIdVec
-	//	(
-	//		s_some_size_2d.x
-	//			+ ((!prev_args_are_with_border) ? 2 : 0),
-	//		ecs::ENT_NULL_ID
-	//	)
-	//),
+	_ent_id_v2d
+	(
+		s_some_size_2d.y
+			+ ((!prev_args_are_with_border) ? 2 : 0),
+		ecs::EntIdVec
+		(
+			s_some_size_2d.x
+				+ ((!prev_args_are_with_border) ? 2 : 0),
+			ecs::ENT_NULL_ID
+		)
+	),
 	_cleared_ent_id_v2d
 	(
 		s_some_size_2d.y
@@ -85,24 +85,24 @@ Window::Window(const PosVec2& s_some_pos, const SizeVec2& s_some_size_2d,
 	)
 {
 	//init_set_border();
-	_ent_id_v2d = _cleared_ent_id_v2d;
+	//_ent_id_v2d = _cleared_ent_id_v2d;
 }
 Window::Window(const PosVec2& s_some_pos, const PosVec2& s_some_end_pos,
 	int s_file_num, bool prev_args_are_with_border)
 	: _pos(s_some_pos
 		- ((!prev_args_are_with_border) ? PosVec2(1, 1) : PosVec2(0, 0))),
 	_file_num(s_file_num),
-	//_ent_id_v2d
-	//(
-	//	s_some_end_pos.y - s_some_pos.y + 1
-	//		+ ((!prev_args_are_with_border) ? 2 : 0),
-	//	ecs::EntIdVec
-	//	(
-	//		s_some_end_pos.x - s_some_pos.x + 1
-	//			+ ((!prev_args_are_with_border) ? 2 : 0),
-	//		ecs::ENT_NULL_ID
-	//	)
-	//),
+	_ent_id_v2d
+	(
+		s_some_end_pos.y - s_some_pos.y + 1
+			+ ((!prev_args_are_with_border) ? 2 : 0),
+		ecs::EntIdVec
+		(
+			s_some_end_pos.x - s_some_pos.x + 1
+				+ ((!prev_args_are_with_border) ? 2 : 0),
+			ecs::ENT_NULL_ID
+		)
+	),
 	_cleared_ent_id_v2d
 	(
 		s_some_end_pos.y - s_some_pos.y + 1
@@ -116,7 +116,7 @@ Window::Window(const PosVec2& s_some_pos, const PosVec2& s_some_end_pos,
 	)
 {
 	//init_set_border();
-	_ent_id_v2d = _cleared_ent_id_v2d;
+	//_ent_id_v2d = _cleared_ent_id_v2d;
 }
 Window::~Window()
 {
@@ -135,7 +135,7 @@ void Window::deserialize(const Json::Value& jv)
 {
 	//printout("Window::deserialize() before: ", engine == nullptr, "\n");
 	MEMB_SER_LIST_WINDOW(JSON_MEMB_DESERIALIZE);
-	_ent_id_v2d = _cleared_ent_id_v2d;
+	//_ent_id_v2d = _cleared_ent_id_v2d;
 	//printout("Window::deserialize() after: ", engine == nullptr, "\n");
 }
 

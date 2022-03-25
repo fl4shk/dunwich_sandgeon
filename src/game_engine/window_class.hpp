@@ -74,17 +74,18 @@ public:		// constants
 	static const comp::Drawable::Data& BLANK_DRAWABLE_DATA();
 protected:		// non-serialized variables
 	//Engine* _engine = nullptr;
-	ecs::EntIdVec2d _ent_id_v2d;
 protected:		// serialized variables
 	#define MEMB_SER_LIST_WINDOW(X) \
-		X(_cleared_ent_id_v2d, std::nullopt) \
 		X(_pos, std::nullopt) \
 		X(_file_num, std::nullopt) \
+		X(_ent_id_v2d, std::nullopt) \
+		X(_cleared_ent_id_v2d, std::nullopt) \
 
 	//int _priority = 0;
-	ecs::EntIdVec2d _cleared_ent_id_v2d;
 	PosVec2 _pos;
 	int _file_num = -1;
+	ecs::EntIdVec2d _ent_id_v2d;
+	ecs::EntIdVec2d _cleared_ent_id_v2d;
 public:		// functions
 	Window();
 	Window(const PosVec2& s_some_pos,
