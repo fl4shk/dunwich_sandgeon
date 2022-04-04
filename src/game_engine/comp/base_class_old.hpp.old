@@ -40,7 +40,7 @@ public:		// functions
 	virtual ~Base() = default;
 
 	virtual std::string kind_str() const;
-	virtual operator Json::Value () const;
+	virtual operator binser::Value () const;
 };
 
 } // namespace comp

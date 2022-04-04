@@ -87,8 +87,8 @@ concept EngineErrWhenEntNullIdObj = requires(ObjT obj)
 class Engine final
 {
 public:		// types
-	using EntIdSetVec2d
-		= std::vector<std::vector<ecs::EntIdSet>>;
+	//using EntIdSetVec2d
+	//	= std::vector<std::vector<ecs::EntIdSet>>;
 
 public:		// constants
 	// These are basement floors, going from B1F down to B50F
@@ -112,7 +112,7 @@ public:		// types
 			X(log_msg_log, std::nullopt) \
 			X(hud_msg_log, std::nullopt) \
 			X(floor, std::nullopt) \
-			X(pfield_ent_id_v3d, std::nullopt)
+			X(pfield_ent_id_map, std::nullopt)
 
 		MsgLog
 			log_msg_log,
@@ -124,17 +124,17 @@ public:		// types
 		// "pfield" is short for "playfield".
 		// I needed to have a shorter variable name, so I changed the name
 		// of this variable and related functions
-		std::vector<EntIdSetVec2d> pfield_ent_id_v3d;
-	private:		// static functions
-		static decltype(pfield_ent_id_v3d)
-			_gen_blank_pfield_ent_id_v3d();
+		std::unordered_map<PosVec3, ecs::EntIdSet> pfield_ent_id_map;
+	//private:		// static functions
+	//	static decltype(pfield_ent_id_v3d)
+	//		_gen_blank_pfield_ent_id_v3d();
 	public:		// functions
 		NonEcsSerData();
-		NonEcsSerData(const Json::Value& jv);
+		NonEcsSerData(const binser::Value& bv);
 		GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(NonEcsSerData);
 		~NonEcsSerData();
 
-		operator Json::Value () const;
+		operator binser::Value () const;
 	};
 
 public:		// serialized variables
@@ -145,13 +145,13 @@ public:		// serialized variables
 		X(game_options, std::nullopt) \
 		X(_non_ecs_ser_data_vec, std::nullopt) \
 		\
-		X(_screen_window_vec, std::nullopt) \
-		X(_aux_window_vec, std::nullopt) \
-		X(_pfield_window_vec, std::nullopt) \
-		X(_log_window_vec, std::nullopt) \
-		X(_hud_window_vec, std::nullopt) \
-		X(_yes_no_window_vec, std::nullopt) \
-		X(_text_yes_no_window_vec, std::nullopt)
+		/* X(_screen_window_vec, std::nullopt) */ \
+		/* X(_aux_window_vec, std::nullopt) */ \
+		/* X(_pfield_window_vec, std::nullopt) */ \
+		/* X(_log_window_vec, std::nullopt) */ \
+		/* X(_hud_window_vec, std::nullopt) */ \
+		/* X(_yes_no_window_vec, std::nullopt) */ \
+		/* X(_text_yes_no_window_vec, std::nullopt) */
 
 	GameOptions game_options;
 private:		// serialized variables
@@ -239,9 +239,9 @@ public:		// functions
 	Engine(bool do_create_or_load=true);
 	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(Engine);
 	~Engine();
-	operator Json::Value () const;
+	operator binser::Value () const;
 
-	void deserialize(const Json::Value& jv);
+	void deserialize(const binser::Value& bv);
 
 	inline void err(const auto&... objs) const
 	{
@@ -258,8 +258,8 @@ public:		// functions
 	void tick();
 private:		// functions
 	void _create_or_load_save_file_etc();
-	//void _load_from_json();
-	void _save_to_json(bool do_create_or_load=false);
+	//void _load_from_binser();
+	void _save_to_binser(bool do_create_or_load=false);
 public:		// functions
 	void save_and_quit();
 	void save_and_return_to_title();
@@ -379,42 +379,75 @@ public:		// `_non_ecs_ser_data_vec` accessor functions
 		return floor(USE_CURR_FILE_NUM);
 	}
 	//--------
-	inline std::vector<EntIdSetVec2d>& pfield_ent_id_v3d(int file_num)
+	inline ecs::EntIdSet& pfield_ent_id_set(int file_num,
+		const PosVec3& pos)
 	{
-		return non_ecs_ser_data(file_num).pfield_ent_id_v3d;
+		return non_ecs_ser_data(file_num).pfield_ent_id_map.at(pos);
 	}
-	inline const std::vector<EntIdSetVec2d>& pfield_ent_id_v3d
-		(int file_num) const
+	inline const ecs::EntIdSet& pfield_ent_id_set(int file_num,
+		const PosVec3& pos) const
 	{
-		return non_ecs_ser_data(file_num).pfield_ent_id_v3d;
+		return non_ecs_ser_data(file_num).pfield_ent_id_map.at(pos);
 	}
-	inline std::vector<EntIdSetVec2d>& pfield_ent_id_v3d_cfn()
+	inline ecs::EntIdSet& pfield_ent_id_set_cfn(const PosVec3& pos)
 	{
-		return pfield_ent_id_v3d(USE_CURR_FILE_NUM);
+		return pfield_ent_id_set(USE_CURR_FILE_NUM, pos);
 	}
-	inline const std::vector<EntIdSetVec2d>& pfield_ent_id_v3d_cfn() const
+	inline const ecs::EntIdSet& pfield_ent_id_set_cfn(const PosVec3& pos)
+		const
 	{
-		return pfield_ent_id_v3d(USE_CURR_FILE_NUM);
+		return pfield_ent_id_set(USE_CURR_FILE_NUM, pos);
 	}
 	//--------
-	inline EntIdSetVec2d& pfield_ent_id_v2d(int file_num)
+	inline ecs::EntIdSet& pfield_ent_id_set(int file_num,
+		const PosVec2& pos_2d)
 	{
-		return pfield_ent_id_v3d(file_num).at(floor(file_num));
+		return pfield_ent_id_set(file_num, to_pos_vec3(file_num, pos_2d));
 	}
-	inline const EntIdSetVec2d& pfield_ent_id_v2d(int file_num) const
+	inline const ecs::EntIdSet& pfield_ent_id_set(int file_num,
+		const PosVec2& pos_2d) const
 	{
-		return pfield_ent_id_v3d(file_num).at(floor(file_num));
+		return pfield_ent_id_set(file_num, to_pos_vec3(file_num, pos_2d));
 	}
-	inline EntIdSetVec2d& pfield_ent_id_v2d_cfn()
+	inline ecs::EntIdSet& pfield_ent_id_set_cfn(const PosVec2& pos_2d)
 	{
-		return pfield_ent_id_v2d(USE_CURR_FILE_NUM);
+		return pfield_ent_id_set_cfn(to_pos_vec3_cfn(pos_2d));
 	}
-	inline const EntIdSetVec2d& pfield_ent_id_v2d_cfn() const
+	inline const ecs::EntIdSet& pfield_ent_id_set_cfn
+		(const PosVec2& pos_2d) const
 	{
-		return pfield_ent_id_v2d(USE_CURR_FILE_NUM);
+		return pfield_ent_id_set_cfn(to_pos_vec3_cfn(pos_2d));
+	}
+	//inline EntIdSetVec2d& pfield_ent_id_v2d(int file_num)
+	//{
+	//	return pfield_ent_id_v3d(file_num).at(floor(file_num));
+	//}
+	//inline const EntIdSetVec2d& pfield_ent_id_v2d(int file_num) const
+	//{
+	//	return pfield_ent_id_v3d(file_num).at(floor(file_num));
+	//}
+	//inline EntIdSetVec2d& pfield_ent_id_v2d_cfn()
+	//{
+	//	return pfield_ent_id_v2d(USE_CURR_FILE_NUM);
+	//}
+	//inline const EntIdSetVec2d& pfield_ent_id_v2d_cfn() const
+	//{
+	//	return pfield_ent_id_v2d(USE_CURR_FILE_NUM);
+	//}
+	//--------
+public:		// functions
+	//--------
+	inline PosVec3 to_pos_vec3(int file_num, const PosVec2& pos_2d) const
+	{
+		return PosVec3(pos_2d.x, pos_2d.y, floor(file_num));
+	}
+	inline PosVec3 to_pos_vec3_cfn(const PosVec2& pos_2d) const
+	{
+		return to_pos_vec3(USE_CURR_FILE_NUM, pos_2d);
 	}
 	//--------
 public:		// functions
+	//--------
 	inline int fn_state_index() const
 	{
 		return
@@ -422,6 +455,7 @@ public:		// functions
 			? *curr_file_num()
 			: src_file_num;
 	}
+	//--------
 public:		// `Window` and `Menu` accessor functions
 	//--------
 	//inline Window& screen_window(int file_num)

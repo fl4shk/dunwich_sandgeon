@@ -25,37 +25,37 @@ namespace game_engine
 namespace comp
 {
 
-Drawable::Data Drawable::Data::from_jv(const Json::Value& jv)
+Drawable::Data Drawable::Data::from_bv(const binser::Value& bv)
 {
 	Data ret;
 
-	MEMB_LIST_COMP_DRAWABLE_DATA(JSON_MEMB_FROM_JV_DESERIALIZE);
+	MEMB_LIST_COMP_DRAWABLE_DATA(BINSER_MEMB_FROM_BV_DESERIALIZE);
 
 	return ret;
 }
-Drawable::Data::operator Json::Value () const
+Drawable::Data::operator binser::Value () const
 {
-	Json::Value ret;
+	binser::Value ret;
 
-	MEMB_LIST_COMP_DRAWABLE_DATA(JSON_MEMB_SERIALIZE);
+	MEMB_LIST_COMP_DRAWABLE_DATA(BINSER_MEMB_SERIALIZE);
 
 	return ret;
 }
 
 const std::string Drawable::KIND_STR("Drawable");
-Drawable::Drawable(const Json::Value& jv)
+Drawable::Drawable(const binser::Value& bv)
 {
-	MEMB_LIST_COMP_DRAWABLE(JSON_MEMB_DESERIALIZE);
+	MEMB_LIST_COMP_DRAWABLE(BINSER_MEMB_DESERIALIZE);
 }
 std::string Drawable::kind_str() const
 {
 	return KIND_STR;
 }
-Drawable::operator Json::Value () const
+Drawable::operator binser::Value () const
 {
-	Json::Value ret;
+	binser::Value ret;
 
-	MEMB_LIST_COMP_DRAWABLE(JSON_MEMB_SERIALIZE);
+	MEMB_LIST_COMP_DRAWABLE(BINSER_MEMB_SERIALIZE);
 
 	return ret;
 }
@@ -67,16 +67,17 @@ Position::Position(ecs::EntId s_ent_id, const PosVec3& s_pos,
 {
 	engine->position_ctor_callback(this);
 }
-Position::Position(const Json::Value& jv)
+Position::Position(const binser::Value& bv)
 {
-	MEMB_AUTOSER_LIST_COMP_POSITION(JSON_MEMB_DESERIALIZE);
+	MEMB_AUTOSER_LIST_COMP_POSITION(BINSER_MEMB_DESERIALIZE);
 	//priority = static_cast<PlayfieldLayerPrio>
-	//	(get_jv_memb<uint>(jv, "priority"));
+	//	(get_bv_memb<uint>(bv, "priority"));
 
 	//priority = static_cast<PlayfieldLayerPrio>(val_from_jv<uint>
-	//	(jv["priority"]));
+	//	(bv["priority"]));
 
-	get_jv_memb_w_stat_cast<uint>(priority, jv, "priority", std::nullopt);
+	binser::get_bv_memb_w_stat_cast<u32>(priority, bv, "priority",
+		std::nullopt);
 
 	engine->position_ctor_callback(this);
 }
@@ -92,28 +93,29 @@ std::string Position::kind_str() const
 {
 	return KIND_STR;
 }
-Position::operator Json::Value () const
+Position::operator binser::Value () const
 {
-	Json::Value ret;
+	binser::Value ret;
 
-	MEMB_AUTOSER_LIST_COMP_POSITION(JSON_MEMB_SERIALIZE);
-	ret["priority"] = static_cast<uint>(priority);
+	MEMB_AUTOSER_LIST_COMP_POSITION(BINSER_MEMB_SERIALIZE);
+	//ret["priority"] = static_cast<uint>(priority);
+	ret.insert("priority", static_cast<u32>(priority));
 
 	return ret;
 }
 
 //const std::string Weight::KIND_STR("Weight");
-//Weight::Weight(const Json::Value& jv)
+//Weight::Weight(const binser::Value& bv)
 //{
-//	val = val_from_jv<decltype(val)>(jv["val"]);
+//	val = val_from_jv<decltype(val)>(bv["val"]);
 //}
 //std::string Weight::kind_str() const
 //{
 //	return KIND_STR;
 //}
-//Weight::operator Json::Value () const
+//Weight::operator binser::Value () const
 //{
-//	Json::Value ret;
+//	binser::Value ret;
 //
 //	ret["val"] = val;
 //
@@ -121,19 +123,19 @@ Position::operator Json::Value () const
 //}
 
 const std::string BaseStats::KIND_STR("BaseStats");
-BaseStats::BaseStats(const Json::Value& jv)
+BaseStats::BaseStats(const binser::Value& bv)
 {
-	MEMB_LIST_COMP_BASE_STATS(JSON_MEMB_DESERIALIZE);
+	MEMB_LIST_COMP_BASE_STATS(BINSER_MEMB_DESERIALIZE);
 }
 std::string BaseStats::kind_str() const
 {
 	return KIND_STR;
 }
-BaseStats::operator Json::Value () const
+BaseStats::operator binser::Value () const
 {
-	Json::Value ret;
+	binser::Value ret;
 
-	MEMB_LIST_COMP_BASE_STATS(JSON_MEMB_SERIALIZE);
+	MEMB_LIST_COMP_BASE_STATS(BINSER_MEMB_SERIALIZE);
 
 	return ret;
 }

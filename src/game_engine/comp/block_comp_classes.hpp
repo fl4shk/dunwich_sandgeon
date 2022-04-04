@@ -41,7 +41,7 @@ namespace comp
 //	virtual ~InBetweenWalls() = default;
 //
 //	virtual std::string kind_str() const;
-//	virtual operator Json::Value () const;
+//	virtual operator binser::Value () const;
 //};
 
 class Wall final: public ecs::Comp
@@ -52,12 +52,12 @@ public:		// variables
 	#define MEMB_LIST_COMP_WALL(X)
 public:		// functions
 	Wall() = default;
-	Wall(const Json::Value& jv);
+	Wall(const binser::Value& bv);
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Wall);
 	virtual ~Wall() = default;
 
 	virtual std::string kind_str() const;
-	virtual operator Json::Value () const;
+	virtual operator binser::Value () const;
 };
 
 class Floor final: public ecs::Comp
@@ -68,12 +68,12 @@ public:		// variables
 	#define MEMB_LIST_COMP_FLOOR(X)
 public:		// functions
 	Floor() = default;
-	Floor(const Json::Value& jv);
+	Floor(const binser::Value& bv);
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Floor);
 	virtual ~Floor() = default;
 
 	virtual std::string kind_str() const;
-	virtual operator Json::Value () const;
+	virtual operator binser::Value () const;
 };
 
 class DownStairs final: public ecs::Comp
@@ -84,12 +84,12 @@ public:		// variables
 	#define MEMB_LIST_COMP_DOWN_STAIRS(X)
 public:		// functions
 	DownStairs() = default;
-	DownStairs(const Json::Value& jv);
+	DownStairs(const binser::Value& bv);
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(DownStairs);
 	virtual ~DownStairs() = default;
 
 	virtual std::string kind_str() const;
-	virtual operator Json::Value () const;
+	virtual operator binser::Value () const;
 };
 
 class UpStairs final: public ecs::Comp
@@ -100,12 +100,12 @@ public:		// variables
 	#define MEMB_LIST_COMP_UP_STAIRS(X)
 public:		// functions
 	UpStairs() = default;
-	UpStairs(const Json::Value& jv);
+	UpStairs(const binser::Value& bv);
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(UpStairs);
 	virtual ~UpStairs() = default;
 
 	virtual std::string kind_str() const;
-	virtual operator Json::Value () const;
+	virtual operator binser::Value () const;
 };
 
 } // namespace comp

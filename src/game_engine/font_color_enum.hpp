@@ -83,10 +83,10 @@ public:		// functions
 		: fg(s_fg), bg(s_bg)
 	{
 	}
-	constexpr inline FgBgColorPair(const Json::Value& jv)
+	constexpr inline FgBgColorPair(const binser::Value& bv)
 	{
-		fg = static_cast<FontColor>(jv["fg"].asUInt());
-		bg = static_cast<FontColor>(jv["bg"].asUInt());
+		fg = static_cast<FontColor>(bv.at("fg").get<u32>());
+		bg = static_cast<FontColor>(bv.at("bg").get<u32>());
 	}
 	GEN_CX_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(FgBgColorPair);
 	constexpr inline ~FgBgColorPair() = default;
@@ -97,12 +97,12 @@ public:		// functions
 		bg = DEFAULT_BG;
 		return *this;
 	}
-	inline operator Json::Value () const
+	inline operator binser::Value () const
 	{
-		Json::Value ret;
+		binser::Value ret;
 
-		ret["fg"] = static_cast<uint>(fg);
-		ret["bg"] = static_cast<uint>(bg);
+		ret.insert("fg", static_cast<u32>(fg));
+		ret.insert("bg", static_cast<u32>(bg));
 
 		return ret;
 	}

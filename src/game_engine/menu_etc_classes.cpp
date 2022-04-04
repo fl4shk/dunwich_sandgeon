@@ -24,21 +24,21 @@ namespace dunwich_sandgeon
 namespace game_engine
 {
 //--------
-RopePart::RopePart(const Json::Value& jv)
+RopePart::RopePart(const binser::Value& bv)
 {
-	MEMB_LIST_ROPE_PART(JSON_MEMB_DESERIALIZE);
+	MEMB_LIST_ROPE_PART(BINSER_MEMB_DESERIALIZE);
 }
-RopePart::operator Json::Value () const
+RopePart::operator binser::Value () const
 {
-	Json::Value ret;
+	binser::Value ret;
 
-	MEMB_LIST_ROPE_PART(JSON_MEMB_SERIALIZE);
+	MEMB_LIST_ROPE_PART(BINSER_MEMB_SERIALIZE);
 
 	return ret;
 }
-RopePart& RopePart::operator = (const Json::Value& jv)
+RopePart& RopePart::operator = (const binser::Value& bv)
 {
-	*this = RopePart(jv);
+	*this = RopePart(bv);
 
 	return *this;
 }
@@ -189,16 +189,16 @@ MsgLog::MsgLog(const RopeDeque& s_data, uint s_internal_height,
 		push_back(rope);
 	}
 }
-MsgLog::MsgLog(const Json::Value& jv)
+MsgLog::MsgLog(const binser::Value& bv)
 {
-	MEMB_LIST_MSG_LOG(JSON_MEMB_DESERIALIZE);
+	MEMB_LIST_MSG_LOG(BINSER_MEMB_DESERIALIZE);
 }
 
-MsgLog::operator Json::Value () const
+MsgLog::operator binser::Value () const
 {
-	Json::Value ret;
+	binser::Value ret;
 
-	MEMB_LIST_MSG_LOG(JSON_MEMB_SERIALIZE);
+	MEMB_LIST_MSG_LOG(BINSER_MEMB_SERIALIZE);
 
 	return ret;
 }

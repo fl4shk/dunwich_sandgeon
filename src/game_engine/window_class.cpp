@@ -122,19 +122,19 @@ Window::~Window()
 {
 }
 
-Window::operator Json::Value () const
+Window::operator binser::Value () const
 {
-	Json::Value ret;
+	binser::Value ret;
 
-	MEMB_SER_LIST_WINDOW(JSON_MEMB_SERIALIZE);
+	MEMB_SER_LIST_WINDOW(BINSER_MEMB_SERIALIZE);
 
 	return ret;
 }
 
-void Window::deserialize(const Json::Value& jv)
+void Window::deserialize(const binser::Value& bv)
 {
 	//printout("Window::deserialize() before: ", engine == nullptr, "\n");
-	MEMB_SER_LIST_WINDOW(JSON_MEMB_DESERIALIZE);
+	MEMB_SER_LIST_WINDOW(BINSER_MEMB_DESERIALIZE);
 	//_ent_id_v2d = _cleared_ent_id_v2d;
 	//printout("Window::deserialize() after: ", engine == nullptr, "\n");
 }

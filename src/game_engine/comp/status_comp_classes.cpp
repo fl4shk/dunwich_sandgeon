@@ -25,91 +25,91 @@ namespace comp
 {
 
 const std::string StatusOnFire::KIND_STR("StatusOnFire");
-StatusOnFire::StatusOnFire(const Json::Value& jv)
+StatusOnFire::StatusOnFire(const binser::Value& bv)
 {
-	MEMB_LIST_COMP_STATUS_ON_FIRE(JSON_MEMB_DESERIALIZE);
+	MEMB_LIST_COMP_STATUS_ON_FIRE(BINSER_MEMB_DESERIALIZE);
 }
 std::string StatusOnFire::kind_str() const
 {
 	return KIND_STR;
 }
-StatusOnFire::operator Json::Value () const
+StatusOnFire::operator binser::Value () const
 {
-	Json::Value ret;
+	binser::Value ret;
 
-	MEMB_LIST_COMP_STATUS_ON_FIRE(JSON_MEMB_SERIALIZE);
+	MEMB_LIST_COMP_STATUS_ON_FIRE(BINSER_MEMB_SERIALIZE);
 
 	return ret;
 }
 
 const std::string StatusPoisoned::KIND_STR("StatusPoisoned");
-StatusPoisoned::StatusPoisoned(const Json::Value& jv)
+StatusPoisoned::StatusPoisoned(const binser::Value& bv)
 {
-	MEMB_LIST_COMP_STATUS_POISONED(JSON_MEMB_DESERIALIZE);
+	MEMB_LIST_COMP_STATUS_POISONED(BINSER_MEMB_DESERIALIZE);
 }
 std::string StatusPoisoned::kind_str() const
 {
 	return KIND_STR;
 }
-StatusPoisoned::operator Json::Value () const
+StatusPoisoned::operator binser::Value () const
 {
-	Json::Value ret;
+	binser::Value ret;
 
-	MEMB_LIST_COMP_STATUS_POISONED(JSON_MEMB_SERIALIZE);
+	MEMB_LIST_COMP_STATUS_POISONED(BINSER_MEMB_SERIALIZE);
 
 	return ret;
 }
 
 const std::string StatusAsleep::KIND_STR("StatusAsleep");
-StatusAsleep::StatusAsleep(const Json::Value& jv)
+StatusAsleep::StatusAsleep(const binser::Value& bv)
 {
-	MEMB_LIST_COMP_STATUS_ASLEEP(JSON_MEMB_DESERIALIZE);
+	MEMB_LIST_COMP_STATUS_ASLEEP(BINSER_MEMB_DESERIALIZE);
 }
 std::string StatusAsleep::kind_str() const
 {
 	return KIND_STR;
 }
-StatusAsleep::operator Json::Value () const
+StatusAsleep::operator binser::Value () const
 {
-	Json::Value ret;
+	binser::Value ret;
 
-	MEMB_LIST_COMP_STATUS_ASLEEP(JSON_MEMB_SERIALIZE);
+	MEMB_LIST_COMP_STATUS_ASLEEP(BINSER_MEMB_SERIALIZE);
 
 	return ret;
 }
 
 const std::string StatusTravelSpeed::KIND_STR("StatusTravelSpeed");
-StatusTravelSpeed::StatusTravelSpeed(const Json::Value& jv)
+StatusTravelSpeed::StatusTravelSpeed(const binser::Value& bv)
 {
-	MEMB_LIST_COMP_STATUS_TRAVEL_SPEED(JSON_MEMB_DESERIALIZE);
+	MEMB_LIST_COMP_STATUS_TRAVEL_SPEED(BINSER_MEMB_DESERIALIZE);
 }
 std::string StatusTravelSpeed::kind_str() const
 {
 	return KIND_STR;
 }
-StatusTravelSpeed::operator Json::Value () const
+StatusTravelSpeed::operator binser::Value () const
 {
-	Json::Value ret;
+	binser::Value ret;
 
-	MEMB_LIST_COMP_STATUS_TRAVEL_SPEED(JSON_MEMB_SERIALIZE);
+	MEMB_LIST_COMP_STATUS_TRAVEL_SPEED(BINSER_MEMB_SERIALIZE);
 
 	return ret;
 }
 
 const std::string StatusActionSpeed::KIND_STR("StatusActionSpeed");
-StatusActionSpeed::StatusActionSpeed(const Json::Value& jv)
+StatusActionSpeed::StatusActionSpeed(const binser::Value& bv)
 {
-	MEMB_LIST_COMP_STATUS_ACTION_SPEED(JSON_MEMB_DESERIALIZE);
+	MEMB_LIST_COMP_STATUS_ACTION_SPEED(BINSER_MEMB_DESERIALIZE);
 }
 std::string StatusActionSpeed::kind_str() const
 {
 	return KIND_STR;
 }
-StatusActionSpeed::operator Json::Value () const
+StatusActionSpeed::operator binser::Value () const
 {
-	Json::Value ret;
+	binser::Value ret;
 
-	MEMB_LIST_COMP_STATUS_ACTION_SPEED(JSON_MEMB_SERIALIZE);
+	MEMB_LIST_COMP_STATUS_ACTION_SPEED(BINSER_MEMB_SERIALIZE);
 
 	return ret;
 }

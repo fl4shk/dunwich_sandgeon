@@ -37,8 +37,8 @@ public:		// constants
 public:		// functions
 	//--------
 	GmTitleScreen() = default;
-	//inline GmTitleScreen(const Json::Value& jv)
-	//	: ecs::Sys(jv)
+	//inline GmTitleScreen(const binser::Value& bv)
+	//	: ecs::Sys(bv)
 	//{
 	//}
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(GmTitleScreen);

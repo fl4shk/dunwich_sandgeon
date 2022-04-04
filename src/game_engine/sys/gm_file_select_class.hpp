@@ -52,8 +52,8 @@ private:		// variables
 	WinState _win_state = WinState::Aux;
 public:		// functions
 	GmFileSelect() = default;
-	//inline GmFileSelect(const Json::Value& jv)
-	//	: ecs::Sys(jv)
+	//inline GmFileSelect(const binser::Value& bv)
+	//	: ecs::Sys(bv)
 	//{
 	//}
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(GmFileSelect);

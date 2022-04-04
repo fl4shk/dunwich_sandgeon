@@ -31,20 +31,20 @@ GameOptions::GameOptions(bool s_grayscale)
 {
 }
 
-GameOptions::GameOptions(const Json::Value& jv)
+GameOptions::GameOptions(const binser::Value& bv)
 {
-	MEMB_LIST_GAME_OPTIONS(JSON_MEMB_DESERIALIZE);
+	MEMB_LIST_GAME_OPTIONS(BINSER_MEMB_DESERIALIZE);
 }
 
 GameOptions::~GameOptions()
 {
 }
 
-GameOptions::operator Json::Value () const
+GameOptions::operator binser::Value () const
 {
-	Json::Value ret;
+	binser::Value ret;
 
-	MEMB_LIST_GAME_OPTIONS(JSON_MEMB_SERIALIZE);
+	MEMB_LIST_GAME_OPTIONS(BINSER_MEMB_SERIALIZE);
 
 	return ret;
 }

@@ -89,14 +89,14 @@ public:		// variables
 	{
 		str += c;
 	}
-	RopePart(const Json::Value& jv);
+	RopePart(const binser::Value& bv);
 
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(RopePart);
 	inline ~RopePart() = default;
 
-	RopePart& operator = (const Json::Value& jv);
+	RopePart& operator = (const binser::Value& bv);
 
-	operator Json::Value () const;
+	operator binser::Value () const;
 
 };
 
@@ -155,11 +155,11 @@ public:		// functions
 		uint s_internal_height=DEFAULT_INTERNAL_HEIGHT,
 		const SizeVec2& s_window_size_2d=SCREEN_SIZE_2D,
 		Vec2<bool> s_center=Vec2(false, false), bool s_keep_sep=false);
-	MsgLog(const Json::Value& jv);
+	MsgLog(const binser::Value& bv);
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(MsgLog);
 	inline ~MsgLog() = default;
 
-	operator Json::Value () const;
+	operator binser::Value () const;
 
 	void clear();
 

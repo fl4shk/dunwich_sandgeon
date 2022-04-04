@@ -29,9 +29,9 @@ std::string Base::kind_str() const
 {
 	return KIND_STR;
 }
-Base::operator Json::Value () const
+Base::operator binser::Value () const
 {
-	return Json::Value();
+	return binser::Value();
 }
 
 } // namespace comp

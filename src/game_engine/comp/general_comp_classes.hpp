@@ -54,8 +54,8 @@ public:		// types
 			// Grayscale color pair
 			gs_color_pair = FontColor::White;
 	public:		// functions
-		static Data from_jv(const Json::Value& jv);
-		operator Json::Value () const;
+		static Data from_bv(const binser::Value& bv);
+		operator binser::Value () const;
 
 		inline bool operator == (Data to_cmp) const
 		{
@@ -89,12 +89,12 @@ public:		// functions
 	{
 		set_data(s_data);
 	}
-	Drawable(const Json::Value& jv);
+	Drawable(const binser::Value& bv);
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Drawable);
 	virtual ~Drawable() = default;
 
 	virtual std::string kind_str() const;
-	virtual operator Json::Value () const;
+	virtual operator binser::Value () const;
 
 	void blink()
 	{
@@ -142,17 +142,46 @@ public:		// functions
 	Position() = default;
 	Position(ecs::EntId s_ent_id, const PosVec3& s_pos,
 		PlayfieldLayerPrio s_priority);
-	Position(const Json::Value& jv);
+	Position(const binser::Value& bv);
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Position);
 	virtual ~Position();
 
 	virtual std::string kind_str() const;
-	virtual operator Json::Value () const;
+	virtual operator binser::Value () const;
 
 	GEN_GETTER_BY_VAL(ent_id);
 	GEN_GETTER_BY_CON_REF(pos);
 	void set_pos(const PosVec3& n_pos);
 };
+
+//class NonSerPosition final: public ecs::Comp
+//{
+//	friend class dunwich_sandgeon::game_engine::Engine;
+//public:		// constants
+//	static const std::string KIND_STR;
+//private:		// variables
+//	#define MEMB_AUTOSER_LIST_COMP_NON_SER_POSITION(X)
+//		X(_ent_id, std::nullopt)
+//		X(_pos, std::nullopt)
+//	ecs::EntId _ent_id = ecs::ENT_NULL_ID;
+//	PosVec3 _pos;
+//public:		// variables
+//	PlayfieldLayerPrio priority = PlayfieldLayerPrio::Block;
+//public:		// functions
+//	NonSerPosition() = default;
+//	NonSerPosition(ecs::EntId s_ent_id, const PosVec3& s_pos,
+//		PlayfieldLayerPrio s_priority);
+//	NonSerPosition(const binser::Value& bv);
+//	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(NonSerPosition);
+//	virtual ~NonSerPosition();
+//
+//	virtual std::string kind_str() const;
+//	virtual operator binser::Value () const;
+//
+//	GEN_GETTER_BY_VAL(ent_id);
+//	GEN_GETTER_BY_CON_REF(pos);
+//	void set_pos(const PosVec3& n_pos);
+//};
 
 //class Weight final: public ecs::Comp
 //{
@@ -166,12 +195,12 @@ public:		// functions
 //		: val(s_val)
 //	{
 //	}
-//	Weight(const Json::Value& jv);
+//	Weight(const binser::Value& bv);
 //	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Weight);
 //	virtual ~Weight() = default;
 //
 //	virtual std::string kind_str() const;
-//	virtual operator Json::Value () const;
+//	virtual operator binser::Value () const;
 //};
 
 // These are stats that increase or stay the same upon level up.
@@ -207,12 +236,12 @@ public:		// functions
 		mag_def(s_mag_def)
 	{
 	}
-	BaseStats(const Json::Value& jv);
+	BaseStats(const binser::Value& bv);
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(BaseStats);
 	virtual ~BaseStats() = default;
 
 	virtual std::string kind_str() const;
-	virtual operator Json::Value () const;
+	virtual operator binser::Value () const;
 };
 
 //class OtherStats final: public ecs::Comp

@@ -36,11 +36,11 @@ public:		// variables
 public:		// functions
 	GameOptions();
 	GameOptions(bool s_grayscale);
-	GameOptions(const Json::Value& jv);
+	GameOptions(const binser::Value& bv);
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(GameOptions);
 	~GameOptions();
 
-	operator Json::Value () const;
+	operator binser::Value () const;
 };
 
 } // namespace game_engine

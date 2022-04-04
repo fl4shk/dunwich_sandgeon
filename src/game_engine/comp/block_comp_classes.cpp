@@ -30,73 +30,73 @@ namespace comp
 //}
 
 const std::string Wall::KIND_STR("Wall");
-Wall::Wall(const Json::Value& jv)
+Wall::Wall(const binser::Value& bv)
 {
-	MEMB_LIST_COMP_WALL(JSON_MEMB_DESERIALIZE);
+	MEMB_LIST_COMP_WALL(BINSER_MEMB_DESERIALIZE);
 }
 std::string Wall::kind_str() const
 {
 	return KIND_STR;
 }
-Wall::operator Json::Value () const
+Wall::operator binser::Value () const
 {
-	Json::Value ret;
+	binser::Value ret;
 
-	MEMB_LIST_COMP_WALL(JSON_MEMB_SERIALIZE);
+	MEMB_LIST_COMP_WALL(BINSER_MEMB_SERIALIZE);
 
 	return ret;
 }
 
 const std::string Floor::KIND_STR("Floor");
-Floor::Floor(const Json::Value& jv)
+Floor::Floor(const binser::Value& bv)
 {
-	MEMB_LIST_COMP_FLOOR(JSON_MEMB_DESERIALIZE);
+	MEMB_LIST_COMP_FLOOR(BINSER_MEMB_DESERIALIZE);
 }
 std::string Floor::kind_str() const
 {
 	return KIND_STR;
 }
-Floor::operator Json::Value () const
+Floor::operator binser::Value () const
 {
-	Json::Value ret;
+	binser::Value ret;
 
-	MEMB_LIST_COMP_FLOOR(JSON_MEMB_SERIALIZE);
+	MEMB_LIST_COMP_FLOOR(BINSER_MEMB_SERIALIZE);
 
 	return ret;
 }
 
 const std::string DownStairs::KIND_STR("DownStairs");
-DownStairs::DownStairs(const Json::Value& jv)
+DownStairs::DownStairs(const binser::Value& bv)
 {
-	MEMB_LIST_COMP_DOWN_STAIRS(JSON_MEMB_DESERIALIZE);
+	MEMB_LIST_COMP_DOWN_STAIRS(BINSER_MEMB_DESERIALIZE);
 }
 std::string DownStairs::kind_str() const
 {
 	return KIND_STR;
 }
-DownStairs::operator Json::Value () const
+DownStairs::operator binser::Value () const
 {
-	Json::Value ret;
+	binser::Value ret;
 
-	MEMB_LIST_COMP_DOWN_STAIRS(JSON_MEMB_SERIALIZE);
+	MEMB_LIST_COMP_DOWN_STAIRS(BINSER_MEMB_SERIALIZE);
 
 	return ret;
 }
 
 const std::string UpStairs::KIND_STR("UpStairs");
-UpStairs::UpStairs(const Json::Value& jv)
+UpStairs::UpStairs(const binser::Value& bv)
 {
-	MEMB_LIST_COMP_UP_STAIRS(JSON_MEMB_DESERIALIZE);
+	MEMB_LIST_COMP_UP_STAIRS(BINSER_MEMB_DESERIALIZE);
 }
 std::string UpStairs::kind_str() const
 {
 	return KIND_STR;
 }
-UpStairs::operator Json::Value () const
+UpStairs::operator binser::Value () const
 {
-	Json::Value ret;
+	binser::Value ret;
 
-	MEMB_LIST_COMP_UP_STAIRS(JSON_MEMB_SERIALIZE);
+	MEMB_LIST_COMP_UP_STAIRS(BINSER_MEMB_SERIALIZE);
 
 	return ret;
 }

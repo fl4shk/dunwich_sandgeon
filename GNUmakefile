@@ -10,6 +10,7 @@ SHARED_SRC_DIRS:=src \
 	src/game_engine/comp \
 	src/game_engine/sys \
 	src/sdl \
+	src/liborangepower_src/binser \
 	src/liborangepower_src/json_stuff \
 	src/liborangepower_src/game_stuff \
 
@@ -41,6 +42,9 @@ CXX:=$(PREFIX)g++
 CXX_FLAGS:=$(CXX_FLAGS) -std=c++20 -fcoroutines -fmodules-ts -Wall \
 	$(shell pkg-config --cflags jsoncpp) \
 	$(shell pkg-config --cflags sdl2)
+ifdef DEBUG
+	CXX_FLAGS:=$(CXX_FLAGS) -DDEBUG=1
+endif
 OBJDUMP:=$(PREFIX)objdump
 
 

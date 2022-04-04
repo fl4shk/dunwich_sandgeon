@@ -97,9 +97,9 @@ public:		// functions
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Window);
 	virtual ~Window();
 
-	operator Json::Value () const;
+	operator binser::Value () const;
 
-	void deserialize(const Json::Value& jv);
+	void deserialize(const binser::Value& bv);
 	void init_set_border();
 
 	virtual void tick(InputKind input_kind);

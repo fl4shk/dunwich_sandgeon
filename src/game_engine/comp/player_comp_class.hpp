@@ -58,12 +58,12 @@ public:		// variables
 		weight = DEFAULT_WEIGHT;
 public:		// functions
 	inline Player() = default;
-	Player(const Json::Value& jv);
+	Player(const binser::Value& bv);
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Player);
 	virtual ~Player() = default;
 
 	virtual std::string kind_str() const;
-	virtual operator Json::Value () const;
+	virtual operator binser::Value () const;
 };
 
 } // namespace comp

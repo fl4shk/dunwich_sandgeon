@@ -25,19 +25,19 @@ namespace comp
 {
 
 const std::string Player::KIND_STR("Player");
-Player::Player(const Json::Value& jv)
+Player::Player(const binser::Value& bv)
 {
-	MEMB_LIST_COMP_PLAYER(JSON_MEMB_DESERIALIZE);
+	MEMB_LIST_COMP_PLAYER(BINSER_MEMB_DESERIALIZE);
 }
 std::string Player::kind_str() const
 {
 	return KIND_STR;
 }
-Player::operator Json::Value () const
+Player::operator binser::Value () const
 {
-	Json::Value ret;
+	binser::Value ret;
 
-	MEMB_LIST_COMP_PLAYER(JSON_MEMB_SERIALIZE);
+	MEMB_LIST_COMP_PLAYER(BINSER_MEMB_SERIALIZE);
 
 	return ret;
 }

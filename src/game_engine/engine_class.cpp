@@ -37,40 +37,40 @@ namespace dunwich_sandgeon
 namespace game_engine
 {
 //--------
-const std::string Engine::SAVE_FILE_NAME("save_file.json");
+const std::string Engine::SAVE_FILE_NAME("save_file.binser.ignore");
 //--------
-auto Engine::NonEcsSerData::_gen_blank_pfield_ent_id_v3d()
-	-> decltype(pfield_ent_id_v3d)
-{
-	return
-		decltype(pfield_ent_id_v3d)
-		(
-			NUM_FLOORS,
-			EntIdSetVec2d(PFIELD_WINDOW_SIZE_2D.y,
-				std::vector<std::unordered_set<ecs::EntId>>
-					(PFIELD_WINDOW_SIZE_2D.x,
-					std::unordered_set<ecs::EntId>()))
-		);
-}
+//auto Engine::NonEcsSerData::_gen_blank_pfield_ent_id_v3d()
+//	-> decltype(pfield_ent_id_v3d)
+//{
+//	return
+//		decltype(pfield_ent_id_v3d)
+//		(
+//			NUM_FLOORS,
+//			EntIdSetVec2d(PFIELD_WINDOW_SIZE_2D.y,
+//				std::vector<std::unordered_set<ecs::EntId>>
+//					(PFIELD_WINDOW_SIZE_2D.x,
+//					std::unordered_set<ecs::EntId>()))
+//		);
+//}
 
 Engine::NonEcsSerData::NonEcsSerData()
-	: pfield_ent_id_v3d(_gen_blank_pfield_ent_id_v3d())
+	//: pfield_ent_id_v3d(_gen_blank_pfield_ent_id_v3d())
 {
 }
-Engine::NonEcsSerData::NonEcsSerData(const Json::Value& jv)
+Engine::NonEcsSerData::NonEcsSerData(const binser::Value& bv)
 {
-	MEMB_LIST_ENGINE_NON_ECS_SER_DATA(JSON_MEMB_DESERIALIZE);
+	MEMB_LIST_ENGINE_NON_ECS_SER_DATA(BINSER_MEMB_DESERIALIZE);
 }
 
 Engine::NonEcsSerData::~NonEcsSerData()
 {
 }
 
-Engine::NonEcsSerData::operator Json::Value () const
+Engine::NonEcsSerData::operator binser::Value () const
 {
-	Json::Value ret;
+	binser::Value ret;
 
-	MEMB_LIST_ENGINE_NON_ECS_SER_DATA(JSON_MEMB_SERIALIZE);
+	MEMB_LIST_ENGINE_NON_ECS_SER_DATA(BINSER_MEMB_SERIALIZE);
 
 	return ret;
 }
@@ -181,40 +181,40 @@ Engine::Engine(bool do_create_or_load)
 	}
 	//_load_from_json();
 }
-//Engine::Engine(const Json::Value& jv)
+//Engine::Engine(const binser::Value& bv)
 //{
-//	MEMB_LIST_ENGINE(JSON_MEMB_DESERIALIZE);
+//	MEMB_LIST_ENGINE(BINSER_MEMB_DESERIALIZE);
 //}
 Engine::~Engine()
 {
 }
 
-//void Engine::deserialize(const Json::Value& jv, int file_num)
+//void Engine::deserialize(const binser::Value& bv, int file_num)
 //{
 //	Engine ret;
 //
-//	ret.ecs_engine.deserialize(jv["ecs_engine"]);
+//	ret.ecs_engine.deserialize(bv["ecs_engine"]);
 //
-//	JSON_MEMB_DESERIALIZE
+//	BINSER_MEMB_DESERIALIZE
 //
 //	return ret;
 //}
-Engine::operator Json::Value () const
+Engine::operator binser::Value () const
 {
-	Json::Value ret;
+	binser::Value ret;
 
-	//JSON_MEMB_SERIALIZE(ecs_engine);
-	MEMB_SER_LIST_ENGINE(JSON_MEMB_SERIALIZE);
+	//BINSER_MEMB_SERIALIZE(ecs_engine);
+	MEMB_SER_LIST_ENGINE(BINSER_MEMB_SERIALIZE);
 
 	return ret;
 }
-void Engine::deserialize(const Json::Value& jv)
+void Engine::deserialize(const binser::Value& bv)
 {
-	//JSON_MEMB_DESERIALIZE(ecs_engine);
-	//ecs_engine.deserialize(jv["ecs_engine"]);
+	//BINSER_MEMB_DESERIALIZE(ecs_engine);
+	//ecs_engine.deserialize(bv["ecs_engine"]);
 	//printout("Engine::deserialize() before: ",
 	//	aux_window(0).engine() == nullptr, "\n");
-	MEMB_SER_LIST_ENGINE(JSON_MEMB_DESERIALIZE);
+	MEMB_SER_LIST_ENGINE(BINSER_MEMB_DESERIALIZE);
 	//printout("Engine::deserialize() after: ",
 	//	aux_window(0).engine() == nullptr, "\n");
 }
@@ -274,7 +274,7 @@ void Engine::tick()
 	if (key_status.key_down_now(KeyKind::ShoulderL)
 		&& key_status.key_up_now(KeyKind::ShoulderR))
 	{
-		_save_to_json();
+		_save_to_binser();
 	}
 	else if (key_status.key_down_now(KeyKind::ShoulderR)
 		&& key_status.key_up_now(KeyKind::ShoulderL))
@@ -283,7 +283,7 @@ void Engine::tick()
 		//if (auto file=std::fstream(SAVE_FILE_NAME, std::ios_base::in);
 		//	file.is_open())
 		//{
-		//	Json::Value root;
+		//	binser::Value root;
 		//	std::string errs;
 
 		//	parse_json(file, &root, &errs);
@@ -317,22 +317,23 @@ void Engine::_create_or_load_save_file_etc()
 	if (auto file=std::fstream(SAVE_FILE_NAME, std::ios_base::in);
 		file.is_open())
 	{
-		Json::Value root;
-		std::string errs;
+		binser::Value root;
+		//std::string errs;
 
 		// If the on-computer JSON file has not been created yet
 		if (file.peek() == decltype(file)::traits_type::eof())
 		{
-			//Engine()._save_to_json();
+			//Engine()._save_to_binser();
 		}
 		// Else if there's not a valid JSON file
-		else if (!parse_json(file, &root, &errs))
-		{
-			err("game_engine::Engine::_create_or_load_save_file_etc(): ",
-				"JSON parsing error: ", errs);
-		}
+		//else if (!parse_json(file, &root, &errs))
+		//{
+		//	err("game_engine::Engine::_create_or_load_save_file_etc(): ",
+		//		"JSON parsing error: ", errs);
+		//}
 		else
 		{
+			binser::parse_binser(file, root);
 			//printout("Testificate: Calling `deserialize()`\n");
 			deserialize(root);
 		}
@@ -342,23 +343,23 @@ void Engine::_create_or_load_save_file_etc()
 		//err("game_engine::Engine::_create_or_load_save_file_etc(): ",
 		//	"Error opening file called \"", SAVE_FILE_NAME, "\" for ",
 		//	"reading.\n");
-		_save_to_json(true);
+		_save_to_binser(true);
 	}
 	printout("Testificate: ", ecs_engine.curr_file_num, "\n");
 }
 
-//void Engine::_load_from_json()
+//void Engine::_load_from_binser()
 //{
-//	Json::Value root;
+//	binser::Value root;
 //
 //	deserialize
 //}
-void Engine::_save_to_json(bool do_create_or_load)
+void Engine::_save_to_binser(bool do_create_or_load)
 {
 	printout("game_engine::Engine::_save_file(): testificate\n");
 
-	//Json::Value root = do_create_or_load ? Engine(false) : *this;
-	Json::Value root;
+	//binser::Value root = do_create_or_load ? Engine(false) : *this;
+	binser::Value root;
 	if (do_create_or_load)
 	{
 		root = Engine(false);
@@ -368,14 +369,19 @@ void Engine::_save_to_json(bool do_create_or_load)
 		root = *this;
 	}
 
-	write_json(SAVE_FILE_NAME, &root);
+	#ifdef DEBUG
+	if (Json::Value jv_root=binser::bv_to_jv(root); true)
+	{
+		json::write_json("save_file.json.ignore", &jv_root);
+	}
+	#endif		// DEBUG
 }
 
 void Engine::save_and_quit()
 {
 	printout("game_engine::Engine::save_and_quit(): testificate\n");
 
-	_save_to_json();
+	_save_to_binser();
 	exit(0);
 }
 void Engine::save_and_return_to_title()
@@ -383,7 +389,7 @@ void Engine::save_and_return_to_title()
 	printout("game_engine::Engine::save_and_return_to_title(): ",
 		"testificate\n");
 
-	_save_to_json();
+	_save_to_binser();
 	set_game_mode(GameMode::TitleScreen);
 }
 
@@ -408,8 +414,10 @@ void Engine::position_ctor_callback(comp::Position* obj)
 {
 	_err_when_ent_id_is_null(obj, "position_ctor_callback");
 
-	auto& ent_id_set = pfield_ent_id_v3d_cfn()
-		.at(obj->pos().z).at(obj->pos().y).at(obj->pos().x);
+	//auto& ent_id_set = pfield_ent_id_v3d_cfn()
+	//	.at(obj->pos().z).at(obj->pos().y).at(obj->pos().x);
+	auto& ent_id_set = pfield_ent_id_set_cfn(obj->pos());
+
 	if (ent_id_set.contains(obj->ent_id()))
 	{
 		fprintf(stderr, sconcat("Engine::position_ctor_callback(): ",
@@ -423,8 +431,10 @@ void Engine::position_dtor_callback(comp::Position* obj)
 {
 	_err_when_ent_id_is_null(obj, "position_dtor_callback");
 
-	auto& ent_id_set = pfield_ent_id_v3d_cfn()
-		.at(obj->pos().z).at(obj->pos().y).at(obj->pos().x);
+	//auto& ent_id_set = pfield_ent_id_v3d_cfn()
+	//	.at(obj->pos().z).at(obj->pos().y).at(obj->pos().x);
+	auto& ent_id_set = pfield_ent_id_set_cfn(obj->pos());
+
 	if (!ent_id_set.contains(obj->ent_id()))
 	{
 		fprintf(stderr, sconcat("Engine::position_dtor_callback(): ",

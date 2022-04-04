@@ -45,12 +45,12 @@ public:		// functions
 		: timer(s_timer)
 	{
 	}
-	StatusOnFire(const Json::Value& jv);
+	StatusOnFire(const binser::Value& bv);
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(StatusOnFire);
 	virtual ~StatusOnFire() = default;
 
 	virtual std::string kind_str() const;
-	virtual operator Json::Value () const;
+	virtual operator binser::Value () const;
 };
 
 // Take damage slowly
@@ -68,12 +68,12 @@ public:		// functions
 		: timer(s_timer)
 	{
 	}
-	StatusPoisoned(const Json::Value& jv);
+	StatusPoisoned(const binser::Value& bv);
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(StatusPoisoned);
 	virtual ~StatusPoisoned() = default;
 
 	virtual std::string kind_str() const;
-	virtual operator Json::Value () const;
+	virtual operator binser::Value () const;
 };
 
 // Can do nothing
@@ -91,12 +91,12 @@ public:		// functions
 		: timer(s_timer)
 	{
 	}
-	StatusAsleep(const Json::Value& jv);
+	StatusAsleep(const binser::Value& bv);
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(StatusAsleep);
 	virtual ~StatusAsleep() = default;
 
 	virtual std::string kind_str() const;
-	virtual operator Json::Value () const;
+	virtual operator binser::Value () const;
 };
 
 // Speed of movement
@@ -118,12 +118,12 @@ public:		// functions
 		: timer(s_timer), val(s_val)
 	{
 	}
-	StatusTravelSpeed(const Json::Value& jv);
+	StatusTravelSpeed(const binser::Value& bv);
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(StatusTravelSpeed);
 	virtual ~StatusTravelSpeed() = default;
 
 	virtual std::string kind_str() const;
-	virtual operator Json::Value () const;
+	virtual operator binser::Value () const;
 };
 
 // Speed of actions besides movement
@@ -145,12 +145,12 @@ public:		// functions
 		: timer(s_timer), val(s_val)
 	{
 	}
-	StatusActionSpeed(const Json::Value& jv);
+	StatusActionSpeed(const binser::Value& bv);
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(StatusActionSpeed);
 	virtual ~StatusActionSpeed() = default;
 
 	virtual std::string kind_str() const;
-	virtual operator Json::Value () const;
+	virtual operator binser::Value () const;
 };
 
 } // namespace comp
