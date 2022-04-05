@@ -43,6 +43,8 @@ class MsgLog;
 // A window made out of `Entity`s
 class Window
 {
+public:		// types
+	using DrawData = comp::Drawable::Data;
 public:		// constants
 	static const std::string
 		BORDER_CORNER_KIND_STR,
@@ -68,24 +70,22 @@ public:		// constants
 	//		.color_pair=FontColor::Black,
 	//		.gs_color_pair=FontColor::Black};
 
-	static const comp::Drawable::Data& BORDER_CORNER_DRAWABLE_DATA();
-	static const comp::Drawable::Data& BORDER_HORIZ_DRAWABLE_DATA();
-	static const comp::Drawable::Data& BORDER_VERT_DRAWABLE_DATA();
-	static const comp::Drawable::Data& BLANK_DRAWABLE_DATA();
+	static const DrawData& BORDER_CORNER_DRAWABLE_DATA();
+	static const DrawData& BORDER_HORIZ_DRAWABLE_DATA();
+	static const DrawData& BORDER_VERT_DRAWABLE_DATA();
+	static const DrawData& BLANK_DRAWABLE_DATA();
 protected:		// non-serialized variables
 	//Engine* _engine = nullptr;
 protected:		// serialized variables
-	#define MEMB_SER_LIST_WINDOW(X) \
-		X(_pos, std::nullopt) \
-		X(_file_num, std::nullopt) \
-		X(_ent_id_v2d, std::nullopt) \
-		X(_cleared_ent_id_v2d, std::nullopt) \
+	/* #define MEMB_SER_LIST_WINDOW(X) */ \
+		/* X(_pos, std::nullopt) */ \
+		/* X(_file_num, std::nullopt) */ \
+		/* X(_draw_data_v2d, std::nullopt) */ \
 
 	//int _priority = 0;
 	PosVec2 _pos;
 	int _file_num = -1;
-	ecs::EntIdVec2d _ent_id_v2d;
-	ecs::EntIdVec2d _cleared_ent_id_v2d;
+	std::vector<std::vector<DrawData>> _draw_data_v2d;
 public:		// functions
 	Window();
 	Window(const PosVec2& s_some_pos,
@@ -97,51 +97,53 @@ public:		// functions
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Window);
 	virtual ~Window();
 
-	operator binser::Value () const;
+	//operator binser::Value () const;
 
-	void deserialize(const binser::Value& bv);
-	void init_set_border();
+	//void deserialize(const binser::Value& bv);
+	//void init_set_border();
 
-	virtual void tick(InputKind input_kind);
+	//virtual void tick(InputKind input_kind);
 
-	inline auto& with_border_ent_id_at(const PosVec2& index)
+	inline DrawData& with_border_draw_data_at(const PosVec2& index)
 	{
-		return _ent_id_v2d.at(index.y).at(index.x);
+		return _draw_data_v2d.at(index.y).at(index.x);
 	}
-	inline const auto& with_border_ent_id_at(const PosVec2& index) const
+	inline const DrawData& with_border_draw_data_at(const PosVec2& index)
+		const
 	{
-		return _ent_id_v2d.at(index.y).at(index.x);
+		return _draw_data_v2d.at(index.y).at(index.x);
 	}
-	inline auto& with_border_ent_id_at(const SizeVec2& index)
+	inline DrawData& with_border_draw_data_at(const SizeVec2& index)
 	{
-		return _ent_id_v2d.at(index.y).at(index.x);
+		return _draw_data_v2d.at(index.y).at(index.x);
 	}
-	inline const auto& with_border_ent_id_at(const SizeVec2& index) const
+	inline const DrawData& with_border_draw_data_at(const SizeVec2& index)
+		const
 	{
-		return _ent_id_v2d.at(index.y).at(index.x);
+		return _draw_data_v2d.at(index.y).at(index.x);
 	}
 
-	inline auto& ent_id_at(const PosVec2& index)
+	inline DrawData& draw_data_at(const PosVec2& index)
 	{
-		return with_border_ent_id_at(index + PosVec2(1, 1));
+		return with_border_draw_data_at(index + PosVec2(1, 1));
 	}
-	inline const auto& ent_id_at(const PosVec2& index) const
+	inline const DrawData& draw_data_at(const PosVec2& index) const
 	{
-		return with_border_ent_id_at(index + PosVec2(1, 1));
+		return with_border_draw_data_at(index + PosVec2(1, 1));
 	}
-	inline auto& ent_id_at(const SizeVec2& index)
+	inline DrawData& draw_data_at(const SizeVec2& index)
 	{
-		return with_border_ent_id_at(index + SizeVec2(1, 1));
+		return with_border_draw_data_at(index + SizeVec2(1, 1));
 	}
-	inline const auto& ent_id_at(const SizeVec2& index) const
+	inline const DrawData& draw_data_at(const SizeVec2& index) const
 	{
-		return with_border_ent_id_at(index + SizeVec2(1, 1));
+		return with_border_draw_data_at(index + SizeVec2(1, 1));
 	}
 
 	inline SizeVec2 with_border_size_2d() const
 	{
-		return SizeVec2(ent_id_v2d().at(0).size(),
-			ent_id_v2d().size());
+		return SizeVec2(draw_data_v2d().front().size(),
+			draw_data_v2d().size());
 	}
 	inline SizeVec2 size_2d() const
 	{
@@ -151,7 +153,7 @@ public:		// functions
 	void clear();
 
 	// This draws the border as well.
-	void draw(const Window& win, bool leave_corner=false);
+	void draw(const Window& src, bool leave_corner=false);
 	void draw(const Menu& menu);
 	void draw(const MsgLog& msg_log);
 	//void draw(const Hud& hud);
@@ -161,7 +163,7 @@ public:		// functions
 	//GEN_GETTER_AND_SETTER_BY_VAL(priority);
 	//GEN_GETTER_AND_SETTER_BY_VAL(engine);
 	GEN_GETTER_BY_CON_REF(pos);
-	GEN_GETTER_BY_CON_REF(ent_id_v2d);
+	GEN_GETTER_BY_CON_REF(draw_data_v2d);
 	GEN_GETTER_BY_VAL(file_num);
 };
 

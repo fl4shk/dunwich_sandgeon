@@ -216,7 +216,7 @@ public:		// constants
 		USE_SRC_FILE_NUM = -2,
 		USE_COPY_DST_FILE_NUM = -3;
 private:		// non-serialized variables
-	bool _did_init_set_border = false;
+	bool _did_init_window_clear = false;
 	// File numbers selected via HorizPickers, though `curr_file_num` is
 	// also the current file number used for indexing into
 	// `_non_ecs_ser_data_vec`.

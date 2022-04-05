@@ -265,28 +265,31 @@ int RealMainSdl::run()
 			{
 				auto& ecs_engine = _engine.ecs_engine;
 				const PosVec2 wb_pos(i, j);
-				const ecs::EntId id
-					= screen_window.with_border_ent_id_at(wb_pos);
+				//const ecs::EntId id
+				//	= screen_window.with_border_ent_id_at(wb_pos);
+				const auto& draw_data
+					= screen_window.with_border_draw_data_at(wb_pos);
 
-				if (ecs_engine.has_ent_with_comp(id,
-					game_engine::comp::Drawable::KIND_STR, fn_state_index))
+				//if (ecs_engine.has_ent_with_comp(id,
+				//	game_engine::comp::Drawable::KIND_STR, fn_state_index))
 				{
 					//auto& drawable = static_cast<comp::Drawable*>
 					//	(ecs_engine.comp_map(id, fn_state_index).at
 					//		(comp::Drawable::KIND_STR).get());
-					auto drawable = ecs_engine
-						.casted_comp_at<game_engine::comp::Drawable>
-							(id, fn_state_index);
+
+					//auto drawable = ecs_engine
+					//	.casted_comp_at<game_engine::comp::Drawable>
+					//		(id, fn_state_index);
 
 					if (_engine.game_options.grayscale)
 					{
-						_text_handler.draw_char(drawable->data().c,
-							drawable->data().gs_color_pair, wb_pos);
+						_text_handler.draw_char(draw_data.c,
+							draw_data.gs_color_pair, wb_pos);
 					}
 					else // if (!_engine.game_options.grayscale)
 					{
-						_text_handler.draw_char(drawable->data().c,
-							drawable->data().color_pair, wb_pos);
+						_text_handler.draw_char(draw_data.c,
+							draw_data.color_pair, wb_pos);
 					}
 				}
 			}

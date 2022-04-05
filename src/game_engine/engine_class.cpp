@@ -241,20 +241,20 @@ void Engine::deserialize(const binser::Value& bv)
 
 void Engine::tick()
 {
-	if (!_did_init_set_border)
+	if (!_did_init_window_clear)
 	{
-		_did_init_set_border = true;
+		_did_init_window_clear = true;
 
 		for (int i=0; i<NUM_FILES; ++i)
 		{
-			_screen_window_vec.at(i).init_set_border();
-			_aux_window_vec.at(i).init_set_border();
-			_pfield_window_vec.at(i).init_set_border();
-			_log_window_vec.at(i).init_set_border();
-			_hud_window_vec.at(i).init_set_border();
-			_popup_window_vec.at(i).init_set_border();
-			_yes_no_window_vec.at(i).init_set_border();
-			_text_yes_no_window_vec.at(i).init_set_border();
+			_screen_window_vec.at(i).clear();
+			_aux_window_vec.at(i).clear();
+			_pfield_window_vec.at(i).clear();
+			_log_window_vec.at(i).clear();
+			_hud_window_vec.at(i).clear();
+			_popup_window_vec.at(i).clear();
+			_yes_no_window_vec.at(i).clear();
+			_text_yes_no_window_vec.at(i).clear();
 		}
 	}
 	// testing
@@ -368,6 +368,8 @@ void Engine::_save_to_binser(bool do_create_or_load)
 	{
 		root = *this;
 	}
+
+	binser::write_binser(SAVE_FILE_NAME, root);
 
 	#ifdef DEBUG
 	if (Json::Value jv_root=binser::bv_to_jv(root); true)
