@@ -33,7 +33,7 @@ class Player final: public ecs::Comp
 {
 public:		// constants
 	static const std::string KIND_STR;
-	static constexpr uint
+	static constexpr u32
 		MAX_LEVEL = 100,
 		DEFAULT_LEVEL = 1,
 

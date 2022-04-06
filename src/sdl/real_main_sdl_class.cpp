@@ -116,8 +116,8 @@ int RealMainSdl::run()
 		//_text_handler.draw_char('@', FontColor::DarkGray, PosVec2(10, 0));
 	};
 	//--------
-	auto
-		& screen_window = _engine.screen_window();
+	//auto
+		//& screen_window = _engine.screen_window();
 		//& aux_window_cfn = _engine.aux_window_cfn(),
 		//& pfield_window_cfn = _engine.pfield_window_cfn(),
 		//& log_window_cfn = _engine.log_window_cfn(),
@@ -161,6 +161,8 @@ int RealMainSdl::run()
 	bool quit = false;
 	while (!quit)
 	{
+		auto
+			& screen_window = _engine.screen_window();
 		_mouse_right_button_state.back_up();
 
 		bool tick_engine_now = false,

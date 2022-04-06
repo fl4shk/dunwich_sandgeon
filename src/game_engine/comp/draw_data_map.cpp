@@ -15,10 +15,11 @@
 // You should have received a copy of the GNU General Public License along
 // with Dunwich Sandgeon.  If not, see <https://www.gnu.org/licenses/>.
 
-#include "drawable_data_map.hpp"
+#include "draw_data_map.hpp"
 #include "../window_class.hpp"
 #include "player_comp_class.hpp"
-#include "block_comp_classes.hpp"
+//#include "block_comp_classes.hpp"
+#include "static_layout_comp_class.hpp"
 
 namespace dunwich_sandgeon
 {
@@ -30,7 +31,7 @@ namespace comp
 static constexpr FgBgColorPair
 	WINDOW_BORDER_COLOR_PAIR = FontColor::Green;
 
-const std::map<std::string, Drawable::Data> DRAWABLE_DATA_MAP
+const std::map<std::string, Drawable::Data> DRAW_DATA_MAP
 = {
 	// ' ', 32
 	{
@@ -44,12 +45,12 @@ const std::map<std::string, Drawable::Data> DRAWABLE_DATA_MAP
 
 	// '#', 35
 	{
-		Wall::KIND_STR,
+		StaticLayout::TILE_WALL_DRAW_DATA_STR,
 		{
 			.c='#',
 			//.color_pair=FontColor::LightGray,
 			//.gs_color_pair=FontColor::LightGray
-			.color_pair=FontColor::Gray,
+			.color_pair=FontColor::Brown,
 			.gs_color_pair=FontColor::Gray
 		}
 	},
@@ -76,7 +77,7 @@ const std::map<std::string, Drawable::Data> DRAWABLE_DATA_MAP
 
 	// '.', 46
 	{
-		Floor::KIND_STR,
+		StaticLayout::TILE_FLOOR_DRAW_DATA_STR,
 		{
 			.c='.',
 			//.color_pair=FontColor::LightGray,
@@ -88,7 +89,7 @@ const std::map<std::string, Drawable::Data> DRAWABLE_DATA_MAP
 
 	// '<', 60
 	{
-		DownStairs::KIND_STR,
+		StaticLayout::TILE_DOWN_STAIRS_DRAW_DATA_STR,
 		{
 			.c='<',
 			.color_pair=FontColor::White,
@@ -98,7 +99,7 @@ const std::map<std::string, Drawable::Data> DRAWABLE_DATA_MAP
 
 	// '>', 62
 	{
-		UpStairs::KIND_STR,
+		StaticLayout::TILE_UP_STAIRS_DRAW_DATA_STR,
 		{
 			.c='>',
 			.color_pair=FontColor::White,
@@ -116,12 +117,32 @@ const std::map<std::string, Drawable::Data> DRAWABLE_DATA_MAP
 		}
 	},
 
+	// '^', 94,
+	{
+		StaticLayout::TILE_SPIKES_DRAW_DATA_STR,
+		{
+			.c='^',
+			.color_pair=FontColor::Gray,
+			.gs_color_pair=FontColor::Gray
+		}
+	},
+
 	// '|', 124
 	{
 		Window::BORDER_VERT_KIND_STR,
 		{
 			.c='|',
 			.color_pair=WINDOW_BORDER_COLOR_PAIR,
+			.gs_color_pair=FontColor::White
+		}
+	},
+
+	// '~', 126
+	{
+		StaticLayout::TILE_WATER_DRAW_DATA_STR,
+		{
+			.c='~',
+			.color_pair=FontColor::Blue,
 			.gs_color_pair=FontColor::White
 		}
 	},

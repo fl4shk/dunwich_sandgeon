@@ -51,9 +51,9 @@ enum class FontColor: u32
 
 inline FontColor font_color_add(FontColor font_color, u32 amount)
 {
-	u32 ret_u32 = static_cast<u32>(font_color);
+	u32 ret_u32 = u32(font_color);
 	ret_u32 += amount;
-	return static_cast<FontColor>(ret_u32);
+	return FontColor(ret_u32);
 }
 
 extern const std::map<FontColor, std::string> FONT_COLOR_TO_STR_MAP;
@@ -85,8 +85,8 @@ public:		// functions
 	}
 	constexpr inline FgBgColorPair(const binser::Value& bv)
 	{
-		fg = static_cast<FontColor>(bv.at("fg").get<u32>());
-		bg = static_cast<FontColor>(bv.at("bg").get<u32>());
+		fg = FontColor(bv.at("fg").get<u32>());
+		bg = FontColor(bv.at("bg").get<u32>());
 	}
 	GEN_CX_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(FgBgColorPair);
 	constexpr inline ~FgBgColorPair() = default;
@@ -101,8 +101,8 @@ public:		// functions
 	{
 		binser::Value ret;
 
-		ret.insert("fg", static_cast<u32>(fg));
-		ret.insert("bg", static_cast<u32>(bg));
+		ret.insert("fg", u32(fg));
+		ret.insert("bg", u32(bg));
 
 		return ret;
 	}

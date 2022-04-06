@@ -21,7 +21,8 @@
 
 #include "comp/general_comp_classes.hpp"
 #include "comp/player_comp_class.hpp"
-#include "comp/block_comp_classes.hpp"
+//#include "comp/block_comp_classes.hpp"
+#include "comp/static_layout_comp_class.hpp"
 #include "comp/status_comp_classes.hpp"
 //#include "comp/ui_etc_comp_classes.hpp"
 
@@ -37,7 +38,9 @@ namespace dunwich_sandgeon
 namespace game_engine
 {
 //--------
-const std::string Engine::SAVE_FILE_NAME("save_file.binser.ignore");
+const std::string
+	Engine::SAVE_FILE_NAME("save_file.binser.ignore"),
+	Engine::DEBUG_SAVE_FILE_NAME("debug_save_file.json.ignore");
 //--------
 //auto Engine::NonEcsSerData::_gen_blank_pfield_ent_id_v3d()
 //	-> decltype(pfield_ent_id_v3d)
@@ -374,7 +377,7 @@ void Engine::_save_to_binser(bool do_create_or_load)
 	#ifdef DEBUG
 	if (Json::Value jv_root=binser::bv_to_jv(root); true)
 	{
-		json::write_json("save_file.json.ignore", &jv_root);
+		json::write_json(DEBUG_SAVE_FILE_NAME, &jv_root);
 	}
 	#endif		// DEBUG
 }

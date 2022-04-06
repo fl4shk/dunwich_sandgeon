@@ -29,10 +29,11 @@
 	\
 	comp::Player, \
 	\
-	comp::Wall, \
-	comp::Floor, \
-	comp::DownStairs, \
-	comp::UpStairs, \
+	/* comp::Wall, */ \
+	/* comp::Floor, */ \
+	/* comp::DownStairs, */ \
+	/* comp::UpStairs, */ \
+	comp::StaticLayout, \
 	\
 	comp::StatusOnFire, \
 	comp::StatusPoisoned, \

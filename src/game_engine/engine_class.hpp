@@ -91,14 +91,15 @@ public:		// types
 	//	= std::vector<std::vector<ecs::EntIdSet>>;
 
 public:		// constants
-	// These are basement floors, going from B1F down to B50F
-	static constexpr int
+	// These are basement floors, going from B1F down to B25F
+	static constexpr i32
 		LOWEST_FLOOR = 25, HIGHEST_FLOOR = 1,
 		//LOWEST_FLOOR = 5, HIGHEST_FLOOR = 1,
 		NUM_FLOORS = std::abs(HIGHEST_FLOOR - LOWEST_FLOOR) + 1;
 
 	static const std::string
-		SAVE_FILE_NAME;
+		SAVE_FILE_NAME,
+		DEBUG_SAVE_FILE_NAME;
 
 	static constexpr int
 		//NUM_FILES = 9;
@@ -382,42 +383,42 @@ public:		// `_non_ecs_ser_data_vec` accessor functions
 	inline ecs::EntIdSet& pfield_ent_id_set(int file_num,
 		const PosVec3& pos)
 	{
-		return non_ecs_ser_data(file_num).pfield_ent_id_map.at(pos);
+		return non_ecs_ser_data(file_num).pfield_ent_id_map[pos];
 	}
-	inline const ecs::EntIdSet& pfield_ent_id_set(int file_num,
-		const PosVec3& pos) const
-	{
-		return non_ecs_ser_data(file_num).pfield_ent_id_map.at(pos);
-	}
+	//inline const ecs::EntIdSet& pfield_ent_id_set(int file_num,
+	//	const PosVec3& pos) const
+	//{
+	//	return non_ecs_ser_data(file_num).pfield_ent_id_map[pos];
+	//}
 	inline ecs::EntIdSet& pfield_ent_id_set_cfn(const PosVec3& pos)
 	{
 		return pfield_ent_id_set(USE_CURR_FILE_NUM, pos);
 	}
-	inline const ecs::EntIdSet& pfield_ent_id_set_cfn(const PosVec3& pos)
-		const
-	{
-		return pfield_ent_id_set(USE_CURR_FILE_NUM, pos);
-	}
+	//inline const ecs::EntIdSet& pfield_ent_id_set_cfn(const PosVec3& pos)
+	//	const
+	//{
+	//	return pfield_ent_id_set(USE_CURR_FILE_NUM, pos);
+	//}
 	//--------
 	inline ecs::EntIdSet& pfield_ent_id_set(int file_num,
 		const PosVec2& pos_2d)
 	{
 		return pfield_ent_id_set(file_num, to_pos_vec3(file_num, pos_2d));
 	}
-	inline const ecs::EntIdSet& pfield_ent_id_set(int file_num,
-		const PosVec2& pos_2d) const
-	{
-		return pfield_ent_id_set(file_num, to_pos_vec3(file_num, pos_2d));
-	}
+	//inline const ecs::EntIdSet& pfield_ent_id_set(int file_num,
+	//	const PosVec2& pos_2d) const
+	//{
+	//	return pfield_ent_id_set(file_num, to_pos_vec3(file_num, pos_2d));
+	//}
 	inline ecs::EntIdSet& pfield_ent_id_set_cfn(const PosVec2& pos_2d)
 	{
 		return pfield_ent_id_set_cfn(to_pos_vec3_cfn(pos_2d));
 	}
-	inline const ecs::EntIdSet& pfield_ent_id_set_cfn
-		(const PosVec2& pos_2d) const
-	{
-		return pfield_ent_id_set_cfn(to_pos_vec3_cfn(pos_2d));
-	}
+	//inline const ecs::EntIdSet& pfield_ent_id_set_cfn
+	//	(const PosVec2& pos_2d) const
+	//{
+	//	return pfield_ent_id_set_cfn(to_pos_vec3_cfn(pos_2d));
+	//}
 	//inline EntIdSetVec2d& pfield_ent_id_v2d(int file_num)
 	//{
 	//	return pfield_ent_id_v3d(file_num).at(floor(file_num));
