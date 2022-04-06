@@ -40,5 +40,5 @@ int main(int argc, char* argv[])
 
 	//printout("main()");
 	//dunwich_sandgeon::game_engine::engine->dbg_check_ecs_engine();
-	return dunwich_sandgeon::io::RealMainSdl().run();
+	return dunwich_sandgeon::io::RealMainSdl(argc, argv).run();
 }

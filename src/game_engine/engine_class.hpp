@@ -98,7 +98,7 @@ public:		// constants
 		NUM_FLOORS = std::abs(HIGHEST_FLOOR - LOWEST_FLOOR) + 1;
 
 	static const std::string
-		SAVE_FILE_NAME,
+		DEFAULT_SAVE_FILE_NAME,
 		DEBUG_SAVE_FILE_NAME;
 
 	static constexpr int
@@ -137,6 +137,10 @@ public:		// types
 
 		operator binser::Value () const;
 	};
+private:		// non-serialized variables
+	int _argc = 0;
+	char** _argv = nullptr;
+	std::string _save_file_name;
 
 public:		// serialized variables
 	ecs::Engine ecs_engine;
@@ -237,7 +241,7 @@ public:		// non-serialized variables
 private:		// variables
 	//u64 _tick_counter = 0;
 public:		// functions
-	Engine(bool do_create_or_load=true);
+	Engine(int s_argc, char** s_argv, bool do_create_or_load=true);
 	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(Engine);
 	~Engine();
 	operator binser::Value () const;
@@ -778,6 +782,7 @@ public:		// functions
 private:		// functions
 	//static void _yes_no_menu_act_yes(Engine* self);
 	//static void _yes_no_menu_act_no(Engine* self);
+
 	template<EngineErrWhenEntNullIdObj ObjT>
 	inline void _err_when_ent_id_is_null(ObjT* obj,
 		const std::string& func_name) const
@@ -786,8 +791,9 @@ private:		// functions
 		{
 			const std::string err_msg(sconcat("Engine::", func_name,
 				"(): Internal error.\n"));
-			fprintf(stderr, err_msg.c_str());
-			exit(1);
+			throw std::invalid_argument(err_msg.c_str());
+			//fprintf(stderr, err_msg.c_str());
+			//exit(1);
 		}
 	}
 };

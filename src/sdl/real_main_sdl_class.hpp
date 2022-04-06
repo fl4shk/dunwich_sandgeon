@@ -66,7 +66,7 @@ private:		// variables
 	PrevCurrPair<bool> _mouse_right_button_state;
 	TextHandlerSdl _text_handler;
 public:		// functions
-	RealMainSdl();
+	RealMainSdl(int argc, char** argv);
 	~RealMainSdl() = default;
 
 	int run();

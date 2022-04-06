@@ -39,7 +39,7 @@ namespace game_engine
 {
 //--------
 const std::string
-	Engine::SAVE_FILE_NAME("save_file.binser.ignore"),
+	Engine::DEFAULT_SAVE_FILE_NAME("save_file.binser.ignore"),
 	Engine::DEBUG_SAVE_FILE_NAME("debug_save_file.json.ignore");
 //--------
 //auto Engine::NonEcsSerData::_gen_blank_pfield_ent_id_v3d()
@@ -78,11 +78,12 @@ Engine::NonEcsSerData::operator binser::Value () const
 	return ret;
 }
 //--------
-Engine::Engine(bool do_create_or_load)
-	: ecs_engine(NUM_FILES),
+Engine::Engine(int s_argc, char** s_argv, bool do_create_or_load)
+	: _argc(s_argc), _argv(s_argv),
+	ecs_engine(NUM_FILES),
 
 	_non_ecs_ser_data_vec(NUM_FILES, NonEcsSerData()),
-	key_status(static_cast<size_t>(KeyKind::Lim)),
+	key_status(size_t(KeyKind::Lim)),
 
 	//screen_window(this, PosVec2(), WITH_BORDER_SCREEN_SIZE_2D,
 	//	USE_CURR_FILE_NUM),
@@ -109,6 +110,26 @@ Engine::Engine(bool do_create_or_load)
 	_yes_no_menu_vec(NUM_FILES, Menu()),
 	_text_yes_no_menu_vec(NUM_FILES, Menu())
 {
+	if (_argc <= 0)
+	{
+		err("Engine::Engine(): Eek!\n");
+	}
+	else if (_argc == 1)
+	{
+		_save_file_name = DEFAULT_SAVE_FILE_NAME;
+	}
+	else if (_argc == 2)
+	{
+		_save_file_name = const_cast<const char*>(_argv[1]);
+	}
+	else
+	{
+		err
+		(
+			"Usage 1: ", _argv[0], "\n",
+			"Usage 2: ", _argv[0], " <save_file_name>\n"
+		);
+	}
 	_curr_file_num = &ecs_engine.curr_file_num;
 
 	//screen_window = Window(this, PosVec2(),
@@ -283,7 +304,8 @@ void Engine::tick()
 		&& key_status.key_up_now(KeyKind::ShoulderL))
 	{
 		_create_or_load_save_file_etc();
-		//if (auto file=std::fstream(SAVE_FILE_NAME, std::ios_base::in);
+		//if (auto file=std::fstream(DEFAULT_SAVE_FILE_NAME, 
+		//	std::ios_base::in);
 		//	file.is_open())
 		//{
 		//	binser::Value root;
@@ -317,7 +339,8 @@ void Engine::_create_or_load_save_file_etc()
 	printout("game_engine::Engine::_create_or_load_save_file_etc(): ",
 		"testificate\n");
 
-	if (auto file=std::fstream(SAVE_FILE_NAME, std::ios_base::in);
+	if (auto file=std::fstream(_save_file_name,
+		std::ios_base::in | std::ios_base::binary);
 		file.is_open())
 	{
 		binser::Value root;
@@ -336,15 +359,27 @@ void Engine::_create_or_load_save_file_etc()
 		//}
 		else
 		{
-			binser::parse_binser(file, root);
+			try
+			{
+				binser::parse_binser(file, root);
+				deserialize(root);
+			}
+			catch (const std::exception& e)
+			{
+				#ifdef DEBUG
+				printerr("Error: ", e.what(), "\n");
+				#endif		// DEBUG
+				err("Error: corrupted save file ",
+					"\"", _save_file_name, "\".",
+					"\n");
+			}
 			//printout("Testificate: Calling `deserialize()`\n");
-			deserialize(root);
 		}
 	}
 	else
 	{
 		//err("game_engine::Engine::_create_or_load_save_file_etc(): ",
-		//	"Error opening file called \"", SAVE_FILE_NAME, "\" for ",
+		//	"Error opening file called \"", _save_file_name, "\" for ",
 		//	"reading.\n");
 		_save_to_binser(true);
 	}
@@ -359,20 +394,21 @@ void Engine::_create_or_load_save_file_etc()
 //}
 void Engine::_save_to_binser(bool do_create_or_load)
 {
-	printout("game_engine::Engine::_save_file(): testificate\n");
+	printout("game_engine::Engine::_save_to_binser(): testificate\n");
 
-	//binser::Value root = do_create_or_load ? Engine(false) : *this;
+	//binser::Value root 
+	//	= do_create_or_load ? Engine(_argc, _argv, false) : *this;
 	binser::Value root;
 	if (do_create_or_load)
 	{
-		root = Engine(false);
+		root = Engine(_argc, _argv, false);
 	}
 	else
 	{
 		root = *this;
 	}
 
-	binser::write_binser(SAVE_FILE_NAME, root);
+	binser::write_binser(_save_file_name, root);
 
 	#ifdef DEBUG
 	if (Json::Value jv_root=binser::bv_to_jv(root); true)

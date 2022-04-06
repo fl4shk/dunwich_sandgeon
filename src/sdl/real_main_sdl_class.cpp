@@ -23,7 +23,8 @@ namespace dunwich_sandgeon
 namespace io
 {
 
-RealMainSdl::RealMainSdl()
+RealMainSdl::RealMainSdl(int argc, char** argv)
+	: _engine(argc, argv)
 {
 	game_engine::engine = &_engine;
 	//_engine.dbg_check_ecs_engine();
