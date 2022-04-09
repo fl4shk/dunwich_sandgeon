@@ -41,10 +41,10 @@ void GmOptions::init(ecs::Engine* ecs_engine)
 	_game_options = engine->game_options;
 
 	uint i = 0;
-	engine->aux_menu_cfn() = Menu
+	engine->aux_menu = Menu
 	(
 		"grayscale",
-		engine->aux_window_cfn().size_2d(),
+		engine->aux_window.size_2d(),
 
 		// Menu::build_node_map() start
 		// "title";
@@ -110,10 +110,10 @@ void GmOptions::tick(ecs::Engine* ecs_engine)
 		engine->game_mode() == GameMode::Options))
 	{
 		auto
-			& screen_window = engine->screen_window(),
-			& aux_window_cfn = engine->aux_window_cfn();
+			& screen_window = engine->screen_window,
+			& aux_window_cfn = engine->aux_window;
 
-		auto& aux_menu_cfn = engine->aux_menu_cfn();
+		auto& aux_menu_cfn = engine->aux_menu;
 
 		aux_menu_cfn.tick(engine->key_status);
 

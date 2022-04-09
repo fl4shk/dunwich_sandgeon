@@ -18,7 +18,7 @@
 #include "window_class.hpp"
 #include "engine_class.hpp"
 #include "menu_etc_classes.hpp"
-#include "comp/draw_data_map.hpp"
+#include "comp/drawable_data_map.hpp"
 
 //#include <queue>
 
@@ -38,30 +38,29 @@ const std::string
 //--------
 const comp::Drawable::Data& Window::BORDER_CORNER_DRAWABLE_DATA()
 {
-	return comp::DRAW_DATA_MAP.at(BORDER_CORNER_KIND_STR);
+	return comp::DRAWABLE_DATA_MAP.at(BORDER_CORNER_KIND_STR);
 }
 const comp::Drawable::Data& Window::BORDER_HORIZ_DRAWABLE_DATA()
 {
-	return comp::DRAW_DATA_MAP.at(BORDER_HORIZ_KIND_STR);
+	return comp::DRAWABLE_DATA_MAP.at(BORDER_HORIZ_KIND_STR);
 }
 const comp::Drawable::Data& Window::BORDER_VERT_DRAWABLE_DATA()
 {
-	return comp::DRAW_DATA_MAP.at(BORDER_VERT_KIND_STR);
+	return comp::DRAWABLE_DATA_MAP.at(BORDER_VERT_KIND_STR);
 }
 const comp::Drawable::Data& Window::BLANK_DRAWABLE_DATA()
 {
-	return comp::DRAW_DATA_MAP.at(BLANK_KIND_STR);
+	return comp::DRAWABLE_DATA_MAP.at(BLANK_KIND_STR);
 }
 
 Window::Window()
 {
 }
 Window::Window(const PosVec2& s_some_pos, const SizeVec2& s_some_size_2d,
-	int s_file_num, bool prev_args_are_with_border)
+	bool prev_args_are_with_border)
 	: _pos(s_some_pos
 		- ((!prev_args_are_with_border) ? PosVec2(1, 1) : PosVec2(0, 0))),
-	_file_num(s_file_num),
-	_draw_data_v2d
+	_drawable_data_v2d
 	(
 		s_some_size_2d.y
 			+ ((!prev_args_are_with_border) ? 2 : 0),
@@ -87,11 +86,10 @@ Window::Window(const PosVec2& s_some_pos, const SizeVec2& s_some_size_2d,
 	//_ent_id_v2d = _cleared_ent_id_v2d;
 }
 Window::Window(const PosVec2& s_some_pos, const PosVec2& s_some_end_pos,
-	int s_file_num, bool prev_args_are_with_border)
+	bool prev_args_are_with_border)
 	: _pos(s_some_pos
 		- ((!prev_args_are_with_border) ? PosVec2(1, 1) : PosVec2(0, 0))),
-	_file_num(s_file_num),
-	_draw_data_v2d
+	_drawable_data_v2d
 	(
 		s_some_end_pos.y - s_some_pos.y + 1
 			+ ((!prev_args_are_with_border) ? 2 : 0),
@@ -137,112 +135,8 @@ Window::~Window()
 //	//printout("Window::deserialize() after: ", engine == nullptr, "\n");
 //}
 
-// This function exists and is called outside of the constructor because in
-// the `game_engine::engine` class, the `game_engine::Window`s are
-// constructed before the `game_engine::Engine` that is passed to the
-// `game_engine::Window` constructor.
-//void Window::init_set_border()
-//{
-//	ecs::EntId id = ecs::ENT_NULL_ID;
-//	//auto add_border_drawable
-//	//	= [this, &id](comp::Drawable::Data drawable_data) -> void
-//	//{
-//	//	engine->ecs_engine.insert_comp(id,
-//	//		ecs::CompSptr(new comp::Drawable(drawable_data)),
-//	//		file_num());
-//	//};
-//	for (uint j=0; j<with_border_size_2d().y; ++j)
-//	{
-//		for (uint i=0; i<with_border_size_2d().x; ++i)
-//		{
-//			auto add_drawable
-//				= [this, &id, j, i](comp::Drawable::Data drawable_data)
-//				-> void
-//			{
-//				id = engine->ecs_engine.create(file_num());
-//				with_border_ent_id_at(PosVec2(i, j)) = id;
-//				engine->ecs_engine.insert_comp(id,
-//					ecs::CompSptr(new comp::Drawable(drawable_data)),
-//					file_num());
-//
-//				id = engine->ecs_engine.create(file_num());
-//				_cleared_ent_id_v2d.at(j).at(i) = id;
-//				engine->ecs_engine.insert_comp(id,
-//					ecs::CompSptr(new comp::Drawable(drawable_data)),
-//					file_num());
-//			};
-//
-//			if ((j == 0) || (j == (with_border_size_2d().y - 1)))
-//			{
-//				if ((i == 0) || (i == (with_border_size_2d().x - 1)))
-//				{
-//					//id = engine->ecs_engine.create(file_num());
-//					//with_border_ent_id_at(PosVec2(i, j)) = id;
-//					//add_border_drawable(BORDER_CORNER_DRAWABLE_DATA());
-//
-//					//id = engine->ecs_engine.create(file_num());
-//					//_cleared_ent_id_v2d.at(j).at(i) = id;
-//					//add_border_drawable(BORDER_CORNER_DRAWABLE_DATA());
-//					add_drawable(BORDER_CORNER_DRAWABLE_DATA());
-//				}
-//				else
-//				{
-//					add_drawable(BORDER_HORIZ_DRAWABLE_DATA());
-//				}
-//			}
-//			else if ((i == 0) || (i == (with_border_size_2d().x - 1)))
-//			{
-//				add_drawable(BORDER_VERT_DRAWABLE_DATA());
-//			}
-//			else
-//			{
-//				//id = engine->ecs_engine.create(file_num());
-//				//with_border_ent_id_at(PosVec2(i, j)) = id;
-//				//engine->ecs_engine.insert_comp(id,
-//				//	ecs::CompSptr(new comp::Drawable
-//				//		(BLANK_DRAWABLE_DATA())),
-//				//	file_num());
-//
-//				//id = engine->ecs_engine.create(file_num());
-//				//_cleared_ent_id_v2d.at(j).at(i) = id;
-//				//engine->ecs_engine.insert_comp(id,
-//				//	ecs::CompSptr(new comp::Drawable
-//				//		(BLANK_DRAWABLE_DATA())),
-//				//	file_num());
-//				add_drawable(BLANK_DRAWABLE_DATA());
-//			}
-//		}
-//	}
-//}
-
-//void Window::tick(InputKind input_kind)
-//{
-//	// Derived classes should override this function
-//};
-
 void Window::clear()
 {
-	//printout("Window::clear() testificate: ", engine == nullptr, "\n");
-	//PosVec2 src_pos;
-	//for (src_pos.y=0; src_pos.y<with_border_size_2d().y; ++src_pos.y)
-	//{
-	//	for (src_pos.x=0; src_pos.x<with_border_size_2d().x; ++src_pos.x)
-	//	{
-	//		const auto
-	//			SRC_ENT_ID = _cleared_ent_id_v2d.at(src_pos.y)
-	//				.at(src_pos.x),
-	//			DST_ENT_ID = with_border_ent_id_at(src_pos);
-	//		auto
-	//			src = engine->ecs_engine
-	//				.casted_comp_at<comp::Drawable>(SRC_ENT_ID,
-	//					file_num()),
-	//			dst = engine->ecs_engine
-	//				.casted_comp_at<comp::Drawable>(DST_ENT_ID,
-	//					file_num());
-	//		*dst = *src;
-	//		//dst->data.color_pair = FontColor::Black;
-	//	}
-	//}
 	for (uint j=0; j<with_border_size_2d().y; ++j)
 	{
 		for (uint i=0; i<with_border_size_2d().x; ++i)
@@ -252,23 +146,23 @@ void Window::clear()
 			{
 				if ((i == 0) || (i == with_border_size_2d().x - 1))
 				{
-					with_border_draw_data_at(index)
+					with_border_drawable_data_at(index)
 						= BORDER_CORNER_DRAWABLE_DATA();
 				}
 				else
 				{
-					with_border_draw_data_at(index)
+					with_border_drawable_data_at(index)
 						= BORDER_HORIZ_DRAWABLE_DATA();
 				}
 			}
 			else if ((i == 0) || (i == with_border_size_2d().x - 1))
 			{
-				with_border_draw_data_at(index)
+				with_border_drawable_data_at(index)
 					= BORDER_VERT_DRAWABLE_DATA();
 			}
 			else
 			{
-				with_border_draw_data_at(index)
+				with_border_drawable_data_at(index)
 					= BLANK_DRAWABLE_DATA();
 			}
 		}
@@ -284,44 +178,15 @@ void Window::draw(const Window& src, bool leave_corner)
 			src_pos.x<src.with_border_size_2d().x;
 			++src_pos.x)
 		{
-			const auto& SRC_DRAW_DATA
-				= src.with_border_draw_data_at(src_pos);
+			const auto& SRC_DRAWABLE_DATA
+				= src.with_border_drawable_data_at(src_pos);
 			const auto DST_POS = src.pos() + src_pos;
-			auto& dst_draw_data = with_border_draw_data_at(DST_POS);
+			auto& dst_drawable_data = with_border_drawable_data_at(DST_POS);
 
 			if (!leave_corner
-				|| (dst_draw_data != BORDER_CORNER_DRAWABLE_DATA()))
+				|| (dst_drawable_data != BORDER_CORNER_DRAWABLE_DATA()))
 			{
-				dst_draw_data = SRC_DRAW_DATA;
-			}
-
-			//if (engine->ecs_engine.has_ent_with_comp
-			//	(SRC_ENT_ID, comp::Drawable::KIND_STR, file_num()))
-			{
-
-				//printout("Window::draw(): ", src_pos.x, " ", src_pos.y,
-				//	"; ", DST_POS.x, " ", DST_POS.y,
-				//	"; ", src.with_border_size_2d().x, " ",
-				//	src.with_border_size_2d().y, "\n");
-
-				//auto src = engine->ecs_engine
-				//	.casted_comp_at<comp::Drawable>(SRC_ENT_ID,
-				//		file_num());
-
-				//if (!engine->ecs_engine.comp_map(DST_ENT_ID, file_num())
-				//	.contains(comp::Drawable::KIND_STR))
-				//{
-				//	engine->ecs_engine.insert_comp(DST_ENT_ID,
-				//		ecs::CompSptr(new comp::Drawable(src->data())),
-				//		file_num());
-				//}
-				//else
-				{
-					//auto dst = engine->ecs_engine
-					//	.casted_comp_at<comp::Drawable>(DST_ENT_ID,
-					//		file_num());
-
-				}
+				dst_drawable_data = SRC_DRAWABLE_DATA;
 			}
 		}
 	}
@@ -397,7 +262,7 @@ void Window::draw(const MsgLog& msg_log)
 		}
 
 		auto draw_at_temp_pos
-			= [this, &temp_pos](const comp::Drawable::Data& draw_data)
+			= [this, &temp_pos](const comp::Drawable::Data& drawable_data)
 			-> void
 		{
 			//const auto DST_ENT_ID = ent_id_at(temp_pos);
@@ -405,7 +270,7 @@ void Window::draw(const MsgLog& msg_log)
 			//	.casted_comp_at<comp::Drawable>(DST_ENT_ID, file_num());
 
 			//dst->set_data(drawable_data);
-			draw_data_at(temp_pos) = draw_data;
+			drawable_data_at(temp_pos) = drawable_data;
 		};
 
 		for (const auto& rope_part: ROPE)

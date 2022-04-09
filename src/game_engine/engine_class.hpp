@@ -144,20 +144,22 @@ public:		// types
 
 		operator binser::Value () const;
 
-		inline void init_rngs(LayoutRngArr& layout_rng_arr,
-			u64 n_base_rng_seed=get_hrc_now_rng_seed())
+		inline size_t init_layout_rng_arr(LayoutRngArr& layout_rng_arr)
+			const
 		{
-			//base_rng_seed = get_hrc_now_rng_seed();
-			base_rng_seed = n_base_rng_seed;
-
-			//layout_rng_arr.resize(Engine::NUM_FLOORS);
-
-			//for (i32 i=0; i<Engine::NUM_FLOORS; ++i)
 			size_t i;
 			for (i=0; i<layout_rng_arr.size(); ++i)
 			{
 				layout_rng_arr.at(i).seed(base_rng_seed + i);
 			}
+			return i;
+		}
+		inline void init_rngs_etc(LayoutRngArr& layout_rng_arr)
+		{
+			base_rng_seed = get_hrc_now_rng_seed();
+
+			const size_t i = init_layout_rng_arr(layout_rng_arr);
+
 			misc_rng.seed(base_rng_seed + i);
 		}
 	};
@@ -178,13 +180,13 @@ public:		// serialized variables
 		X(game_options, std::nullopt) \
 		X(_non_ecs_ser_data_arr, std::nullopt) \
 		\
-		/* X(_screen_window_vec, std::nullopt) */ \
-		/* X(_aux_window_vec, std::nullopt) */ \
-		/* X(_pfield_window_vec, std::nullopt) */ \
-		/* X(_log_window_vec, std::nullopt) */ \
-		/* X(_hud_window_vec, std::nullopt) */ \
-		/* X(_yes_no_window_vec, std::nullopt) */ \
-		/* X(_text_yes_no_window_vec, std::nullopt) */
+		/* X(_screen_window, std::nullopt) */ \
+		/* X(_aux_window, std::nullopt) */ \
+		/* X(_pfield_window, std::nullopt) */ \
+		/* X(_log_window, std::nullopt) */ \
+		/* X(_hud_window, std::nullopt) */ \
+		/* X(_yes_no_window, std::nullopt) */ \
+		/* X(_text_yes_no_window, std::nullopt) */
 
 	GameOptions game_options;
 private:		// serialized variables
@@ -203,46 +205,46 @@ public:		// non-serialized variables
 	//} text_input;
 private:		// non-serialized variables
 	GameMode _game_mode = GameMode::TitleScreen;
-private:		// non-serialized variables
-	std::vector<Window>
+public:		// non-serialized variables
+	Window
 		// The `Window` that contains the entities to display on screen 
-		_screen_window_vec,
+		screen_window,
 
-		// Auxilliary `Window`s, which takes up the whole game window, for
+		// Auxilliary `Window`, which takes up the whole game window, for
 		// things like the title screen, game options, and credits.
-		_aux_window_vec,
+		aux_window,
 
-		// The game world's `Window`s.
-		_pfield_window_vec,
+		// The game world's `Window`.
+		pfield_window,
 
-		// `Window`s for messages from the game.
-		_log_window_vec,
+		// `Window` for messages from the game.
+		log_window,
 
 		// The heads up display `Window`.
-		_hud_window_vec,
+		hud_window,
 
-		// Popup `Window`s for various tasks (inventory, shops, etc.)
-		_popup_window_vec,
+		// Popup `Window` for various tasks (inventory, shops, etc.)
+		popup_window,
 
-		// `Window`s containing just "yes" and "no" buttons.
-		_yes_no_window_vec,
+		// `Window` containing just "yes" and "no" buttons.
+		yes_no_window,
 
-		// Larger-than-`_yes_no_window_vec` `Window`s containing "yes" and
+		// Larger-than-`yes_no_window` `Window` containing "yes" and
 		// "no" buttons, and also some text at the top.
-		_text_yes_no_window_vec;
+		text_yes_no_window;
 
-	std::vector<Menu>
-		// `Menu`s for various tasks that take up the whole game window
-		_aux_menu_vec,
+	Menu
+		// `Menu` for various tasks that take up the whole game window
+		aux_menu,
 
-		// The popup windows' menus
-		_popup_menu_vec,
+		// The popup window's menu
+		popup_menu,
 
-		// The small yes-no windows' menus
-		_yes_no_menu_vec,
+		// The small yes-no window's menu
+		yes_no_menu,
 
-		// The with-text yes-no windows' menus
-		_text_yes_no_menu_vec;
+		// The with-text yes-no window's menu
+		text_yes_no_menu;
 public:		// constants
 	static constexpr int
 		USE_CURR_FILE_NUM = -1,
@@ -300,47 +302,23 @@ public:		// functions
 	void copy_file();
 	void erase_file();
 private:		// functions
-	void _inner_draw_menu_w_pre_clear(Window& window, Menu& menu,
-		int file_num);
+	void _inner_draw_menu_w_pre_clear(Window& window, Menu& menu);
 public:		// functions
-	inline void draw_aux_menu_w_pre_clear(int file_num)
+	inline void draw_aux_menu_w_pre_clear()
 	{
-		_inner_draw_menu_w_pre_clear(aux_window(file_num),
-			aux_menu(file_num), file_num);
+		_inner_draw_menu_w_pre_clear(aux_window, aux_menu);
 	}
-	inline void draw_aux_menu_w_pre_clear_cfn()
+	inline void draw_popup_menu_w_pre_clear()
 	{
-		draw_aux_menu_w_pre_clear(USE_CURR_FILE_NUM);
+		_inner_draw_menu_w_pre_clear(popup_window, popup_menu);
 	}
-
-	inline void draw_popup_menu_w_pre_clear(int file_num)
+	inline void draw_yes_no_menu_w_pre_clear()
 	{
-		_inner_draw_menu_w_pre_clear(popup_window(file_num),
-			popup_menu(file_num), file_num);
+		_inner_draw_menu_w_pre_clear(yes_no_window, yes_no_menu);
 	}
-	inline void draw_popup_menu_w_pre_clear_cfn()
+	inline void draw_text_yes_no_menu_w_pre_clear()
 	{
-		draw_popup_menu_w_pre_clear(USE_CURR_FILE_NUM);
-	}
-
-	inline void draw_yes_no_menu_w_pre_clear(int file_num)
-	{
-		_inner_draw_menu_w_pre_clear(yes_no_window(file_num),
-			yes_no_menu(file_num), file_num);
-	}
-	inline void draw_yes_no_menu_w_pre_clear_cfn()
-	{
-		draw_yes_no_menu_w_pre_clear(USE_CURR_FILE_NUM);
-	}
-
-	inline void draw_text_yes_no_menu_w_pre_clear(int file_num)
-	{
-		_inner_draw_menu_w_pre_clear(text_yes_no_window(file_num),
-			text_yes_no_menu(file_num), file_num);
-	}
-	inline void draw_text_yes_no_menu_w_pre_clear_cfn()
-	{
-		draw_text_yes_no_menu_w_pre_clear(USE_CURR_FILE_NUM);
+		_inner_draw_menu_w_pre_clear(text_yes_no_window, text_yes_no_menu);
 	}
 public:		// `_non_ecs_ser_data_arr` accessor functions
 	//--------
@@ -489,220 +467,6 @@ public:		// functions
 			: src_file_num;
 	}
 	//--------
-public:		// `Window` and `Menu` accessor functions
-	//--------
-	//inline Window& screen_window(int file_num)
-	//{
-	//	return _screen_window_vec.at(_sel_file_num(file_num));
-	//}
-	//inline const Window& screen_window(int file_num) const
-	//{
-	//	return _screen_window_vec.at(_sel_file_num(file_num));
-	//}
-	//inline Window& screen_window_cfn()
-	//{
-	//	return screen_window(USE_CURR_FILE_NUM);
-	//}
-	//inline const Window& screen_window_cfn() const
-	//{
-	//	return screen_window(USE_CURR_FILE_NUM);
-	//}
-	inline Window& screen_window()
-	{
-		return _screen_window_vec.at(fn_state_index());
-	}
-	inline const Window& screen_window() const
-	{
-		return _screen_window_vec.at(fn_state_index());
-	}
-	//--------
-	inline Window& aux_window(int file_num)
-	{
-		return _aux_window_vec.at(_sel_file_num(file_num));
-	}
-	inline const Window& aux_window(int file_num) const
-	{
-		return _aux_window_vec.at(_sel_file_num(file_num));
-	}
-	inline Window& aux_window_cfn()
-	{
-		return aux_window(USE_CURR_FILE_NUM);
-	}
-	inline const Window& aux_window_cfn() const
-	{
-		return aux_window(USE_CURR_FILE_NUM);
-	}
-	//--------
-	inline Window& pfield_window(int file_num)
-	{
-		return _pfield_window_vec.at(_sel_file_num(file_num));
-	}
-	inline const Window& pfield_window(int file_num) const
-	{
-		return _pfield_window_vec.at(_sel_file_num(file_num));
-	}
-	inline Window& pfield_window_cfn()
-	{
-		return pfield_window(USE_CURR_FILE_NUM);
-	}
-	inline const Window& pfield_window_cfn() const
-	{
-		return pfield_window(USE_CURR_FILE_NUM);
-	}
-	//--------
-	inline Window& log_window(int file_num)
-	{
-		return _log_window_vec.at(_sel_file_num(file_num));
-	}
-	inline const Window& log_window(int file_num) const
-	{
-		return _log_window_vec.at(_sel_file_num(file_num));
-	}
-	inline Window& log_window_cfn()
-	{
-		return log_window(USE_CURR_FILE_NUM);
-	}
-	inline const Window& log_window_cfn() const
-	{
-		return log_window(USE_CURR_FILE_NUM);
-	}
-	//--------
-	inline Window& hud_window(int file_num)
-	{
-		return _hud_window_vec.at(_sel_file_num(file_num));
-	}
-	inline const Window& hud_window(int file_num) const
-	{
-		return _hud_window_vec.at(_sel_file_num(file_num));
-	}
-	inline Window& hud_window_cfn()
-	{
-		return hud_window(USE_CURR_FILE_NUM);
-	}
-	inline const Window& hud_window_cfn() const
-	{
-		return hud_window(USE_CURR_FILE_NUM);
-	}
-	//--------
-	inline Window& popup_window(int file_num)
-	{
-		return _popup_window_vec.at(_sel_file_num(file_num));
-	}
-	inline const Window& popup_window(int file_num) const
-	{
-		return _popup_window_vec.at(_sel_file_num(file_num));
-	}
-	inline Window& popup_window_cfn()
-	{
-		return popup_window(USE_CURR_FILE_NUM);
-	}
-	inline const Window& popup_window_cfn() const
-	{
-		return popup_window(USE_CURR_FILE_NUM);
-	}
-	//--------
-	inline Window& yes_no_window(int file_num)
-	{
-		return _yes_no_window_vec.at(_sel_file_num(file_num));
-	}
-	inline const Window& yes_no_window(int file_num) const
-	{
-		return _yes_no_window_vec.at(_sel_file_num(file_num));
-	}
-	inline Window& yes_no_window_cfn()
-	{
-		return yes_no_window(USE_CURR_FILE_NUM);
-	}
-	inline const Window& yes_no_window_cfn() const
-	{
-		return yes_no_window(USE_CURR_FILE_NUM);
-	}
-	//--------
-	inline Window& text_yes_no_window(int file_num)
-	{
-		return _text_yes_no_window_vec.at(_sel_file_num(file_num));
-	}
-	inline const Window& text_yes_no_window(int file_num) const
-	{
-		return _text_yes_no_window_vec.at(_sel_file_num(file_num));
-	}
-	inline Window& text_yes_no_window_cfn()
-	{
-		return text_yes_no_window(USE_CURR_FILE_NUM);
-	}
-	inline const Window& text_yes_no_window_cfn() const
-	{
-		return text_yes_no_window(USE_CURR_FILE_NUM);
-	}
-	//--------
-	inline Menu& aux_menu(int file_num)
-	{
-		return _aux_menu_vec.at(_sel_file_num(file_num));
-	}
-	inline const Menu& aux_menu(int file_num) const
-	{
-		return _aux_menu_vec.at(_sel_file_num(file_num));
-	}
-	inline Menu& aux_menu_cfn()
-	{
-		return aux_menu(USE_CURR_FILE_NUM);
-	}
-	inline const Menu& aux_menu_cfn() const
-	{
-		return aux_menu(USE_CURR_FILE_NUM);
-	}
-	//--------
-	inline Menu& popup_menu(int file_num)
-	{
-		return _popup_menu_vec.at(_sel_file_num(file_num));
-	}
-	inline const Menu& popup_menu(int file_num) const
-	{
-		return _popup_menu_vec.at(_sel_file_num(file_num));
-	}
-	inline Menu& popup_menu_cfn()
-	{
-		return popup_menu(USE_CURR_FILE_NUM);
-	}
-	inline const Menu& popup_menu_cfn() const
-	{
-		return popup_menu(USE_CURR_FILE_NUM);
-	}
-	//--------
-	inline Menu& yes_no_menu(int file_num)
-	{
-		return _yes_no_menu_vec.at(_sel_file_num(file_num));
-	}
-	inline const Menu& yes_no_menu(int file_num) const
-	{
-		return _yes_no_menu_vec.at(_sel_file_num(file_num));
-	}
-	inline Menu& yes_no_menu_cfn()
-	{
-		return yes_no_menu(USE_CURR_FILE_NUM);
-	}
-	inline const Menu& yes_no_menu_cfn() const
-	{
-		return yes_no_menu(USE_CURR_FILE_NUM);
-	}
-	//--------
-	inline Menu& text_yes_no_menu(int file_num)
-	{
-		return _text_yes_no_menu_vec.at(_sel_file_num(file_num));
-	}
-	inline const Menu& text_yes_no_menu(int file_num) const
-	{
-		return _text_yes_no_menu_vec.at(_sel_file_num(file_num));
-	}
-	inline Menu& text_yes_no_menu_cfn()
-	{
-		return text_yes_no_menu(USE_CURR_FILE_NUM);
-	}
-	inline const Menu& text_yes_no_menu_cfn() const
-	{
-		return text_yes_no_menu(USE_CURR_FILE_NUM);
-	}
-	//--------
 private:		// static functions
 	inline int _sel_file_num(int some_file_num) const
 	{
@@ -733,14 +497,14 @@ public:		// functions
 		const PosVec3& n_pos);
 
 	template<typename SelfT>
-	inline Menu build_yes_no_menu(SelfT* self, int file_num,
+	inline Menu build_yes_no_menu(SelfT* self,
 		const std::function<void(SelfT*)>& yes_func,
 		const std::function<void(SelfT*)>& no_func)
 	{
 		return Menu
 		(
 			"yes",
-			yes_no_window(file_num).size_2d(),
+			yes_no_window.size_2d(),
 			Menu::build_node_map
 			({
 				Menu::build_action_button_knc_pair
@@ -762,7 +526,7 @@ public:		// functions
 		);
 	}
 	template<typename SelfT>
-	inline Menu build_text_yes_no_menu(SelfT* self, int file_num,
+	inline Menu build_text_yes_no_menu(SelfT* self,
 		const std::string& s_text,
 		const std::function<void(SelfT*)>& yes_func,
 		const std::function<void(SelfT*)>& no_func,
@@ -771,7 +535,7 @@ public:		// functions
 		return Menu
 		(
 			"yes",
-			text_yes_no_window(file_num).size_2d(),
+			text_yes_no_window.size_2d(),
 			Menu::build_node_map
 			({
 				Menu::build_text_only_knc_pair

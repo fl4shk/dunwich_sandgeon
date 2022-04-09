@@ -46,12 +46,12 @@ void GmFileSelect::init(ecs::Engine* ecs_engine)
 	_win_state = WinState::Aux;
 
 	uint i = 0;
-	for (int j=0; j<Engine::NUM_FILES; ++j)
+	//for (int j=0; j<Engine::NUM_FILES; ++j)
 	{
-		engine->aux_menu(j) = Menu
+		engine->aux_menu = Menu
 		(
 			AUX_MENU_KEY_FILE_QMARK,
-			engine->aux_window(j).size_2d(),
+			engine->aux_window.size_2d(),
 			Menu::build_node_map
 			({
 				//--------
@@ -115,12 +115,12 @@ void GmFileSelect::tick(ecs::Engine* ecs_engine)
 	{
 		//const int& cfn = *engine->curr_file_num();
 		const int& sfn = engine->src_file_num;
-		auto& screen_window = engine->screen_window();
+		auto& screen_window = engine->screen_window;
 
 		auto
-			& aux_menu_sfn = engine->aux_menu(sfn),
-			& popup_menu_sfn = engine->popup_menu(sfn),
-			& text_yes_no_menu_sfn = engine->text_yes_no_menu(sfn);
+			& aux_menu = engine->aux_menu,
+			& popup_menu = engine->popup_menu,
+			& text_yes_no_menu = engine->text_yes_no_menu;
 
 		//screen_window.clear();
 
@@ -128,29 +128,29 @@ void GmFileSelect::tick(ecs::Engine* ecs_engine)
 		{
 		//--------
 		case WinState::Aux:
-			aux_menu_sfn.tick(engine->key_status);
-			engine->draw_aux_menu_w_pre_clear(sfn);
+			aux_menu.tick(engine->key_status);
+			engine->draw_aux_menu_w_pre_clear();
 			break;
 		case WinState::Popup:
-			//printout("testificate: ", popup_window_sfn.size_2d().x,
-			//	" ", popup_window_sfn.size_2d().y, "\n");
-			engine->draw_aux_menu_w_pre_clear(sfn);
+			//printout("testificate: ", popup_window.size_2d().x,
+			//	" ", popup_window.size_2d().y, "\n");
+			engine->draw_aux_menu_w_pre_clear();
 
-			popup_menu_sfn.tick(engine->key_status);
-			engine->draw_popup_menu_w_pre_clear(sfn);
+			popup_menu.tick(engine->key_status);
+			engine->draw_popup_menu_w_pre_clear();
 			break;
 		case WinState::TextYesNoCopy:
-			engine->draw_aux_menu_w_pre_clear(sfn);
-			engine->draw_popup_menu_w_pre_clear(sfn);
+			engine->draw_aux_menu_w_pre_clear();
+			engine->draw_popup_menu_w_pre_clear();
 
-			text_yes_no_menu_sfn.tick(engine->key_status);
-			engine->draw_text_yes_no_menu_w_pre_clear(sfn);
+			text_yes_no_menu.tick(engine->key_status);
+			engine->draw_text_yes_no_menu_w_pre_clear();
 			break;
 		case WinState::TextYesNoErase:
-			engine->draw_aux_menu_w_pre_clear(sfn);
+			engine->draw_aux_menu_w_pre_clear();
 
-			text_yes_no_menu_sfn.tick(engine->key_status);
-			engine->draw_text_yes_no_menu_w_pre_clear(sfn);
+			text_yes_no_menu.tick(engine->key_status);
+			engine->draw_text_yes_no_menu_w_pre_clear();
 			break;
 		default:
 			engine->err("game_engine::sys::GmFileSelect::tick(): ",
@@ -169,9 +169,9 @@ void GmFileSelect::_aux_menu_file_qmark_hpick_func(GmFileSelect* self,
 	int& sfn = engine->src_file_num;
 	sfn = std::get<Menu::Node::DataValue>(node->data)();
 
-	for (int j=0; j<Engine::NUM_FILES; ++j)
+	//for (int j=0; j<Engine::NUM_FILES; ++j)
 	{
-		Menu& aux_menu = engine->aux_menu(j);
+		Menu& aux_menu = engine->aux_menu;
 		Menu::Node& other_node = aux_menu.at(AUX_MENU_KEY_FILE_QMARK);
 		std::get<Menu::Node::DataValue>(other_node.data)() = sfn;
 	}
@@ -188,17 +188,17 @@ void GmFileSelect::_aux_menu_copy_file_func(GmFileSelect* self)
 	self->_win_state = WinState::Popup;
 
 	uint i = 0;
-	for (int j=0; j<Engine::NUM_FILES; ++j)
+	//for (int j=0; j<Engine::NUM_FILES; ++j)
 	{
-		engine->popup_menu(j) = Menu
+		engine->popup_menu = Menu
 		(
 			"dst_file_qmark",
-			engine->popup_window(j).size_2d(),
+			engine->popup_window.size_2d(),
 			Menu::build_node_map
 			({
 				//--------
 				Menu::build_text_only_knc_pair("title",
-					sconcat("Copy File ", j, " To?")),
+					sconcat("Copy File ", engine->src_file_num, " To?")),
 				//--------
 				Menu::build_separator_knc_pair(i++),
 				//--------
@@ -237,12 +237,12 @@ void GmFileSelect::_aux_menu_copy_file_func(GmFileSelect* self)
 void GmFileSelect::_aux_menu_erase_file_func(GmFileSelect* self)
 {
 	self->_win_state = WinState::TextYesNoErase;
-	for (int j=0; j<Engine::NUM_FILES; ++j)
+	//for (int j=0; j<Engine::NUM_FILES; ++j)
 	{
-		engine->text_yes_no_menu(j) = engine->build_text_yes_no_menu
+		engine->text_yes_no_menu = engine->build_text_yes_no_menu
 		(
-			self, j,
-			sconcat("Really erase file ", j, "?"),
+			self,
+			sconcat("Really erase file ", engine->src_file_num, "?"),
 			std::function<void(GmFileSelect*)>
 				(&_text_yes_no_menu_erase_yes_func),
 			std::function<void(GmFileSelect*)>
@@ -266,12 +266,12 @@ void GmFileSelect::_popup_menu_dest_file_qmark_hpick_func
 void GmFileSelect::_popup_menu_do_the_copy_func(GmFileSelect* self)
 {
 	self->_win_state = WinState::TextYesNoCopy;
-	for (int j=0; j<Engine::NUM_FILES; ++j)
+	//for (int j=0; j<Engine::NUM_FILES; ++j)
 	{
-		engine->text_yes_no_menu(j) = engine->build_text_yes_no_menu
+		engine->text_yes_no_menu = engine->build_text_yes_no_menu
 		(
-			self, j,
-			sconcat("Really copy file ", j, " to file ",
+			self,
+			sconcat("Really copy file ", engine->src_file_num, " to file ",
 				engine->copy_dst_file_num, "?"),
 			std::function<void(GmFileSelect*)>
 				(&_text_yes_no_menu_copy_yes_func),

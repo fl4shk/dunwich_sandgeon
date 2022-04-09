@@ -118,13 +118,13 @@ int RealMainSdl::run()
 	};
 	//--------
 	//auto
-		//& screen_window = _engine.screen_window();
-		//& aux_window_cfn = _engine.aux_window_cfn(),
-		//& pfield_window_cfn = _engine.pfield_window_cfn(),
-		//& log_window_cfn = _engine.log_window_cfn(),
-		//& hud_window_cfn = _engine.hud_window_cfn(),
-		//& popup_window_cfn = _engine.popup_window_cfn(),
-		//& yes_no_window_cfn = _engine.yes_no_window_cfn();
+		//& screen_window = _engine.screen_window;
+		//& aux_window = _engine.aux_window,
+		//& pfield_window = _engine.pfield_window,
+		//& log_window = _engine.log_window,
+		//& hud_window = _engine.hud_window,
+		//& popup_window = _engine.popup_window,
+		//& yes_no_window = _engine.yes_no_window;
 	//MsgLog
 	//	msg_log
 	//	(
@@ -153,17 +153,17 @@ int RealMainSdl::run()
 	//			//},
 	//		},
 	//		MsgLog::DEFAULT_INTERNAL_HEIGHT,
-	//		log_window_cfn.size_2d(),
+	//		log_window.size_2d(),
 	//		Vec2(true, true)
 	//	);
 	////msg_log.set_scroll(2);
-	//log_window_cfn.draw(msg_log);
+	//log_window.draw(msg_log);
 	//--------
 	bool quit = false;
 	while (!quit)
 	{
 		auto
-			& screen_window = _engine.screen_window();
+			& screen_window = _engine.screen_window;
 		_mouse_right_button_state.back_up();
 
 		bool tick_engine_now = false,
@@ -245,20 +245,20 @@ int RealMainSdl::run()
 
 		// Draw tiles/graphics here.
 
-		//yes_no_window_cfn.clear();
-		//yes_no_window_cfn.draw(_engine.yes_no_menu);
+		//yes_no_window.clear();
+		//yes_no_window.draw(_engine.yes_no_menu);
 
 		//screen_window.clear();
-		//screen_window.draw(yes_no_window_cfn);
+		//screen_window.draw(yes_no_window);
 		////playfield_window.draw(msg_log);
 
 		//// Temporary drawing into `screen_window`.
 		//screen_window.draw(playfield_window, true);
-		//screen_window.draw(log_window_cfn, true);
-		//screen_window.draw(hud_window_cfn, true);
-		//////screen_window.draw(aux_window_cfn);
-		//////screen_window.draw(popup_window_cfn);
-		////screen_window.draw(yes_no_window_cfn);
+		//screen_window.draw(log_window, true);
+		//screen_window.draw(hud_window, true);
+		//////screen_window.draw(aux_window);
+		//////screen_window.draw(popup_window);
+		////screen_window.draw(yes_no_window);
 
 		const auto& fn_state_index = _engine.fn_state_index();
 		for (uint j=0; j<screen_window.with_border_size_2d().y; ++j)
@@ -269,8 +269,8 @@ int RealMainSdl::run()
 				const PosVec2 wb_pos(i, j);
 				//const ecs::EntId id
 				//	= screen_window.with_border_ent_id_at(wb_pos);
-				const auto& draw_data
-					= screen_window.with_border_draw_data_at(wb_pos);
+				const auto& drawable_data
+					= screen_window.with_border_drawable_data_at(wb_pos);
 
 				//if (ecs_engine.has_ent_with_comp(id,
 				//	game_engine::comp::Drawable::KIND_STR, fn_state_index))
@@ -285,13 +285,13 @@ int RealMainSdl::run()
 
 					if (_engine.game_options.grayscale)
 					{
-						_text_handler.draw_char(draw_data.c,
-							draw_data.gs_color_pair, wb_pos);
+						_text_handler.draw_char(drawable_data.c,
+							drawable_data.gs_color_pair, wb_pos);
 					}
 					else // if (!_engine.game_options.grayscale)
 					{
-						_text_handler.draw_char(draw_data.c,
-							draw_data.color_pair, wb_pos);
+						_text_handler.draw_char(drawable_data.c,
+							drawable_data.color_pair, wb_pos);
 					}
 				}
 			}

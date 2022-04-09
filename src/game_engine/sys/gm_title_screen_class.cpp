@@ -38,10 +38,10 @@ void GmTitleScreen::init(ecs::Engine* ecs_engine)
 	_init_start();
 
 	uint i = 0;
-	engine->aux_menu_cfn() = Menu
+	engine->aux_menu = Menu
 	(
 		"file_select",
-		engine->aux_window_cfn().size_2d(),
+		engine->aux_window.size_2d(),
 		Menu::build_node_map
 		({
 			Menu::build_text_only_knc_pair("title", "Dunwich Sandgeon"),
@@ -85,18 +85,18 @@ void GmTitleScreen::tick(ecs::Engine* ecs_engine)
 		engine->game_mode() == GameMode::TitleScreen))
 	{
 		auto
-			& screen_window = engine->screen_window(),
-			& aux_window_cfn = engine->aux_window_cfn();
+			& screen_window = engine->screen_window,
+			& aux_window = engine->aux_window;
 
-		auto& aux_menu_cfn = engine->aux_menu_cfn();
+		auto& aux_menu = engine->aux_menu;
 
-		aux_menu_cfn.tick(engine->key_status);
+		aux_menu.tick(engine->key_status);
 
-		aux_window_cfn.clear();
-		aux_window_cfn.draw(aux_menu_cfn);
+		aux_window.clear();
+		aux_window.draw(aux_menu);
 
 		screen_window.clear();
-		screen_window.draw(aux_window_cfn);
+		screen_window.draw(aux_window);
 	}
 }
 //--------

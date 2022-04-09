@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License along
 // with Dunwich Sandgeon.  If not, see <https://www.gnu.org/licenses/>.
 
-#include "draw_data_map.hpp"
+#include "drawable_data_map.hpp"
 #include "../window_class.hpp"
 #include "player_comp_class.hpp"
 //#include "block_comp_classes.hpp"
@@ -31,7 +31,7 @@ namespace comp
 static constexpr FgBgColorPair
 	WINDOW_BORDER_COLOR_PAIR = FontColor::Green;
 
-const std::map<std::string, Drawable::Data> DRAW_DATA_MAP
+const std::map<std::string, Drawable::Data> DRAWABLE_DATA_MAP
 = {
 	// ' ', 32
 	{
@@ -45,7 +45,7 @@ const std::map<std::string, Drawable::Data> DRAW_DATA_MAP
 
 	// '#', 35
 	{
-		StaticLayout::TILE_WALL_DRAW_DATA_STR,
+		StaticLayout::TILE_WALL_DRAWABLE_DATA_STR,
 		{
 			.c='#',
 			//.color_pair=FontColor::LightGray,
@@ -77,7 +77,7 @@ const std::map<std::string, Drawable::Data> DRAW_DATA_MAP
 
 	// '.', 46
 	{
-		StaticLayout::TILE_FLOOR_DRAW_DATA_STR,
+		StaticLayout::TILE_FLOOR_DRAWABLE_DATA_STR,
 		{
 			.c='.',
 			//.color_pair=FontColor::LightGray,
@@ -89,7 +89,7 @@ const std::map<std::string, Drawable::Data> DRAW_DATA_MAP
 
 	// '<', 60
 	{
-		StaticLayout::TILE_DOWN_STAIRS_DRAW_DATA_STR,
+		StaticLayout::TILE_DOWN_STAIRS_DRAWABLE_DATA_STR,
 		{
 			.c='<',
 			.color_pair=FontColor::White,
@@ -99,7 +99,7 @@ const std::map<std::string, Drawable::Data> DRAW_DATA_MAP
 
 	// '>', 62
 	{
-		StaticLayout::TILE_UP_STAIRS_DRAW_DATA_STR,
+		StaticLayout::TILE_UP_STAIRS_DRAWABLE_DATA_STR,
 		{
 			.c='>',
 			.color_pair=FontColor::White,
@@ -119,7 +119,7 @@ const std::map<std::string, Drawable::Data> DRAW_DATA_MAP
 
 	// '^', 94,
 	{
-		StaticLayout::TILE_SPIKES_DRAW_DATA_STR,
+		StaticLayout::TILE_SPIKES_DRAWABLE_DATA_STR,
 		{
 			.c='^',
 			.color_pair=FontColor::Gray,
@@ -139,7 +139,7 @@ const std::map<std::string, Drawable::Data> DRAW_DATA_MAP
 
 	// '~', 126
 	{
-		StaticLayout::TILE_WATER_DRAW_DATA_STR,
+		StaticLayout::TILE_WATER_DRAWABLE_DATA_STR,
 		{
 			.c='~',
 			.color_pair=FontColor::Blue,

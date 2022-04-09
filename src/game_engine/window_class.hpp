@@ -79,20 +79,16 @@ protected:		// non-serialized variables
 protected:		// serialized variables
 	/* #define MEMB_SER_LIST_WINDOW(X) */ \
 		/* X(_pos, std::nullopt) */ \
-		/* X(_file_num, std::nullopt) */ \
-		/* X(_draw_data_v2d, std::nullopt) */ \
+		/* X(_drawable_data_v2d, std::nullopt) */ \
 
 	//int _priority = 0;
 	PosVec2 _pos;
-	int _file_num = -1;
-	std::vector<std::vector<DrawData>> _draw_data_v2d;
+	std::vector<std::vector<DrawData>> _drawable_data_v2d;
 public:		// functions
 	Window();
-	Window(const PosVec2& s_some_pos,
-		const SizeVec2& s_some_size_2d, int s_file_num,
+	Window(const PosVec2& s_some_pos, const SizeVec2& s_some_size_2d,
 		bool prev_args_are_with_border=true);
-	Window(const PosVec2& s_some_pos,
-		const PosVec2& s_some_end_pos, int s_file_num,
+	Window(const PosVec2& s_some_pos, const PosVec2& s_some_end_pos,
 		bool prev_args_are_with_border=true);
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Window);
 	virtual ~Window();
@@ -102,48 +98,46 @@ public:		// functions
 	//void deserialize(const binser::Value& bv);
 	//void init_set_border();
 
-	//virtual void tick(InputKind input_kind);
-
-	inline DrawData& with_border_draw_data_at(const PosVec2& index)
+	inline DrawData& with_border_drawable_data_at(const PosVec2& index)
 	{
-		return _draw_data_v2d.at(index.y).at(index.x);
+		return _drawable_data_v2d.at(index.y).at(index.x);
 	}
-	inline const DrawData& with_border_draw_data_at(const PosVec2& index)
+	inline const DrawData& with_border_drawable_data_at(const PosVec2& index)
 		const
 	{
-		return _draw_data_v2d.at(index.y).at(index.x);
+		return _drawable_data_v2d.at(index.y).at(index.x);
 	}
-	inline DrawData& with_border_draw_data_at(const SizeVec2& index)
+	inline DrawData& with_border_drawable_data_at(const SizeVec2& index)
 	{
-		return _draw_data_v2d.at(index.y).at(index.x);
+		return _drawable_data_v2d.at(index.y).at(index.x);
 	}
-	inline const DrawData& with_border_draw_data_at(const SizeVec2& index)
+	inline const DrawData& with_border_drawable_data_at(const SizeVec2& index)
 		const
 	{
-		return _draw_data_v2d.at(index.y).at(index.x);
+		return _drawable_data_v2d.at(index.y).at(index.x);
 	}
 
-	inline DrawData& draw_data_at(const PosVec2& index)
+	inline DrawData& drawable_data_at(const PosVec2& index)
 	{
-		return with_border_draw_data_at(index + PosVec2(1, 1));
+		return with_border_drawable_data_at(index + PosVec2(1, 1));
 	}
-	inline const DrawData& draw_data_at(const PosVec2& index) const
+	inline const DrawData& drawable_data_at(const PosVec2& index) const
 	{
-		return with_border_draw_data_at(index + PosVec2(1, 1));
+		return with_border_drawable_data_at(index + PosVec2(1, 1));
 	}
-	inline DrawData& draw_data_at(const SizeVec2& index)
+	inline DrawData& drawable_data_at(const SizeVec2& index)
 	{
-		return with_border_draw_data_at(index + SizeVec2(1, 1));
+		return with_border_drawable_data_at(index + SizeVec2(1, 1));
 	}
-	inline const DrawData& draw_data_at(const SizeVec2& index) const
+	inline const DrawData& drawable_data_at(const SizeVec2& index) const
 	{
-		return with_border_draw_data_at(index + SizeVec2(1, 1));
+		return with_border_drawable_data_at(index + SizeVec2(1, 1));
 	}
 
 	inline SizeVec2 with_border_size_2d() const
 	{
-		return SizeVec2(draw_data_v2d().front().size(),
-			draw_data_v2d().size());
+		return SizeVec2(drawable_data_v2d().front().size(),
+			drawable_data_v2d().size());
 	}
 	inline SizeVec2 size_2d() const
 	{
@@ -163,8 +157,7 @@ public:		// functions
 	//GEN_GETTER_AND_SETTER_BY_VAL(priority);
 	//GEN_GETTER_AND_SETTER_BY_VAL(engine);
 	GEN_GETTER_BY_CON_REF(pos);
-	GEN_GETTER_BY_CON_REF(draw_data_v2d);
-	GEN_GETTER_BY_VAL(file_num);
+	GEN_GETTER_BY_CON_REF(drawable_data_v2d);
 };
 
 //class LayeredWindow

@@ -15,10 +15,10 @@
 // You should have received a copy of the GNU General Public License along
 // with Dunwich Sandgeon.  If not, see <https://www.gnu.org/licenses/>.
 
-#ifndef src_game_engine_comp_draw_data_map_hpp
-#define src_game_engine_comp_draw_data_map_hpp
+#ifndef src_game_engine_comp_drawable_data_map_hpp
+#define src_game_engine_comp_drawable_data_map_hpp
 
-// src/game_engine/comp/draw_data_map.hpp
+// src/game_engine/comp/drawable_data_map.hpp
 
 #include "../../misc_includes.hpp"
 #include "general_comp_classes.hpp"
@@ -30,10 +30,10 @@ namespace game_engine
 namespace comp
 {
 
-extern const std::map<std::string, Drawable::Data> DRAW_DATA_MAP;
+extern const std::map<std::string, Drawable::Data> DRAWABLE_DATA_MAP;
 
 } // namespace comp
 } // namespace game_engine
 } // namespace dunwich_sandgeon
 
-#endif		// src_game_engine_comp_draw_data_map_hpp
+#endif		// src_game_engine_comp_drawable_data_map_hpp

@@ -28,15 +28,15 @@ namespace comp
 const std::string
 	StaticLayout::KIND_STR("StaticLayout"),
 
-	StaticLayout::TILE_WALL_DRAW_DATA_STR("TileWall"),
-	StaticLayout::TILE_FLOOR_DRAW_DATA_STR("TileFloor"),
-	StaticLayout::TILE_UP_STAIRS_DRAW_DATA_STR("TileUpStairs"),
-	StaticLayout::TILE_DOWN_STAIRS_DRAW_DATA_STR("TileDownStairs"),
+	StaticLayout::TILE_WALL_DRAWABLE_DATA_STR("TileWall"),
+	StaticLayout::TILE_FLOOR_DRAWABLE_DATA_STR("TileFloor"),
+	StaticLayout::TILE_UP_STAIRS_DRAWABLE_DATA_STR("TileUpStairs"),
+	StaticLayout::TILE_DOWN_STAIRS_DRAWABLE_DATA_STR("TileDownStairs"),
 
-	StaticLayout::TILE_DOOR_DRAW_DATA_STR("TileDoor"),
-	StaticLayout::TILE_PIT_DRAW_DATA_STR("TilePit"),
-	StaticLayout::TILE_WATER_DRAW_DATA_STR("TileWater"),
-	StaticLayout::TILE_SPIKES_DRAW_DATA_STR("TileSpikes");
+	StaticLayout::TILE_DOOR_DRAWABLE_DATA_STR("TileDoor"),
+	StaticLayout::TILE_PIT_DRAWABLE_DATA_STR("TilePit"),
+	StaticLayout::TILE_WATER_DRAWABLE_DATA_STR("TileWater"),
+	StaticLayout::TILE_SPIKES_DRAWABLE_DATA_STR("TileSpikes");
 
 StaticLayout::StaticLayout(const binser::Value& bv)
 {

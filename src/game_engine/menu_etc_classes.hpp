@@ -120,8 +120,9 @@ public:		// constants
 	static const std::string
 		WIDGET_SELECTED_SPACING_STR,
 		WIDGET_SPACING_STR;
-	static constexpr uint DEFAULT_INTERNAL_HEIGHT = 256;
+	//static constexpr uint DEFAULT_INTERNAL_HEIGHT = 256;
 	//static constexpr uint DEFAULT_INTERNAL_HEIGHT = 70;
+	static constexpr uint DEFAULT_INTERNAL_HEIGHT = 10;
 	//static const uint DEFAULT_INTERNAL_HEIGHT;
 private:		// variables
 	#define MEMB_LIST_MSG_LOG(X) \

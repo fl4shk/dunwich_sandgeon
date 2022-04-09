@@ -132,30 +132,20 @@ Engine::Engine(int s_argc, char** s_argv, bool do_create_or_load)
 	//_non_ecs_ser_data_arr(NUM_FILES, NonEcsSerData()),
 	key_status(size_t(KeyKind::Lim)),
 
-	//screen_window(this, PosVec2(), WITH_BORDER_SCREEN_SIZE_2D,
-	//	USE_CURR_FILE_NUM),
-	//_screen_window_vec(NUM_FILES,
-	//	Window(this, PosVec2(), WITH_BORDER_SCREEN_SIZE_2D)),
-	//_aux_window_vec(NUM_FILES,
-	//	Window(this, PosVec2(), WITH_BORDER_SCREEN_SIZE_2D)),
+	screen_window(PosVec2(), WITH_BORDER_SCREEN_SIZE_2D),
+	aux_window(PosVec2(), WITH_BORDER_SCREEN_SIZE_2D),
 
-	//_pfield_window_vec(NUM_FILES,
-	//	Window(this, PFIELD_WINDOW_POS, PFIELD_WINDOW_END_POS)),
-	//_log_window_vec(NUM_FILES,
-	//	Window(this, LOG_WINDOW_POS, LOG_WINDOW_END_POS)),
-	//_hud_window_vec(NUM_FILES,
-	//	Window(this, HUD_WINDOW_POS, HUD_WINDOW_END_POS)),
-	//_popup_window_vec(NUM_FILES,
-	//	Window(this, POPUP_WINDOW_POS, POPUP_WINDOW_END_POS)),
-	//_yes_no_window_vec(NUM_FILES,
-	//	Window(this, YES_NO_WINDOW_POS, YES_NO_WINDOW_END_POS)),
-	//_text_yes_no_window_vec(NUM_FILES,
-	//	Window(this, TEXT_YES_NO_WINDOW_POS, TEXT_YES_NO_WINDOW_END_POS)),
+	pfield_window(PFIELD_WINDOW_POS, PFIELD_WINDOW_END_POS),
+	log_window(LOG_WINDOW_POS, LOG_WINDOW_END_POS),
+	hud_window(HUD_WINDOW_POS, HUD_WINDOW_END_POS),
+	popup_window(POPUP_WINDOW_POS, POPUP_WINDOW_END_POS),
+	yes_no_window(YES_NO_WINDOW_POS, YES_NO_WINDOW_END_POS),
+	text_yes_no_window(TEXT_YES_NO_WINDOW_POS, TEXT_YES_NO_WINDOW_END_POS),
 
-	_aux_menu_vec(NUM_FILES, Menu()),
-	_popup_menu_vec(NUM_FILES, Menu()),
-	_yes_no_menu_vec(NUM_FILES, Menu()),
-	_text_yes_no_menu_vec(NUM_FILES, Menu())
+	aux_menu(Menu()),
+	popup_menu(Menu()),
+	yes_no_menu(Menu()),
+	text_yes_no_menu(Menu())
 {
 	if (_argc <= 0)
 	{
@@ -181,39 +171,39 @@ Engine::Engine(int s_argc, char** s_argv, bool do_create_or_load)
 
 	//screen_window = Window(this, PosVec2(),
 	//		WITH_BORDER_SCREEN_SIZE_2D, i);
-	for (i32 i=0; i<NUM_FILES; ++i)
-	{
-		//--------
-		//_non_ecs_ser_data_arr.push_back(NonEcsSerData());
-		//--------
-		//auto add_window = [](auto& vec_etc, Window&& to_push) -> void
-		//{
-		//	//printout("add_window() testificate: ",
-		//	//	to_push.engine() == nullptr, "\n");
-		//	vec_etc.push_back(std::move(to_push));
-		//	//vec_etc.back().init_set_border();
-		//};
-		//--------
-		_screen_window_vec.push_back
-			(Window(PosVec2(), WITH_BORDER_SCREEN_SIZE_2D, i));
-		_aux_window_vec.push_back
-			(Window(PosVec2(), WITH_BORDER_SCREEN_SIZE_2D, i));
-		//--------
-		_pfield_window_vec.push_back
-			(Window(PFIELD_WINDOW_POS, PFIELD_WINDOW_END_POS, i));
-		_log_window_vec.push_back
-			(Window(LOG_WINDOW_POS, LOG_WINDOW_END_POS, i));
-		_hud_window_vec.push_back
-			(Window(HUD_WINDOW_POS, HUD_WINDOW_END_POS, i));
-		_popup_window_vec.push_back
-			(Window(POPUP_WINDOW_POS, POPUP_WINDOW_END_POS, i));
-		_yes_no_window_vec.push_back
-			(Window(YES_NO_WINDOW_POS, YES_NO_WINDOW_END_POS, i));
-		_text_yes_no_window_vec.push_back
-			(Window(TEXT_YES_NO_WINDOW_POS, TEXT_YES_NO_WINDOW_END_POS,
-				i));
-		//--------
-	}
+	//for (i32 i=0; i<NUM_FILES; ++i)
+	//{
+	//	//--------
+	//	//_non_ecs_ser_data_arr.push_back(NonEcsSerData());
+	//	//--------
+	//	//auto add_window = [](auto& vec_etc, Window&& to_push) -> void
+	//	//{
+	//	//	//printout("add_window() testificate: ",
+	//	//	//	to_push.engine() == nullptr, "\n");
+	//	//	vec_etc.push_back(std::move(to_push));
+	//	//	//vec_etc.back().init_set_border();
+	//	//};
+	//	//--------
+	//	_screen_window_vec.push_back
+	//		(Window(PosVec2(), WITH_BORDER_SCREEN_SIZE_2D, i));
+	//	_aux_window_vec.push_back
+	//		(Window(PosVec2(), WITH_BORDER_SCREEN_SIZE_2D, i));
+	//	//--------
+	//	_pfield_window_vec.push_back
+	//		(Window(PFIELD_WINDOW_POS, PFIELD_WINDOW_END_POS, i));
+	//	_log_window_vec.push_back
+	//		(Window(LOG_WINDOW_POS, LOG_WINDOW_END_POS, i));
+	//	_hud_window_vec.push_back
+	//		(Window(HUD_WINDOW_POS, HUD_WINDOW_END_POS, i));
+	//	_popup_window_vec.push_back
+	//		(Window(POPUP_WINDOW_POS, POPUP_WINDOW_END_POS, i));
+	//	_yes_no_window_vec.push_back
+	//		(Window(YES_NO_WINDOW_POS, YES_NO_WINDOW_END_POS, i));
+	//	_text_yes_no_window_vec.push_back
+	//		(Window(TEXT_YES_NO_WINDOW_POS, TEXT_YES_NO_WINDOW_END_POS,
+	//			i));
+	//	//--------
+	//}
 
 	ecs_engine.init_comp_deserialize
 	<
@@ -235,9 +225,8 @@ Engine::Engine(int s_argc, char** s_argv, bool do_create_or_load)
 	#define X(arg) \
 		if (ecs_engine.insert_sys(ecs::SysSptr(new sys::Gm ## arg()))) \
 		{ \
-			fprintf(stderr, "game_engine::Engine::Engine(): " \
+			err("game_engine::Engine::Engine(): ", \
 				#arg " internal error\n"); \
-			exit(1); \
 		}
 	LIST_OF_GAME_MODES(X)
 	#undef X
@@ -316,17 +305,26 @@ void Engine::tick()
 	{
 		_did_init_window_clear = true;
 
-		for (i32 i=0; i<NUM_FILES; ++i)
-		{
-			_screen_window_vec.at(i).clear();
-			_aux_window_vec.at(i).clear();
-			_pfield_window_vec.at(i).clear();
-			_log_window_vec.at(i).clear();
-			_hud_window_vec.at(i).clear();
-			_popup_window_vec.at(i).clear();
-			_yes_no_window_vec.at(i).clear();
-			_text_yes_no_window_vec.at(i).clear();
-		}
+		//for (i32 i=0; i<NUM_FILES; ++i)
+		//{
+		//	_screen_window_vec.at(i).clear();
+		//	_aux_window_vec.at(i).clear();
+		//	_pfield_window_vec.at(i).clear();
+		//	_log_window_vec.at(i).clear();
+		//	_hud_window_vec.at(i).clear();
+		//	_popup_window_vec.at(i).clear();
+		//	_yes_no_window_vec.at(i).clear();
+		//	_text_yes_no_window_vec.at(i).clear();
+		//}
+
+		screen_window.clear();
+		aux_window.clear();
+		pfield_window.clear();
+		log_window.clear();
+		hud_window.clear();
+		popup_window.clear();
+		yes_no_window.clear();
+		text_yes_no_window.clear();
 	}
 	// testing
 
@@ -489,13 +487,12 @@ void Engine::erase_file()
 {
 	printout("game_engine::Engine::erase_file(): testificate\n");
 }
-void Engine::_inner_draw_menu_w_pre_clear(Window& window, Menu& menu,
-	int file_num)
+void Engine::_inner_draw_menu_w_pre_clear(Window& window, Menu& menu)
 {
 	window.clear();
 	window.draw(menu);
 	//_screen_window_vec.at(_sel_file_num(file_num)).draw(window);
-	screen_window().draw(window);
+	screen_window.draw(window);
 }
 
 void Engine::position_ctor_callback(comp::Position* obj)
