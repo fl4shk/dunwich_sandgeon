@@ -63,7 +63,7 @@ public:		// constants
 		TILE_SPIKES_DRAW_DATA_STR;
 private:		// variables
 	#define MEMB_LIST_COMP_STATIC_LAYOUT(X) \
-		X(_data, std::nullopt)
+		X(_data, std::nullopt) \
 
 	std::vector<std::vector<Tile>> _data;
 public:		// functions

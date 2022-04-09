@@ -33,7 +33,7 @@
 #include "liborangepower_src/containers/vec3_classes.hpp"
 #include "liborangepower_src/containers/prev_curr_pair_classes.hpp"
 #include "liborangepower_src/json_stuff/json_stuff.hpp"
-#include "liborangepower_src/binser/binser_serialize_funcs.hpp"
+#include "liborangepower_src/binser/serialize_funcs.hpp"
 #include "liborangepower_src/binser/bv_to_jv_casting_func.hpp"
 #include "liborangepower_src/game_stuff/ecs_classes.hpp"
 #include "liborangepower_src/game_stuff/engine_key_status_class.hpp"
@@ -80,5 +80,6 @@ namespace ecs = liborangepower::game::ecs;
 #include <type_traits>
 #include <concepts>
 
+#include <pcg_random.hpp>
 
 #endif		// src_misc_includes_hpp

@@ -59,10 +59,46 @@ const std::string
 Engine::NonEcsSerData::NonEcsSerData()
 	//: pfield_ent_id_v3d(_gen_blank_pfield_ent_id_v3d())
 {
+	//const auto& time_count = get_hrc_now().time_since_epoch().count();
+	//rng.seed(time_count, time_count + 1, time_count + 2);
 }
 Engine::NonEcsSerData::NonEcsSerData(const binser::Value& bv)
 {
-	MEMB_LIST_ENGINE_NON_ECS_SER_DATA(BINSER_MEMB_DESERIALIZE);
+	MEMB_AUTOSER_LIST_ENGINE_NON_ECS_SER_DATA(BINSER_MEMB_DESERIALIZE);
+
+	//{
+	//	//std::vector<std::string> vec;
+	//	//binser::get_bv_memb(vec, bv, "layout_rng_arr", std::nullopt);
+
+	//	//if (vec.size() != Engine::NUM_FLOORS)
+	//	//{
+	//	//	const std::string err_msg(sconcat
+	//	//		("game_engine::Engine::NonEcsSerData::NonEcsSerData",
+	//	//		"(const binser::Value&): Wrong `vec.size()` value of ",
+	//	//		vec.size(), "."));
+	//	//	throw std::invalid_argument(err_msg.c_str());
+	//	//}
+
+	//	//layout_rng_arr.resize(0);
+
+	//	//for (i32 i=0; i<Engine::NUM_FLOORS; ++i)
+	//	//{
+	//	//	pcg64 layout_rng;
+	//	//	std::stringstream sstm;
+	//	//	sstm << vec.at(i);
+	//	//	sstm >> layout_rng;
+	//	//	layout_rng_arr.at(i) = std::move(layout_rng);
+	//	//}
+	//}
+
+	{
+		std::string str;
+		binser::get_bv_memb(str, bv, "misc_rng", std::nullopt);
+
+		std::stringstream sstm;
+		sstm << str;
+		sstm >> misc_rng;
+	}
 }
 
 Engine::NonEcsSerData::~NonEcsSerData()
@@ -73,16 +109,27 @@ Engine::NonEcsSerData::operator binser::Value () const
 {
 	binser::Value ret;
 
-	MEMB_LIST_ENGINE_NON_ECS_SER_DATA(BINSER_MEMB_SERIALIZE);
+	MEMB_AUTOSER_LIST_ENGINE_NON_ECS_SER_DATA(BINSER_MEMB_SERIALIZE);
+	//binser::set_bv_memb(ret, "rng", sconcat(rng));
+	//{
+	//	std::vector<std::string> vec;
+	//	for (const auto& layout_rng: layout_rng_arr)
+	//	{
+	//		vec.push_back(sconcat(layout_rng));
+	//	}
+	//	binser::set_bv_memb(ret, "layout_rng_arr", vec);
+	//}
+	binser::set_bv_memb(ret, "misc_rng", sconcat(misc_rng));
 
 	return ret;
 }
+
 //--------
 Engine::Engine(int s_argc, char** s_argv, bool do_create_or_load)
 	: _argc(s_argc), _argv(s_argv),
 	ecs_engine(NUM_FILES),
 
-	_non_ecs_ser_data_vec(NUM_FILES, NonEcsSerData()),
+	//_non_ecs_ser_data_arr(NUM_FILES, NonEcsSerData()),
 	key_status(size_t(KeyKind::Lim)),
 
 	//screen_window(this, PosVec2(), WITH_BORDER_SCREEN_SIZE_2D,
@@ -134,10 +181,10 @@ Engine::Engine(int s_argc, char** s_argv, bool do_create_or_load)
 
 	//screen_window = Window(this, PosVec2(),
 	//		WITH_BORDER_SCREEN_SIZE_2D, i);
-	for (int i=0; i<NUM_FILES; ++i)
+	for (i32 i=0; i<NUM_FILES; ++i)
 	{
 		//--------
-		//_non_ecs_ser_data_vec.push_back(NonEcsSerData());
+		//_non_ecs_ser_data_arr.push_back(NonEcsSerData());
 		//--------
 		//auto add_window = [](auto& vec_etc, Window&& to_push) -> void
 		//{
@@ -269,7 +316,7 @@ void Engine::tick()
 	{
 		_did_init_window_clear = true;
 
-		for (int i=0; i<NUM_FILES; ++i)
+		for (i32 i=0; i<NUM_FILES; ++i)
 		{
 			_screen_window_vec.at(i).clear();
 			_aux_window_vec.at(i).clear();
@@ -498,9 +545,9 @@ void Engine::position_set_pos_callback(comp::Position* obj,
 
 GameMode& Engine::set_game_mode(GameMode n_game_mode)
 {
-	//printout("old _game_mode: ", (int)_game_mode, "\n");
+	//printout("old _game_mode: ", int(_game_mode), "\n");
 	_game_mode = n_game_mode;
-	//printout("new _game_mode: ", (int)_game_mode, "\n");
+	//printout("new _game_mode: ", int(_game_mode), "\n");
 
 	switch (game_mode())
 	{

@@ -86,10 +86,6 @@ concept EngineErrWhenEntNullIdObj = requires(ObjT obj)
 
 class Engine final
 {
-public:		// types
-	//using EntIdSetVec2d
-	//	= std::vector<std::vector<ecs::EntIdSet>>;
-
 public:		// constants
 	// These are basement floors, going from B1F down to B25F
 	static constexpr i32
@@ -106,14 +102,20 @@ public:		// constants
 		NUM_FILES = 3;
 		//NUM_FILES = 1;
 public:		// types
+	//using EntIdSetVec2d
+	//	= std::vector<std::vector<ecs::EntIdSet>>;
+	using LayoutRngArr = std::array<pcg64, NUM_FLOORS>;
+	using LayoutRngA2d = std::array<LayoutRngArr, NUM_FILES>;
+public:		// types
 	class NonEcsSerData final
 	{
 	public:		// variables
-		#define MEMB_LIST_ENGINE_NON_ECS_SER_DATA(X) \
+		#define MEMB_AUTOSER_LIST_ENGINE_NON_ECS_SER_DATA(X) \
 			X(log_msg_log, std::nullopt) \
 			X(hud_msg_log, std::nullopt) \
 			X(floor, std::nullopt) \
-			X(pfield_ent_id_map, std::nullopt)
+			X(pfield_ent_id_map, std::nullopt) \
+			X(base_rng_seed, std::nullopt)
 
 		MsgLog
 			log_msg_log,
@@ -126,6 +128,11 @@ public:		// types
 		// I needed to have a shorter variable name, so I changed the name
 		// of this variable and related functions
 		std::unordered_map<PosVec3, ecs::EntIdSet> pfield_ent_id_map;
+
+		u64 base_rng_seed = 0;
+		// The RNG to use for tasks other than initial floor layout
+		// generation
+		pcg64 misc_rng;
 	//private:		// static functions
 	//	static decltype(pfield_ent_id_v3d)
 	//		_gen_blank_pfield_ent_id_v3d();
@@ -136,19 +143,40 @@ public:		// types
 		~NonEcsSerData();
 
 		operator binser::Value () const;
+
+		inline void init_rngs(LayoutRngArr& layout_rng_arr,
+			u64 n_base_rng_seed=get_hrc_now_rng_seed())
+		{
+			//base_rng_seed = get_hrc_now_rng_seed();
+			base_rng_seed = n_base_rng_seed;
+
+			//layout_rng_arr.resize(Engine::NUM_FLOORS);
+
+			//for (i32 i=0; i<Engine::NUM_FLOORS; ++i)
+			size_t i;
+			for (i=0; i<layout_rng_arr.size(); ++i)
+			{
+				layout_rng_arr.at(i).seed(base_rng_seed + i);
+			}
+			misc_rng.seed(base_rng_seed + i);
+		}
 	};
 private:		// non-serialized variables
 	int _argc = 0;
 	char** _argv = nullptr;
 	std::string _save_file_name;
 
+	// The RNGs for each file's floors' initial layouts, including the
+	// parts that are static (which are stored in the
+	// `comp::StaticLayout`).
+	LayoutRngA2d _layout_rng_a2d;
 public:		// serialized variables
 	ecs::Engine ecs_engine;
 
 	#define MEMB_SER_LIST_ENGINE(X) \
 		X(ecs_engine, std::nullopt) \
 		X(game_options, std::nullopt) \
-		X(_non_ecs_ser_data_vec, std::nullopt) \
+		X(_non_ecs_ser_data_arr, std::nullopt) \
 		\
 		/* X(_screen_window_vec, std::nullopt) */ \
 		/* X(_aux_window_vec, std::nullopt) */ \
@@ -160,7 +188,7 @@ public:		// serialized variables
 
 	GameOptions game_options;
 private:		// serialized variables
-	std::vector<NonEcsSerData> _non_ecs_ser_data_vec;
+	std::array<NonEcsSerData, NUM_FILES> _non_ecs_ser_data_arr;
 public:		// non-serialized variables
 	EngineKeyStatus key_status;
 
@@ -173,7 +201,7 @@ public:		// non-serialized variables
 	//	bool req_start = false;
 	//	std::string text;
 	//} text_input;
-private:		// variables
+private:		// non-serialized variables
 	GameMode _game_mode = GameMode::TitleScreen;
 private:		// non-serialized variables
 	std::vector<Window>
@@ -224,7 +252,7 @@ private:		// non-serialized variables
 	bool _did_init_window_clear = false;
 	// File numbers selected via HorizPickers, though `curr_file_num` is
 	// also the current file number used for indexing into
-	// `_non_ecs_ser_data_vec`.
+	// `_non_ecs_ser_data_arr`.
 	int* _curr_file_num = nullptr;
 public:		// non-serialized variables
 	int
@@ -314,15 +342,15 @@ public:		// functions
 	{
 		draw_text_yes_no_menu_w_pre_clear(USE_CURR_FILE_NUM);
 	}
-public:		// `_non_ecs_ser_data_vec` accessor functions
+public:		// `_non_ecs_ser_data_arr` accessor functions
 	//--------
 	inline NonEcsSerData& non_ecs_ser_data(int file_num)
 	{
-		return _non_ecs_ser_data_vec.at(_sel_file_num(file_num));
+		return _non_ecs_ser_data_arr.at(_sel_file_num(file_num));
 	}
 	inline const NonEcsSerData& non_ecs_ser_data(int file_num) const
 	{
-		return _non_ecs_ser_data_vec.at(_sel_file_num(file_num));
+		return _non_ecs_ser_data_arr.at(_sel_file_num(file_num));
 	}
 	inline NonEcsSerData& non_ecs_ser_data_cfn()
 	{

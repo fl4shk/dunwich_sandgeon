@@ -122,7 +122,7 @@ void GmFileSelect::tick(ecs::Engine* ecs_engine)
 			& popup_menu_sfn = engine->popup_menu(sfn),
 			& text_yes_no_menu_sfn = engine->text_yes_no_menu(sfn);
 
-		screen_window.clear();
+		//screen_window.clear();
 
 		switch (_win_state)
 		{

@@ -243,7 +243,6 @@ int RealMainSdl::run()
 		SDL_SetRenderDrawColor(_renderer, 0x00, 0x00, 0x00, 0xff);
 		SDL_RenderFillRect(_renderer, nullptr);
 
-
 		// Draw tiles/graphics here.
 
 		//yes_no_window_cfn.clear();
