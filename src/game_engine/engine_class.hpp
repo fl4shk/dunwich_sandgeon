@@ -247,19 +247,19 @@ public:		// non-serialized variables
 		text_yes_no_menu;
 public:		// constants
 	static constexpr int
-		USE_CURR_FILE_NUM = -1,
-		USE_SRC_FILE_NUM = -2,
-		USE_COPY_DST_FILE_NUM = -3;
+		USE_CURR_FILE_NUM = ecs::Engine::USE_CURR_FILE_NUM;
+		//USE_SRC_FILE_NUM = ecs::Engine::USE_SRC_FILE_NUM,
+		//USE_COPY_DST_FILE_NUM = ecs::Engine::USE_COPY_DST_FILE_NUM;
 private:		// non-serialized variables
 	bool _did_init_window_clear = false;
 	// File numbers selected via HorizPickers, though `curr_file_num` is
 	// also the current file number used for indexing into
 	// `_non_ecs_ser_data_arr`.
-	int* _curr_file_num = nullptr;
+	ecs::FileNum
+		* _curr_file_num = nullptr,
+		* _src_file_num = nullptr,
+		* _copy_dst_file_num = nullptr;
 public:		// non-serialized variables
-	int
-		src_file_num = 0,
-		copy_dst_file_num = 0;
 
 	// File number state
 	enum class FnState: int
@@ -464,42 +464,45 @@ public:		// functions
 		return
 			fn_state == FnState::Curr
 			? *curr_file_num()
-			: src_file_num;
+			: *src_file_num();
 	}
 	//--------
 private:		// static functions
-	inline int _sel_file_num(int some_file_num) const
+	inline ecs::FileNum _sel_file_num(int some_file_num) const
 	{
-		//return (some_file_num == USE_CURR_FILE_NUM)
-		//	? *curr_file_num()
-		//	: some_file_num;
-		switch (some_file_num)
-		{
-		//--------
-		case USE_CURR_FILE_NUM:
-			return *curr_file_num();
-			break;
-		case USE_SRC_FILE_NUM:
-			return src_file_num;
-			break;
-		case USE_COPY_DST_FILE_NUM:
-			return copy_dst_file_num;
-		default:
-			return some_file_num;
-			break;
-		//--------
-		}
+		return ecs_engine.sel_file_num(some_file_num);
 	}
+	//inline int _sel_file_num(int some_file_num) const
+	//{
+	//	//return (some_file_num == USE_CURR_FILE_NUM)
+	//	//	? *curr_file_num()
+	//	//	: some_file_num;
+	//	switch (some_file_num)
+	//	{
+	//	//--------
+	//	case USE_CURR_FILE_NUM:
+	//		return *curr_file_num();
+	//		break;
+	//	case USE_SRC_FILE_NUM:
+	//		return *src_file_num();
+	//		break;
+	//	case USE_COPY_DST_FILE_NUM:
+	//		return *copy_dst_file_num();
+	//	default:
+	//		return some_file_num;
+	//		break;
+	//	//--------
+	//	}
+	//}
 public:		// functions
 	void position_ctor_callback(comp::Position* obj);
 	void position_dtor_callback(comp::Position* obj);
 	void position_set_pos_callback(comp::Position* obj,
 		const PosVec3& n_pos);
 
-	template<typename SelfT>
-	inline Menu build_yes_no_menu(SelfT* self,
-		const std::function<void(SelfT*)>& yes_func,
-		const std::function<void(SelfT*)>& no_func)
+	inline Menu build_yes_no_menu(auto* self,
+		const std::function<void(decltype(self))>& yes_func,
+		const std::function<void(decltype(self))>& no_func)
 	{
 		return Menu
 		(
@@ -525,11 +528,10 @@ public:		// functions
 			Vec2(false, true)
 		);
 	}
-	template<typename SelfT>
-	inline Menu build_text_yes_no_menu(SelfT* self,
+	inline Menu build_text_yes_no_menu(auto* self,
 		const std::string& s_text,
-		const std::function<void(SelfT*)>& yes_func,
-		const std::function<void(SelfT*)>& no_func,
+		const std::function<void(decltype(self))>& yes_func,
+		const std::function<void(decltype(self))>& no_func,
 		uint s_tab_amount=0)
 	{
 		return Menu
@@ -571,6 +573,8 @@ public:		// functions
 	}
 
 	GEN_GETTER_BY_VAL(curr_file_num);
+	GEN_GETTER_BY_VAL(src_file_num);
+	GEN_GETTER_BY_VAL(copy_dst_file_num);
 private:		// functions
 	//static void _yes_no_menu_act_yes(Engine* self);
 	//static void _yes_no_menu_act_no(Engine* self);

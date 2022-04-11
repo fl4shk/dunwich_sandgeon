@@ -38,9 +38,9 @@ void GmFileSelect::init(ecs::Engine* ecs_engine)
 {
 	_init_start();
 
-	//engine->src_file_num = *engine->curr_file_num();
+	//*engine->src_file_num() = *engine->curr_file_num();
 
-	*engine->curr_file_num() = engine->src_file_num = 0;
+	*engine->curr_file_num() = *engine->src_file_num() = 0;
 	engine->fn_state = Engine::FnState::Src;
 
 	_win_state = WinState::Aux;
@@ -114,7 +114,7 @@ void GmFileSelect::tick(ecs::Engine* ecs_engine)
 		engine->game_mode() == GameMode::FileSelect))
 	{
 		//const int& cfn = *engine->curr_file_num();
-		const int& sfn = engine->src_file_num;
+		const ecs::FileNum& sfn = *engine->src_file_num();
 		auto& screen_window = engine->screen_window;
 
 		auto
@@ -166,7 +166,7 @@ void GmFileSelect::_aux_menu_file_qmark_hpick_func(GmFileSelect* self,
 {
 	//*engine->curr_file_num()
 	//	= std::get<Menu::Node::DataValue>(node->data)();
-	int& sfn = engine->src_file_num;
+	ecs::FileNum& sfn = *engine->src_file_num();
 	sfn = std::get<Menu::Node::DataValue>(node->data)();
 
 	//for (int j=0; j<Engine::NUM_FILES; ++j)
@@ -178,7 +178,7 @@ void GmFileSelect::_aux_menu_file_qmark_hpick_func(GmFileSelect* self,
 }
 void GmFileSelect::_aux_menu_start_game_func(GmFileSelect* self)
 {
-	//*engine->curr_file_num() = engine->src_file_num;
+	//*engine->curr_file_num() = *engine->src_file_num();
 	//engine->fn_state = Engine::FnState::Curr;
 
 	// TODO: finish this function
@@ -198,7 +198,7 @@ void GmFileSelect::_aux_menu_copy_file_func(GmFileSelect* self)
 			({
 				//--------
 				Menu::build_text_only_knc_pair("title",
-					sconcat("Copy File ", engine->src_file_num, " To?")),
+					sconcat("Copy File ", *engine->src_file_num(), " To?")),
 				//--------
 				Menu::build_separator_knc_pair(i++),
 				//--------
@@ -242,7 +242,7 @@ void GmFileSelect::_aux_menu_erase_file_func(GmFileSelect* self)
 		engine->text_yes_no_menu = engine->build_text_yes_no_menu
 		(
 			self,
-			sconcat("Really erase file ", engine->src_file_num, "?"),
+			sconcat("Really erase file ", *engine->src_file_num(), "?"),
 			std::function<void(GmFileSelect*)>
 				(&_text_yes_no_menu_erase_yes_func),
 			std::function<void(GmFileSelect*)>
@@ -253,14 +253,14 @@ void GmFileSelect::_aux_menu_erase_file_func(GmFileSelect* self)
 void GmFileSelect::_aux_menu_exit_func(GmFileSelect* self)
 {
 	engine->set_game_mode(GameMode::TitleScreen);
-	*engine->curr_file_num() = engine->src_file_num;
+	*engine->curr_file_num() = *engine->src_file_num();
 	engine->fn_state = Engine::FnState::Curr;
 }
 //--------
 void GmFileSelect::_popup_menu_dest_file_qmark_hpick_func
 	(GmFileSelect* self, Menu::Node* node)
 {
-	engine->copy_dst_file_num
+	*engine->copy_dst_file_num()
 		= std::get<Menu::Node::DataValue>(node->data)();
 }
 void GmFileSelect::_popup_menu_do_the_copy_func(GmFileSelect* self)
@@ -271,8 +271,8 @@ void GmFileSelect::_popup_menu_do_the_copy_func(GmFileSelect* self)
 		engine->text_yes_no_menu = engine->build_text_yes_no_menu
 		(
 			self,
-			sconcat("Really copy file ", engine->src_file_num, " to file ",
-				engine->copy_dst_file_num, "?"),
+			sconcat("Really copy file ", *engine->src_file_num(),
+				" to file ", *engine->copy_dst_file_num(), "?"),
 			std::function<void(GmFileSelect*)>
 				(&_text_yes_no_menu_copy_yes_func),
 			std::function<void(GmFileSelect*)>

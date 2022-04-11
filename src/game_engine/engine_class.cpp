@@ -168,6 +168,8 @@ Engine::Engine(int s_argc, char** s_argv, bool do_create_or_load)
 		);
 	}
 	_curr_file_num = &ecs_engine.curr_file_num;
+	_src_file_num = &ecs_engine.src_file_num;
+	_copy_dst_file_num = &ecs_engine.copy_dst_file_num;
 
 	//screen_window = Window(this, PosVec2(),
 	//		WITH_BORDER_SCREEN_SIZE_2D, i);
@@ -481,11 +483,11 @@ void Engine::save_and_return_to_title()
 
 void Engine::copy_file()
 {
-	printout("game_engine::Engine::copy_file(): testificate\n");
+	//printout("game_engine::Engine::copy_file(): testificate\n");
 }
 void Engine::erase_file()
 {
-	printout("game_engine::Engine::erase_file(): testificate\n");
+	//printout("game_engine::Engine::erase_file(): testificate\n");
 }
 void Engine::_inner_draw_menu_w_pre_clear(Window& window, Menu& menu)
 {
