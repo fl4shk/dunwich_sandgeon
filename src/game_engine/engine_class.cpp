@@ -235,21 +235,6 @@ Engine::Engine(int s_argc, char** s_argv, bool do_create_or_load)
 		_create_or_load_save_file_etc();
 	}
 	//_load_from_json();
-
-	for (ecs::FileNum file_num=0; file_num<NUM_FILES; ++file_num)
-	{
-		auto& lr_arr = layout_rng_arr_fn(file_num);
-		non_ecs_ser_data_fn(file_num).seed_layout_rng_arr(lr_arr);
-
-		//#ifdef DEBUG
-		for (size_t i=0; i<lr_arr.size(); ++i)
-		{
-			printout(i, ": ", lr_arr.at(i), "\n");
-		}
-		printout("\n");
-
-		//#endif		// DEBUG
-	}
 }
 //Engine::Engine(const binser::Value& bv)
 //{
@@ -287,6 +272,17 @@ void Engine::deserialize(const binser::Value& bv)
 	MEMB_SER_LIST_ENGINE(BINSER_MEMB_DESERIALIZE);
 	//printout("Engine::deserialize() after: ",
 	//	aux_window(0).engine() == nullptr, "\n");
+
+	for (ecs::FileNum file_num=0; file_num<NUM_FILES; ++file_num)
+	{
+		//auto& lr_arr = layout_rng_arr_fn(file_num);
+		non_ecs_ser_data_fn(file_num).seed_layout_rng_arr
+			(layout_rng_arr_fn(file_num));
+	}
+	#ifdef DEBUG
+	printout("Engine::deserialize()\n");
+	dbg_osprint_layout_rng_a2d(std::cout);
+	#endif		// DEBUG
 }
 
 //void Engine::dbg_check_ecs_engine(const PosVec2& wb_pos)
@@ -492,10 +488,35 @@ void Engine::save_and_return_to_title()
 void Engine::copy_file()
 {
 	//printout("game_engine::Engine::copy_file(): testificate\n");
+	ecs_engine.copy_file();
+	non_ecs_ser_data_fn(*copy_dst_file_num())
+		= non_ecs_ser_data_fn(*src_file_num());
+	layout_rng_arr_fn(*copy_dst_file_num())
+		= layout_rng_arr_fn(*src_file_num());
+
+	#ifdef DEBUG
+	printout("Engine::copy_file()\n");
+	dbg_osprint_layout_rng_a2d(std::cout);
+	#endif		// DEBUG
 }
 void Engine::erase_file()
 {
 	//printout("game_engine::Engine::erase_file(): testificate\n");
+	ecs_engine.erase_file();
+
+	auto& temp = non_ecs_ser_data_fn(*src_file_num());
+	temp = NonEcsSerData();
+	//layout_rng_arr_fn(*src_file_num()) = LayoutRngArr();
+	temp.seed_layout_rng_arr(layout_rng_arr_fn(*src_file_num()));
+
+	//for (ecs::FileNum file_num=0; file_num<NUM_FILES; ++file_num)
+	//{
+	//	dbg_osprint_layout_rng_arr_fn(file_num);
+	//}
+	#ifdef DEBUG
+	printout("Engine::erase_file()\n");
+	dbg_osprint_layout_rng_a2d(std::cout);
+	#endif		// DEBUG
 }
 void Engine::_inner_draw_menu_w_pre_clear(Window& window, Menu& menu)
 {

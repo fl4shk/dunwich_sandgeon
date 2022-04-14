@@ -174,9 +174,10 @@ public:		// types
 			_rng.seed(_base_rng_seed + i);
 		}
 
-		template<typename RetT=decltype(_rng())>
-		inline std::remove_cvref_t<RetT> rand()
-			requires std::integral<std::remove_cvref_t<RetT>>
+		//template<typename RetT=decltype(_rng())>
+		//inline std::remove_cvref_t<RetT> rand()
+		//	requires std::integral<std::remove_cvref_t<RetT>>
+		inline auto rand()
 		{
 			return _rng();
 		}
@@ -362,6 +363,40 @@ public:		// functions
 	{
 		return layout_rng_arr().at(floor())();
 	}
+
+	inline std::ostream& dbg_osprint_layout_rng_a2d(std::ostream& os) const
+	{
+		osprintout(os, "Engine::dbg_osprint_layout_rng_a2d(): Start\n");
+
+		for (ecs::FileNum file_num=0; file_num<NUM_FILES; ++file_num)
+		{
+			dbg_osprint_layout_rng_arr_fn(os, file_num);
+
+			if (file_num + 1 < NUM_FILES)
+			{
+				osprintout(os, "\n");
+			}
+		}
+
+		osprintout(os, "Engine::dbg_osprint_layout_rng_a2d(): End\n\n");
+		return os;
+	}
+	inline std::ostream& dbg_osprint_layout_rng_arr_fn(std::ostream& os,
+		ecs::FileNum file_num) const
+	{
+		const auto& lr_arr = layout_rng_arr_fn(file_num);
+
+		for (size_t i=0; i<lr_arr.size(); ++i)
+		{
+			osprintout(os, i, ": ", lr_arr.at(i), "\n");
+		}
+
+		return os;
+	}
+	//inline void dbg_osprint_layout_rng_arr() const
+	//{
+	//	dbg_osprint_layout_rng_arr_fn(USE_CURR_FILE_NUM);
+	//}
 	//--------
 public:		// `_non_ecs_ser_data_arr` accessor functions
 	//--------
@@ -510,10 +545,11 @@ public:		// `_non_ecs_ser_data_arr` accessor functions
 	//	return pfield_ent_id_v2d_fn(USE_CURR_FILE_NUM);
 	//}
 	//--------
-	template<typename RetT=decltype(NonEcsSerData::_rng())>
-	inline RetT rand()
+	//template<typename RetT=decltype(NonEcsSerData::_rng())>
+	//inline RetT rand()
+	inline auto rand()
 	{
-		return non_ecs_ser_data().rand<RetT>();
+		return non_ecs_ser_data().rand();
 	}
 	//--------
 public:		// functions

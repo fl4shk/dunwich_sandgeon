@@ -203,7 +203,7 @@ void GmFileSelect::_aux_menu_copy_file_func(GmFileSelect* self)
 			(
 				"dst_file_qmark",
 				"Destination File?",
-				Engine::NUM_FILES,
+				Engine::NUM_FILES - 1,
 				self,
 				std::function<void(GmFileSelect*, Menu::Node*)>
 					(&_popup_menu_dest_file_qmark_hpick_func)
@@ -288,6 +288,7 @@ void GmFileSelect::_text_yes_no_menu_erase_yes_func(GmFileSelect* self)
 {
 	self->_win_state = WinState::Aux;
 	engine->erase_file();
+	//engine->dbg_print_layout_rng_arr();
 }
 void GmFileSelect::_text_yes_no_menu_erase_no_func(GmFileSelect* self)
 {
