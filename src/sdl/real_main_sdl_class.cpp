@@ -96,26 +96,26 @@ int RealMainSdl::run()
 		exit(1);
 	}
 
-	auto draw_test_chars = [this]() -> void
-	{
-		_text_handler.draw_char('@', 
-			{FontColor::White, FontColor::Blue},
-			PosVec2(0, 0));
+	//auto draw_test_chars = [this]() -> void
+	//{
+	//	_text_handler.draw_char('@', 
+	//		{FontColor::White, FontColor::Blue},
+	//		PosVec2(0, 0));
 
-		_text_handler.draw_char('@', FontColor::Red, PosVec2(1, 0));
-		_text_handler.draw_char('@', FontColor::Green, PosVec2(2, 0));
-		_text_handler.draw_char('@', FontColor::Brown, PosVec2(3, 0));
-		_text_handler.draw_char('@', FontColor::Yellow, PosVec2(4, 0));
+	//	_text_handler.draw_char('@', FontColor::Red, PosVec2(1, 0));
+	//	_text_handler.draw_char('@', FontColor::Green, PosVec2(2, 0));
+	//	_text_handler.draw_char('@', FontColor::Brown, PosVec2(3, 0));
+	//	_text_handler.draw_char('@', FontColor::Yellow, PosVec2(4, 0));
 
-		_text_handler.draw_char('@', FontColor::Blue, PosVec2(5, 0));
-		_text_handler.draw_char('@', FontColor::Purple, PosVec2(6, 0));
-		_text_handler.draw_char('@', FontColor::Cyan, PosVec2(7, 0));
-		_text_handler.draw_char('@', FontColor::White, PosVec2(8, 0));
-		_text_handler.draw_char('@', FontColor::Gray, PosVec2(9, 0));
-		//_text_handler.draw_char('@', FontColor::LightGray, PosVec2(9, 0));
+	//	_text_handler.draw_char('@', FontColor::Blue, PosVec2(5, 0));
+	//	_text_handler.draw_char('@', FontColor::Purple, PosVec2(6, 0));
+	//	_text_handler.draw_char('@', FontColor::Cyan, PosVec2(7, 0));
+	//	_text_handler.draw_char('@', FontColor::White, PosVec2(8, 0));
+	//	_text_handler.draw_char('@', FontColor::Gray, PosVec2(9, 0));
+	//	//_text_handler.draw_char('@', FontColor::LightGray, PosVec2(9, 0));
 
-		//_text_handler.draw_char('@', FontColor::DarkGray, PosVec2(10, 0));
-	};
+	//	//_text_handler.draw_char('@', FontColor::DarkGray, PosVec2(10, 0));
+	//};
 	//--------
 	//auto
 		//& screen_window = _engine.screen_window;
@@ -260,39 +260,25 @@ int RealMainSdl::run()
 		//////screen_window.draw(popup_window);
 		////screen_window.draw(yes_no_window);
 
-		const auto& fn_state_index = _engine.fn_state_index();
-		for (uint j=0; j<screen_window.with_border_size_2d().y; ++j)
+		for (u32 j=0; j<screen_window.with_border_size_2d().y; ++j)
 		{
-			for (uint i=0; i<screen_window.with_border_size_2d().x; ++i)
+			for (u32 i=0; i<screen_window.with_border_size_2d().x; ++i)
 			{
-				auto& ecs_engine = _engine.ecs_engine;
 				const PosVec2 wb_pos(i, j);
 				//const ecs::EntId id
 				//	= screen_window.with_border_ent_id_at(wb_pos);
 				const auto& drawable_data
 					= screen_window.with_border_drawable_data_at(wb_pos);
 
-				//if (ecs_engine.has_ent_with_comp(id,
-				//	game_engine::comp::Drawable::KIND_STR, fn_state_index))
+				if (_engine.game_options.grayscale)
 				{
-					//auto& drawable = static_cast<comp::Drawable*>
-					//	(ecs_engine.comp_map(id, fn_state_index).at
-					//		(comp::Drawable::KIND_STR).get());
-
-					//auto drawable = ecs_engine
-					//	.casted_comp_at<game_engine::comp::Drawable>
-					//		(id, fn_state_index);
-
-					if (_engine.game_options.grayscale)
-					{
-						_text_handler.draw_char(drawable_data.c,
-							drawable_data.gs_color_pair, wb_pos);
-					}
-					else // if (!_engine.game_options.grayscale)
-					{
-						_text_handler.draw_char(drawable_data.c,
-							drawable_data.color_pair, wb_pos);
-					}
+					_text_handler.draw_char(drawable_data.c,
+						drawable_data.gs_color_pair, wb_pos);
+				}
+				else // if (!_engine.game_options.grayscale)
+				{
+					_text_handler.draw_char(drawable_data.c,
+						drawable_data.color_pair, wb_pos);
 				}
 			}
 		}

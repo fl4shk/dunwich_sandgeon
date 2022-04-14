@@ -102,8 +102,8 @@ public:		// functions
 	{
 		return _drawable_data_v2d.at(index.y).at(index.x);
 	}
-	inline const DrawData& with_border_drawable_data_at(const PosVec2& index)
-		const
+	inline const DrawData& with_border_drawable_data_at
+		(const PosVec2& index) const
 	{
 		return _drawable_data_v2d.at(index.y).at(index.x);
 	}
@@ -111,8 +111,8 @@ public:		// functions
 	{
 		return _drawable_data_v2d.at(index.y).at(index.x);
 	}
-	inline const DrawData& with_border_drawable_data_at(const SizeVec2& index)
-		const
+	inline const DrawData& with_border_drawable_data_at
+		(const SizeVec2& index) const
 	{
 		return _drawable_data_v2d.at(index.y).at(index.x);
 	}

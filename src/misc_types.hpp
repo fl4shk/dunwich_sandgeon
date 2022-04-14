@@ -26,9 +26,9 @@
 namespace dunwich_sandgeon
 {
 
-using PosVec2 = Vec2<int>;
-using PosVec3 = Vec3<int>;
-using SizeVec2 = Vec2<uint>;
+using PosVec2 = Vec2<i32>;
+using PosVec3 = Vec3<i32>;
+using SizeVec2 = Vec2<u32>;
 
 } // namespace dunwich_sandgeon
 

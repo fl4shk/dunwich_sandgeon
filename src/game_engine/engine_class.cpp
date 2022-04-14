@@ -22,7 +22,7 @@
 #include "comp/general_comp_classes.hpp"
 #include "comp/player_comp_class.hpp"
 //#include "comp/block_comp_classes.hpp"
-#include "comp/static_layout_comp_class.hpp"
+#include "comp/floor_layout_comp_classes.hpp"
 #include "comp/status_comp_classes.hpp"
 //#include "comp/ui_etc_comp_classes.hpp"
 
@@ -79,25 +79,18 @@ Engine::NonEcsSerData::NonEcsSerData(const binser::Value& bv)
 	//	//	throw std::invalid_argument(err_msg.c_str());
 	//	//}
 
-	//	//layout_rng_arr.resize(0);
-
 	//	//for (i32 i=0; i<Engine::NUM_FLOORS; ++i)
 	//	//{
-	//	//	pcg64 layout_rng;
-	//	//	std::stringstream sstm;
-	//	//	sstm << vec.at(i);
-	//	//	sstm >> layout_rng;
+	//	//	Rng layout_rng;
+	//	//	inv_sconcat(vec.at(i), layout_rng);
 	//	//	layout_rng_arr.at(i) = std::move(layout_rng);
 	//	//}
 	//}
 
 	{
 		std::string str;
-		binser::get_bv_memb(str, bv, "misc_rng", std::nullopt);
-
-		std::stringstream sstm;
-		sstm << str;
-		sstm >> misc_rng;
+		binser::get_bv_memb(str, bv, "_rng", std::nullopt);
+		inv_sconcat(str, _rng);
 	}
 }
 
@@ -119,7 +112,7 @@ Engine::NonEcsSerData::operator binser::Value () const
 	//	}
 	//	binser::set_bv_memb(ret, "layout_rng_arr", vec);
 	//}
-	binser::set_bv_memb(ret, "misc_rng", sconcat(misc_rng));
+	binser::set_bv_memb(ret, "_rng", sconcat(_rng));
 
 	return ret;
 }
@@ -242,6 +235,21 @@ Engine::Engine(int s_argc, char** s_argv, bool do_create_or_load)
 		_create_or_load_save_file_etc();
 	}
 	//_load_from_json();
+
+	for (ecs::FileNum file_num=0; file_num<NUM_FILES; ++file_num)
+	{
+		auto& lr_arr = layout_rng_arr_fn(file_num);
+		non_ecs_ser_data_fn(file_num).seed_layout_rng_arr(lr_arr);
+
+		//#ifdef DEBUG
+		for (size_t i=0; i<lr_arr.size(); ++i)
+		{
+			printout(i, ": ", lr_arr.at(i), "\n");
+		}
+		printout("\n");
+
+		//#endif		// DEBUG
+	}
 }
 //Engine::Engine(const binser::Value& bv)
 //{
@@ -251,7 +259,7 @@ Engine::~Engine()
 {
 }
 
-//void Engine::deserialize(const binser::Value& bv, int file_num)
+//void Engine::deserialize(const binser::Value& bv, ecs::FileNum file_num)
 //{
 //	Engine ret;
 //
@@ -430,7 +438,7 @@ void Engine::_create_or_load_save_file_etc()
 		//	"reading.\n");
 		_save_to_binser(true);
 	}
-	printout("Testificate: ", ecs_engine.curr_file_num, "\n");
+	//printout("Testificate: ", ecs_engine.curr_file_num, "\n");
 }
 
 //void Engine::_load_from_binser()
@@ -501,9 +509,9 @@ void Engine::position_ctor_callback(comp::Position* obj)
 {
 	_err_when_ent_id_is_null(obj, "position_ctor_callback");
 
-	//auto& ent_id_set = pfield_ent_id_v3d_cfn()
+	//auto& ent_id_set = pfield_ent_id_v3d()
 	//	.at(obj->pos().z).at(obj->pos().y).at(obj->pos().x);
-	auto& ent_id_set = pfield_ent_id_set_cfn(obj->pos());
+	auto& ent_id_set = pfield_ent_id_set(obj->pos());
 
 	if (ent_id_set.contains(obj->ent_id()))
 	{
@@ -518,9 +526,9 @@ void Engine::position_dtor_callback(comp::Position* obj)
 {
 	_err_when_ent_id_is_null(obj, "position_dtor_callback");
 
-	//auto& ent_id_set = pfield_ent_id_v3d_cfn()
+	//auto& ent_id_set = pfield_ent_id_v3d()
 	//	.at(obj->pos().z).at(obj->pos().y).at(obj->pos().x);
-	auto& ent_id_set = pfield_ent_id_set_cfn(obj->pos());
+	auto& ent_id_set = pfield_ent_id_set(obj->pos());
 
 	if (!ent_id_set.contains(obj->ent_id()))
 	{

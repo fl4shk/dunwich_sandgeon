@@ -33,7 +33,7 @@ namespace dunwich_sandgeon
 namespace game_engine
 {
 //--------
-enum class KeyKind: int
+enum class KeyKind: i32
 {
 	LeftL,
 	UpL,
@@ -97,31 +97,41 @@ public:		// constants
 		DEFAULT_SAVE_FILE_NAME,
 		DEBUG_SAVE_FILE_NAME;
 
-	static constexpr int
+	static constexpr ecs::FileNum
 		//NUM_FILES = 9;
 		NUM_FILES = 3;
 		//NUM_FILES = 1;
 public:		// types
 	//using EntIdSetVec2d
 	//	= std::vector<std::vector<ecs::EntIdSet>>;
-	using LayoutRngArr = std::array<pcg64, NUM_FLOORS>;
+
+	//using Rng = pcg32;
+	using Rng = pcg64;
+	using LayoutRngArr = std::array<Rng, NUM_FLOORS>;
 	using LayoutRngA2d = std::array<LayoutRngArr, NUM_FILES>;
 public:		// types
 	class NonEcsSerData final
 	{
+		friend class Engine;
 	public:		// variables
 		#define MEMB_AUTOSER_LIST_ENGINE_NON_ECS_SER_DATA(X) \
+			X(did_init_save_file, std::nullopt) \
+			\
 			X(log_msg_log, std::nullopt) \
 			X(hud_msg_log, std::nullopt) \
+			\
 			X(floor, std::nullopt) \
 			X(pfield_ent_id_map, std::nullopt) \
-			X(base_rng_seed, std::nullopt)
+			\
+			X(_base_rng_seed, std::nullopt)
+
+		bool did_init_save_file = false;
 
 		MsgLog
 			log_msg_log,
 			hud_msg_log;
 
-		int floor = HIGHEST_FLOOR;
+		i32 floor = HIGHEST_FLOOR;
 
 		// dimensions: floor, y, x
 		// "pfield" is short for "playfield".
@@ -129,10 +139,11 @@ public:		// types
 		// of this variable and related functions
 		std::unordered_map<PosVec3, ecs::EntIdSet> pfield_ent_id_map;
 
-		u64 base_rng_seed = 0;
+	private:		// variables
+		u64 _base_rng_seed = 0;
 		// The RNG to use for tasks other than initial floor layout
 		// generation
-		pcg64 misc_rng;
+		Rng _rng;
 	//private:		// static functions
 	//	static decltype(pfield_ent_id_v3d)
 	//		_gen_blank_pfield_ent_id_v3d();
@@ -144,23 +155,30 @@ public:		// types
 
 		operator binser::Value () const;
 
-		inline size_t init_layout_rng_arr(LayoutRngArr& layout_rng_arr)
+		inline size_t seed_layout_rng_arr(LayoutRngArr& layout_rng_arr)
 			const
 		{
 			size_t i;
 			for (i=0; i<layout_rng_arr.size(); ++i)
 			{
-				layout_rng_arr.at(i).seed(base_rng_seed + i);
+				layout_rng_arr.at(i).seed(_base_rng_seed + i);
 			}
 			return i;
 		}
-		inline void init_rngs_etc(LayoutRngArr& layout_rng_arr)
+		inline void seed_rngs_etc(LayoutRngArr& layout_rng_arr)
 		{
-			base_rng_seed = get_hrc_now_rng_seed();
+			_base_rng_seed = get_hrc_now_rng_seed();
 
-			const size_t i = init_layout_rng_arr(layout_rng_arr);
+			const size_t i = seed_layout_rng_arr(layout_rng_arr);
 
-			misc_rng.seed(base_rng_seed + i);
+			_rng.seed(_base_rng_seed + i);
+		}
+
+		template<typename RetT=decltype(_rng())>
+		inline std::remove_cvref_t<RetT> rand()
+			requires std::integral<std::remove_cvref_t<RetT>>
+		{
+			return _rng();
 		}
 	};
 private:		// non-serialized variables
@@ -170,7 +188,7 @@ private:		// non-serialized variables
 
 	// The RNGs for each file's floors' initial layouts, including the
 	// parts that are static (which are stored in the
-	// `comp::StaticLayout`).
+	// `comp::StaticTileMap`).
 	LayoutRngA2d _layout_rng_a2d;
 public:		// serialized variables
 	ecs::Engine ecs_engine;
@@ -262,12 +280,12 @@ private:		// non-serialized variables
 public:		// non-serialized variables
 
 	// File number state
-	enum class FnState: int
-	{
-		Curr,
-		Src,
-	};
-	FnState fn_state = FnState::Curr;
+	//enum class FnState: int
+	//{
+	//	Curr,
+	//	Src,
+	//};
+	//FnState fn_state = FnState::Curr;
 private:		// variables
 	//u64 _tick_counter = 0;
 public:		// functions
@@ -304,6 +322,7 @@ public:		// functions
 private:		// functions
 	void _inner_draw_menu_w_pre_clear(Window& window, Menu& menu);
 public:		// functions
+	//--------
 	inline void draw_aux_menu_w_pre_clear()
 	{
 		_inner_draw_menu_w_pre_clear(aux_window, aux_menu);
@@ -320,159 +339,211 @@ public:		// functions
 	{
 		_inner_draw_menu_w_pre_clear(text_yes_no_window, text_yes_no_menu);
 	}
+	//--------
+	inline LayoutRngArr& layout_rng_arr_fn(ecs::FileNum file_num)
+	{
+		return _layout_rng_a2d.at(_sel_file_num(file_num));
+	}
+	inline const LayoutRngArr& layout_rng_arr_fn(ecs::FileNum file_num)
+		const
+	{
+		return _layout_rng_a2d.at(_sel_file_num(file_num));
+	}
+	inline LayoutRngArr& layout_rng_arr()
+	{
+		return layout_rng_arr_fn(USE_CURR_FILE_NUM);
+	}
+	inline const LayoutRngArr& layout_rng_arr() const
+	{
+		return layout_rng_arr_fn(USE_CURR_FILE_NUM);
+	}
+
+	inline auto layout_rand()
+	{
+		return layout_rng_arr().at(floor())();
+	}
+	//--------
 public:		// `_non_ecs_ser_data_arr` accessor functions
 	//--------
-	inline NonEcsSerData& non_ecs_ser_data(int file_num)
+	inline NonEcsSerData& non_ecs_ser_data_fn(ecs::FileNum file_num)
 	{
 		return _non_ecs_ser_data_arr.at(_sel_file_num(file_num));
 	}
-	inline const NonEcsSerData& non_ecs_ser_data(int file_num) const
+	inline const NonEcsSerData& non_ecs_ser_data_fn(ecs::FileNum file_num)
+		const
 	{
 		return _non_ecs_ser_data_arr.at(_sel_file_num(file_num));
 	}
-	inline NonEcsSerData& non_ecs_ser_data_cfn()
+	inline NonEcsSerData& non_ecs_ser_data()
 	{
-		return non_ecs_ser_data(USE_CURR_FILE_NUM);
+		return non_ecs_ser_data_fn(USE_CURR_FILE_NUM);
 	}
-	inline const NonEcsSerData& non_ecs_ser_data_cfn() const
+	inline const NonEcsSerData& non_ecs_ser_data() const
 	{
-		return non_ecs_ser_data(USE_CURR_FILE_NUM);
-	}
-	//--------
-	inline MsgLog& log_msg_log(int file_num)
-	{
-		return non_ecs_ser_data(file_num).log_msg_log;
-	}
-	inline const MsgLog& log_msg_log(int file_num) const
-	{
-		return non_ecs_ser_data(file_num).log_msg_log;
-	}
-	inline MsgLog& log_msg_log_cfn()
-	{
-		return log_msg_log(USE_CURR_FILE_NUM);
-	}
-	inline const MsgLog& log_msg_log_cfn() const
-	{
-		return log_msg_log(USE_CURR_FILE_NUM);
+		return non_ecs_ser_data_fn(USE_CURR_FILE_NUM);
 	}
 	//--------
-	inline MsgLog& hud_msg_log(int file_num)
+	inline bool& did_init_save_file_fn(ecs::FileNum file_num)
 	{
-		return non_ecs_ser_data(file_num).hud_msg_log;
+		return non_ecs_ser_data_fn(file_num).did_init_save_file;
 	}
-	inline const MsgLog& hud_msg_log(int file_num) const
+	inline const bool& did_init_save_file_fn(ecs::FileNum file_num) const
 	{
-		return non_ecs_ser_data(file_num).hud_msg_log;
+		return non_ecs_ser_data_fn(file_num).did_init_save_file;
 	}
-	inline MsgLog& hud_msg_log_cfn()
+	inline bool& did_init_save_file()
 	{
-		return hud_msg_log(USE_CURR_FILE_NUM);
+		return did_init_save_file_fn(USE_CURR_FILE_NUM);
 	}
-	inline const MsgLog& hud_msg_log_cfn() const
+	inline const bool& did_init_save_file() const
 	{
-		return hud_msg_log(USE_CURR_FILE_NUM);
-	}
-	//--------
-	inline int& floor(int file_num)
-	{
-		return non_ecs_ser_data(file_num).floor;
-	}
-	inline const int& floor(int file_num) const
-	{
-		return non_ecs_ser_data(file_num).floor;
-	}
-	inline int& floor_cfn()
-	{
-		return floor(USE_CURR_FILE_NUM);
-	}
-	inline const int& floor_cfn() const
-	{
-		return floor(USE_CURR_FILE_NUM);
+		return did_init_save_file_fn(USE_CURR_FILE_NUM);
 	}
 	//--------
-	inline ecs::EntIdSet& pfield_ent_id_set(int file_num,
+	inline MsgLog& log_msg_log_fn(ecs::FileNum file_num)
+	{
+		return non_ecs_ser_data_fn(file_num).log_msg_log;
+	}
+	inline const MsgLog& log_msg_log_fn(ecs::FileNum file_num) const
+	{
+		return non_ecs_ser_data_fn(file_num).log_msg_log;
+	}
+	inline MsgLog& log_msg_log()
+	{
+		return log_msg_log_fn(USE_CURR_FILE_NUM);
+	}
+	inline const MsgLog& log_msg_log() const
+	{
+		return log_msg_log_fn(USE_CURR_FILE_NUM);
+	}
+	//--------
+	inline MsgLog& hud_msg_log_fn(ecs::FileNum file_num)
+	{
+		return non_ecs_ser_data_fn(file_num).hud_msg_log;
+	}
+	inline const MsgLog& hud_msg_log_fn(ecs::FileNum file_num) const
+	{
+		return non_ecs_ser_data_fn(file_num).hud_msg_log;
+	}
+	inline MsgLog& hud_msg_log()
+	{
+		return hud_msg_log_fn(USE_CURR_FILE_NUM);
+	}
+	inline const MsgLog& hud_msg_log() const
+	{
+		return hud_msg_log_fn(USE_CURR_FILE_NUM);
+	}
+	//--------
+	inline int& floor_fn(ecs::FileNum file_num)
+	{
+		return non_ecs_ser_data_fn(file_num).floor;
+	}
+	inline const int& floor_fn(ecs::FileNum file_num) const
+	{
+		return non_ecs_ser_data_fn(file_num).floor;
+	}
+	inline int& floor()
+	{
+		return floor_fn(USE_CURR_FILE_NUM);
+	}
+	inline const int& floor() const
+	{
+		return floor_fn(USE_CURR_FILE_NUM);
+	}
+	//--------
+	inline ecs::EntIdSet& pfield_ent_id_set_fn(ecs::FileNum file_num,
 		const PosVec3& pos)
 	{
-		return non_ecs_ser_data(file_num).pfield_ent_id_map[pos];
+		return non_ecs_ser_data_fn(file_num).pfield_ent_id_map[pos];
 	}
-	//inline const ecs::EntIdSet& pfield_ent_id_set(int file_num,
-	//	const PosVec3& pos) const
+	//inline const ecs::EntIdSet& pfield_ent_id_set_fn
+	//	(ecs::FileNum file_num, const PosVec3& pos) const
 	//{
 	//	return non_ecs_ser_data(file_num).pfield_ent_id_map[pos];
 	//}
-	inline ecs::EntIdSet& pfield_ent_id_set_cfn(const PosVec3& pos)
+	inline ecs::EntIdSet& pfield_ent_id_set(const PosVec3& pos)
 	{
-		return pfield_ent_id_set(USE_CURR_FILE_NUM, pos);
+		return pfield_ent_id_set_fn(USE_CURR_FILE_NUM, pos);
 	}
-	//inline const ecs::EntIdSet& pfield_ent_id_set_cfn(const PosVec3& pos)
+	//inline const ecs::EntIdSet& pfield_ent_id_set(const PosVec3& pos)
 	//	const
 	//{
-	//	return pfield_ent_id_set(USE_CURR_FILE_NUM, pos);
+	//	return pfield_ent_id_set_fn(USE_CURR_FILE_NUM, pos);
 	//}
 	//--------
-	inline ecs::EntIdSet& pfield_ent_id_set(int file_num,
+	inline ecs::EntIdSet& pfield_ent_id_set_fn(ecs::FileNum file_num,
 		const PosVec2& pos_2d)
 	{
-		return pfield_ent_id_set(file_num, to_pos_vec3(file_num, pos_2d));
+		return pfield_ent_id_set_fn(file_num,
+			to_pos_vec3_fn(file_num, pos_2d));
 	}
-	//inline const ecs::EntIdSet& pfield_ent_id_set(int file_num,
+	//inline const ecs::EntIdSet& pfield_ent_id_set_fn(ecs::FileNum file_num,
 	//	const PosVec2& pos_2d) const
 	//{
-	//	return pfield_ent_id_set(file_num, to_pos_vec3(file_num, pos_2d));
+	//	return pfield_ent_id_set_fn(file_num,
+	//		to_pos_vec3_fn(file_num, pos_2d));
 	//}
-	inline ecs::EntIdSet& pfield_ent_id_set_cfn(const PosVec2& pos_2d)
+	inline ecs::EntIdSet& pfield_ent_id_set(const PosVec2& pos_2d)
 	{
-		return pfield_ent_id_set_cfn(to_pos_vec3_cfn(pos_2d));
+		return pfield_ent_id_set(to_pos_vec3(pos_2d));
 	}
-	//inline const ecs::EntIdSet& pfield_ent_id_set_cfn
-	//	(const PosVec2& pos_2d) const
+	//inline const ecs::EntIdSet& pfield_ent_id_set(const PosVec2& pos_2d)
+	//	const
 	//{
-	//	return pfield_ent_id_set_cfn(to_pos_vec3_cfn(pos_2d));
+	//	return pfield_ent_id_set(to_pos_vec3(pos_2d));
 	//}
-	//inline EntIdSetVec2d& pfield_ent_id_v2d(int file_num)
+	//inline EntIdSetVec2d& pfield_ent_id_v2d_fn(ecs::FileNum file_num)
 	//{
-	//	return pfield_ent_id_v3d(file_num).at(floor(file_num));
+	//	return pfield_ent_id_v3d_fn(file_num).at(floor_fn(file_num));
 	//}
-	//inline const EntIdSetVec2d& pfield_ent_id_v2d(int file_num) const
+	//inline const EntIdSetVec2d& pfield_ent_id_v2d_fn(ecs::FileNum file_num)
+	//	const
 	//{
-	//	return pfield_ent_id_v3d(file_num).at(floor(file_num));
+	//	return pfield_ent_id_v3d_fn(file_num).at(floor_fn(file_num));
 	//}
-	//inline EntIdSetVec2d& pfield_ent_id_v2d_cfn()
+	//inline EntIdSetVec2d& pfield_ent_id_v2d()
 	//{
-	//	return pfield_ent_id_v2d(USE_CURR_FILE_NUM);
+	//	return pfield_ent_id_v2d_fn(USE_CURR_FILE_NUM);
 	//}
-	//inline const EntIdSetVec2d& pfield_ent_id_v2d_cfn() const
+	//inline const EntIdSetVec2d& pfield_ent_id_v2d() const
 	//{
-	//	return pfield_ent_id_v2d(USE_CURR_FILE_NUM);
+	//	return pfield_ent_id_v2d_fn(USE_CURR_FILE_NUM);
 	//}
 	//--------
-public:		// functions
-	//--------
-	inline PosVec3 to_pos_vec3(int file_num, const PosVec2& pos_2d) const
+	template<typename RetT=decltype(NonEcsSerData::_rng())>
+	inline RetT rand()
 	{
-		return PosVec3(pos_2d.x, pos_2d.y, floor(file_num));
-	}
-	inline PosVec3 to_pos_vec3_cfn(const PosVec2& pos_2d) const
-	{
-		return to_pos_vec3(USE_CURR_FILE_NUM, pos_2d);
+		return non_ecs_ser_data().rand<RetT>();
 	}
 	//--------
 public:		// functions
 	//--------
-	inline int fn_state_index() const
+	inline PosVec3 to_pos_vec3_fn(ecs::FileNum file_num,
+		const PosVec2& pos_2d) const
 	{
-		return
-			fn_state == FnState::Curr
-			? *curr_file_num()
-			: *src_file_num();
+		return PosVec3(pos_2d.x, pos_2d.y, floor_fn(file_num));
 	}
+	inline PosVec3 to_pos_vec3(const PosVec2& pos_2d) const
+	{
+		return to_pos_vec3_fn(USE_CURR_FILE_NUM, pos_2d);
+	}
+	//--------
+public:		// functions
+	//--------
+	//inline int fn_state_index() const
+	//{
+	//	return
+	//		fn_state == FnState::Curr
+	//		? *curr_file_num()
+	//		: *src_file_num();
+	//}
 	//--------
 private:		// static functions
-	inline ecs::FileNum _sel_file_num(int some_file_num) const
+	inline ecs::FileNum _sel_file_num(ecs::FileNum some_file_num) const
 	{
 		return ecs_engine.sel_file_num(some_file_num);
 	}
-	//inline int _sel_file_num(int some_file_num) const
+	//inline int _sel_file_num(ecs::FileNum some_file_num) const
 	//{
 	//	//return (some_file_num == USE_CURR_FILE_NUM)
 	//	//	? *curr_file_num()

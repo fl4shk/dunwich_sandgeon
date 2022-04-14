@@ -15,10 +15,10 @@
 // You should have received a copy of the GNU General Public License along
 // with Dunwich Sandgeon.  If not, see <https://www.gnu.org/licenses/>.
 
-#ifndef src_game_engine_comp_static_layout_comp_class_hpp
-#define src_game_engine_comp_static_layout_comp_class_hpp
+#ifndef src_game_engine_comp_floor_layout_comp_classes_hpp
+#define src_game_engine_comp_floor_layout_comp_classes_hpp
 
-// src/game_engine/comp/static_layout_comp_class.hpp
+// src/game_engine/comp/floor_layout_comp_classes.hpp
 
 #include "../../misc_includes.hpp"
 #include "general_comp_classes.hpp"
@@ -33,7 +33,7 @@ namespace comp
 // This should be generated when going to a new floor, and it shouldn't be
 // written into save data. I will store the seed that is used to generate a
 // floor
-class StaticLayout final: public ecs::Comp
+class StaticTileMap final: public ecs::Comp
 {
 public:		// types
 	enum class Tile: u8
@@ -67,10 +67,10 @@ private:		// variables
 
 	std::vector<std::vector<Tile>> _data;
 public:		// functions
-	inline StaticLayout() = default;
-	StaticLayout(const binser::Value& bv);
-	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(StaticLayout);
-	virtual ~StaticLayout() = default;
+	inline StaticTileMap() = default;
+	StaticTileMap(const binser::Value& bv);
+	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(StaticTileMap);
+	virtual ~StaticTileMap() = default;
 
 	virtual std::string kind_str() const;
 	virtual operator binser::Value() const;
@@ -84,7 +84,7 @@ public:		// functions
 		return _data.at(pos.y).at(pos.x);
 	}
 
-	template<typename VecElemT=size_t>
+	template<typename VecElemT=typename SizeVec2::ElemT>
 	inline Vec2<VecElemT> size_2d() const
 	{
 		return Vec2<VecElemT>(_data.front().size(), _data.size());
@@ -97,4 +97,4 @@ public:		// functions
 } // namespace game_engine
 } // namespace dunwich_sandgeon
 
-#endif		// src_game_engine_comp_static_layout_comp_class_hpp
+#endif		// src_game_engine_comp_floor_layout_comp_classes_hpp

@@ -111,17 +111,17 @@ void GmOptions::tick(ecs::Engine* ecs_engine)
 	{
 		auto
 			& screen_window = engine->screen_window,
-			& aux_window_cfn = engine->aux_window;
+			& aux_window = engine->aux_window;
 
-		auto& aux_menu_cfn = engine->aux_menu;
+		auto& aux_menu = engine->aux_menu;
 
-		aux_menu_cfn.tick(engine->key_status);
+		aux_menu.tick(engine->key_status);
 
-		aux_window_cfn.clear();
-		aux_window_cfn.draw(aux_menu_cfn);
+		aux_window.clear();
+		aux_window.draw(aux_menu);
 
 		screen_window.clear();
-		screen_window.draw(aux_window_cfn);
+		screen_window.draw(aux_window);
 	}
 }
 

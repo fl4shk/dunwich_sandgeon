@@ -172,10 +172,12 @@ void Window::clear()
 void Window::draw(const Window& src, bool leave_corner)
 {
 	PosVec2 src_pos;
-	for (src_pos.y=0; src_pos.y<src.with_border_size_2d().y; ++src_pos.y)
+	for (src_pos.y=0;
+		src_pos.y<i32(src.with_border_size_2d().y);
+		++src_pos.y)
 	{
 		for (src_pos.x=0;
-			src_pos.x<src.with_border_size_2d().x;
+			src_pos.x<i32(src.with_border_size_2d().x);
 			++src_pos.x)
 		{
 			const auto& SRC_DRAWABLE_DATA
@@ -288,7 +290,7 @@ void Window::draw(const MsgLog& msg_log)
 				);
 			}
 
-			if ((!msg_log.keep_sep()) && (temp_pos.x < size_2d().x))
+			if ((!msg_log.keep_sep()) && (temp_pos.x < i32(size_2d().x)))
 			{
 				draw_at_temp_pos
 				(
@@ -303,7 +305,7 @@ void Window::draw(const MsgLog& msg_log)
 				++temp_pos.x;
 			}
 		}
-		for (; temp_pos.x < size_2d().x; ++temp_pos.x)
+		for (; temp_pos.x<i32(size_2d().x); ++temp_pos.x)
 		{
 			draw_at_temp_pos
 			(

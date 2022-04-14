@@ -19,7 +19,7 @@
 #include "../window_class.hpp"
 #include "player_comp_class.hpp"
 //#include "block_comp_classes.hpp"
-#include "static_layout_comp_class.hpp"
+#include "floor_layout_comp_classes.hpp"
 
 namespace dunwich_sandgeon
 {
@@ -45,7 +45,7 @@ const std::map<std::string, Drawable::Data> DRAWABLE_DATA_MAP
 
 	// '#', 35
 	{
-		StaticLayout::TILE_WALL_DRAWABLE_DATA_STR,
+		StaticTileMap::TILE_WALL_DRAWABLE_DATA_STR,
 		{
 			.c='#',
 			//.color_pair=FontColor::LightGray,
@@ -77,7 +77,7 @@ const std::map<std::string, Drawable::Data> DRAWABLE_DATA_MAP
 
 	// '.', 46
 	{
-		StaticLayout::TILE_FLOOR_DRAWABLE_DATA_STR,
+		StaticTileMap::TILE_FLOOR_DRAWABLE_DATA_STR,
 		{
 			.c='.',
 			//.color_pair=FontColor::LightGray,
@@ -89,20 +89,20 @@ const std::map<std::string, Drawable::Data> DRAWABLE_DATA_MAP
 
 	// '<', 60
 	{
-		StaticLayout::TILE_DOWN_STAIRS_DRAWABLE_DATA_STR,
+		StaticTileMap::TILE_DOWN_STAIRS_DRAWABLE_DATA_STR,
 		{
 			.c='<',
-			.color_pair=FontColor::White,
+			.color_pair=FontColor::Brown,
 			.gs_color_pair=FontColor::White
 		}
 	},
 
 	// '>', 62
 	{
-		StaticLayout::TILE_UP_STAIRS_DRAWABLE_DATA_STR,
+		StaticTileMap::TILE_UP_STAIRS_DRAWABLE_DATA_STR,
 		{
 			.c='>',
-			.color_pair=FontColor::White,
+			.color_pair=FontColor::Brown,
 			.gs_color_pair=FontColor::White
 		}
 	},
@@ -119,7 +119,7 @@ const std::map<std::string, Drawable::Data> DRAWABLE_DATA_MAP
 
 	// '^', 94,
 	{
-		StaticLayout::TILE_SPIKES_DRAWABLE_DATA_STR,
+		StaticTileMap::TILE_SPIKES_DRAWABLE_DATA_STR,
 		{
 			.c='^',
 			.color_pair=FontColor::Gray,
@@ -139,7 +139,7 @@ const std::map<std::string, Drawable::Data> DRAWABLE_DATA_MAP
 
 	// '~', 126
 	{
-		StaticLayout::TILE_WATER_DRAWABLE_DATA_STR,
+		StaticTileMap::TILE_WATER_DRAWABLE_DATA_STR,
 		{
 			.c='~',
 			.color_pair=FontColor::Blue,

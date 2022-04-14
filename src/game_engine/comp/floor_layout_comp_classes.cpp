@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License along
 // with Dunwich Sandgeon.  If not, see <https://www.gnu.org/licenses/>.
 
-#include "static_layout_comp_class.hpp"
+#include "floor_layout_comp_classes.hpp"
 #include "../window_size_2d_constants.hpp"
 
 namespace dunwich_sandgeon
@@ -26,27 +26,27 @@ namespace comp
 {
 
 const std::string
-	StaticLayout::KIND_STR("StaticLayout"),
+	StaticTileMap::KIND_STR("StaticTileMap"),
 
-	StaticLayout::TILE_WALL_DRAWABLE_DATA_STR("TileWall"),
-	StaticLayout::TILE_FLOOR_DRAWABLE_DATA_STR("TileFloor"),
-	StaticLayout::TILE_UP_STAIRS_DRAWABLE_DATA_STR("TileUpStairs"),
-	StaticLayout::TILE_DOWN_STAIRS_DRAWABLE_DATA_STR("TileDownStairs"),
+	StaticTileMap::TILE_WALL_DRAWABLE_DATA_STR("TileWall"),
+	StaticTileMap::TILE_FLOOR_DRAWABLE_DATA_STR("TileFloor"),
+	StaticTileMap::TILE_UP_STAIRS_DRAWABLE_DATA_STR("TileUpStairs"),
+	StaticTileMap::TILE_DOWN_STAIRS_DRAWABLE_DATA_STR("TileDownStairs"),
 
-	StaticLayout::TILE_DOOR_DRAWABLE_DATA_STR("TileDoor"),
-	StaticLayout::TILE_PIT_DRAWABLE_DATA_STR("TilePit"),
-	StaticLayout::TILE_WATER_DRAWABLE_DATA_STR("TileWater"),
-	StaticLayout::TILE_SPIKES_DRAWABLE_DATA_STR("TileSpikes");
+	StaticTileMap::TILE_DOOR_DRAWABLE_DATA_STR("TileDoor"),
+	StaticTileMap::TILE_PIT_DRAWABLE_DATA_STR("TilePit"),
+	StaticTileMap::TILE_WATER_DRAWABLE_DATA_STR("TileWater"),
+	StaticTileMap::TILE_SPIKES_DRAWABLE_DATA_STR("TileSpikes");
 
-StaticLayout::StaticLayout(const binser::Value& bv)
+StaticTileMap::StaticTileMap(const binser::Value& bv)
 {
 	MEMB_LIST_COMP_STATIC_LAYOUT(BINSER_MEMB_DESERIALIZE);
 }
-std::string StaticLayout::kind_str() const
+std::string StaticTileMap::kind_str() const
 {
 	return KIND_STR;
 }
-StaticLayout::operator binser::Value() const
+StaticTileMap::operator binser::Value() const
 {
 	binser::Value ret;
 
