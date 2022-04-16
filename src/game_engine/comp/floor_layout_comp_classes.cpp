@@ -38,6 +38,23 @@ const std::string
 	StaticTileMap::TILE_WATER_DRAWABLE_DATA_STR("TileWater"),
 	StaticTileMap::TILE_SPIKES_DRAWABLE_DATA_STR("TileSpikes");
 
+auto StaticTileMap::Elem::from_bv(const binser::Value& bv) -> Elem
+{
+	Elem ret;
+
+	MEMB_LIST_STATIC_TILE_MAP_ELEM(BINSER_MEMB_FROM_BV_DESERIALIZE);
+
+	return ret;
+}
+StaticTileMap::Elem::operator binser::Value () const
+{
+	binser::Value ret;
+
+	MEMB_LIST_STATIC_TILE_MAP_ELEM(BINSER_MEMB_SERIALIZE);
+
+	return ret;
+}
+
 StaticTileMap::StaticTileMap()
 	//: _data
 	//({
@@ -76,11 +93,11 @@ void StaticTileMap::_init_data()
 {
 	_data
 	= {
-		.data=std::vector<binser::VectorEx<Tile>>
+		.data=std::vector<binser::VectorEx<Elem>>
 		(
 			PFIELD_WINDOW_SIZE_2D.y,
 			{
-				.data=std::vector<Tile>(PFIELD_WINDOW_SIZE_2D.x, Tile()),
+				.data=std::vector<Elem>(PFIELD_WINDOW_SIZE_2D.x, Elem()),
 				.checked_size=PFIELD_WINDOW_SIZE_2D.x
 			}
 		),
@@ -94,7 +111,7 @@ const std::string
 
 auto DungeonGenDb::Room::from_bv(const binser::Value& bv) -> Room
 {
-	DungeonGenDb::Room ret;
+	Room ret;
 
 	#define X(...) BINSER_MEMB_FROM_BV_DESERIALIZE(__VA_ARGS__)
 	MEMB_AUTOSER_LIST_COMP_DUNGEON_GEN_DB_ROOM(X);
@@ -128,7 +145,7 @@ DungeonGenDb::Room::operator binser::Value () const
 
 auto DungeonGenDb::Path::from_bv(const binser::Value& bv) -> Path
 {
-	DungeonGenDb::Path ret;
+	Path ret;
 
 	#define X(...) BINSER_MEMB_FROM_BV_DESERIALIZE(__VA_ARGS__)
 	MEMB_AUTOSER_LIST_COMP_DUNGEON_GEN_DB_PATH(X);

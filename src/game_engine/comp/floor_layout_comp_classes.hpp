@@ -47,6 +47,41 @@ public:		// types
 		Water,
 		Spikes,
 	};
+
+	class Elem final
+	{
+	public:		// constants
+		//--------
+		static constexpr size_t
+			VISITED_LO = 0x0,
+			VISITED_HI = 0x0;
+		//--------
+	public:		// variables
+		//--------
+		#define MEMB_LIST_STATIC_TILE_MAP_ELEM(X) \
+			X(tile, std::nullopt) \
+			X(flags, std::nullopt) \
+
+		Tile tile = Tile::Wall;
+		u32 flags = 0;
+		//--------
+	public:		// functions
+		//--------
+		static Elem from_bv(const binser::Value& bv);
+		operator binser::Value () const;
+		//--------
+		inline bool visited() const
+		{
+			return get_bits_with_range(flags, VISITED_HI, VISITED_LO);
+		}
+		inline bool set_visited(bool n_visited)
+		{
+			clear_and_set_bits_with_range(flags, n_visited, VISITED_HI,
+				VISITED_LO);
+			return visited();
+		}
+		//--------
+	};
 public:		// constants
 	static const std::string
 		KIND_STR,
@@ -64,7 +99,7 @@ private:		// variables
 	#define MEMB_LIST_COMP_STATIC_LAYOUT(X) \
 		X(_data, std::nullopt) \
 
-	binser::VectorEx<binser::VectorEx<Tile>> _data;
+	binser::VectorEx<binser::VectorEx<Elem>> _data;
 public:		// functions
 	//--------
 	StaticTileMap();
@@ -81,11 +116,11 @@ private:		// functions
 	//--------
 public:		// functions
 	//--------
-	inline Tile& at(const PosVec2& pos)
+	inline Elem& at(const PosVec2& pos)
 	{
 		return _data.data.at(pos.y).data.at(pos.x);
 	}
-	inline const Tile& at(const PosVec2& pos) const
+	inline const Elem& at(const PosVec2& pos) const
 	{
 		return _data.data.at(pos.y).data.at(pos.x);
 	}
@@ -96,7 +131,6 @@ public:		// functions
 		return Vec2<VecElemT>(_data.data.front().data.size(),
 			_data.data.size());
 	}
-	//--------
 	//--------
 };
 //--------
@@ -115,7 +149,9 @@ public:		// constants
 		MAX_NUM_ROOMS = 32,
 
 		MIN_NUM_PATHS = 1,
-		MAX_NUM_PATHS = 64;
+		MAX_NUM_PATHS = 64,
+
+		NULL_INDEX = -1;
 public:		// types
 	//--------
 	class Room final
