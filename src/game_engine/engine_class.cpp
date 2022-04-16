@@ -279,10 +279,11 @@ void Engine::deserialize(const binser::Value& bv)
 		non_ecs_ser_data_fn(file_num).seed_layout_rng_arr
 			(layout_rng_arr_fn(file_num));
 	}
-	#ifdef DEBUG
-	printout("Engine::deserialize()\n");
-	dbg_osprint_layout_rng_a2d(std::cout);
-	#endif		// DEBUG
+
+	//#ifdef DEBUG
+	//printout("Engine::deserialize()\n");
+	//dbg_osprint_layout_rng_a2d(std::cout);
+	//#endif		// DEBUG
 }
 
 //void Engine::dbg_check_ecs_engine(const PosVec2& wb_pos)
@@ -445,7 +446,9 @@ void Engine::_create_or_load_save_file_etc()
 //}
 void Engine::_save_to_binser(bool do_create_or_load)
 {
+	#ifdef DEBUG
 	printout("game_engine::Engine::_save_to_binser(): testificate\n");
+	#endif		// DEBUG
 
 	//binser::Value root 
 	//	= do_create_or_load ? Engine(_argc, _argv, false) : *this;
@@ -471,15 +474,19 @@ void Engine::_save_to_binser(bool do_create_or_load)
 
 void Engine::save_and_quit()
 {
+	#ifdef DEBUG
 	printout("game_engine::Engine::save_and_quit(): testificate\n");
+	#endif		// DEBUG
 
 	_save_to_binser();
 	exit(0);
 }
 void Engine::save_and_return_to_title()
 {
+	#ifdef DEBUG
 	printout("game_engine::Engine::save_and_return_to_title(): ",
 		"testificate\n");
+	#endif		// DEBUG
 
 	_save_to_binser();
 	set_game_mode(GameMode::TitleScreen);
@@ -487,21 +494,25 @@ void Engine::save_and_return_to_title()
 
 void Engine::copy_file()
 {
-	//printout("game_engine::Engine::copy_file(): testificate\n");
+	#ifdef DEBUG
+	printout("game_engine::Engine::copy_file(): testificate\n");
+	#endif		// DEBUG
 	ecs_engine.copy_file();
 	non_ecs_ser_data_fn(*copy_dst_file_num())
 		= non_ecs_ser_data_fn(*src_file_num());
 	layout_rng_arr_fn(*copy_dst_file_num())
 		= layout_rng_arr_fn(*src_file_num());
 
-	#ifdef DEBUG
-	printout("Engine::copy_file()\n");
-	dbg_osprint_layout_rng_a2d(std::cout);
-	#endif		// DEBUG
+	//#ifdef DEBUG
+	//printout("Engine::copy_file()\n");
+	//dbg_osprint_layout_rng_a2d(std::cout);
+	//#endif		// DEBUG
 }
 void Engine::erase_file()
 {
-	//printout("game_engine::Engine::erase_file(): testificate\n");
+	#ifdef DEBUG
+	printout("game_engine::Engine::erase_file(): testificate\n");
+	#endif		// DEBUG
 	ecs_engine.erase_file();
 
 	auto& temp = non_ecs_ser_data_fn(*src_file_num());
@@ -513,10 +524,11 @@ void Engine::erase_file()
 	//{
 	//	dbg_osprint_layout_rng_arr_fn(file_num);
 	//}
-	#ifdef DEBUG
-	printout("Engine::erase_file()\n");
-	dbg_osprint_layout_rng_a2d(std::cout);
-	#endif		// DEBUG
+
+	//#ifdef DEBUG
+	//printout("Engine::erase_file()\n");
+	//dbg_osprint_layout_rng_a2d(std::cout);
+	//#endif		// DEBUG
 }
 void Engine::_inner_draw_menu_w_pre_clear(Window& window, Menu& menu)
 {

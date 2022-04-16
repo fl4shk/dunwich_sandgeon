@@ -28,7 +28,13 @@ namespace dunwich_sandgeon
 
 using PosVec2 = Vec2<i32>;
 using PosVec3 = Vec3<i32>;
+//using PosVec2 = binser::Vec2Ex<i32>;
+//using PosVec3 = binser::Vec3Ex<i32>;
+//using PosVec2Ex = binser::Vec2Ex<i32>;
+//using PosVec3Ex = binser::Vec3Ex<i32>;
+
 using SizeVec2 = Vec2<u32>;
+//using SizeVec2Ex = binser::Vec2Ex<u32>;
 
 } // namespace dunwich_sandgeon
 

@@ -29,10 +29,9 @@ namespace game_engine
 {
 namespace comp
 {
-
+//--------
 // This should be generated when going to a new floor, and it shouldn't be
-// written into save data. I will store the seed that is used to generate a
-// floor
+// written into save _data (outside of debugging).
 class StaticTileMap final: public ecs::Comp
 {
 public:		// types
@@ -65,34 +64,162 @@ private:		// variables
 	#define MEMB_LIST_COMP_STATIC_LAYOUT(X) \
 		X(_data, std::nullopt) \
 
-	std::vector<std::vector<Tile>> _data;
+	binser::VectorEx<binser::VectorEx<Tile>> _data;
 public:		// functions
-	inline StaticTileMap() = default;
+	//--------
+	StaticTileMap();
 	StaticTileMap(const binser::Value& bv);
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(StaticTileMap);
 	virtual ~StaticTileMap() = default;
 
 	virtual std::string kind_str() const;
-	virtual operator binser::Value() const;
-
+	virtual operator binser::Value () const;
+	//--------
+private:		// functions
+	//--------
+	void _init_data();
+	//--------
+public:		// functions
+	//--------
 	inline Tile& at(const PosVec2& pos)
 	{
-		return _data.at(pos.y).at(pos.x);
+		return _data.data.at(pos.y).data.at(pos.x);
 	}
-	inline Tile at(const PosVec2& pos) const
+	inline const Tile& at(const PosVec2& pos) const
 	{
-		return _data.at(pos.y).at(pos.x);
+		return _data.data.at(pos.y).data.at(pos.x);
 	}
 
 	template<typename VecElemT=typename SizeVec2::ElemT>
 	inline Vec2<VecElemT> size_2d() const
 	{
-		return Vec2<VecElemT>(_data.front().size(), _data.size());
+		return Vec2<VecElemT>(_data.data.front().data.size(),
+			_data.data.size());
 	}
-
-	GEN_GETTER_BY_CON_REF(data);
+	//--------
+	//--------
 };
+//--------
+//class DungeonGenDb;
+//--------
+//--------
+class DungeonGenDb final: public ecs::Comp
+{
+public:		// constants
+	static const std::string
+		KIND_STR;
 
+	static constexpr u32
+		// Chosen arbitrarily; might need to adjust later
+		MIN_NUM_ROOMS = 1,
+		MAX_NUM_ROOMS = 32,
+
+		MIN_NUM_PATHS = 1,
+		MAX_NUM_PATHS = 64;
+public:		// types
+	//--------
+	class Room final
+	{
+	public:		// constants
+		static constexpr SizeVec2::CtorArgs
+			MIN_SIZE_2D = {.x=3, .y=3},
+			MAX_SIZE_2D = {.x=10, .y=10};
+	public:		// variables
+		#define MEMB_LIST_COMP_DUNGEON_GEN_DB_ROOM(X) \
+			X(pos, std::nullopt) \
+			X(size_2d, std::nullopt) \
+
+		PosVec2 pos = PosVec2({.x=0, .y=0});
+		SizeVec2 size_2d = MIN_SIZE_2D;
+	public:		// functions
+		static Room from_bv(const binser::Value& bv);
+		operator binser::Value () const;
+
+		inline auto operator <=> (const Room& to_cmp) const = default;
+	};
+	//--------
+	class Path final
+	{
+	public:		// constants
+		static constexpr u32
+			MIN_SIZE = 1,
+			MAX_SIZE = 32;
+	public:		// variables
+		#define MEMB_LIST_COMP_DUNGEON_GEN_DB_PATH(X) \
+			X(pos, std::nullopt) \
+			X(size, std::nullopt) \
+			X(horiz, std::nullopt) \
+
+		PosVec2 pos = PosVec2({.x=0, .y=0});
+		u32 size = MIN_SIZE;
+		bool horiz = false;
+
+	public:		// functions
+		static Path from_bv(const binser::Value& bv);
+		operator binser::Value () const;
+
+		inline auto operator <=> (const Path& to_cmp) const = default;
+	};
+	//--------
+private:		// variables
+	#define MEMB_LIST_COMP_DUNGEON_GEN_DB(X) \
+		X(_room_vec, std::nullopt) \
+		X(_path_vec, std::nullopt) \
+
+	binser::VectorEx<Room> _room_vec;
+	binser::VectorEx<Path> _path_vec;
+public:		// functions
+	//--------
+	DungeonGenDb();
+	DungeonGenDb(const binser::Value& bv);
+	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(DungeonGenDb);
+	virtual ~DungeonGenDb() = default;
+
+	virtual std::string kind_str() const;
+	virtual operator binser::Value () const;
+	//--------
+	inline Room& room_at(size_t index)
+	{
+		return _room_vec.data.at(index);
+	}
+	inline const Room& room_at(size_t index) const
+	{
+		return _room_vec.data.at(index);
+	}
+	inline void room_push_back(Room&& to_push)
+	{
+		if (_room_vec.data.size() + 1 > MAX_NUM_ROOMS)
+		{
+			throw std::length_error(sconcat
+				("game_engine::comp::DungeonGenDb::room_push_back(): ",
+				"`_room_vec` cannot increase in size: ",
+				_room_vec.data.size(), " ", MAX_NUM_ROOMS));
+		}
+		_room_vec.data.push_back(std::move(to_push));
+	}
+	//--------
+	inline Path& path_at(size_t index)
+	{
+		return _path_vec.data.at(index);
+	}
+	inline const Path& path_at(size_t index) const
+	{
+		return _path_vec.data.at(index);
+	}
+	inline void path_push_back(Path&& to_push)
+	{
+		if (_path_vec.data.size() + 1 > MAX_NUM_ROOMS)
+		{
+			throw std::length_error(sconcat
+				("game_engine::comp::DungeonGenDb::path_push_back(): ",
+				"`_path_vec` cannot increase in size: ",
+				_path_vec.data.size(), " ", MAX_NUM_ROOMS));
+		}
+		_path_vec.data.push_back(std::move(to_push));
+	}
+	//--------
+};
+//--------
 } // namespace comp
 } // namespace game_engine
 } // namespace dunwich_sandgeon

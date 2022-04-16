@@ -161,7 +161,8 @@ public:		// types
 			size_t i;
 			for (i=0; i<layout_rng_arr.size(); ++i)
 			{
-				layout_rng_arr.at(i).seed(_base_rng_seed + i);
+				//layout_rng_arr.at(i).seed(_base_rng_seed + i);
+				layout_rng_arr.at(i) = Rng(_base_rng_seed + i);
 			}
 			return i;
 		}
@@ -171,15 +172,33 @@ public:		// types
 
 			const size_t i = seed_layout_rng_arr(layout_rng_arr);
 
-			_rng.seed(_base_rng_seed + i);
+			//_rng.seed(_base_rng_seed + i);
+			_rng = Rng(_base_rng_seed + i);
 		}
 
 		//template<typename RetT=decltype(_rng())>
 		//inline std::remove_cvref_t<RetT> rand()
 		//	requires std::integral<std::remove_cvref_t<RetT>>
+		template<typename T=decltype(std::declval<Rng>())>
 		inline auto rand()
 		{
-			return _rng();
+			return rng_run<T>(_rng);
+		}
+		template<typename T>
+		inline auto rand(const T& max_val, bool saturate=false)
+		{
+			return rng_run<T>(_rng, max_val, saturate);
+		}
+		template<typename T>
+		inline auto rand_scaled(const T& scale)
+		{
+			return rng_run_scaled<T>(_rng, scale);
+		}
+		template<typename T>
+		inline auto rand_scaled(const T& scale, const T& max_val,
+			bool saturate=false)
+		{
+			return rng_run_scaled<T>(_rng, scale, max_val, saturate);
 		}
 	};
 private:		// non-serialized variables
@@ -547,9 +566,26 @@ public:		// `_non_ecs_ser_data_arr` accessor functions
 	//--------
 	//template<typename RetT=decltype(NonEcsSerData::_rng())>
 	//inline RetT rand()
+	template<typename T=decltype(std::declval<Rng>())>
 	inline auto rand()
 	{
-		return non_ecs_ser_data().rand();
+		return non_ecs_ser_data().rand<T>();
+	}
+	template<typename T>
+	inline auto rand(const T& max_val, bool saturate=false)
+	{
+		return non_ecs_ser_data().rand<T>(max_val, saturate);
+	}
+	template<typename T>
+	inline auto rand_scaled(const T& scale)
+	{
+		return non_ecs_ser_data().rand_scaled<T>(scale);
+	}
+	template<typename T>
+	inline auto rand_scaled(const T& scale, const T& max_val,
+		bool saturate=false)
+	{
+		return non_ecs_ser_data().rand_scaled<T>(scale, max_val, saturate);
 	}
 	//--------
 public:		// functions
@@ -632,7 +668,7 @@ public:		// functions
 					no_func
 				),
 			}),
-			Vec2(false, true)
+			Vec2<bool>({.x=false, .y=true})
 		);
 	}
 	inline Menu build_text_yes_no_menu(auto* self,
@@ -667,7 +703,7 @@ public:		// functions
 					no_func
 				),
 			}),
-			Vec2(false, true),
+			Vec2<bool>({.x=false, .y=true}),
 			s_tab_amount
 		);
 	}

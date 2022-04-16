@@ -57,16 +57,17 @@ public:		// types
 		static Data from_bv(const binser::Value& bv);
 		operator binser::Value () const;
 
-		inline bool operator == (Data to_cmp) const
-		{
-			return ((c == to_cmp.c)
-				&& (color_pair == to_cmp.color_pair)
-				&& (gs_color_pair == to_cmp.gs_color_pair));
-		}
-		inline bool operator != (Data to_cmp) const
-		{
-			return (!(*this == to_cmp));
-		}
+		//inline bool operator == (Data to_cmp) const
+		//{
+		//	return ((c == to_cmp.c)
+		//		&& (color_pair == to_cmp.color_pair)
+		//		&& (gs_color_pair == to_cmp.gs_color_pair));
+		//}
+		//inline bool operator != (Data to_cmp) const
+		//{
+		//	return (!(*this == to_cmp));
+		//}
+		inline auto operator <=> (const Data& to_cmp) const = default;
 	};
 private:		// variables
 	#define MEMB_LIST_COMP_DRAWABLE(X) \
