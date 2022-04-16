@@ -27,23 +27,26 @@ namespace dunwich_sandgeon
 {
 namespace game_engine
 {
-
+//--------
 // This constant has values in the amount of tilemap entries
 extern const SizeVec2
 	WITH_BORDER_SCREEN_SIZE_2D,
 	SCREEN_SIZE_2D;
+//--------
 extern const PosVec2
 	PFIELD_WINDOW_POS, PFIELD_WINDOW_END_POS;
+extern const PosVec2Ex
+	PFIELD_WINDOW_EX_RANGE;
 extern const SizeVec2
 	PFIELD_WINDOW_SIZE_2D;
-
+//--------
 extern const PosVec2
 	LOG_WINDOW_POS, LOG_WINDOW_END_POS,
 	HUD_WINDOW_POS, HUD_WINDOW_END_POS,
 	POPUP_WINDOW_POS, POPUP_WINDOW_END_POS,
 	YES_NO_WINDOW_POS, YES_NO_WINDOW_END_POS,
 	TEXT_YES_NO_WINDOW_POS, TEXT_YES_NO_WINDOW_END_POS;
-
+//--------
 } // namespace game_engine
 } // namespace dunwich_sandgeon
 

@@ -125,11 +125,15 @@ public:		// types
 			MIN_SIZE_2D = {.x=3, .y=3},
 			MAX_SIZE_2D = {.x=10, .y=10};
 	public:		// variables
-		#define MEMB_LIST_COMP_DUNGEON_GEN_DB_ROOM(X) \
+		#define MEMB_TO_BV_LIST_COMP_DUNGEON_GEN_DB_ROOM(X) \
 			X(pos, std::nullopt) \
 			X(size_2d, std::nullopt) \
 
-		PosVec2 pos = PosVec2({.x=0, .y=0});
+		#define MEMB_AUTOSER_LIST_COMP_DUNGEON_GEN_DB_ROOM(X) \
+			/* X(pos, std::nullopt) */ \
+			/* X(size_2d, std::nullopt) */ \
+
+		PosVec2 pos = PosVec2();
 		SizeVec2 size_2d = MIN_SIZE_2D;
 	public:		// functions
 		static Room from_bv(const binser::Value& bv);
@@ -145,12 +149,16 @@ public:		// types
 			MIN_SIZE = 1,
 			MAX_SIZE = 32;
 	public:		// variables
-		#define MEMB_LIST_COMP_DUNGEON_GEN_DB_PATH(X) \
+		#define MEMB_TO_BV_LIST_COMP_DUNGEON_GEN_DB_PATH(X) \
 			X(pos, std::nullopt) \
 			X(size, std::nullopt) \
+
+		#define MEMB_AUTOSER_LIST_COMP_DUNGEON_GEN_DB_PATH(X) \
+			/* X(pos, std::nullopt) */ \
+			/* X(size, std::nullopt) */ \
 			X(horiz, std::nullopt) \
 
-		PosVec2 pos = PosVec2({.x=0, .y=0});
+		PosVec2 pos = PosVec2();
 		u32 size = MIN_SIZE;
 		bool horiz = false;
 

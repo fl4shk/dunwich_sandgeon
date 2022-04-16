@@ -92,11 +92,27 @@ void StaticTileMap::_init_data()
 const std::string
 	DungeonGenDb::KIND_STR("DungeonGenDb");
 
-DungeonGenDb::Room DungeonGenDb::Room::from_bv(const binser::Value& bv)
+auto DungeonGenDb::Room::from_bv(const binser::Value& bv) -> Room
 {
 	DungeonGenDb::Room ret;
 
-	MEMB_LIST_COMP_DUNGEON_GEN_DB_ROOM(BINSER_MEMB_FROM_BV_DESERIALIZE);
+	#define X(...) BINSER_MEMB_FROM_BV_DESERIALIZE(__VA_ARGS__)
+	MEMB_AUTOSER_LIST_COMP_DUNGEON_GEN_DB_ROOM(X);
+	#undef X
+
+	if (PosVec2Ex temp_pos={.data=PosVec2(), .max=PFIELD_WINDOW_END_POS};
+		true)
+	{
+		binser::get_bv_memb(temp_pos, bv, "pos", std::nullopt);
+		ret.pos = std::move(temp_pos.data);
+	}
+	if (SizeVec2Ex temp_size_2d
+		= {.data=SizeVec2(), .max=MAX_SIZE_2D, .min=MIN_SIZE_2D};
+		true)
+	{
+		binser::get_bv_memb(temp_size_2d, bv, "size_2d", std::nullopt);
+		ret.size_2d = std::move(temp_size_2d.data);
+	}
 
 	return ret;
 }
@@ -104,16 +120,33 @@ DungeonGenDb::Room::operator binser::Value () const
 {
 	binser::Value ret;
 
-	MEMB_LIST_COMP_DUNGEON_GEN_DB_ROOM(BINSER_MEMB_SERIALIZE);
+	MEMB_TO_BV_LIST_COMP_DUNGEON_GEN_DB_ROOM(BINSER_MEMB_SERIALIZE);
+	MEMB_AUTOSER_LIST_COMP_DUNGEON_GEN_DB_ROOM(BINSER_MEMB_SERIALIZE);
 
 	return ret;
 }
 
-DungeonGenDb::Path DungeonGenDb::Path::from_bv(const binser::Value& bv)
+auto DungeonGenDb::Path::from_bv(const binser::Value& bv) -> Path
 {
 	DungeonGenDb::Path ret;
 
-	MEMB_LIST_COMP_DUNGEON_GEN_DB_PATH(BINSER_MEMB_FROM_BV_DESERIALIZE);
+	#define X(...) BINSER_MEMB_FROM_BV_DESERIALIZE(__VA_ARGS__)
+	MEMB_AUTOSER_LIST_COMP_DUNGEON_GEN_DB_PATH(X);
+	#undef X
+
+	if (PosVec2Ex temp_pos=PFIELD_WINDOW_EX_RANGE;
+		true)
+	{
+		binser::get_bv_memb(temp_pos, bv, "pos", std::nullopt);
+		ret.pos = std::move(temp_pos.data);
+	}
+	if (binser::ScalarEx<decltype(size)> temp_size
+		={.data=0u, .max=MAX_SIZE, .min=MIN_SIZE};
+		true)
+	{
+		binser::get_bv_memb(temp_size, bv, "size", std::nullopt);
+		ret.size = std::move(temp_size.data);
+	}
 
 	return ret;
 }
@@ -121,7 +154,8 @@ DungeonGenDb::Path::operator binser::Value () const
 {
 	binser::Value ret;
 
-	MEMB_LIST_COMP_DUNGEON_GEN_DB_PATH(BINSER_MEMB_SERIALIZE);
+	MEMB_TO_BV_LIST_COMP_DUNGEON_GEN_DB_PATH(BINSER_MEMB_SERIALIZE);
+	MEMB_AUTOSER_LIST_COMP_DUNGEON_GEN_DB_PATH(BINSER_MEMB_SERIALIZE);
 
 	return ret;
 }
