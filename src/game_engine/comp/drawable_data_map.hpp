@@ -30,7 +30,7 @@ namespace game_engine
 namespace comp
 {
 
-extern const std::map<std::string, Drawable::Data> DRAWABLE_DATA_MAP;
+const std::unordered_map<std::string, Drawable::Data>& drawable_data_map();
 
 } // namespace comp
 } // namespace game_engine

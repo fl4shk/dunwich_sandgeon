@@ -30,76 +30,33 @@ namespace game_engine
 namespace comp
 {
 //--------
+enum class Tile: u8
+{
+	Wall,
+	Floor,
+	UpStairs,
+	DownStairs,
+
+	Door,
+	Pit,
+	Water,
+	Spikes,
+};
+
+const std::unordered_map<Tile, std::string>& tile_str_map();
+//--------
 // This should be generated when going to a new floor, and it shouldn't be
 // written into save _data (outside of debugging).
 class StaticTileMap final: public ecs::Comp
 {
-public:		// types
-	enum class Tile: u8
-	{
-		Wall,
-		Floor,
-		UpStairs,
-		DownStairs,
-
-		Door,
-		Pit,
-		Water,
-		Spikes,
-	};
-
-	class Elem final
-	{
-	public:		// constants
-		//--------
-		static constexpr size_t
-			VISITED_LO = 0x0,
-			VISITED_HI = 0x0;
-		//--------
-	public:		// variables
-		//--------
-		#define MEMB_LIST_STATIC_TILE_MAP_ELEM(X) \
-			X(tile, std::nullopt) \
-			X(flags, std::nullopt) \
-
-		Tile tile = Tile::Wall;
-		u32 flags = 0;
-		//--------
-	public:		// functions
-		//--------
-		static Elem from_bv(const binser::Value& bv);
-		operator binser::Value () const;
-		//--------
-		inline bool visited() const
-		{
-			return get_bits_with_range(flags, VISITED_HI, VISITED_LO);
-		}
-		inline bool set_visited(bool n_visited)
-		{
-			clear_and_set_bits_with_range(flags, n_visited, VISITED_HI,
-				VISITED_LO);
-			return visited();
-		}
-		//--------
-	};
 public:		// constants
 	static const std::string
-		KIND_STR,
-
-		TILE_WALL_DRAWABLE_DATA_STR,
-		TILE_FLOOR_DRAWABLE_DATA_STR,
-		TILE_UP_STAIRS_DRAWABLE_DATA_STR,
-		TILE_DOWN_STAIRS_DRAWABLE_DATA_STR,
-
-		TILE_DOOR_DRAWABLE_DATA_STR,
-		TILE_PIT_DRAWABLE_DATA_STR,
-		TILE_WATER_DRAWABLE_DATA_STR,
-		TILE_SPIKES_DRAWABLE_DATA_STR;
+		KIND_STR;
 private:		// variables
 	#define MEMB_LIST_COMP_STATIC_LAYOUT(X) \
 		X(_data, std::nullopt) \
 
-	binser::VectorEx<binser::VectorEx<Elem>> _data;
+	binser::VectorEx<binser::VectorEx<Tile>> _data;
 public:		// functions
 	//--------
 	StaticTileMap();
@@ -116,11 +73,11 @@ private:		// functions
 	//--------
 public:		// functions
 	//--------
-	inline Elem& at(const PosVec2& pos)
+	inline Tile& at(const PosVec2& pos)
 	{
 		return _data.data.at(pos.y).data.at(pos.x);
 	}
-	inline const Elem& at(const PosVec2& pos) const
+	inline const Tile& at(const PosVec2& pos) const
 	{
 		return _data.data.at(pos.y).data.at(pos.x);
 	}
@@ -134,10 +91,7 @@ public:		// functions
 	//--------
 };
 //--------
-//class DungeonGenDb;
-//--------
-//--------
-class DungeonGenDb final: public ecs::Comp
+class Dungeon final: public ecs::Comp
 {
 public:		// constants
 	static const std::string
@@ -149,9 +103,7 @@ public:		// constants
 		MAX_NUM_ROOMS = 32,
 
 		MIN_NUM_PATHS = 1,
-		MAX_NUM_PATHS = 64,
-
-		NULL_INDEX = -1;
+		MAX_NUM_PATHS = 64;
 public:		// types
 	//--------
 	class Room final
@@ -161,16 +113,21 @@ public:		// types
 			MIN_SIZE_2D = {.x=3, .y=3},
 			MAX_SIZE_2D = {.x=10, .y=10};
 	public:		// variables
-		#define MEMB_TO_BV_LIST_COMP_DUNGEON_GEN_DB_ROOM(X) \
-			X(pos, std::nullopt) \
-			X(size_2d, std::nullopt) \
+		#define MEMB_EX_MM_LIST_COMP_DUNGEON_GEN_DB_ROOM(X) \
+			X(pos, std::nullopt, PosVec2Ex, \
+				temp_pos, PFIELD_WINDOW_END_POS, PFIELD_WINDOW_POS) \
+			X(size_2d, std::nullopt, SizeVec2Ex, \
+				temp_size_2d, MAX_SIZE_2D, MIN_SIZE_2D) \
+
+		#define MEMB_EX_CS_LIST_COMP_DUNGEON_GEN_DB_ROOM(X) \
+			X(path_lst_2, std::nullopt, binser::IndCircLinkListEx<u32>, \
+				temp_path_lst_2, MAX_NUM_PATHS, true, MIN_NUM_PATHS) \
 
 		#define MEMB_AUTOSER_LIST_COMP_DUNGEON_GEN_DB_ROOM(X) \
-			/* X(pos, std::nullopt) */ \
-			/* X(size_2d, std::nullopt) */ \
 
 		PosVec2 pos = PosVec2();
 		SizeVec2 size_2d = MIN_SIZE_2D;
+		IndCircLinkList<u32> path_lst_2;
 	public:		// functions
 		static Room from_bv(const binser::Value& bv);
 		operator binser::Value () const;
@@ -185,13 +142,13 @@ public:		// types
 			MIN_SIZE = 1,
 			MAX_SIZE = 32;
 	public:		// variables
-		#define MEMB_TO_BV_LIST_COMP_DUNGEON_GEN_DB_PATH(X) \
-			X(pos, std::nullopt) \
-			X(size, std::nullopt) \
+		#define MEMB_EX_MM_LIST_COMP_DUNGEON_GEN_DB_PATH(X) \
+			X(pos, std::nullopt, PosVec2Ex, temp_pos, \
+				PFIELD_WINDOW_END_POS, PFIELD_WINDOW_POS) \
+			X(size, std::nullopt, binser::ScalarEx<u32>, temp_size, \
+				MAX_SIZE, MIN_SIZE) \
 
 		#define MEMB_AUTOSER_LIST_COMP_DUNGEON_GEN_DB_PATH(X) \
-			/* X(pos, std::nullopt) */ \
-			/* X(size, std::nullopt) */ \
 			X(horiz, std::nullopt) \
 
 		PosVec2 pos = PosVec2();
@@ -214,10 +171,10 @@ private:		// variables
 	binser::VectorEx<Path> _path_vec;
 public:		// functions
 	//--------
-	DungeonGenDb();
-	DungeonGenDb(const binser::Value& bv);
-	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(DungeonGenDb);
-	virtual ~DungeonGenDb() = default;
+	Dungeon();
+	Dungeon(const binser::Value& bv);
+	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Dungeon);
+	virtual ~Dungeon() = default;
 
 	virtual std::string kind_str() const;
 	virtual operator binser::Value () const;
@@ -235,7 +192,7 @@ public:		// functions
 		if (_room_vec.data.size() + 1 > MAX_NUM_ROOMS)
 		{
 			throw std::length_error(sconcat
-				("game_engine::comp::DungeonGenDb::room_push_back(): ",
+				("game_engine::comp::Dungeon::room_push_back(): ",
 				"`_room_vec` cannot increase in size: ",
 				_room_vec.data.size(), " ", MAX_NUM_ROOMS));
 		}
@@ -255,12 +212,15 @@ public:		// functions
 		if (_path_vec.data.size() + 1 > MAX_NUM_ROOMS)
 		{
 			throw std::length_error(sconcat
-				("game_engine::comp::DungeonGenDb::path_push_back(): ",
+				("game_engine::comp::Dungeon::path_push_back(): ",
 				"`_path_vec` cannot increase in size: ",
 				_path_vec.data.size(), " ", MAX_NUM_ROOMS));
 		}
 		_path_vec.data.push_back(std::move(to_push));
 	}
+	//--------
+	GEN_GETTER_BY_CON_REF(room_vec);
+	GEN_GETTER_BY_CON_REF(path_vec);
 	//--------
 };
 //--------

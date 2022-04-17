@@ -25,49 +25,31 @@ namespace game_engine
 namespace comp
 {
 //--------
+const std::unordered_map<Tile, std::string>& tile_str_map()
+{
+	//--------
+	static const std::unordered_map<Tile, std::string>
+		TILE_STR_MAP
+	= {
+		{Tile::Wall, "TileWall"},
+		{Tile::Floor, "TileFloor"},
+		{Tile::UpStairs, "TileUpStairs"},
+		{Tile::DownStairs, "TileDownStairs"},
+
+		{Tile::Door, "TileDoor"},
+		{Tile::Pit, "TilePit"},
+		{Tile::Water, "TileWater"},
+		{Tile::Spikes, "TileSpikes"},
+	};
+	//--------
+	return TILE_STR_MAP;
+	//--------
+}
+//--------
 const std::string
-	StaticTileMap::KIND_STR("StaticTileMap"),
-
-	StaticTileMap::TILE_WALL_DRAWABLE_DATA_STR("TileWall"),
-	StaticTileMap::TILE_FLOOR_DRAWABLE_DATA_STR("TileFloor"),
-	StaticTileMap::TILE_UP_STAIRS_DRAWABLE_DATA_STR("TileUpStairs"),
-	StaticTileMap::TILE_DOWN_STAIRS_DRAWABLE_DATA_STR("TileDownStairs"),
-
-	StaticTileMap::TILE_DOOR_DRAWABLE_DATA_STR("TileDoor"),
-	StaticTileMap::TILE_PIT_DRAWABLE_DATA_STR("TilePit"),
-	StaticTileMap::TILE_WATER_DRAWABLE_DATA_STR("TileWater"),
-	StaticTileMap::TILE_SPIKES_DRAWABLE_DATA_STR("TileSpikes");
-
-auto StaticTileMap::Elem::from_bv(const binser::Value& bv) -> Elem
-{
-	Elem ret;
-
-	MEMB_LIST_STATIC_TILE_MAP_ELEM(BINSER_MEMB_FROM_BV_DESERIALIZE);
-
-	return ret;
-}
-StaticTileMap::Elem::operator binser::Value () const
-{
-	binser::Value ret;
-
-	MEMB_LIST_STATIC_TILE_MAP_ELEM(BINSER_MEMB_SERIALIZE);
-
-	return ret;
-}
+	StaticTileMap::KIND_STR("StaticTileMap");
 
 StaticTileMap::StaticTileMap()
-	//: _data
-	//({
-	//	.data=std::vector<binser::VectorEx<Tile>>
-	//	(
-	//		PFIELD_WINDOW_SIZE_2D.y,
-	//		{
-	//			.data=std::vector<Tile>(PFIELD_WINDOW_SIZE_2D.x, Tile()),
-	//			.checked_size=PFIELD_WINDOW_SIZE_2D.x
-	//		}
-	//	),
-	//	.checked_size=PFIELD_WINDOW_SIZE_2D.y
-	//})
 {
 	_init_data();
 }
@@ -93,11 +75,12 @@ void StaticTileMap::_init_data()
 {
 	_data
 	= {
-		.data=std::vector<binser::VectorEx<Elem>>
+		.data=std::vector<binser::VectorEx<Tile>>
 		(
 			PFIELD_WINDOW_SIZE_2D.y,
 			{
-				.data=std::vector<Elem>(PFIELD_WINDOW_SIZE_2D.x, Elem()),
+				.data=std::vector<Tile>(PFIELD_WINDOW_SIZE_2D.x,
+					Tile::Wall),
 				.checked_size=PFIELD_WINDOW_SIZE_2D.x
 			}
 		),
@@ -107,80 +90,115 @@ void StaticTileMap::_init_data()
 //--------
 //--------
 const std::string
-	DungeonGenDb::KIND_STR("DungeonGenDb");
+	Dungeon::KIND_STR("Dungeon");
 
-auto DungeonGenDb::Room::from_bv(const binser::Value& bv) -> Room
+auto Dungeon::Room::from_bv(const binser::Value& bv) -> Room
 {
 	Room ret;
+
+	#define X(...) BINSER_MEMB_FROM_BV_DESERIALIZE_EX_MM(__VA_ARGS__)
+	MEMB_EX_MM_LIST_COMP_DUNGEON_GEN_DB_ROOM(X);
+	#undef X
+
+	#define X(...) BINSER_MEMB_FROM_BV_DESERIALIZE_EX_CS(__VA_ARGS__)
+	MEMB_EX_CS_LIST_COMP_DUNGEON_GEN_DB_ROOM(X);
+	#undef X
 
 	#define X(...) BINSER_MEMB_FROM_BV_DESERIALIZE(__VA_ARGS__)
 	MEMB_AUTOSER_LIST_COMP_DUNGEON_GEN_DB_ROOM(X);
 	#undef X
 
-	if (PosVec2Ex temp_pos={.data=PosVec2(), .max=PFIELD_WINDOW_END_POS};
-		true)
-	{
-		binser::get_bv_memb(temp_pos, bv, "pos", std::nullopt);
-		ret.pos = std::move(temp_pos.data);
-	}
-	if (SizeVec2Ex temp_size_2d
-		= {.data=SizeVec2(), .max=MAX_SIZE_2D, .min=MIN_SIZE_2D};
-		true)
-	{
-		binser::get_bv_memb(temp_size_2d, bv, "size_2d", std::nullopt);
-		ret.size_2d = std::move(temp_size_2d.data);
-	}
+	//if (PosVec2Ex temp_pos=PFIELD_WINDOW_EX_RANGE; true)
+	//{
+	//	binser::get_bv_memb(temp_pos, bv, "pos", std::nullopt);
+	//	ret.pos = std::move(temp_pos.data);
+	//}
+	//if (SizeVec2Ex temp_size_2d
+	//	= {.data=SizeVec2(), .max=MAX_SIZE_2D, .min=MIN_SIZE_2D};
+	//	true)
+	//{
+	//	binser::get_bv_memb(temp_size_2d, bv, "size_2d", std::nullopt);
+	//	ret.size_2d = std::move(temp_size_2d.data);
+	//}
+
+	//if (binser::IndCircLinkListEx<u32> temp_path_lst
+	//	= {
+	//		.data=IndCircLinkList<u32>(),
+	//		.checked_size=MAX_NUM_PATHS,
+	//		.cs_is_max=true,
+	//		.min_size=MIN_NUM_PATHS
+	//	};
+	//	true)
+
+	//if (binser::IndCircLinkListEx<u32> temp_path_lst; true)
+	//{
+	//	temp_path_lst.checked_size = MAX_NUM_PATHS,
+	//	temp_path_lst.cs_is_max = true;
+	//	temp_path_lst.min_size = MIN_NUM_PATHS;
+
+	//	binser::get_bv_memb(temp_path_lst, bv, "path_lst", std::nullopt);
+	//	ret.path_lst = std::move(temp_path_lst.data);
+	//}
 
 	return ret;
 }
-DungeonGenDb::Room::operator binser::Value () const
+Dungeon::Room::operator binser::Value () const
 {
 	binser::Value ret;
 
-	MEMB_TO_BV_LIST_COMP_DUNGEON_GEN_DB_ROOM(BINSER_MEMB_SERIALIZE);
+	MEMB_EX_MM_LIST_COMP_DUNGEON_GEN_DB_ROOM(BINSER_MEMB_SERIALIZE);
+	MEMB_EX_CS_LIST_COMP_DUNGEON_GEN_DB_ROOM(BINSER_MEMB_SERIALIZE);
 	MEMB_AUTOSER_LIST_COMP_DUNGEON_GEN_DB_ROOM(BINSER_MEMB_SERIALIZE);
 
 	return ret;
 }
 
-auto DungeonGenDb::Path::from_bv(const binser::Value& bv) -> Path
+auto Dungeon::Path::from_bv(const binser::Value& bv) -> Path
 {
 	Path ret;
+
+	#define X(...) BINSER_MEMB_FROM_BV_DESERIALIZE_EX_MM(__VA_ARGS__)
+	MEMB_EX_MM_LIST_COMP_DUNGEON_GEN_DB_PATH(X);
+	#undef X
+
+	//#define X(...) BINSER_MEMB_FROM_BV_DESERIALIZE_EX_CS(__VA_ARGS__)
+	//MEMB_EX_CS_LIST_COMP_DUNGEON_GEN_DB_PATH(X);
+	//#undef X
 
 	#define X(...) BINSER_MEMB_FROM_BV_DESERIALIZE(__VA_ARGS__)
 	MEMB_AUTOSER_LIST_COMP_DUNGEON_GEN_DB_PATH(X);
 	#undef X
 
-	if (PosVec2Ex temp_pos=PFIELD_WINDOW_EX_RANGE;
-		true)
-	{
-		binser::get_bv_memb(temp_pos, bv, "pos", std::nullopt);
-		ret.pos = std::move(temp_pos.data);
-	}
-	if (binser::ScalarEx<decltype(size)> temp_size
-		={.data=0u, .max=MAX_SIZE, .min=MIN_SIZE};
-		true)
-	{
-		binser::get_bv_memb(temp_size, bv, "size", std::nullopt);
-		ret.size = std::move(temp_size.data);
-	}
+	//if (PosVec2Ex temp_pos=PFIELD_WINDOW_EX_RANGE;
+	//	true)
+	//{
+	//	binser::get_bv_memb(temp_pos, bv, "pos", std::nullopt);
+	//	ret.pos = std::move(temp_pos.data);
+	//}
+	//if (binser::ScalarEx<decltype(size)> temp_size
+	//	={.data=0u, .max=MAX_SIZE, .min=MIN_SIZE};
+	//	true)
+	//{
+	//	binser::get_bv_memb(temp_size, bv, "size", std::nullopt);
+	//	ret.size = std::move(temp_size.data);
+	//}
 
 	return ret;
 }
-DungeonGenDb::Path::operator binser::Value () const
+Dungeon::Path::operator binser::Value () const
 {
 	binser::Value ret;
 
-	MEMB_TO_BV_LIST_COMP_DUNGEON_GEN_DB_PATH(BINSER_MEMB_SERIALIZE);
+	MEMB_EX_MM_LIST_COMP_DUNGEON_GEN_DB_PATH(BINSER_MEMB_SERIALIZE);
 	MEMB_AUTOSER_LIST_COMP_DUNGEON_GEN_DB_PATH(BINSER_MEMB_SERIALIZE);
 
 	return ret;
 }
 
-DungeonGenDb::DungeonGenDb()
+Dungeon::Dungeon()
 {
 }
-DungeonGenDb::DungeonGenDb(const binser::Value& bv)
+Dungeon::Dungeon(const binser::Value& bv)
 {
 	_room_vec.checked_size = MAX_NUM_ROOMS;
 	_room_vec.cs_is_max = true;
@@ -193,11 +211,11 @@ DungeonGenDb::DungeonGenDb(const binser::Value& bv)
 	MEMB_LIST_COMP_DUNGEON_GEN_DB(BINSER_MEMB_DESERIALIZE);
 }
 
-std::string DungeonGenDb::kind_str() const
+std::string Dungeon::kind_str() const
 {
 	return KIND_STR;
 }
-DungeonGenDb::operator binser::Value () const
+Dungeon::operator binser::Value () const
 {
 	binser::Value ret;
 

@@ -38,19 +38,19 @@ const std::string
 //--------
 const comp::Drawable::Data& Window::BORDER_CORNER_DRAWABLE_DATA()
 {
-	return comp::DRAWABLE_DATA_MAP.at(BORDER_CORNER_KIND_STR);
+	return comp::drawable_data_map().at(BORDER_CORNER_KIND_STR);
 }
 const comp::Drawable::Data& Window::BORDER_HORIZ_DRAWABLE_DATA()
 {
-	return comp::DRAWABLE_DATA_MAP.at(BORDER_HORIZ_KIND_STR);
+	return comp::drawable_data_map().at(BORDER_HORIZ_KIND_STR);
 }
 const comp::Drawable::Data& Window::BORDER_VERT_DRAWABLE_DATA()
 {
-	return comp::DRAWABLE_DATA_MAP.at(BORDER_VERT_KIND_STR);
+	return comp::drawable_data_map().at(BORDER_VERT_KIND_STR);
 }
 const comp::Drawable::Data& Window::BLANK_DRAWABLE_DATA()
 {
-	return comp::DRAWABLE_DATA_MAP.at(BLANK_KIND_STR);
+	return comp::drawable_data_map().at(BLANK_KIND_STR);
 }
 
 Window::Window()

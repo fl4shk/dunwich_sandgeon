@@ -31,122 +31,128 @@ namespace comp
 static constexpr FgBgColorPair
 	WINDOW_BORDER_COLOR_PAIR = FontColor::Green;
 
-const std::map<std::string, Drawable::Data> DRAWABLE_DATA_MAP
-= {
-	// ' ', 32
-	{
-		Window::BLANK_KIND_STR,
+const std::unordered_map<std::string, Drawable::Data>& drawable_data_map()
+{
+	static std::unordered_map<std::string, Drawable::Data>
+		DRAWABLE_DATA_MAP
+	= {
+		// ' ', 32
 		{
-			.c=' ',
-			.color_pair=FontColor::Black,
-			.gs_color_pair=FontColor::Black
-		}
-	},
+			Window::BLANK_KIND_STR,
+			{
+				.c=' ',
+				.color_pair=FontColor::Black,
+				.gs_color_pair=FontColor::Black
+			}
+		},
 
-	// '#', 35
-	{
-		StaticTileMap::TILE_WALL_DRAWABLE_DATA_STR,
+		// '#', 35
 		{
-			.c='#',
-			//.color_pair=FontColor::LightGray,
-			//.gs_color_pair=FontColor::LightGray
-			.color_pair=FontColor::Brown,
-			.gs_color_pair=FontColor::Gray
-		}
-	},
+			tile_str_map().at(Tile::Wall),
+			{
+				.c='#',
+				//.color_pair=FontColor::LightGray,
+				//.gs_color_pair=FontColor::LightGray
+				.color_pair=FontColor::Brown,
+				.gs_color_pair=FontColor::Gray
+			}
+		},
 
-	// '+', 43
-	{
-		Window::BORDER_CORNER_KIND_STR,
+		// '+', 43
 		{
-			.c='+',
-			.color_pair=WINDOW_BORDER_COLOR_PAIR,
-			.gs_color_pair=FontColor::White
-		}
-	},
+			Window::BORDER_CORNER_KIND_STR,
+			{
+				.c='+',
+				.color_pair=WINDOW_BORDER_COLOR_PAIR,
+				.gs_color_pair=FontColor::White
+			}
+		},
 
-	// '-', 45
-	{
-		Window::BORDER_HORIZ_KIND_STR,
+		// '-', 45
 		{
-			.c='-',
-			.color_pair=WINDOW_BORDER_COLOR_PAIR,
-			.gs_color_pair=FontColor::White
-		}
-	},
+			Window::BORDER_HORIZ_KIND_STR,
+			{
+				.c='-',
+				.color_pair=WINDOW_BORDER_COLOR_PAIR,
+				.gs_color_pair=FontColor::White
+			}
+		},
 
-	// '.', 46
-	{
-		StaticTileMap::TILE_FLOOR_DRAWABLE_DATA_STR,
+		// '.', 46
 		{
-			.c='.',
-			//.color_pair=FontColor::LightGray,
-			//.gs_color_pair=FontColor::LightGray
-			.color_pair=FontColor::Gray,
-			.gs_color_pair=FontColor::Gray
-		}
-	},
+			tile_str_map().at(Tile::Floor),
+			{
+				.c='.',
+				//.color_pair=FontColor::LightGray,
+				//.gs_color_pair=FontColor::LightGray
+				.color_pair=FontColor::Gray,
+				.gs_color_pair=FontColor::Gray
+			}
+		},
 
-	// '<', 60
-	{
-		StaticTileMap::TILE_DOWN_STAIRS_DRAWABLE_DATA_STR,
+		// '<', 60
 		{
-			.c='<',
-			.color_pair=FontColor::Brown,
-			.gs_color_pair=FontColor::White
-		}
-	},
+			tile_str_map().at(Tile::DownStairs),
+			{
+				.c='<',
+				.color_pair=FontColor::Brown,
+				.gs_color_pair=FontColor::White
+			}
+		},
 
-	// '>', 62
-	{
-		StaticTileMap::TILE_UP_STAIRS_DRAWABLE_DATA_STR,
+		// '>', 62
 		{
-			.c='>',
-			.color_pair=FontColor::Brown,
-			.gs_color_pair=FontColor::White
-		}
-	},
+			tile_str_map().at(Tile::UpStairs),
+			{
+				.c='>',
+				.color_pair=FontColor::Brown,
+				.gs_color_pair=FontColor::White
+			}
+		},
 
-	// '@', 64
-	{
-		Player::KIND_STR,
+		// '@', 64
 		{
-			.c='@',
-			.color_pair=FontColor::White,
-			.gs_color_pair=FontColor::White
-		}
-	},
+			Player::KIND_STR,
+			{
+				.c='@',
+				.color_pair=FontColor::White,
+				.gs_color_pair=FontColor::White
+			}
+		},
 
-	// '^', 94,
-	{
-		StaticTileMap::TILE_SPIKES_DRAWABLE_DATA_STR,
+		// '^', 94,
 		{
-			.c='^',
-			.color_pair=FontColor::Gray,
-			.gs_color_pair=FontColor::Gray
-		}
-	},
+			tile_str_map().at(Tile::Spikes),
+			{
+				.c='^',
+				.color_pair=FontColor::Gray,
+				.gs_color_pair=FontColor::Gray
+			}
+		},
 
-	// '|', 124
-	{
-		Window::BORDER_VERT_KIND_STR,
+		// '|', 124
 		{
-			.c='|',
-			.color_pair=WINDOW_BORDER_COLOR_PAIR,
-			.gs_color_pair=FontColor::White
-		}
-	},
+			Window::BORDER_VERT_KIND_STR,
+			{
+				.c='|',
+				.color_pair=WINDOW_BORDER_COLOR_PAIR,
+				.gs_color_pair=FontColor::White
+			}
+		},
 
-	// '~', 126
-	{
-		StaticTileMap::TILE_WATER_DRAWABLE_DATA_STR,
+		// '~', 126
 		{
-			.c='~',
-			.color_pair=FontColor::Blue,
-			.gs_color_pair=FontColor::White
-		}
-	},
-};
+			tile_str_map().at(Tile::Water),
+			{
+				.c='~',
+				.color_pair=FontColor::Blue,
+				.gs_color_pair=FontColor::White
+			}
+		},
+	};
+
+	return DRAWABLE_DATA_MAP;
+}
 
 } // namespace comp
 } // namespace game_engine
