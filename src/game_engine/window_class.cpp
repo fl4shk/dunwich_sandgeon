@@ -27,8 +27,8 @@ namespace dunwich_sandgeon
 namespace game_engine
 {
 //--------
-//const SizeVec2 Window::SCREEN_SIZE_2D(82, 62);
-//const SizeVec2 Window::SCREEN_SIZE_2D(60, 50);
+//const IntVec2 Window::SCREEN_SIZE_2D(82, 62);
+//const IntVec2 Window::SCREEN_SIZE_2D(60, 50);
 
 const std::string
 	Window::BORDER_CORNER_KIND_STR("game_engine::Window::BorderCorner"),
@@ -56,63 +56,80 @@ const comp::Drawable::Data& Window::BLANK_DRAWABLE_DATA()
 Window::Window()
 {
 }
-Window::Window(const PosVec2& s_some_pos, const SizeVec2& s_some_size_2d,
-	bool prev_args_are_with_border)
+//Window::Window(const IntVec2& s_some_pos, const IntVec2& s_some_size_2d,
+//	bool with_border)
+//	: _pos(s_some_pos
+//		- (!with_border ? IntVec2(1, 1) : IntVec2(0, 0))),
+//	_drawable_data_v2d
+//	(
+//		s_some_size_2d.y + (!with_border ? 2 : 0),
+//		std::vector<DrawData>
+//		(
+//			s_some_size_2d.x + (!with_border ? 2 : 0)
+//		)
+//	)
+//	//_cleared_ent_id_v2d
+//	//(
+//	//	s_some_size_2d.y
+//	//		+ (!with_border ? 2 : 0),
+//	//	ecs::EntIdVec
+//	//	(
+//	//		s_some_size_2d.x
+//	//			+ (!with_border ? 2 : 0),
+//	//		ecs::ENT_NULL_ID
+//	//	)
+//	//)
+//{
+//	//init_set_border();
+//	//_ent_id_v2d = _cleared_ent_id_v2d;
+//}
+//Window::Window(const IntVec2& s_some_pos, const IntVec2& s_some_end_pos,
+//	bool with_border)
+//	: _pos(s_some_pos
+//		- (!with_border ? IntVec2(1, 1) : IntVec2(0, 0))),
+//	_drawable_data_v2d
+//	(
+//		s_some_end_pos.y - s_some_pos.y + 1
+//			+ (!with_border ? 2 : 0),
+//		std::vector<DrawData>
+//		(
+//			s_some_end_pos.x - s_some_pos.x + 1
+//				+ (!with_border ? 2 : 0)
+//		)
+//	)
+//	//_cleared_ent_id_v2d
+//	//(
+//	//	s_some_end_pos.y - s_some_pos.y + 1
+//	//		+ (!with_border ? 2 : 0),
+//	//	ecs::EntIdVec
+//	//	(
+//	//		s_some_end_pos.x - s_some_pos.x + 1
+//	//			+ (!with_border ? 2 : 0),
+//	//		ecs::ENT_NULL_ID
+//	//	)
+//	//)
+//{
+//	//init_set_border();
+//	//_ent_id_v2d = _cleared_ent_id_v2d;
+//}
+Window::Window(const IntVec2& s_some_pos,
+	const IntVec2& s_some_size_2d_or_end_pos, bool use_end_pos,
+	bool with_border)
 	: _pos(s_some_pos
-		- ((!prev_args_are_with_border) ? PosVec2(1, 1) : PosVec2(0, 0))),
+		- (!with_border ? IntVec2(1, 1) : IntVec2(0, 0))),
 	_drawable_data_v2d
 	(
-		s_some_size_2d.y
-			+ ((!prev_args_are_with_border) ? 2 : 0),
+		s_some_size_2d_or_end_pos.y
+			+ (use_end_pos ? (-s_some_pos.y + 1) : 0)
+			+ (!with_border ? 2 : 0),
 		std::vector<DrawData>
 		(
-			s_some_size_2d.x
-				+ ((!prev_args_are_with_border) ? 2 : 0)
+			s_some_size_2d_or_end_pos.x
+				+ (use_end_pos ? (-s_some_pos.x + 1) : 0)
+				+ (!with_border ? 2 : 0)
 		)
 	)
-	//_cleared_ent_id_v2d
-	//(
-	//	s_some_size_2d.y
-	//		+ ((!prev_args_are_with_border) ? 2 : 0),
-	//	ecs::EntIdVec
-	//	(
-	//		s_some_size_2d.x
-	//			+ ((!prev_args_are_with_border) ? 2 : 0),
-	//		ecs::ENT_NULL_ID
-	//	)
-	//)
 {
-	//init_set_border();
-	//_ent_id_v2d = _cleared_ent_id_v2d;
-}
-Window::Window(const PosVec2& s_some_pos, const PosVec2& s_some_end_pos,
-	bool prev_args_are_with_border)
-	: _pos(s_some_pos
-		- ((!prev_args_are_with_border) ? PosVec2(1, 1) : PosVec2(0, 0))),
-	_drawable_data_v2d
-	(
-		s_some_end_pos.y - s_some_pos.y + 1
-			+ ((!prev_args_are_with_border) ? 2 : 0),
-		std::vector<DrawData>
-		(
-			s_some_end_pos.x - s_some_pos.x + 1
-				+ ((!prev_args_are_with_border) ? 2 : 0)
-		)
-	)
-	//_cleared_ent_id_v2d
-	//(
-	//	s_some_end_pos.y - s_some_pos.y + 1
-	//		+ ((!prev_args_are_with_border) ? 2 : 0),
-	//	ecs::EntIdVec
-	//	(
-	//		s_some_end_pos.x - s_some_pos.x + 1
-	//			+ ((!prev_args_are_with_border) ? 2 : 0),
-	//		ecs::ENT_NULL_ID
-	//	)
-	//)
-{
-	//init_set_border();
-	//_ent_id_v2d = _cleared_ent_id_v2d;
 }
 Window::~Window()
 {
@@ -137,11 +154,11 @@ Window::~Window()
 
 void Window::clear()
 {
-	for (uint j=0; j<with_border_size_2d().y; ++j)
+	for (int j=0; j<with_border_size_2d().y; ++j)
 	{
-		for (uint i=0; i<with_border_size_2d().x; ++i)
+		for (int i=0; i<with_border_size_2d().x; ++i)
 		{
-			const PosVec2 index(i, j);
+			const IntVec2 index(i, j);
 			if ((j == 0) || (j == with_border_size_2d().y - 1))
 			{
 				if ((i == 0) || (i == with_border_size_2d().x - 1))
@@ -171,7 +188,7 @@ void Window::clear()
 
 void Window::draw(const Window& src, bool leave_corner)
 {
-	PosVec2 src_pos;
+	IntVec2 src_pos;
 	for (src_pos.y=0;
 		src_pos.y<i32(src.with_border_size_2d().y);
 		++src_pos.y)
@@ -201,7 +218,7 @@ void Window::draw(const Menu& menu)
 
 void Window::draw(const MsgLog& msg_log)
 {
-	PosVec2 temp_pos(0, 0);
+	IntVec2 temp_pos(0, 0);
 
 	//if (msg_log.center().y
 	//	&& (msg_log.data().size() < msg_log.window_size_2d().y))
@@ -344,8 +361,8 @@ void Window::draw(const MsgLog& msg_log)
 //LayeredWindow::LayeredWindow()
 //{
 //}
-//LayeredWindow::LayeredWindow(const PosVec2& s_pos,
-//	const SizeVec2& s_size_2d,
+//LayeredWindow::LayeredWindow(const IntVec2& s_pos,
+//	const IntVec2& s_size_2d,
 //	const std::map<std::string, uint>& s_layer_prio_map)
 //	: _layer_prio_map(s_layer_prio_map)
 //{

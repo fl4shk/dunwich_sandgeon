@@ -61,7 +61,7 @@ Drawable::operator binser::Value () const
 }
 
 const std::string Position::KIND_STR("Position");
-Position::Position(ecs::EntId s_ent_id, const PosVec3& s_pos,
+Position::Position(ecs::EntId s_ent_id, const IntVec3& s_pos,
 	PlayfieldLayerPrio s_priority)
 	: _ent_id(s_ent_id), _pos(s_pos), priority(s_priority)
 {
@@ -85,7 +85,7 @@ Position::~Position()
 {
 	engine->position_dtor_callback(this);
 }
-void Position::set_pos(const PosVec3& n_pos)
+void Position::set_pos(const IntVec3& n_pos)
 {
 	engine->position_set_pos_callback(this, n_pos);
 }

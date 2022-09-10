@@ -11,8 +11,10 @@ SHARED_SRC_DIRS:=src \
 	src/game_engine/sys \
 	src/sdl \
 	src/liborangepower_src/binser \
+	src/liborangepower_src/binser_plus_json_stuff \
 	src/liborangepower_src/json_stuff \
 	src/liborangepower_src/game_stuff \
+	src/liborangepower_src/gfx \
 
 CXX_DIRS:=$(SHARED_SRC_DIRS)
 # End of source directories

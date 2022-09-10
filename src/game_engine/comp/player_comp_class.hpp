@@ -50,7 +50,8 @@ public:		// variables
 		X(level, std::nullopt) \
 		X(exp, std::nullopt) \
 		X(hunger, std::nullopt) \
-		X(weight, std::nullopt)
+		X(weight, std::nullopt) \
+
 	uint
 		level = DEFAULT_LEVEL,
 		exp = DEFAULT_EXP,

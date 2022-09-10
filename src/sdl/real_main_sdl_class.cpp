@@ -100,21 +100,21 @@ int RealMainSdl::run()
 	//{
 	//	_text_handler.draw_char('@', 
 	//		{FontColor::White, FontColor::Blue},
-	//		PosVec2(0, 0));
+	//		IntVec2(0, 0));
 
-	//	_text_handler.draw_char('@', FontColor::Red, PosVec2(1, 0));
-	//	_text_handler.draw_char('@', FontColor::Green, PosVec2(2, 0));
-	//	_text_handler.draw_char('@', FontColor::Brown, PosVec2(3, 0));
-	//	_text_handler.draw_char('@', FontColor::Yellow, PosVec2(4, 0));
+	//	_text_handler.draw_char('@', FontColor::Red, IntVec2(1, 0));
+	//	_text_handler.draw_char('@', FontColor::Green, IntVec2(2, 0));
+	//	_text_handler.draw_char('@', FontColor::Brown, IntVec2(3, 0));
+	//	_text_handler.draw_char('@', FontColor::Yellow, IntVec2(4, 0));
 
-	//	_text_handler.draw_char('@', FontColor::Blue, PosVec2(5, 0));
-	//	_text_handler.draw_char('@', FontColor::Purple, PosVec2(6, 0));
-	//	_text_handler.draw_char('@', FontColor::Cyan, PosVec2(7, 0));
-	//	_text_handler.draw_char('@', FontColor::White, PosVec2(8, 0));
-	//	_text_handler.draw_char('@', FontColor::Gray, PosVec2(9, 0));
-	//	//_text_handler.draw_char('@', FontColor::LightGray, PosVec2(9, 0));
+	//	_text_handler.draw_char('@', FontColor::Blue, IntVec2(5, 0));
+	//	_text_handler.draw_char('@', FontColor::Purple, IntVec2(6, 0));
+	//	_text_handler.draw_char('@', FontColor::Cyan, IntVec2(7, 0));
+	//	_text_handler.draw_char('@', FontColor::White, IntVec2(8, 0));
+	//	_text_handler.draw_char('@', FontColor::Gray, IntVec2(9, 0));
+	//	//_text_handler.draw_char('@', FontColor::LightGray, IntVec2(9, 0));
 
-	//	//_text_handler.draw_char('@', FontColor::DarkGray, PosVec2(10, 0));
+	//	//_text_handler.draw_char('@', FontColor::DarkGray, IntVec2(10, 0));
 	//};
 	//--------
 	//auto
@@ -260,11 +260,11 @@ int RealMainSdl::run()
 		//////screen_window.draw(popup_window);
 		////screen_window.draw(yes_no_window);
 
-		for (u32 j=0; j<screen_window.with_border_size_2d().y; ++j)
+		for (int j=0; j<screen_window.with_border_size_2d().y; ++j)
 		{
-			for (u32 i=0; i<screen_window.with_border_size_2d().x; ++i)
+			for (int i=0; i<screen_window.with_border_size_2d().x; ++i)
 			{
-				const PosVec2 wb_pos(i, j);
+				const IntVec2 wb_pos(i, j);
 				//const ecs::EntId id
 				//	= screen_window.with_border_ent_id_at(wb_pos);
 				const auto& drawable_data

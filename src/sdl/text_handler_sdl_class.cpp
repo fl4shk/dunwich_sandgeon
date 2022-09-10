@@ -22,7 +22,7 @@ namespace dunwich_sandgeon
 namespace io
 {
 
-const PosVec2 TextHandlerSdl::TILE_SIZE_2D(8, 8);
+const IntVec2 TextHandlerSdl::TILE_SIZE_2D(8, 8);
 
 //bool TextHandlerSdl::init(sdl::Renderer& s_renderer, int& s_zoom)
 bool TextHandlerSdl::init(sdl::Renderer& s_renderer)
@@ -246,11 +246,11 @@ bool TextHandlerSdl::init(sdl::Renderer& s_renderer)
 }
 
 void TextHandlerSdl::draw_char(int c, const FgBgColorPair& color_pair,
-	const PosVec2& draw_pos)
+	const IntVec2& draw_pos)
 {
 	const auto draw_char_fg_surface_size_2d
 		= _get_draw_char_fg_surface_size_2d();
-	const PosVec2
+	const IntVec2
 		c_tilemap_pos(c % draw_char_fg_surface_size_2d.x,
 			c / draw_char_fg_surface_size_2d.x),
 
@@ -276,9 +276,9 @@ void TextHandlerSdl::draw_char(int c, const FgBgColorPair& color_pair,
 	SDL_RenderCopy(*_renderer, _fg_texture_map.at(color_pair.fg),
 		fg_src_rect, dst_rect);
 }
-PosVec2 TextHandlerSdl::_get_draw_char_fg_surface_size_2d() const
+IntVec2 TextHandlerSdl::_get_draw_char_fg_surface_size_2d() const
 {
-	return PosVec2(_fg_surface->w / TILE_SIZE_2D.x,
+	return IntVec2(_fg_surface->w / TILE_SIZE_2D.x,
 		_fg_surface->h / TILE_SIZE_2D.y);
 }
 

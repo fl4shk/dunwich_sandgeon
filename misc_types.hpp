@@ -26,30 +26,27 @@
 namespace dunwich_sandgeon
 {
 
-using IntVec2 = math::Vec2<int>;
-using IntVec3 = math::Vec3<int>;
-////using PosVec2 = binser::Vec2Ex<int>;
-////using PosVec3 = binser::Vec3Ex<int>;
-using IntVec2Ex = binser::Vec2Ex<int>;
-using IntVec3Ex = binser::Vec3Ex<int>;
-
+//using PosVec2 = math::Vec2<i32>;
+//using PosVec3 = math::Vec3<i32>;
+////using PosVec2 = binser::Vec2Ex<i32>;
+////using PosVec3 = binser::Vec3Ex<i32>;
+//using PosVec2Ex = binser::Vec2Ex<i32>;
+//using PosVec3Ex = binser::Vec3Ex<i32>;
+//
 //using SizeVec2 = math::Vec2<u32>;
 ////using SizeVec2 = binser::Vec2Ex<u32>;
 //using SizeVec2Ex = binser::Vec2Ex<u32>;
 //
 //using DblVec2 = math::Vec2<double>;
 //using DblVec2Ex = binser::Vec2Ex<double>;
+using PosVec2 = math::Vec2<double>;
+using PosVec3 = math::Vec3<double>;
+
+using SizeVec2 = math::Vec2<double>;
+using SizeVec2Ex = binser::Vec2Ex<double>;
+
 using DblVec2 = math::Vec2<double>;
-using DblVec3 = math::Vec3<double>;
-
 using DblVec2Ex = binser::Vec2Ex<double>;
-using DblVec3Ex = binser::Vec3Ex<double>;
-
-using DblHit2 = math::Hit2<double>;
-using DblSweep2 = math::Sweep2<double>;
-using DblLineSeg2 = math::LineSeg2<double>;
-using DblRect2 = math::Rect2<double>;
-
 
 //template<typename FirstT, typename OtherT>
 //inline void set_vec2(Vec2<FirstT>& self, const Vec2<OtherT>& other)

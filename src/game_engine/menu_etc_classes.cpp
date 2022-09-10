@@ -176,7 +176,7 @@ const std::string
 //	MsgLog::DEFAULT_INTERNAL_HEIGHT = SCREEN_SIZE_2D.y;
 
 MsgLog::MsgLog(const RopeDeque& s_data, uint s_internal_height,
-	const SizeVec2& s_window_size_2d, Vec2<bool> s_center,
+	const IntVec2& s_window_size_2d, Vec2<bool> s_center,
 	bool s_keep_sep)
 {
 	_internal_height = s_internal_height;
@@ -309,13 +309,13 @@ std::string Menu::Node::widget_check_button_str() const
 		: WIDGET_CHECK_BUTTON_CHECKED_STR;
 }
 
-Menu::Menu(const std::string& s_sel_key, const SizeVec2& s_size_2d,
+Menu::Menu(const std::string& s_sel_key, const IntVec2& s_size_2d,
 	const NodeMap& s_node_map, Vec2<bool> s_center, uint s_tab_amount)
 	: _sel_key(s_sel_key), _size_2d(s_size_2d), _node_map(s_node_map),
 	_center(s_center), _tab_amount(s_tab_amount)
 {
 }
-Menu::Menu(const std::string& s_sel_key, const SizeVec2& s_size_2d,
+Menu::Menu(const std::string& s_sel_key, const IntVec2& s_size_2d,
 	NodeMap&& s_node_map, Vec2<bool> s_center, uint s_tab_amount)
 	: _sel_key(s_sel_key), _size_2d(s_size_2d),
 	_node_map(std::move(s_node_map)), _center(s_center),

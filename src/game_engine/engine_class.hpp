@@ -137,7 +137,7 @@ public:		// types
 		// "pfield" is short for "playfield".
 		// I needed to have a shorter variable name, so I changed the name
 		// of this variable and related functions
-		std::unordered_map<PosVec3, ecs::EntIdSet> pfield_ent_id_map;
+		std::unordered_map<IntVec3, ecs::EntIdSet> pfield_ent_id_map;
 
 	private:		// variables
 		u64 _base_rng_seed = 0;
@@ -322,7 +322,7 @@ public:		// functions
 		exit(1);
 	}
 
-	//void dbg_check_ecs_engine(const PosVec2& wb_pos=PosVec2(0, 0));
+	//void dbg_check_ecs_engine(const IntVec2& wb_pos=IntVec2(0, 0));
 
 	//inline void tick()
 	//{
@@ -506,42 +506,42 @@ public:		// `_non_ecs_ser_data_arr` accessor functions
 	}
 	//--------
 	inline ecs::EntIdSet& pfield_ent_id_set_fn(ecs::FileNum file_num,
-		const PosVec3& pos)
+		const IntVec3& pos)
 	{
 		return non_ecs_ser_data_fn(file_num).pfield_ent_id_map[pos];
 	}
 	//inline const ecs::EntIdSet& pfield_ent_id_set_fn
-	//	(ecs::FileNum file_num, const PosVec3& pos) const
+	//	(ecs::FileNum file_num, const IntVec3& pos) const
 	//{
 	//	return non_ecs_ser_data(file_num).pfield_ent_id_map[pos];
 	//}
-	inline ecs::EntIdSet& pfield_ent_id_set(const PosVec3& pos)
+	inline ecs::EntIdSet& pfield_ent_id_set(const IntVec3& pos)
 	{
 		return pfield_ent_id_set_fn(USE_CURR_FILE_NUM, pos);
 	}
-	//inline const ecs::EntIdSet& pfield_ent_id_set(const PosVec3& pos)
+	//inline const ecs::EntIdSet& pfield_ent_id_set(const IntVec3& pos)
 	//	const
 	//{
 	//	return pfield_ent_id_set_fn(USE_CURR_FILE_NUM, pos);
 	//}
 	//--------
 	inline ecs::EntIdSet& pfield_ent_id_set_fn(ecs::FileNum file_num,
-		const PosVec2& pos_2d)
+		const IntVec2& pos_2d)
 	{
 		return pfield_ent_id_set_fn(file_num,
 			to_pos_vec3_fn(file_num, pos_2d));
 	}
 	//inline const ecs::EntIdSet& pfield_ent_id_set_fn(ecs::FileNum file_num,
-	//	const PosVec2& pos_2d) const
+	//	const IntVec2& pos_2d) const
 	//{
 	//	return pfield_ent_id_set_fn(file_num,
 	//		to_pos_vec3_fn(file_num, pos_2d));
 	//}
-	inline ecs::EntIdSet& pfield_ent_id_set(const PosVec2& pos_2d)
+	inline ecs::EntIdSet& pfield_ent_id_set(const IntVec2& pos_2d)
 	{
 		return pfield_ent_id_set(to_pos_vec3(pos_2d));
 	}
-	//inline const ecs::EntIdSet& pfield_ent_id_set(const PosVec2& pos_2d)
+	//inline const ecs::EntIdSet& pfield_ent_id_set(const IntVec2& pos_2d)
 	//	const
 	//{
 	//	return pfield_ent_id_set(to_pos_vec3(pos_2d));
@@ -590,12 +590,12 @@ public:		// `_non_ecs_ser_data_arr` accessor functions
 	//--------
 public:		// functions
 	//--------
-	inline PosVec3 to_pos_vec3_fn(ecs::FileNum file_num,
-		const PosVec2& pos_2d) const
+	inline IntVec3 to_pos_vec3_fn(ecs::FileNum file_num,
+		const IntVec2& pos_2d) const
 	{
-		return PosVec3(pos_2d.x, pos_2d.y, floor_fn(file_num));
+		return IntVec3(pos_2d.x, pos_2d.y, floor_fn(file_num));
 	}
-	inline PosVec3 to_pos_vec3(const PosVec2& pos_2d) const
+	inline IntVec3 to_pos_vec3(const IntVec2& pos_2d) const
 	{
 		return to_pos_vec3_fn(USE_CURR_FILE_NUM, pos_2d);
 	}
@@ -641,7 +641,7 @@ public:		// functions
 	void position_ctor_callback(comp::Position* obj);
 	void position_dtor_callback(comp::Position* obj);
 	void position_set_pos_callback(comp::Position* obj,
-		const PosVec3& n_pos);
+		const IntVec3& n_pos);
 
 	inline Menu build_yes_no_menu(auto* self,
 		const std::function<void(decltype(self))>& yes_func,

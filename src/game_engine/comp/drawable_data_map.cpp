@@ -48,7 +48,7 @@ const std::unordered_map<std::string, Drawable::Data>& drawable_data_map()
 
 		// '#', 35
 		{
-			tile_str_map().at(Tile::Wall),
+			bg_tile_str_map().at(BgTile::Wall),
 			{
 				.c='#',
 				//.color_pair=FontColor::LightGray,
@@ -80,7 +80,7 @@ const std::unordered_map<std::string, Drawable::Data>& drawable_data_map()
 
 		// '.', 46
 		{
-			tile_str_map().at(Tile::Floor),
+			bg_tile_str_map().at(BgTile::Floor),
 			{
 				.c='.',
 				//.color_pair=FontColor::LightGray,
@@ -92,7 +92,7 @@ const std::unordered_map<std::string, Drawable::Data>& drawable_data_map()
 
 		// '<', 60
 		{
-			tile_str_map().at(Tile::DownStairs),
+			bg_tile_str_map().at(BgTile::DownStairs),
 			{
 				.c='<',
 				.color_pair=FontColor::Brown,
@@ -102,7 +102,7 @@ const std::unordered_map<std::string, Drawable::Data>& drawable_data_map()
 
 		// '>', 62
 		{
-			tile_str_map().at(Tile::UpStairs),
+			bg_tile_str_map().at(BgTile::UpStairs),
 			{
 				.c='>',
 				.color_pair=FontColor::Brown,
@@ -122,7 +122,7 @@ const std::unordered_map<std::string, Drawable::Data>& drawable_data_map()
 
 		// '^', 94,
 		{
-			tile_str_map().at(Tile::Spikes),
+			bg_tile_str_map().at(BgTile::Spikes),
 			{
 				.c='^',
 				.color_pair=FontColor::Gray,
@@ -142,7 +142,7 @@ const std::unordered_map<std::string, Drawable::Data>& drawable_data_map()
 
 		// '~', 126
 		{
-			tile_str_map().at(Tile::Water),
+			bg_tile_str_map().at(BgTile::Water),
 			{
 				.c='~',
 				.color_pair=FontColor::Blue,

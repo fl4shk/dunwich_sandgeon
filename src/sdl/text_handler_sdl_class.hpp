@@ -37,7 +37,7 @@ public:		// types
 	using FontColor = game_engine::FontColor;
 	using FgBgColorPair = game_engine::FgBgColorPair;
 public:		// constants
-	static const PosVec2 TILE_SIZE_2D;
+	static const IntVec2 TILE_SIZE_2D;
 
 	static constexpr int
 		//--------
@@ -105,14 +105,14 @@ public:		// functions
 	bool init(sdl::Renderer& s_renderer);
 
 	void draw_char(int c, const FgBgColorPair& color_pair,
-		const PosVec2& draw_pos);
+		const IntVec2& draw_pos);
 	inline void draw_char(int c, FontColor fg_color,
-		const PosVec2& draw_pos)
+		const IntVec2& draw_pos)
 	{
 		draw_char(c, FgBgColorPair(fg_color), draw_pos);
 	}
 private:		// functions
-	PosVec2 _get_draw_char_fg_surface_size_2d() const;
+	IntVec2 _get_draw_char_fg_surface_size_2d() const;
 };
 
 } // namespace io

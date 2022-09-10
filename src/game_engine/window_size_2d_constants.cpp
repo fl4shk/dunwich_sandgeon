@@ -23,34 +23,34 @@ namespace dunwich_sandgeon
 namespace game_engine
 {
 //--------
-const SizeVec2
+const IntVec2
 	WITH_BORDER_SCREEN_SIZE_2D(82, 62),
 
 	SCREEN_SIZE_2D
-		(WITH_BORDER_SCREEN_SIZE_2D - SizeVec2(2, 2));
+		(WITH_BORDER_SCREEN_SIZE_2D - Vec2(2, 2));
 //--------
-const PosVec2 
+const IntVec2 
 	PFIELD_WINDOW_POS(0, 0),
 
 	PFIELD_WINDOW_END_POS
 		(WITH_BORDER_SCREEN_SIZE_2D.x - 1 - 20,
 		WITH_BORDER_SCREEN_SIZE_2D.y - 1 - 10);
-const PosVec2Ex
-	PFIELD_WINDOW_EX_RANGE
-	= {
-		.data=PosVec2(),
-		.max=PFIELD_WINDOW_END_POS,
-		.min=PFIELD_WINDOW_POS
-	};
+//const IntVec2Ex
+//	PFIELD_WINDOW_EX_RANGE
+//	= {
+//		.data=IntVec2(),
+//		.max=PFIELD_WINDOW_END_POS,
+//		.min=PFIELD_WINDOW_POS
+//	};
 
-const SizeVec2
+const IntVec2
 	PFIELD_WINDOW_SIZE_2D
 		(PFIELD_WINDOW_END_POS.x
 			- PFIELD_WINDOW_POS.x + 1,
 		PFIELD_WINDOW_END_POS.y
 			- PFIELD_WINDOW_POS.y + 1);
 
-const PosVec2 
+const IntVec2 
 	LOG_WINDOW_POS
 		(0,
 		PFIELD_WINDOW_END_POS.y),

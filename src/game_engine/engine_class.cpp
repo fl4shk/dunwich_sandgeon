@@ -125,15 +125,16 @@ Engine::Engine(int s_argc, char** s_argv, bool do_create_or_load)
 	//_non_ecs_ser_data_arr(NUM_FILES, NonEcsSerData()),
 	key_status(size_t(KeyKind::Lim)),
 
-	screen_window(PosVec2(), WITH_BORDER_SCREEN_SIZE_2D),
-	aux_window(PosVec2(), WITH_BORDER_SCREEN_SIZE_2D),
+	screen_window(IntVec2(), WITH_BORDER_SCREEN_SIZE_2D, false),
+	aux_window(IntVec2(), WITH_BORDER_SCREEN_SIZE_2D, false),
 
-	pfield_window(PFIELD_WINDOW_POS, PFIELD_WINDOW_END_POS),
-	log_window(LOG_WINDOW_POS, LOG_WINDOW_END_POS),
-	hud_window(HUD_WINDOW_POS, HUD_WINDOW_END_POS),
-	popup_window(POPUP_WINDOW_POS, POPUP_WINDOW_END_POS),
-	yes_no_window(YES_NO_WINDOW_POS, YES_NO_WINDOW_END_POS),
-	text_yes_no_window(TEXT_YES_NO_WINDOW_POS, TEXT_YES_NO_WINDOW_END_POS),
+	pfield_window(PFIELD_WINDOW_POS, PFIELD_WINDOW_END_POS, true),
+	log_window(LOG_WINDOW_POS, LOG_WINDOW_END_POS, true),
+	hud_window(HUD_WINDOW_POS, HUD_WINDOW_END_POS, true),
+	popup_window(POPUP_WINDOW_POS, POPUP_WINDOW_END_POS, true),
+	yes_no_window(YES_NO_WINDOW_POS, YES_NO_WINDOW_END_POS, true),
+	text_yes_no_window(TEXT_YES_NO_WINDOW_POS, TEXT_YES_NO_WINDOW_END_POS,
+		true),
 
 	aux_menu(Menu()),
 	popup_menu(Menu()),
@@ -164,7 +165,7 @@ Engine::Engine(int s_argc, char** s_argv, bool do_create_or_load)
 	_src_file_num = &ecs_engine.src_file_num;
 	_copy_dst_file_num = &ecs_engine.copy_dst_file_num;
 
-	//screen_window = Window(this, PosVec2(),
+	//screen_window = Window(this, IntVec2(),
 	//		WITH_BORDER_SCREEN_SIZE_2D, i);
 	//for (i32 i=0; i<NUM_FILES; ++i)
 	//{
@@ -180,9 +181,9 @@ Engine::Engine(int s_argc, char** s_argv, bool do_create_or_load)
 	//	//};
 	//	//--------
 	//	_screen_window_vec.push_back
-	//		(Window(PosVec2(), WITH_BORDER_SCREEN_SIZE_2D, i));
+	//		(Window(IntVec2(), WITH_BORDER_SCREEN_SIZE_2D, i));
 	//	_aux_window_vec.push_back
-	//		(Window(PosVec2(), WITH_BORDER_SCREEN_SIZE_2D, i));
+	//		(Window(IntVec2(), WITH_BORDER_SCREEN_SIZE_2D, i));
 	//	//--------
 	//	_pfield_window_vec.push_back
 	//		(Window(PFIELD_WINDOW_POS, PFIELD_WINDOW_END_POS, i));
@@ -286,7 +287,7 @@ void Engine::deserialize(const binser::Value& bv)
 	//#endif		// DEBUG
 }
 
-//void Engine::dbg_check_ecs_engine(const PosVec2& wb_pos)
+//void Engine::dbg_check_ecs_engine(const IntVec2& wb_pos)
 //{
 //	const ecs::EntId id
 //		= screen_window.with_border_ent_id_at(wb_pos);
@@ -574,7 +575,7 @@ void Engine::position_dtor_callback(comp::Position* obj)
 }
 
 void Engine::position_set_pos_callback(comp::Position* obj,
-	const PosVec3& n_pos)
+	const IntVec3& n_pos)
 {
 	_err_when_ent_id_is_null(obj, "position_set_pos_callback");
 

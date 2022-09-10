@@ -136,12 +136,12 @@ private:		// variables
 		X(_ent_id, std::nullopt) \
 		X(_pos, std::nullopt)
 	ecs::EntId _ent_id = ecs::ENT_NULL_ID;
-	PosVec3 _pos;
+	IntVec3 _pos;
 public:		// variables
 	PlayfieldLayerPrio priority = PlayfieldLayerPrio::Block;
 public:		// functions
 	Position() = default;
-	Position(ecs::EntId s_ent_id, const PosVec3& s_pos,
+	Position(ecs::EntId s_ent_id, const IntVec3& s_pos,
 		PlayfieldLayerPrio s_priority);
 	Position(const binser::Value& bv);
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Position);
@@ -152,7 +152,7 @@ public:		// functions
 
 	GEN_GETTER_BY_VAL(ent_id);
 	GEN_GETTER_BY_CON_REF(pos);
-	void set_pos(const PosVec3& n_pos);
+	void set_pos(const IntVec3& n_pos);
 };
 
 //class NonSerPosition final: public ecs::Comp
@@ -165,12 +165,12 @@ public:		// functions
 //		X(_ent_id, std::nullopt)
 //		X(_pos, std::nullopt)
 //	ecs::EntId _ent_id = ecs::ENT_NULL_ID;
-//	PosVec3 _pos;
+//	IntVec3 _pos;
 //public:		// variables
 //	PlayfieldLayerPrio priority = PlayfieldLayerPrio::Block;
 //public:		// functions
 //	NonSerPosition() = default;
-//	NonSerPosition(ecs::EntId s_ent_id, const PosVec3& s_pos,
+//	NonSerPosition(ecs::EntId s_ent_id, const IntVec3& s_pos,
 //		PlayfieldLayerPrio s_priority);
 //	NonSerPosition(const binser::Value& bv);
 //	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(NonSerPosition);
@@ -181,7 +181,7 @@ public:		// functions
 //
 //	GEN_GETTER_BY_VAL(ent_id);
 //	GEN_GETTER_BY_CON_REF(pos);
-//	void set_pos(const PosVec3& n_pos);
+//	void set_pos(const IntVec3& n_pos);
 //};
 
 //class Weight final: public ecs::Comp

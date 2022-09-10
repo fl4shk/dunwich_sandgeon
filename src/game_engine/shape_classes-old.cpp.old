@@ -1,0 +1,264 @@
+// This file is part of Dunwich Sandgeon.
+// 
+// Copyright 2022 FL4SHK
+//
+// Dunwich Sandgeon is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by the
+// Free Software Foundation, either version 3 of the License, or (at your
+// option) any later version.
+// 
+// Dunwich Sandgeon is distributed in the hope that it will be useful, but
+// WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License along
+// with Dunwich Sandgeon.  If not, see <https://www.gnu.org/licenses/>.
+
+#include "shape_classes.hpp"
+#include "window_size_2d_constants.hpp"
+
+namespace dunwich_sandgeon
+{
+namespace game_engine
+{
+//--------
+void LineSeg::deserialize(const binser::Value& bv)
+{
+	MEMB_SER_LIST_LINE_SEG(BINSER_MEMB_DESERIALIZE);
+
+	if (want_in_pfield)
+	{
+		if (!Rect::pfield().arg_inside_inclusive(*this))
+		{
+			throw std::out_of_range(sconcat
+				("LineSeg::deserialize(): ",
+				"`want_in_pfield`: ",
+				"`!Rect::pfield().arg_inside_inclusive(*this)`",
+				p0.x, " ", p0.y, "; ", p1.x, " ", p1.y));
+		}
+	}
+}
+
+LineSeg::operator binser::Value () const
+{
+	binser::Value ret;
+
+	MEMB_SER_LIST_LINE_SEG(BINSER_MEMB_SERIALIZE);
+
+	return ret;
+}
+//--------
+const Rect& Rect::pfield()
+{
+	static const Rect
+		PFIELD
+		= {
+			.pos=PFIELD_WINDOW_POS + DblVec2(1, 1),
+			.size_2d=PFIELD_WINDOW_SIZE_2D - DblVec2(2, 2)
+		};
+
+	return PFIELD;
+}
+//--------
+void Rect::deserialize(const binser::Value& bv)
+{
+	MEMB_SER_LIST_RECT(BINSER_MEMB_DESERIALIZE);
+
+	if (want_in_pfield)
+	{
+		if (!arg_inside_inclusive(pfield()))
+		{
+			throw std::out_of_range(sconcat
+				("Rect::deserialize(): ",
+				"`want_in_pfield`: `!arg_inside_inclusive(pfield())`",
+				pos.x, " ", pos.y, "; ", size_2d.x, " ", size_2d.y));
+		}
+	}
+}
+
+Rect::operator binser::Value () const
+{
+	binser::Value ret;
+
+	MEMB_SER_LIST_RECT(BINSER_MEMB_SERIALIZE);
+
+	return ret;
+}
+//--------
+std::optional<Hit> Rect::intersection(const DblVec2& arg) const
+{
+	//--------
+	const DblVec2
+		temp_half(half());
+	//--------
+	//return (arg.x >= pos.x && arg.x <= br_corner().x
+	//	arg.y >= pos.y && arg.y <= br_corner().y);
+	const DblVec2::ElemT
+		dx = arg.x - pos.x;
+		px = temp_half.x - std::abs(dx);
+	if (px <= DblVec2::ElemT(0))
+	{
+		return std::nullopt;
+	}
+
+	const DblVec2::ElemT
+		dy = arg.y - pos.y;
+		py = temp_half.y - std::abs(dy);
+	if (py <= DblVec2::ElemT(0))
+	{
+		return std::nullopt;
+	}
+	//--------
+	Hit ret;
+
+	if (px < py)
+	{
+		const DblVec2::ElemT
+			sx = sign(dx);
+		ret.delta.x = px * sx;
+		ret.normal.x = sx;
+		ret.pos.x = pos.x + (temp_half.x * sx);
+		ret.pos.y = arg.y;
+	}
+	else // if (px >= py)
+	{
+		const DblVec2::ElemT
+			sy = sign(dy);
+		ret.delta.y = py * sy;
+		ret.normal.y = sy;
+		ret.pos.x = arg.x;
+		ret.pos.y = pos.y + (temp_half.y * sy);
+	}
+
+	return ret;
+	//--------
+}
+std::optional<Hit> Rect::intersection(const LineSeg& arg,
+	const DblVec2& padding) const
+{
+	//--------
+	const DblVec2
+		temp_pos(pos.x, pos.y),
+		temp_half(half()),
+
+		temp_arg_p0(arg.p0.x, arg.p0.y),
+		temp_arg_delta(arg.delta().x, arg.delta().y),
+
+		//padding(padding.x, padding.y),
+
+		scale
+		({
+			.x=DblVec2::ElemT(1) / temp_arg_delta.x,
+			.y=DblVec2::ElemT(1) / temp_arg_delta.y
+		}),
+		sign_vec({.x=sign(scale.x), .y=sign(scale.y)}),
+
+		temp_time_vec
+		({
+			.x=sign_vec.x * (temp_half.x + padding.x),
+			.y=sign_vec.y * (temp_half.y + padding.y),
+		}),
+		near_time_vec
+		({
+			.x=(temp_pos.x - temp_time_vec.x - temp_arg_p0.x) * scale.x,
+			.y=(temp_pos.y - temp_time_vec.y - temp_arg_p0.y) * scale.y,
+		}),
+		far_time_vec
+		({
+			.x=(temp_pos.x + temp_time_vec.x - temp_arg_p0.x) * scale.x,
+			.y=(temp_pos.y + temp_time_vec.y - temp_arg_p0.y) * scale.y,
+		});
+
+	if (near_time_vec.x > far_time_vec.y
+		|| near_time_vec.y > far_time_vec.x)
+	{
+		return std::nullopt;
+	}
+
+	const DblVec2::ElemT
+		near_time
+			= near_time_vec.x > near_time_vec.y
+			? near_time_vec.x
+			: near_time_vec.y,
+		far_time
+			= far_time_vec.x > far_time_vec.y
+			? far_time_vec.x
+			: far_time_vec.y;
+
+	if (near_time >= DblVec2::ElemT(1) || far_time <= DblVec2::ElemT(0))
+	{
+		return std::nullopt;
+	}
+	//--------
+	Hit ret;
+	ret.t = clamp(near_time, 0.0, 1.0);
+
+	if (near_time_vec.x > near_time_vec.y)
+	{
+		ret.normal.x = -sign_vec.x;
+		ret.normal.y = 0;
+	}
+	else // if (near_time_vec.x <= near_time_vec.y)
+	{
+		ret.normal.x = 0;
+		ret.normal.y = -sign_vec.y;
+	}
+	ret.delta.x = (1.0 - ret.t) * (-temp_arg_delta.x);
+	ret.delta.y = (1.0 - ret.t) * (-temp_arg_delta.y);
+	ret.pos.x = temp_arg_p0.x + temp_arg_delta.x * ret.t;
+	ret.pos.y = temp_arg_p0.y + temp_arg_delta.y * ret.t;
+
+	return ret;
+	//--------
+}
+std::optional<Hit> Rect::intersection(const Rect& arg) const
+{
+	//--------
+	const DblVec2
+		temp_half(half()),
+		temp_arg_half(arg.half());
+	//--------
+	const DblVec2::ElemT
+		dx = arg.pos.x - pos.x,
+		px = (temp_arg_half.x + temp_half.x) - std::abs(dx);
+	if (px <= 0)
+	{
+		return std::nullopt;
+	}
+
+	const DblVec2::ElemT
+		dy = arg.pos.y - pos.y,
+		py = (temp_arg_half.y + temp_half.y) - std::abs(dy);
+	if (py <= 0)
+	{
+		return std::nullopt;
+	}
+	//--------
+	Hit ret;
+
+	if (px < py)
+	{
+		const DblVec2::ElemT
+			sx = sign(dx);
+		ret.delta.x = px * sx;
+		ret.normal.x = sx;
+		ret.pos.x = pos.x + (temp_half.x * sx);
+		ret.pos.y = arg.pos.y;
+	}
+	else // if (px >= py)
+	{
+		const DblVec2::ElemT
+			sy = sign(dy);
+		ret.delta.y = py * sy;
+		ret.normal.y = sy;
+		ret.pos.x = arg.pos.x;
+		ret.pos.y = pos.y + (temp_half.y * sy);
+	}
+
+	return ret;
+	//--------
+}
+//--------
+} // namespace game_engine
+} // namespace dunwich_sandgeon

@@ -83,7 +83,8 @@ public:		// functions
 		: fg(s_fg), bg(s_bg)
 	{
 	}
-	constexpr inline FgBgColorPair(const binser::Value& bv)
+	//constexpr 
+	inline FgBgColorPair(const binser::Value& bv)
 	{
 		fg = FontColor(bv.at("fg").get<u32>());
 		bg = FontColor(bv.at("bg").get<u32>());

@@ -55,7 +55,7 @@ private:		// variables
 	SDL_TimerID _global_timer_id;
 	bool _did_handle_global_timer = true;
 	Uint32 _global_timer_interval = 0;
-	PosVec2 _logical_size_2d;
+	IntVec2 _logical_size_2d;
 	//int _zoom = DEF_ZOOM;
 	//float _scale = SCALE_DEFAULT_VAL;
 	Engine _engine;

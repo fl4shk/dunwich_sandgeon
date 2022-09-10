@@ -82,14 +82,25 @@ protected:		// serialized variables
 		/* X(_drawable_data_v2d, std::nullopt) */ \
 
 	//int _priority = 0;
-	PosVec2 _pos;
+	IntVec2 _pos;
 	std::vector<std::vector<DrawData>> _drawable_data_v2d;
+//protected:		// static funcs
+//	static inline DblVec2 _init_pos(const DblVec2& s_some_pos,
+//		)
+//	static inline std::vector<std::vector<DrawData>> _init_dd2vd
+//		(const DblVec2& s_some_pos,
+//		const DblVec2& s_some_size_2d_or_end_pos,
+//		bool use_end_pos,
+//		bool first_two_args_are_with_border)
 public:		// functions
 	Window();
-	Window(const PosVec2& s_some_pos, const SizeVec2& s_some_size_2d,
-		bool prev_args_are_with_border=true);
-	Window(const PosVec2& s_some_pos, const PosVec2& s_some_end_pos,
-		bool prev_args_are_with_border=true);
+	//Window(const DblVec2& s_some_pos, const DblVec2& s_some_size_2d,
+	//	bool with_border=true);
+	//Window(const DblVec2& s_some_pos, const DblVec2& s_some_end_pos,
+	//	bool with_border=true);
+	Window(const IntVec2& s_some_pos,
+		const IntVec2& s_some_size_2d_or_end_pos, bool use_end_pos,
+		bool with_border=true);
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Window);
 	virtual ~Window();
 
@@ -98,50 +109,50 @@ public:		// functions
 	//void deserialize(const binser::Value& bv);
 	//void init_set_border();
 
-	inline DrawData& with_border_drawable_data_at(const PosVec2& index)
+	inline DrawData& with_border_drawable_data_at(const IntVec2& index)
 	{
 		return _drawable_data_v2d.at(index.y).at(index.x);
 	}
 	inline const DrawData& with_border_drawable_data_at
-		(const PosVec2& index) const
+		(const IntVec2& index) const
 	{
 		return _drawable_data_v2d.at(index.y).at(index.x);
 	}
-	inline DrawData& with_border_drawable_data_at(const SizeVec2& index)
-	{
-		return _drawable_data_v2d.at(index.y).at(index.x);
-	}
-	inline const DrawData& with_border_drawable_data_at
-		(const SizeVec2& index) const
-	{
-		return _drawable_data_v2d.at(index.y).at(index.x);
-	}
+	//inline DrawData& with_border_drawable_data_at(const IntVec2& index)
+	//{
+	//	return _drawable_data_v2d.at(index.y).at(index.x);
+	//}
+	//inline const DrawData& with_border_drawable_data_at
+	//	(const IntVec2& index) const
+	//{
+	//	return _drawable_data_v2d.at(index.y).at(index.x);
+	//}
 
-	inline DrawData& drawable_data_at(const PosVec2& index)
+	inline DrawData& drawable_data_at(const IntVec2& index)
 	{
-		return with_border_drawable_data_at(index + PosVec2(1, 1));
+		return with_border_drawable_data_at(index + IntVec2(1, 1));
 	}
-	inline const DrawData& drawable_data_at(const PosVec2& index) const
+	inline const DrawData& drawable_data_at(const IntVec2& index) const
 	{
-		return with_border_drawable_data_at(index + PosVec2(1, 1));
+		return with_border_drawable_data_at(index + IntVec2(1, 1));
 	}
-	inline DrawData& drawable_data_at(const SizeVec2& index)
-	{
-		return with_border_drawable_data_at(index + SizeVec2(1, 1));
-	}
-	inline const DrawData& drawable_data_at(const SizeVec2& index) const
-	{
-		return with_border_drawable_data_at(index + SizeVec2(1, 1));
-	}
+	//inline DrawData& drawable_data_at(const IntVec2& index)
+	//{
+	//	return with_border_drawable_data_at(index + IntVec2(1, 1));
+	//}
+	//inline const DrawData& drawable_data_at(const IntVec2& index) const
+	//{
+	//	return with_border_drawable_data_at(index + IntVec2(1, 1));
+	//}
 
-	inline SizeVec2 with_border_size_2d() const
+	inline IntVec2 with_border_size_2d() const
 	{
-		return SizeVec2(drawable_data_v2d().front().size(),
+		return IntVec2(drawable_data_v2d().front().size(),
 			drawable_data_v2d().size());
 	}
-	inline SizeVec2 size_2d() const
+	inline IntVec2 size_2d() const
 	{
-		return with_border_size_2d() - SizeVec2(2, 2);
+		return with_border_size_2d() - IntVec2(2, 2);
 	}
 
 	void clear();
@@ -152,7 +163,7 @@ public:		// functions
 	void draw(const MsgLog& msg_log);
 	//void draw(const Hud& hud);
 	//void draw(const LayeredWindow& layered_win);
-	//void draw_text(const PosVec2& where, const std::string& what);
+	//void draw_text(const IntVec2& where, const std::string& what);
 	
 	//GEN_GETTER_AND_SETTER_BY_VAL(priority);
 	//GEN_GETTER_AND_SETTER_BY_VAL(engine);
@@ -167,7 +178,7 @@ public:		// functions
 //	std::map<std::string, uint> _layer_prio_map;
 //public:		// functions
 //	LayeredWindow();
-//	LayeredWindow(const PosVec2& s_pos, const SizeVec2& s_size_2d,
+//	LayeredWindow(const IntVec2& s_pos, const IntVec2& s_size_2d,
 //		const std::map<std::string, uint>& s_layer_prio_map);
 //	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(LayeredWindow);
 //	virtual ~LayeredWindow();
@@ -182,7 +193,7 @@ public:		// functions
 //	{
 //		return _layer_map.at(key);
 //	}
-//	inline SizeVec2 size_2d() const
+//	inline IntVec2 size_2d() const
 //	{
 //		for (const auto& pair: layer_map())
 //		{

@@ -140,12 +140,12 @@ private:		// variables
 		_internal_height = DEFAULT_INTERNAL_HEIGHT,
 		_scroll = 0;
 
-	SizeVec2 _window_size_2d = SCREEN_SIZE_2D;
+	IntVec2 _window_size_2d = SCREEN_SIZE_2D;
 	Vec2<bool> _center = Vec2(false, false);
 	bool _keep_sep = false;
 public:		// functions
 	inline MsgLog(uint s_internal_height=DEFAULT_INTERNAL_HEIGHT,
-		const SizeVec2& s_window_size_2d=SCREEN_SIZE_2D,
+		const IntVec2& s_window_size_2d=SCREEN_SIZE_2D,
 		Vec2<bool> s_center=Vec2(false, false), bool s_keep_sep=false)
 		: _internal_height(s_internal_height),
 		_window_size_2d(s_window_size_2d), _center(s_center),
@@ -154,7 +154,7 @@ public:		// functions
 	}
 	MsgLog(const RopeDeque& s_data,
 		uint s_internal_height=DEFAULT_INTERNAL_HEIGHT,
-		const SizeVec2& s_window_size_2d=SCREEN_SIZE_2D,
+		const IntVec2& s_window_size_2d=SCREEN_SIZE_2D,
 		Vec2<bool> s_center=Vec2(false, false), bool s_keep_sep=false);
 	MsgLog(const binser::Value& bv);
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(MsgLog);
@@ -417,16 +417,16 @@ private:		// variables
 	// The currently-selected `Node`'s key
 	std::string _sel_key = "";
 
-	SizeVec2 _size_2d = SCREEN_SIZE_2D;
+	IntVec2 _size_2d = SCREEN_SIZE_2D;
 	NodeMap _node_map;
 	Vec2<bool> _center = Vec2(false, false);
 	uint _tab_amount = 0;
 public:		// functions
 	Menu() = default;
-	Menu(const std::string& s_sel_key, const SizeVec2& s_size_2d,
+	Menu(const std::string& s_sel_key, const IntVec2& s_size_2d,
 		const NodeMap& s_node_map, Vec2<bool> s_center=Vec2(false, false),
 		uint s_tab_amount=0);
-	Menu(const std::string& s_sel_key, const SizeVec2& s_size_2d,
+	Menu(const std::string& s_sel_key, const IntVec2& s_size_2d,
 		NodeMap&& s_node_map, Vec2<bool> s_center=Vec2(false, false),
 		uint s_tab_amount=0);
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Menu);

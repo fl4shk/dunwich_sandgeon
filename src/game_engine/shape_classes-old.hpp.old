@@ -1,0 +1,141 @@
+// This file is part of Dunwich Sandgeon.
+// 
+// Copyright 2022 FL4SHK
+//
+// Dunwich Sandgeon is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by the
+// Free Software Foundation, either version 3 of the License, or (at your
+// option) any later version.
+// 
+// Dunwich Sandgeon is distributed in the hope that it will be useful, but
+// WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License along
+// with Dunwich Sandgeon.  If not, see <https://www.gnu.org/licenses/>.
+
+#ifndef src_game_engine_shape_classes_hpp
+#define src_game_engine_shape_classes_hpp
+
+// src/game_engine/shape_classes.hpp
+
+#include "../misc_includes.hpp"
+#include "../misc_types.hpp"
+
+namespace dunwich_sandgeon
+{
+namespace game_engine
+{
+//--------
+class Hit final
+{
+public:		// variables
+	DblVec2
+		delta,
+		normal,
+		pos;
+
+	// Time
+	DblVec2::ElemT t = 0.0;
+};
+//--------
+class Rect;
+//--------
+class LineSeg final
+{
+public:		// serialized variables
+	#define MEMB_SER_LIST_LINE_SEG(X) \
+		X(p0, std::nullopt) \
+		X(p1, std::nullopt) \
+
+	DblVec2
+		p0 = DblVec2(),
+		p1 = DblVec2();
+public:		// non-serialized variables
+	bool want_in_pfield = true;
+public:		// functions
+	//--------
+	void deserialize(const binser::Value& bv);
+	operator binser::Value () const;
+	//--------
+	inline auto operator <=> (const LineSeg& to_cmp) const = default;
+	//--------
+	inline DblVec2 delta() const
+	{
+		return p1 - p0;
+	}
+	//--------
+};
+//--------
+class Rect final
+{
+public:		// serialized variables
+	#define MEMB_SER_LIST_RECT(X) \
+		X(pos, std::nullopt) \
+		X(size_2d, std::nullopt) \
+
+	// The top-left position, with larger values growing down and to the
+	// right
+	DblVec2 pos = DblVec2();
+	DblVec2 size_2d = DblVec2();
+public:		// non-serialized variables
+	bool want_in_pfield = true;
+public:		// functions
+	//--------
+	static const Rect& pfield();
+	//--------
+	void deserialize(const binser::Value& bv);
+	operator binser::Value () const;
+	//--------
+	inline auto operator <=> (const Rect& to_cmp) const = default;
+	//--------
+	inline DblVec2 half() const
+	{
+		const DblVec2
+			pos_f(pos.x, pos.y),
+			size_2d_f(size_2d.x, size_2d.y);
+		return pos_f + (size_2d_f / 2.0);
+	}
+	inline DblVec2 tl_corner() const
+	{
+		return pos;
+	}
+	inline DblVec2 tr_corner() const
+	{
+		return pos + DblVec2(size_2d.x - 1u, 0);
+	}
+	inline DblVec2 bl_corner() const
+	{
+		return pos + DblVec2(0, size_2d.y - 1u);
+	}
+	inline DblVec2 br_corner() const
+	{
+		return pos + (size_2d - DblVec2(1u, 1u));
+	}
+	//--------
+	std::optional<Hit> intersection(const DblVec2& arg) const;
+	std::optional<Hit> intersection(const LineSeg& arg,
+		const DblVec2& padding=DblVec2()) const;
+	std::optional<Hit> intersection(const Rect& arg) const;
+
+	// Whether or not the *argument* is inside this `Rect`, inclusive
+	inline bool arg_inside_inclusive(const LineSeg& arg) const
+	{
+		return intersection(arg.p0) && intersection(arg.p1);
+	}
+	inline bool arg_inside_inclusive(const Rect& arg) const
+	{
+		return intersection(arg.tl_corner())
+			&& intersection(arg.tr_corner())
+			&& intersection(arg.bl_corner())
+			&& intersection(arg.br_corner());
+	}
+	//--------
+};
+//--------
+} // namespace game_engine
+} // namespace dunwich_sandgeon
+
+
+#endif		// src_game_engine_shape_classes_hpp
