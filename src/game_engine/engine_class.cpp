@@ -61,10 +61,16 @@ Engine::NonEcsSerData::NonEcsSerData()
 {
 	//const auto& time_count = get_hrc_now().time_since_epoch().count();
 	//rng.seed(time_count, time_count + 1, time_count + 2);
+
+	//#ifdef DEBUG
+	//printerr("Engine::NonEcsSerData::NonEcsSerData(): Note: ",
+	//	"**NOT** calling `_init_base_rng_seed()`\n");
+	//#endif		// DEBUG
+	//_init_base_rng_seed();
 }
 Engine::NonEcsSerData::NonEcsSerData(const binser::Value& bv)
 {
-	MEMB_AUTOSER_LIST_ENGINE_NON_ECS_SER_DATA(BINSER_MEMB_DESERIALIZE);
+	//MEMB_AUTOSER_LIST_ENGINE_NON_ECS_SER_DATA(BINSER_MEMB_DESERIALIZE);
 
 	//{
 	//	//std::vector<std::string> vec;
@@ -88,9 +94,16 @@ Engine::NonEcsSerData::NonEcsSerData(const binser::Value& bv)
 	//}
 
 	{
+		MEMB_AUTOSER_LIST_ENGINE_NON_ECS_SER_DATA(BINSER_MEMB_DESERIALIZE);
+
 		std::string str;
+		//str = sconcat(Rng(0));
 		binser::get_bv_memb(str, bv, "_rng", std::nullopt);
+
+		//printout("deserializing NonEcsSerData\n");
+		//printout(str, "\n");
 		inv_sconcat(str, _rng);
+		//printout(_rng, "\n");
 	}
 }
 
@@ -123,7 +136,7 @@ Engine::Engine(int s_argc, char** s_argv, bool do_create_or_load)
 	ecs_engine(NUM_FILES),
 
 	//_non_ecs_ser_data_arr(NUM_FILES, NonEcsSerData()),
-	key_status(size_t(KeyKind::Lim)),
+	key_status(int(KeyKind::Lim)),
 
 	screen_window(IntVec2(), WITH_BORDER_SCREEN_SIZE_2D, false),
 	aux_window(IntVec2(), WITH_BORDER_SCREEN_SIZE_2D, false),
@@ -277,14 +290,15 @@ void Engine::deserialize(const binser::Value& bv)
 	for (ecs::FileNum file_num=0; file_num<NUM_FILES; ++file_num)
 	{
 		//auto& lr_arr = layout_rng_arr_fn(file_num);
-		non_ecs_ser_data_fn(file_num).seed_layout_rng_arr
-			(layout_rng_arr_fn(file_num));
+		auto& temp = non_ecs_ser_data_fn(file_num);
+		temp.seed_layout_rng_arr(layout_rng_arr_fn(file_num));
+		//temp.seed_rngs_etc(layout_rng_arr_fn(file_num));
 	}
 
-	//#ifdef DEBUG
-	//printout("Engine::deserialize()\n");
+	#ifdef DEBUG
+	printout("Engine::deserialize()\n");
 	//dbg_osprint_layout_rng_a2d(std::cout);
-	//#endif		// DEBUG
+	#endif		// DEBUG
 }
 
 //void Engine::dbg_check_ecs_engine(const IntVec2& wb_pos)
@@ -414,6 +428,11 @@ void Engine::_create_or_load_save_file_etc()
 		{
 			try
 			{
+				#ifdef DEBUG
+				printerr("Engine::_create_or_load_save_file_etc(): ",
+					"parse_binser(), deserialize()\n");
+				#endif		// DEBUG
+
 				binser::parse_binser(file, root);
 				deserialize(root);
 			}
@@ -434,6 +453,12 @@ void Engine::_create_or_load_save_file_etc()
 		//err("game_engine::Engine::_create_or_load_save_file_etc(): ",
 		//	"Error opening file called \"", _save_file_name, "\" for ",
 		//	"reading.\n");
+
+		#ifdef DEBUG
+		printerr("Engine::_create_or_load_save_file_etc(): ",
+			"_save_to_binser(true);");
+		#endif		// DEBUG
+
 		_save_to_binser(true);
 	}
 	//printout("Testificate: ", ecs_engine.curr_file_num, "\n");
@@ -504,10 +529,10 @@ void Engine::copy_file()
 	layout_rng_arr_fn(*copy_dst_file_num())
 		= layout_rng_arr_fn(*src_file_num());
 
-	//#ifdef DEBUG
-	//printout("Engine::copy_file()\n");
+	#ifdef DEBUG
+	printout("Engine::copy_file()\n");
 	//dbg_osprint_layout_rng_a2d(std::cout);
-	//#endif		// DEBUG
+	#endif		// DEBUG
 }
 void Engine::erase_file()
 {
@@ -519,17 +544,20 @@ void Engine::erase_file()
 	auto& temp = non_ecs_ser_data_fn(*src_file_num());
 	temp = NonEcsSerData();
 	//layout_rng_arr_fn(*src_file_num()) = LayoutRngArr();
-	temp.seed_layout_rng_arr(layout_rng_arr_fn(*src_file_num()));
+	//temp.seed_layout_rng_arr(layout_rng_arr_fn(*src_file_num()));
+	temp.on_init_or_file_erase_seed_rngs_etc
+		(layout_rng_arr_fn(*src_file_num()));
 
 	//for (ecs::FileNum file_num=0; file_num<NUM_FILES; ++file_num)
 	//{
-	//	dbg_osprint_layout_rng_arr_fn(file_num);
+	//	dbg_osprint_layout_rng_arr_fn(std::cout, file_num);
+	//	printout("\n");
 	//}
 
-	//#ifdef DEBUG
-	//printout("Engine::erase_file()\n");
+	#ifdef DEBUG
+	printout("Engine::erase_file()\n");
 	//dbg_osprint_layout_rng_a2d(std::cout);
-	//#endif		// DEBUG
+	#endif		// DEBUG
 }
 void Engine::_inner_draw_menu_w_pre_clear(Window& window, Menu& menu)
 {

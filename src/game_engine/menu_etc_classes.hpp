@@ -108,22 +108,22 @@ using RopeDeque = std::deque<Rope>;
 std::ostream& operator << (std::ostream& os, const Rope& rope);
 
 Rope split_rope_by_whitespace(const Rope& rope, bool keep_sep=false);
-RopeDeque wrap_rope(const Rope& rope, uint row_length,
+RopeDeque wrap_rope(const Rope& rope, int row_length,
 	bool keep_sep=false);
 
 class MsgLog final
 {
 public:		// constants
-	static constexpr uint
-		WIDGET_SELECTED_SPACING_SIZE = 3u,
-		WIDGET_SPACING_SIZE = 6u;
+	static constexpr int
+		WIDGET_SELECTED_SPACING_SIZE = 3,
+		WIDGET_SPACING_SIZE = 6;
 	static const std::string
 		WIDGET_SELECTED_SPACING_STR,
 		WIDGET_SPACING_STR;
-	//static constexpr uint DEFAULT_INTERNAL_HEIGHT = 256;
-	//static constexpr uint DEFAULT_INTERNAL_HEIGHT = 70;
-	static constexpr uint DEFAULT_INTERNAL_HEIGHT = 10;
-	//static const uint DEFAULT_INTERNAL_HEIGHT;
+	//static constexpr int DEFAULT_INTERNAL_HEIGHT = 256;
+	//static constexpr int DEFAULT_INTERNAL_HEIGHT = 70;
+	static constexpr int DEFAULT_INTERNAL_HEIGHT = 10;
+	//static const int DEFAULT_INTERNAL_HEIGHT;
 private:		// variables
 	#define MEMB_LIST_MSG_LOG(X) \
 		X(_data, std::nullopt) \
@@ -135,16 +135,16 @@ private:		// variables
 
 	RopeDeque _data;
 
-	uint
+	int
 		// This height allows for scrolling
 		_internal_height = DEFAULT_INTERNAL_HEIGHT,
 		_scroll = 0;
 
 	IntVec2 _window_size_2d = SCREEN_SIZE_2D;
-	Vec2<bool> _center = Vec2(false, false);
+	Vec2<bool> _center = {false, false};
 	bool _keep_sep = false;
 public:		// functions
-	inline MsgLog(uint s_internal_height=DEFAULT_INTERNAL_HEIGHT,
+	inline MsgLog(int s_internal_height=DEFAULT_INTERNAL_HEIGHT,
 		const IntVec2& s_window_size_2d=SCREEN_SIZE_2D,
 		Vec2<bool> s_center=Vec2(false, false), bool s_keep_sep=false)
 		: _internal_height(s_internal_height),
@@ -153,9 +153,9 @@ public:		// functions
 	{
 	}
 	MsgLog(const RopeDeque& s_data,
-		uint s_internal_height=DEFAULT_INTERNAL_HEIGHT,
+		int s_internal_height=DEFAULT_INTERNAL_HEIGHT,
 		const IntVec2& s_window_size_2d=SCREEN_SIZE_2D,
-		Vec2<bool> s_center=Vec2(false, false), bool s_keep_sep=false);
+		Vec2<bool> s_center={false, false}, bool s_keep_sep=false);
 	MsgLog(const binser::Value& bv);
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(MsgLog);
 	inline ~MsgLog() = default;
@@ -203,14 +203,14 @@ public:		// constants
 		WIDGET_HORIZ_PICKER_LEFT_STR,
 		WIDGET_HORIZ_PICKER_INNER_BLANK_STR,
 		WIDGET_HORIZ_PICKER_RIGHT_STR;
-	static constexpr uint 
+	static constexpr int 
 		WIDGET_SPACING_SIZE = MsgLog::WIDGET_SPACING_SIZE;
 
 	static const std::string
 		START_NODE_KEY, END_NODE_KEY;
 
-	static constexpr uint
-		TAB_SIZE = 4u;
+	static constexpr int
+		TAB_SIZE = 4;
 	static const std::string
 		TAB_STR;
 
@@ -419,16 +419,16 @@ private:		// variables
 
 	IntVec2 _size_2d = SCREEN_SIZE_2D;
 	NodeMap _node_map;
-	Vec2<bool> _center = Vec2(false, false);
-	uint _tab_amount = 0;
+	Vec2<bool> _center = {false, false};
+	int _tab_amount = 0;
 public:		// functions
 	Menu() = default;
 	Menu(const std::string& s_sel_key, const IntVec2& s_size_2d,
-		const NodeMap& s_node_map, Vec2<bool> s_center=Vec2(false, false),
-		uint s_tab_amount=0);
+		const NodeMap& s_node_map, Vec2<bool> s_center={false, false},
+		int s_tab_amount=0);
 	Menu(const std::string& s_sel_key, const IntVec2& s_size_2d,
-		NodeMap&& s_node_map, Vec2<bool> s_center=Vec2(false, false),
-		uint s_tab_amount=0);
+		NodeMap&& s_node_map, Vec2<bool> s_center={false, false},
+		int s_tab_amount=0);
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Menu);
 	~Menu() = default;
 
@@ -498,8 +498,8 @@ public:		// static builder functions
 
 	static KncPair build_text_only_knc_pair(const std::string& key,
 		const std::string& s_text);
-	static KncPair build_separator_knc_pair(uint i);
-	static KncPair build_spaces_knc_pair(uint i);
+	static KncPair build_separator_knc_pair(int i);
+	static KncPair build_spaces_knc_pair(int i);
 
 	template<typename SelfT>
 	static inline KncPair build_action_button_knc_pair

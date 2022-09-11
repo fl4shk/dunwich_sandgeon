@@ -33,6 +33,11 @@ using IntVec3 = math::Vec3<int>;
 using IntVec2Ex = binser::Vec2Ex<int>;
 using IntVec3Ex = binser::Vec3Ex<int>;
 
+using IntHit2 = math::Hit2<int>;
+using IntSweep2 = math::Sweep2<int>;
+using IntLineSeg2 = math::LineSeg2<int>;
+using IntRect2 = math::Rect2<int>;
+
 //using SizeVec2 = math::Vec2<u32>;
 ////using SizeVec2 = binser::Vec2Ex<u32>;
 //using SizeVec2Ex = binser::Vec2Ex<u32>;

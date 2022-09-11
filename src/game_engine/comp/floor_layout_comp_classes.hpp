@@ -122,38 +122,21 @@ public:		// constants
 		//MAX_NUM_PATHS = 64;
 public:		// types
 	//--------
-	class Room final
-	{
-	public:		// constants
-		static constexpr DblVec2::CtorArgs
-			MIN_SIZE_2D = {.x=3, .y=3},
-			MAX_SIZE_2D = {.x=10, .y=10};
-	public:		// variables
-		//#define MEMB_EX_MM_LIST_COMP_DUNGEON_ROOM(X)
-		//	X(pos, std::nullopt,
-		//		DblVec2Ex, temp_pos,
-		//		PFIELD_WINDOW_END_POS, PFIELD_WINDOW_POS)
-		//	X(size_2d, std::nullopt,
-		//		DblVec2Ex, temp_size_2d,
-		//		MAX_SIZE_2D, MIN_SIZE_2D)
+	//class Room final
+	//{
+	//public:		// constants
+	//	static constexpr DblVec2
+	//		MIN_SIZE_2D = {3, 3},
+	//		MAX_SIZE_2D = {10, 10};
+	//public:		// variables
+	//	DblRect2 rect = {.pos=DblVec2(), .size_2d=MIN_SIZE_2D};
+	//	std::set<int> conn_set;
+	//public:		// functions
+	//	static Room from_bv(const binser::Value& bv);
+	//	operator binser::Value () const;
 
-		//#define MEMB_EX_CS_LIST_COMP_DUNGEON_ROOM(X)
-		//	X(path_lst, std::nullopt,
-		//		binser::IndCircLinkListEx<u32>, temp_path_lst,
-		//		MAX_NUM_PATHS, true, MIN_NUM_PATHS)
-
-		#define MEMB_LIST_COMP_DUNGEON_ROOM(X) \
-			X(rect, std::nullopt) \
-			X(conn_set, std::nullopt) \
-
-		DblRect2 rect = {.pos=DblVec2(), .size_2d=MIN_SIZE_2D};
-		std::set<u32> conn_set;
-	public:		// functions
-		static Room from_bv(const binser::Value& bv);
-		operator binser::Value () const;
-
-		inline auto operator <=> (const Room& to_cmp) const = default;
-	};
+	//	inline auto operator <=> (const Room& to_cmp) const = default;
+	//};
 	//--------
 	//class Path final
 	//{
@@ -183,12 +166,66 @@ public:		// types
 	//	inline auto operator <=> (const Path& to_cmp) const = default;
 	//};
 	//--------
+	class RoomPath final
+	{
+	public:		// constants
+		static constexpr int
+			PATH_THICKNESS = 1,
+			PATH_MIN_LEN = 2;
+
+		static constexpr IntVec2
+			ROOM_MIN_SIZE_2D = {4, 4},
+			ROOM_MAX_SIZE_2D = {10, 10};
+	public:		// variables
+		#define MEMB_LIST_COMP_DUNGEON_ROOM_PATH(X) \
+			X(rect, std::nullopt) \
+			X(conn_set, std::nullopt) \
+
+		IntRect2 rect
+		= {
+			.pos=IntVec2(),
+			.size_2d={PATH_THICKNESS, PATH_MIN_LEN}
+		};
+		std::set<int> conn_set;
+	public:		// functions
+		//--------
+		static RoomPath from_bv(const binser::Value& bv);
+		operator binser::Value () const;
+		//--------
+		inline auto operator <=> (const RoomPath& to_cmp) const = default;
+		//--------
+		constexpr inline bool is_path() const
+		{
+			return ((rect.size_2d.x == PATH_THICKNESS)
+				|| (rect.size_2d.y == PATH_THICKNESS));
+		}
+		constexpr inline bool is_horiz_path() const
+		{
+			return ((rect.size_2d.x >= PATH_MIN_LEN)
+				&& (rect.size_2d.y == PATH_THICKNESS));
+		}
+		constexpr inline bool is_vert_path() const
+		{
+			return ((rect.size_2d.x == PATH_THICKNESS)
+				&& (rect.size_2d.y >= PATH_MIN_LEN));
+		}
+
+		constexpr inline bool is_room() const
+		{
+			return ((rect.size_2d.x >= ROOM_MIN_SIZE_2D.x)
+				&& (rect.size_2d.x <= ROOM_MAX_SIZE_2D.x)
+				&& (rect.size_2d.y >= ROOM_MIN_SIZE_2D.y)
+				&& (rect.size_2d.y <= ROOM_MAX_SIZE_2D.y));
+		}
+		//--------
+	};
+	//--------
 private:		// variables
 	#define MEMB_LIST_COMP_DUNGEON(X) \
 		X(_data, std::nullopt) \
 		/* X(_path_vec, std::nullopt) */ \
 
-	binser::VectorEx<Room> _data;
+	binser::VectorEx<RoomPath> _data;
 	//binser::VectorEx<Path> _path_vec;
 public:		// functions
 	//--------
@@ -200,15 +237,15 @@ public:		// functions
 	virtual std::string kind_str() const;
 	virtual operator binser::Value () const;
 	//--------
-	inline Room& at(size_t index)
+	inline RoomPath& at(size_t index)
 	{
 		return _data.data.at(index);
 	}
-	inline const Room& at(size_t index) const
+	inline const RoomPath& at(size_t index) const
 	{
 		return _data.data.at(index);
 	}
-	inline void push_back(Room&& to_push)
+	inline void push_back(RoomPath&& to_push)
 	{
 		if (_data.data.size() + 1 > MAX_NUM_ROOMS)
 		{

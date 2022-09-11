@@ -38,7 +38,7 @@ public:		// constants
 		KIND_STR,
 		AUX_MENU_KEY_FILE_QMARK;
 public:		// types
-	enum class WinState: uint
+	enum class WinState: int
 	{
 		Aux,
 		Popup,

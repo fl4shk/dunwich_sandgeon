@@ -40,5 +40,66 @@ int main(int argc, char* argv[])
 
 	//printout("main()");
 	//dunwich_sandgeon::game_engine::engine->dbg_check_ecs_engine();
+
+	//pcg32
+	//	rng3(3), rng4(4);
+	//printout(rng3, "\n", rng4, "\n\n");
+	//temp_ostm
+	//	<< sconcat
+	//	(
+	//		//"47026247687942121848144207491837523525 ",
+	//		"47026247687942121848144207491837523520 ",
+	//		"117397592171526113268558934119004209487 ",
+	//		"237373757935471646366144288263181576297"
+	//	);
+
+	//temp_ostm << pcg32(4);
+	//temp_ostm >> rng;
+	//printout(rng, "\n");
+
+	//temp_ostm << pcg32(3);
+	//temp_ostm >> rng;
+	//printout(rng, "\n");
+
+	//temp_ostm << pcg32(4);
+	//temp_ostm >> rng;
+	//printout(rng, "\n");
+	//printout(pcg32(3), "\n", pcg32(4), "\n\n");
+
+	//{
+	//	std::stringstream temp_ostm;
+	//	temp_ostm << pcg32(4);
+	//	temp_ostm >> rng3;
+	//}
+	//printout(rng3, "\n", rng4, "\n\n");
+
+	//{
+	//	std::stringstream temp_ostm;
+	//	temp_ostm << pcg32(3);
+	//	temp_ostm >> rng4;
+	//}
+	//printout(rng3, "\n", rng4, "\n\n");
+
+	//{
+	//	std::stringstream temp_ostm;
+	//	temp_ostm << pcg32(3);
+	//	temp_ostm >> rng3;
+	//}
+	//printout(rng3, "\n", rng4, "\n\n");
+
+	//{
+	//	std::stringstream temp_ostm;
+	//	temp_ostm << pcg32(4);
+	//	temp_ostm >> rng4;
+	//}
+	//printout(rng3, "\n", rng4, "\n\n");
+
+	//{
+	//	std::stringstream temp_ostm;
+	//	temp_ostm << rng3;
+	//	temp_ostm >> rng4;
+	//}
+	//printout(rng3, "\n", rng4, "\n\n");
+
 	return dunwich_sandgeon::io::RealMainSdl(argc, argv).run();
 }

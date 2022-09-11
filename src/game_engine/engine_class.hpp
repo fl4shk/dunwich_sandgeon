@@ -33,7 +33,7 @@ namespace dunwich_sandgeon
 namespace game_engine
 {
 //--------
-enum class KeyKind: i32
+enum class KeyKind: int
 {
 	LeftL,
 	UpL,
@@ -89,7 +89,11 @@ class Engine final
 public:		// constants
 	// These are basement floors, going from B1F down to B25F
 	static constexpr i32
-		LOWEST_FLOOR = 25, HIGHEST_FLOOR = 1,
+		LOWEST_FLOOR
+			//= 25,
+			= 5,
+		HIGHEST_FLOOR
+			= 1,
 		//LOWEST_FLOOR = 5, HIGHEST_FLOOR = 1,
 		NUM_FLOORS = std::abs(HIGHEST_FLOOR - LOWEST_FLOOR) + 1;
 
@@ -155,24 +159,37 @@ public:		// types
 
 		operator binser::Value () const;
 
-		inline size_t seed_layout_rng_arr(LayoutRngArr& layout_rng_arr)
+		inline int seed_layout_rng_arr(LayoutRngArr& layout_rng_arr)
 			const
 		{
-			size_t i;
-			for (i=0; i<layout_rng_arr.size(); ++i)
+			int i;
+			for (i=0; i<int(layout_rng_arr.size()); ++i)
 			{
 				//layout_rng_arr.at(i).seed(_base_rng_seed + i);
 				layout_rng_arr.at(i) = Rng(_base_rng_seed + i);
 			}
 			return i;
 		}
-		inline void seed_rngs_etc(LayoutRngArr& layout_rng_arr)
+		//inline void seed_rngs_etc(LayoutRngArr& layout_rng_arr)
+		//{
+		//	const int i = seed_layout_rng_arr(layout_rng_arr);
+
+		//	//_rng.seed(_base_rng_seed + i);
+		//	_rng = Rng(_base_rng_seed + i);
+		//}
+	private:		// functions
+		inline void _init_base_rng_seed()
 		{
 			_base_rng_seed = get_hrc_now_rng_seed();
+		}
+	public:		// functions
+		inline void on_init_or_file_erase_seed_rngs_etc
+			(LayoutRngArr& layout_rng_arr)
+		{
+			_init_base_rng_seed();
 
-			const size_t i = seed_layout_rng_arr(layout_rng_arr);
+			const int i = seed_layout_rng_arr(layout_rng_arr);
 
-			//_rng.seed(_base_rng_seed + i);
 			_rng = Rng(_base_rng_seed + i);
 		}
 
@@ -200,6 +217,8 @@ public:		// types
 		{
 			return rng_run_scaled<T>(_rng, scale, max_val, saturate);
 		}
+
+		GEN_GETTER_BY_VAL(base_rng_seed);
 	};
 private:		// non-serialized variables
 	int _argc = 0;
@@ -405,7 +424,7 @@ public:		// functions
 	{
 		const auto& lr_arr = layout_rng_arr_fn(file_num);
 
-		for (size_t i=0; i<lr_arr.size(); ++i)
+		for (int i=0; i<int(lr_arr.size()); ++i)
 		{
 			osprintout(os, i, ": ", lr_arr.at(i), "\n");
 		}
@@ -675,7 +694,7 @@ public:		// functions
 		const std::string& s_text,
 		const std::function<void(decltype(self))>& yes_func,
 		const std::function<void(decltype(self))>& no_func,
-		uint s_tab_amount=0)
+		int s_tab_amount=0)
 	{
 		return Menu
 		(

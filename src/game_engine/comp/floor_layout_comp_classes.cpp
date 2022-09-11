@@ -83,12 +83,12 @@ void StaticBgTileMap::_init_data()
 		(
 			PFIELD_WINDOW_SIZE_2D.y,
 			{
-				.data=std::vector<BgTile>(PFIELD_WINDOW_SIZE_2D.x,
-					BgTile::Wall),
-				.checked_size=PFIELD_WINDOW_SIZE_2D.x
+				.data=std::vector<BgTile>
+					(PFIELD_WINDOW_SIZE_2D.x, BgTile::Wall),
+				.checked_size=size_t(PFIELD_WINDOW_SIZE_2D.x)
 			}
 		),
-		.checked_size=PFIELD_WINDOW_SIZE_2D.y
+		.checked_size=size_t(PFIELD_WINDOW_SIZE_2D.y)
 	};
 }
 //--------
@@ -96,65 +96,22 @@ void StaticBgTileMap::_init_data()
 const std::string
 	Dungeon::KIND_STR("Dungeon");
 
-auto Dungeon::Room::from_bv(const binser::Value& bv) -> Room
+auto Dungeon::RoomPath::from_bv(const binser::Value& bv) -> RoomPath
 {
-	Room ret;
+	RoomPath ret;
 
-	//#define X(...) BINSER_MEMB_FROM_BV_DESERIALIZE_EX_MM(__VA_ARGS__)
-	//MEMB_EX_MM_LIST_COMP_DUNGEON_ROOM(X);
-	//#undef X
-
-	//#define X(...) BINSER_MEMB_FROM_BV_DESERIALIZE_EX_CS(__VA_ARGS__)
-	//MEMB_EX_CS_LIST_COMP_DUNGEON_ROOM(X);
-	//#undef X
-
-	//#define X(...) BINSER_MEMB_FROM_BV_DESERIALIZE(__VA_ARGS__)
-	//MEMB_AUTOSER_LIST_COMP_DUNGEON_ROOM(X);
-	//#undef X
-	MEMB_LIST_COMP_DUNGEON_ROOM(BINSER_MEMB_FROM_BV_DESERIALIZE);
-
-	//if (DblVec2Ex temp_pos=PFIELD_WINDOW_EX_RANGE; true)
-	//{
-	//	binser::get_bv_memb(temp_pos, bv, "pos", std::nullopt);
-	//	ret.pos = std::move(temp_pos.data);
-	//}
-	//if (DblVec2Ex temp_size_2d
-	//	= {.data=DblVec2(), .max=MAX_SIZE_2D, .min=MIN_SIZE_2D};
-	//	true)
-	//{
-	//	binser::get_bv_memb(temp_size_2d, bv, "size_2d", std::nullopt);
-	//	ret.size_2d = std::move(temp_size_2d.data);
-	//}
-
-	//if (binser::IndCircLinkListEx<u32> temp_path_lst
-	//	= {
-	//		.data=IndCircLinkList<u32>(),
-	//		.checked_size=MAX_NUM_PATHS,
-	//		.cs_is_max=true,
-	//		.min_size=MIN_NUM_PATHS
-	//	};
-	//	true)
-
-	//if (binser::IndCircLinkListEx<u32> temp_path_lst; true)
-	//{
-	//	temp_path_lst.checked_size = MAX_NUM_PATHS,
-	//	temp_path_lst.cs_is_max = true;
-	//	temp_path_lst.min_size = MIN_NUM_PATHS;
-
-	//	binser::get_bv_memb(temp_path_lst, bv, "path_lst", std::nullopt);
-	//	ret.path_lst = std::move(temp_path_lst.data);
-	//}
+	MEMB_LIST_COMP_DUNGEON_ROOM_PATH(BINSER_MEMB_FROM_BV_DESERIALIZE);
 
 	return ret;
 }
-Dungeon::Room::operator binser::Value () const
+Dungeon::RoomPath::operator binser::Value () const
 {
 	binser::Value ret;
 
-	//MEMB_EX_MM_LIST_COMP_DUNGEON_ROOM(BINSER_MEMB_SERIALIZE);
-	//MEMB_EX_CS_LIST_COMP_DUNGEON_ROOM(BINSER_MEMB_SERIALIZE);
-	//MEMB_AUTOSER_LIST_COMP_DUNGEON_ROOM(BINSER_MEMB_SERIALIZE);
-	MEMB_LIST_COMP_DUNGEON_ROOM(BINSER_MEMB_SERIALIZE);
+	//MEMB_EX_MM_LIST_COMP_DUNGEON_ROOM_PATH(BINSER_MEMB_SERIALIZE);
+	//MEMB_EX_CS_LIST_COMP_DUNGEON_ROOM_PATH(BINSER_MEMB_SERIALIZE);
+	//MEMB_AUTOSER_LIST_COMP_DUNGEON_ROOM_PATH(BINSER_MEMB_SERIALIZE);
+	MEMB_LIST_COMP_DUNGEON_ROOM_PATH(BINSER_MEMB_SERIALIZE);
 
 	return ret;
 }
