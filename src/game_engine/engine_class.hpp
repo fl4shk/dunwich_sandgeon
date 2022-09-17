@@ -33,7 +33,7 @@ namespace dunwich_sandgeon
 namespace game_engine
 {
 //--------
-enum class KeyKind: int
+enum class KeyKind: i32
 {
 	LeftL,
 	UpL,
@@ -159,11 +159,11 @@ public:		// types
 
 		operator binser::Value () const;
 
-		inline int seed_layout_rng_arr(LayoutRngArr& layout_rng_arr)
+		inline i32 seed_layout_rng_arr(LayoutRngArr& layout_rng_arr)
 			const
 		{
-			int i;
-			for (i=0; i<int(layout_rng_arr.size()); ++i)
+			i32 i;
+			for (i=0; i<i32(layout_rng_arr.size()); ++i)
 			{
 				//layout_rng_arr.at(i).seed(_base_rng_seed + i);
 				layout_rng_arr.at(i) = Rng(_base_rng_seed + i);
@@ -172,7 +172,7 @@ public:		// types
 		}
 		//inline void seed_rngs_etc(LayoutRngArr& layout_rng_arr)
 		//{
-		//	const int i = seed_layout_rng_arr(layout_rng_arr);
+		//	const i32 i = seed_layout_rng_arr(layout_rng_arr);
 
 		//	//_rng.seed(_base_rng_seed + i);
 		//	_rng = Rng(_base_rng_seed + i);
@@ -188,7 +188,7 @@ public:		// types
 		{
 			_init_base_rng_seed();
 
-			const int i = seed_layout_rng_arr(layout_rng_arr);
+			const i32 i = seed_layout_rng_arr(layout_rng_arr);
 
 			_rng = Rng(_base_rng_seed + i);
 		}
@@ -202,9 +202,15 @@ public:		// types
 			return rng_run<T>(_rng);
 		}
 		template<typename T>
-		inline auto rand(const T& max_val, bool saturate=false)
+		inline auto rand(const T& max, bool saturate=false)
 		{
-			return rng_run<T>(_rng, max_val, saturate);
+			return rng_run<T>(_rng, max, saturate);
+		}
+		template<typename T>
+		inline auto rand_mm(const T& max, const T& min,
+			bool saturate=false)
+		{
+			return rng_run_mm<T>(_rng, max, min, saturate);
 		}
 		template<typename T>
 		inline auto rand_scaled(const T& scale)
@@ -212,16 +218,22 @@ public:		// types
 			return rng_run_scaled<T>(_rng, scale);
 		}
 		template<typename T>
-		inline auto rand_scaled(const T& scale, const T& max_val,
+		inline auto rand_scaled(const T& scale, const T& max,
 			bool saturate=false)
 		{
-			return rng_run_scaled<T>(_rng, scale, max_val, saturate);
+			return rng_run_scaled<T>(_rng, scale, max, saturate);
+		}
+		template<typename T>
+		inline auto rand_scaled_mm(const T& scale, const T& max,
+			const T& min, bool saturate=false)
+		{
+			return rng_run_scaled_mm<T>(_rng, scale, max, min, saturate);
 		}
 
 		GEN_GETTER_BY_VAL(base_rng_seed);
 	};
 private:		// non-serialized variables
-	int _argc = 0;
+	i32 _argc = 0;
 	char** _argv = nullptr;
 	std::string _save_file_name;
 
@@ -303,7 +315,7 @@ public:		// non-serialized variables
 		// The with-text yes-no window's menu
 		text_yes_no_menu;
 public:		// constants
-	static constexpr int
+	static constexpr i32
 		USE_CURR_FILE_NUM = ecs::Engine::USE_CURR_FILE_NUM;
 		//USE_SRC_FILE_NUM = ecs::Engine::USE_SRC_FILE_NUM,
 		//USE_COPY_DST_FILE_NUM = ecs::Engine::USE_COPY_DST_FILE_NUM;
@@ -319,7 +331,7 @@ private:		// non-serialized variables
 public:		// non-serialized variables
 
 	// File number state
-	//enum class FnState: int
+	//enum class FnState: i32
 	//{
 	//	Curr,
 	//	Src,
@@ -328,7 +340,7 @@ public:		// non-serialized variables
 private:		// variables
 	//u64 _tick_counter = 0;
 public:		// functions
-	Engine(int s_argc, char** s_argv, bool do_create_or_load=true);
+	Engine(i32 s_argc, char** s_argv, bool do_create_or_load=true);
 	GEN_MOVE_ONLY_CONSTRUCTORS_AND_ASSIGN(Engine);
 	~Engine();
 	operator binser::Value () const;
@@ -424,7 +436,7 @@ public:		// functions
 	{
 		const auto& lr_arr = layout_rng_arr_fn(file_num);
 
-		for (int i=0; i<int(lr_arr.size()); ++i)
+		for (i32 i=0; i<i32(lr_arr.size()); ++i)
 		{
 			osprintout(os, i, ": ", lr_arr.at(i), "\n");
 		}
@@ -507,19 +519,19 @@ public:		// `_non_ecs_ser_data_arr` accessor functions
 		return hud_msg_log_fn(USE_CURR_FILE_NUM);
 	}
 	//--------
-	inline int& floor_fn(ecs::FileNum file_num)
+	inline i32& floor_fn(ecs::FileNum file_num)
 	{
 		return non_ecs_ser_data_fn(file_num).floor;
 	}
-	inline const int& floor_fn(ecs::FileNum file_num) const
+	inline const i32& floor_fn(ecs::FileNum file_num) const
 	{
 		return non_ecs_ser_data_fn(file_num).floor;
 	}
-	inline int& floor()
+	inline i32& floor()
 	{
 		return floor_fn(USE_CURR_FILE_NUM);
 	}
-	inline const int& floor() const
+	inline const i32& floor() const
 	{
 		return floor_fn(USE_CURR_FILE_NUM);
 	}
@@ -591,9 +603,14 @@ public:		// `_non_ecs_ser_data_arr` accessor functions
 		return non_ecs_ser_data().rand<T>();
 	}
 	template<typename T>
-	inline auto rand(const T& max_val, bool saturate=false)
+	inline auto rand(const T& max, bool saturate=false)
 	{
-		return non_ecs_ser_data().rand<T>(max_val, saturate);
+		return non_ecs_ser_data().rand<T>(max, saturate);
+	}
+	template<typename T>
+	inline auto rand_mm(const T& max, const T& min, bool saturate=false)
+	{
+		return non_ecs_ser_data().rand_mm(max, min, saturate);
 	}
 	template<typename T>
 	inline auto rand_scaled(const T& scale)
@@ -601,10 +618,17 @@ public:		// `_non_ecs_ser_data_arr` accessor functions
 		return non_ecs_ser_data().rand_scaled<T>(scale);
 	}
 	template<typename T>
-	inline auto rand_scaled(const T& scale, const T& max_val,
+	inline auto rand_scaled(const T& scale, const T& max,
 		bool saturate=false)
 	{
-		return non_ecs_ser_data().rand_scaled<T>(scale, max_val, saturate);
+		return non_ecs_ser_data().rand_scaled<T>(scale, max, saturate);
+	}
+	template<typename T>
+	inline auto rand_scaled_mm(const T& scale, const T& max, const T& min,
+		bool saturate=false)
+	{
+		return non_ecs_ser_data().rand_scaled_mm<T>(scale, max, min,
+			saturate);
 	}
 	//--------
 public:		// functions
@@ -621,7 +645,7 @@ public:		// functions
 	//--------
 public:		// functions
 	//--------
-	//inline int fn_state_index() const
+	//inline i32 fn_state_index() const
 	//{
 	//	return
 	//		fn_state == FnState::Curr
@@ -634,7 +658,7 @@ private:		// static functions
 	{
 		return ecs_engine.sel_file_num(some_file_num);
 	}
-	//inline int _sel_file_num(ecs::FileNum some_file_num) const
+	//inline i32 _sel_file_num(ecs::FileNum some_file_num) const
 	//{
 	//	//return (some_file_num == USE_CURR_FILE_NUM)
 	//	//	? *curr_file_num()
@@ -694,7 +718,7 @@ public:		// functions
 		const std::string& s_text,
 		const std::function<void(decltype(self))>& yes_func,
 		const std::function<void(decltype(self))>& no_func,
-		int s_tab_amount=0)
+		i32 s_tab_amount=0)
 	{
 		return Menu
 		(

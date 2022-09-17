@@ -48,7 +48,7 @@ public:		// constants
 	// 10 ms global timer for ticking the game engine
 	static constexpr Uint32 GLOBAL_TIMER_DELAY = 10u;
 
-	//static constexpr int DEF_ZOOM = 2;
+	//static constexpr i32 DEF_ZOOM = 2;
 	//static constexpr float
 	//	SCALE_MUL_VAL = 0.1f, SCALE_DEFAULT_VAL = 1.0f;
 private:		// variables
@@ -56,7 +56,7 @@ private:		// variables
 	bool _did_handle_global_timer = true;
 	Uint32 _global_timer_interval = 0;
 	IntVec2 _logical_size_2d;
-	//int _zoom = DEF_ZOOM;
+	//i32 _zoom = DEF_ZOOM;
 	//float _scale = SCALE_DEFAULT_VAL;
 	Engine _engine;
 	bool _fullscreen = false;
@@ -66,10 +66,10 @@ private:		// variables
 	PrevCurrPair<bool> _mouse_right_button_state;
 	TextHandlerSdl _text_handler;
 public:		// functions
-	RealMainSdl(int argc, char** argv);
+	RealMainSdl(i32 argc, char** argv);
 	~RealMainSdl() = default;
 
-	int run();
+	i32 run();
 
 	//GEN_GETTER_BY_VAL(zoom);
 private:		// functions

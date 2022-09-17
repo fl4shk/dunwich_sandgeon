@@ -108,22 +108,22 @@ using RopeDeque = std::deque<Rope>;
 std::ostream& operator << (std::ostream& os, const Rope& rope);
 
 Rope split_rope_by_whitespace(const Rope& rope, bool keep_sep=false);
-RopeDeque wrap_rope(const Rope& rope, int row_length,
+RopeDeque wrap_rope(const Rope& rope, i32 row_length,
 	bool keep_sep=false);
 
 class MsgLog final
 {
 public:		// constants
-	static constexpr int
+	static constexpr i32
 		WIDGET_SELECTED_SPACING_SIZE = 3,
 		WIDGET_SPACING_SIZE = 6;
 	static const std::string
 		WIDGET_SELECTED_SPACING_STR,
 		WIDGET_SPACING_STR;
-	//static constexpr int DEFAULT_INTERNAL_HEIGHT = 256;
-	//static constexpr int DEFAULT_INTERNAL_HEIGHT = 70;
-	static constexpr int DEFAULT_INTERNAL_HEIGHT = 10;
-	//static const int DEFAULT_INTERNAL_HEIGHT;
+	//static constexpr i32 DEFAULT_INTERNAL_HEIGHT = 256;
+	//static constexpr i32 DEFAULT_INTERNAL_HEIGHT = 70;
+	static constexpr i32 DEFAULT_INTERNAL_HEIGHT = 10;
+	//static const i32 DEFAULT_INTERNAL_HEIGHT;
 private:		// variables
 	#define MEMB_LIST_MSG_LOG(X) \
 		X(_data, std::nullopt) \
@@ -135,7 +135,7 @@ private:		// variables
 
 	RopeDeque _data;
 
-	int
+	i32
 		// This height allows for scrolling
 		_internal_height = DEFAULT_INTERNAL_HEIGHT,
 		_scroll = 0;
@@ -144,7 +144,7 @@ private:		// variables
 	Vec2<bool> _center = {false, false};
 	bool _keep_sep = false;
 public:		// functions
-	inline MsgLog(int s_internal_height=DEFAULT_INTERNAL_HEIGHT,
+	inline MsgLog(i32 s_internal_height=DEFAULT_INTERNAL_HEIGHT,
 		const IntVec2& s_window_size_2d=SCREEN_SIZE_2D,
 		Vec2<bool> s_center=Vec2(false, false), bool s_keep_sep=false)
 		: _internal_height(s_internal_height),
@@ -153,7 +153,7 @@ public:		// functions
 	{
 	}
 	MsgLog(const RopeDeque& s_data,
-		int s_internal_height=DEFAULT_INTERNAL_HEIGHT,
+		i32 s_internal_height=DEFAULT_INTERNAL_HEIGHT,
 		const IntVec2& s_window_size_2d=SCREEN_SIZE_2D,
 		Vec2<bool> s_center={false, false}, bool s_keep_sep=false);
 	MsgLog(const binser::Value& bv);
@@ -184,7 +184,7 @@ class Menu final
 public:		// constants
 	// The maximum value of `variable` when using a `HorizPicker` or
 	// `HorizPickerWrap` `kind`.
-	static constexpr int HORIZ_PICKER_VAR_MAX = 999;
+	static constexpr i32 HORIZ_PICKER_VAR_MAX = 999;
 
 	static constexpr FgBgColorPair
 		WIDGET_UNSELECTED_COLOR_PAIR = FontColor::Gray,
@@ -203,13 +203,13 @@ public:		// constants
 		WIDGET_HORIZ_PICKER_LEFT_STR,
 		WIDGET_HORIZ_PICKER_INNER_BLANK_STR,
 		WIDGET_HORIZ_PICKER_RIGHT_STR;
-	static constexpr int 
+	static constexpr i32 
 		WIDGET_SPACING_SIZE = MsgLog::WIDGET_SPACING_SIZE;
 
 	static const std::string
 		START_NODE_KEY, END_NODE_KEY;
 
-	static constexpr int
+	static constexpr i32
 		TAB_SIZE = 4;
 	static const std::string
 		TAB_STR;
@@ -257,13 +257,13 @@ public:		// types
 		};
 		//--------
 		// Value to modify for horiz pickers
-		using DataValue = PrevCurrPair<int>;
+		using DataValue = PrevCurrPair<i32>;
 
 		// Button action
 		using DataActionFunc = std::function<void()>;
 
 		//// Button action with parameter
-		//using DataActionParamFunc = std::function<void(int)>;
+		//using DataActionParamFunc = std::function<void(i32)>;
 
 		using DataVariant 
 			= std::variant
@@ -285,7 +285,7 @@ public:		// types
 			std::string text;
 			Kind kind;
 			DataVariant data = std::monostate();
-			int variable = 0;
+			i32 variable = 0;
 			OnUpdateFunc on_update_func = nullptr;
 		};
 		class CtorArgs final
@@ -305,7 +305,7 @@ public:		// types
 		DataVariant data = std::monostate();
 		//--------
 		// Various uses
-		int variable = 0;
+		i32 variable = 0;
 		//--------
 		OnUpdateFunc on_update_func = nullptr;
 		//--------
@@ -319,7 +319,7 @@ public:		// types
 
 		// This constructor takes an `std::monostate` for `s_data`
 		inline Node(const std::string& s_text, Kind s_kind,
-			const auto& s_data, int s_variable,
+			const auto& s_data, i32 s_variable,
 			const OnUpdateFunc& s_on_update_func,
 			const std::string& s_up, const std::string& s_down)
 		: text(s_text),
@@ -371,18 +371,18 @@ public:		// types
 	//{
 	//protected:		// variables
 	//	SelfT* _self = nullptr;
-	//	std::function<void(SelfT*, int)> _func = nullptr;
+	//	std::function<void(SelfT*, i32)> _func = nullptr;
 	//public:		// functions
 	//	inline ActionButtonParamFuncobj() = default;
 	//	inline ActionButtonParamFuncobj(SelfT* s_self,
-	//		const std::function<void(SelfT*, int)>& s_func)
+	//		const std::function<void(SelfT*, i32)>& s_func)
 	//		: _self(s_self), _func(s_func)
 	//	{
 	//	}
 	//	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(ActionButtonParamFuncobj);
 	//	inline ~ActionButtonParamFuncobj() = default;
 
-	//	inline void operator () (int param) const
+	//	inline void operator () (i32 param) const
 	//	{
 	//		_func(_self, param);
 	//	}
@@ -420,15 +420,15 @@ private:		// variables
 	IntVec2 _size_2d = SCREEN_SIZE_2D;
 	NodeMap _node_map;
 	Vec2<bool> _center = {false, false};
-	int _tab_amount = 0;
+	i32 _tab_amount = 0;
 public:		// functions
 	Menu() = default;
 	Menu(const std::string& s_sel_key, const IntVec2& s_size_2d,
 		const NodeMap& s_node_map, Vec2<bool> s_center={false, false},
-		int s_tab_amount=0);
+		i32 s_tab_amount=0);
 	Menu(const std::string& s_sel_key, const IntVec2& s_size_2d,
 		NodeMap&& s_node_map, Vec2<bool> s_center={false, false},
-		int s_tab_amount=0);
+		i32 s_tab_amount=0);
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Menu);
 	~Menu() = default;
 
@@ -498,8 +498,8 @@ public:		// static builder functions
 
 	static KncPair build_text_only_knc_pair(const std::string& key,
 		const std::string& s_text);
-	static KncPair build_separator_knc_pair(int i);
-	static KncPair build_spaces_knc_pair(int i);
+	static KncPair build_separator_knc_pair(i32 i);
+	static KncPair build_spaces_knc_pair(i32 i);
 
 	template<typename SelfT>
 	static inline KncPair build_action_button_knc_pair
@@ -540,7 +540,7 @@ public:		// static builder functions
 	template<typename SelfT>
 	static inline KncPair build_horiz_picker_knc_pair
 		(const std::string& key, const std::string& s_text,
-		int s_variable, SelfT* self,
+		i32 s_variable, SelfT* self,
 		const std::function<void(SelfT*, Node*)>& s_on_update_func)
 	{
 		return

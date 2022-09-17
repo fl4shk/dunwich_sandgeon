@@ -154,9 +154,9 @@ Window::~Window()
 
 void Window::clear()
 {
-	for (int j=0; j<with_border_size_2d().y; ++j)
+	for (i32 j=0; j<with_border_size_2d().y; ++j)
 	{
-		for (int i=0; i<with_border_size_2d().x; ++i)
+		for (i32 i=0; i<with_border_size_2d().x; ++i)
 		{
 			const IntVec2 index(i, j);
 			if ((j == 0) || (j == with_border_size_2d().y - 1))
@@ -223,27 +223,27 @@ void Window::draw(const MsgLog& msg_log)
 	//if (msg_log.center().y
 	//	&& (msg_log.data().size() < msg_log.window_size_2d().y))
 	if (msg_log.center().y
-		&& (int(msg_log.data().size()) <= msg_log.window_size_2d().y))
+		&& (i32(msg_log.data().size()) <= msg_log.window_size_2d().y))
 	{
 		temp_pos.y
 			= (msg_log.window_size_2d().y - msg_log.data().size()) / 2;
 	}
 
-	for (int j=msg_log.scroll();
+	for (i32 j=msg_log.scroll();
 		((j - msg_log.scroll()) < msg_log.window_size_2d().y)
 			&& (j < msg_log.internal_height())
-			&& (j < int(msg_log.data().size()));
+			&& (j < i32(msg_log.data().size()));
 		++j, ++temp_pos.y)
 	{
 		const auto& ROPE = msg_log.data().at(j);
 
-		int rope_size = 0;
+		i32 rope_size = 0;
 
-		for (int i=0; i<int(ROPE.size()); ++i)
+		for (i32 i=0; i<i32(ROPE.size()); ++i)
 		{
 			rope_size += ROPE.at(i).str.size();
 
-			if ((!msg_log.keep_sep()) && (i + 1 < int(ROPE.size())))
+			if ((!msg_log.keep_sep()) && (i + 1 < i32(ROPE.size())))
 			{
 				++rope_size;
 			}
@@ -251,9 +251,9 @@ void Window::draw(const MsgLog& msg_log)
 		//printout("rope_size: ", rope_size, " ", 
 		//	//std::string("This is a red str. asdf asdf asdf asdf").size(),
 		//	"\n");
-		//for (int i=0; i<ROPE.size(); ++i)
+		//for (i32 i=0; i<ROPE.size(); ++i)
 		//{
-		//	int temp_rope_size = ROPE.at(i).str.size();
+		//	i32 temp_rope_size = ROPE.at(i).str.size();
 
 		//	if ((!msg_log.keep_sep()) && ((i + 1) < ROPE.size()))
 		//	{
@@ -294,7 +294,7 @@ void Window::draw(const MsgLog& msg_log)
 
 		for (const auto& rope_part: ROPE)
 		{
-			for (int i=0; i<int(rope_part.str.size()); ++i, ++temp_pos.x)
+			for (i32 i=0; i<i32(rope_part.str.size()); ++i, ++temp_pos.x)
 			{
 				draw_at_temp_pos
 				(
@@ -344,7 +344,7 @@ void Window::draw(const MsgLog& msg_log)
 //void Window::draw(const LayeredWindow& layered_win)
 //{
 //	// This might need `std::greater` instead of `std::less`
-//	std::priority_queue<std::pair<int, std::string>> pq;
+//	std::priority_queue<std::pair<i32, std::string>> pq;
 //
 //	for (const auto& pair: layered_win.layer_prio_map())
 //	{
@@ -363,7 +363,7 @@ void Window::draw(const MsgLog& msg_log)
 //}
 //LayeredWindow::LayeredWindow(const IntVec2& s_pos,
 //	const IntVec2& s_size_2d,
-//	const std::map<std::string, int>& s_layer_prio_map)
+//	const std::map<std::string, i32>& s_layer_prio_map)
 //	: _layer_prio_map(s_layer_prio_map)
 //{
 //	for (const auto& pair: layer_prio_map())

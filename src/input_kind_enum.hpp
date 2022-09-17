@@ -25,7 +25,7 @@
 namespace dunwich_sandgeon
 {
 
-enum class InputKind: u32
+enum class InputKind: i32
 {
 	None,
 
@@ -55,9 +55,9 @@ enum class InputKind: u32
 	Lim,
 };
 
-inline InputKind input_kind_add(InputKind input_kind, u32 amount)
+inline InputKind input_kind_add(InputKind input_kind, i32 amount)
 {
-	u32 ret_u32 = static_cast<u32>(input_kind);
+	i32 ret_u32 = static_cast<i32>(input_kind);
 	ret_u32 += amount;
 	return static_cast<InputKind>(ret_u32);
 }

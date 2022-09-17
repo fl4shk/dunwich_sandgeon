@@ -40,7 +40,7 @@ void GmOptions::init(ecs::Engine* ecs_engine)
 	auto engine = game_engine::engine;
 	_game_options = engine->game_options;
 
-	uint i = 0;
+	i32 i = 0;
 	engine->aux_menu = Menu
 	(
 		"grayscale",

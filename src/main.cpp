@@ -18,25 +18,25 @@
 #include "misc_includes.hpp"
 #include "sdl/real_main_sdl_class.hpp"
 
-int main(int argc, char* argv[])
+i32 main(i32 argc, char* argv[])
 {
-	////static_assert(is_specialization<std::array<int, 5>, std::array>());
-	//static_assert(is_std_array<std::array<std::array<int, 5>, 3>>());
-	//static_assert(is_std_array<std::array<int, 5>>());
-	//static_assert(!is_std_array<std::vector<int>>());
-	////static_assert(is_std_vector<std::vector<int>>());
-	////static_assert(is_std_vector<int>());
-	//static_assert(!is_std_vector<int>());
+	////static_assert(is_specialization<std::array<i32, 5>, std::array>());
+	//static_assert(is_std_array<std::array<std::array<i32, 5>, 3>>());
+	//static_assert(is_std_array<std::array<i32, 5>>());
+	//static_assert(!is_std_array<std::vector<i32>>());
+	////static_assert(is_std_vector<std::vector<i32>>());
+	////static_assert(is_std_vector<i32>());
+	//static_assert(!is_std_vector<i32>());
 
-	////static_assert(is_std_vector<int, std::allocator<int>>());
-	//static_assert(!is_std_vector<int>());
+	////static_assert(is_std_vector<i32, std::allocator<i32>>());
+	//static_assert(!is_std_vector<i32>());
 
-	//static_assert(is_std_vector<std::vector<int>>());
-	////static_assert(!is_std_vector<std::vector<int>>());
+	//static_assert(is_std_vector<std::vector<i32>>());
+	////static_assert(!is_std_vector<std::vector<i32>>());
 
-	//static_assert(is_std_vector<std::vector<int, std::allocator<int>>>());
-	////static_assert(!is_std_vector<std::vector<int, std::allocator<int>,
-	////	std::allocator<int>>());
+	//static_assert(is_std_vector<std::vector<i32, std::allocator<i32>>>());
+	////static_assert(!is_std_vector<std::vector<i32, std::allocator<i32>,
+	////	std::allocator<i32>>());
 
 	//printout("main()");
 	//dunwich_sandgeon::game_engine::engine->dbg_check_ecs_engine();

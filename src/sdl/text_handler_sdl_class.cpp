@@ -24,7 +24,7 @@ namespace io
 
 const IntVec2 TextHandlerSdl::TILE_SIZE_2D(8, 8);
 
-//bool TextHandlerSdl::init(sdl::Renderer& s_renderer, int& s_zoom)
+//bool TextHandlerSdl::init(sdl::Renderer& s_renderer, i32& s_zoom)
 bool TextHandlerSdl::init(sdl::Renderer& s_renderer)
 {
 	//--------
@@ -245,7 +245,7 @@ bool TextHandlerSdl::init(sdl::Renderer& s_renderer)
 	//--------
 }
 
-void TextHandlerSdl::draw_char(int c, const FgBgColorPair& color_pair,
+void TextHandlerSdl::draw_char(i32 c, const FgBgColorPair& color_pair,
 	const IntVec2& draw_pos)
 {
 	const auto draw_char_fg_surface_size_2d

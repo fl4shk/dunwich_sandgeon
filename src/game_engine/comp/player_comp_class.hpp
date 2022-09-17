@@ -33,7 +33,7 @@ class Player final: public ecs::Comp
 {
 public:		// constants
 	static const std::string KIND_STR;
-	static constexpr u32
+	static constexpr i32
 		MAX_LEVEL = 100,
 		DEFAULT_LEVEL = 1,
 
@@ -52,7 +52,7 @@ public:		// variables
 		X(hunger, std::nullopt) \
 		X(weight, std::nullopt) \
 
-	uint
+	i32
 		level = DEFAULT_LEVEL,
 		exp = DEFAULT_EXP,
 		hunger = DEFAULT_HUNGER,

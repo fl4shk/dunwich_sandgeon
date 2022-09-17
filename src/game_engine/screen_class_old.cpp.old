@@ -38,9 +38,9 @@ Screen::~Screen()
 
 void Screen::draw(const Window& win)
 {
-	for (int j=0; j<win.pos().y; ++j)
+	for (i32 j=0; j<win.pos().y; ++j)
 	{
-		for (int i=0; i<win.pos().x; ++i)
+		for (i32 i=0; i<win.pos().x; ++i)
 		{
 			const DblVec2 curr_pos(i, j);
 			ent_id_at(curr_pos) = win.ent_id_at(curr_pos);

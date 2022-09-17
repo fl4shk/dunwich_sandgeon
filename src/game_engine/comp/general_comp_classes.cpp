@@ -71,12 +71,12 @@ Position::Position(const binser::Value& bv)
 {
 	MEMB_AUTOSER_LIST_COMP_POSITION(BINSER_MEMB_DESERIALIZE);
 	//priority = static_cast<PlayfieldLayerPrio>
-	//	(get_bv_memb<uint>(bv, "priority"));
+	//	(get_bv_memb<i32>(bv, "priority"));
 
-	//priority = static_cast<PlayfieldLayerPrio>(val_from_jv<uint>
+	//priority = static_cast<PlayfieldLayerPrio>(val_from_jv<i32>
 	//	(bv["priority"]));
 
-	binser::get_bv_memb_w_stat_cast<u32>(priority, bv, "priority",
+	binser::get_bv_memb_w_stat_cast<i32>(priority, bv, "priority",
 		std::nullopt);
 
 	engine->position_ctor_callback(this);
@@ -98,8 +98,8 @@ Position::operator binser::Value () const
 	binser::Value ret;
 
 	MEMB_AUTOSER_LIST_COMP_POSITION(BINSER_MEMB_SERIALIZE);
-	//ret["priority"] = static_cast<uint>(priority);
-	ret.insert("priority", static_cast<u32>(priority));
+	//ret["priority"] = static_cast<i32>(priority);
+	ret.insert("priority", static_cast<i32>(priority));
 
 	return ret;
 }

@@ -39,7 +39,7 @@ public:		// types
 public:		// constants
 	static const IntVec2 TILE_SIZE_2D;
 
-	static constexpr int
+	static constexpr i32
 		//--------
 		FONT_RED_STCM_R = 0xdd,
 		FONT_RED_STCM_G = 0x0,
@@ -95,18 +95,18 @@ private:		// variables
 	sdl::Surface _fg_surface, _bg_surface;
 	std::map<FontColor, sdl::Texture> _fg_texture_map, _bg_texture_map;
 	sdl::Renderer* _renderer = nullptr;
-	//int* _zoom = nullptr;
+	//i32* _zoom = nullptr;
 public:		// functions
 	TextHandlerSdl() = default;
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(TextHandlerSdl);
 	~TextHandlerSdl() = default;
 
-	//bool init(sdl::Renderer& s_renderer, int& s_zoom);
+	//bool init(sdl::Renderer& s_renderer, i32& s_zoom);
 	bool init(sdl::Renderer& s_renderer);
 
-	void draw_char(int c, const FgBgColorPair& color_pair,
+	void draw_char(i32 c, const FgBgColorPair& color_pair,
 		const IntVec2& draw_pos);
-	inline void draw_char(int c, FontColor fg_color,
+	inline void draw_char(i32 c, FontColor fg_color,
 		const IntVec2& draw_pos)
 	{
 		draw_char(c, FgBgColorPair(fg_color), draw_pos);

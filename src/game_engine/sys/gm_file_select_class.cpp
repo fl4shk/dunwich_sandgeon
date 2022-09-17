@@ -45,7 +45,7 @@ void GmFileSelect::init(ecs::Engine* ecs_engine)
 
 	_win_state = WinState::Aux;
 
-	int i = 0;
+	i32 i = 0;
 	engine->aux_menu = Menu
 	(
 		AUX_MENU_KEY_FILE_QMARK,
@@ -110,7 +110,7 @@ void GmFileSelect::tick(ecs::Engine* ecs_engine)
 	if (_tick_helper(ecs_engine,
 		engine->game_mode() == GameMode::FileSelect))
 	{
-		//const int& cfn = *engine->curr_file_num();
+		//const i32& cfn = *engine->curr_file_num();
 		//const ecs::FileNum& sfn = *engine->src_file_num();
 		//auto& screen_window = engine->screen_window;
 
@@ -187,7 +187,7 @@ void GmFileSelect::_aux_menu_copy_file_func(GmFileSelect* self)
 {
 	self->_win_state = WinState::Popup;
 
-	int i = 0;
+	i32 i = 0;
 	engine->popup_menu = Menu
 	(
 		"dst_file_qmark",

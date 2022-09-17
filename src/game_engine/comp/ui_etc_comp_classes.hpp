@@ -42,7 +42,7 @@ namespace comp
 //		SELECTED_COLOR = FontColor::Red,
 //		UNSELECTED_COLOR = FontColor::White;
 //public:		// variables
-//	int c = ' ';
+//	i32 c = ' ';
 //public:		// functions
 //};
 

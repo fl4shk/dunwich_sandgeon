@@ -23,7 +23,7 @@ namespace dunwich_sandgeon
 namespace io
 {
 
-RealMainSdl::RealMainSdl(int argc, char** argv)
+RealMainSdl::RealMainSdl(i32 argc, char** argv)
 	: _engine(argc, argv)
 {
 	game_engine::engine = &_engine;
@@ -33,7 +33,7 @@ RealMainSdl::RealMainSdl(int argc, char** argv)
 	//_temp_engine_1.dbg_check_ecs_engine();
 }
 
-int RealMainSdl::run()
+i32 RealMainSdl::run()
 {
 	//--------
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_TIMER) < 0)
@@ -260,9 +260,9 @@ int RealMainSdl::run()
 		//////screen_window.draw(popup_window);
 		////screen_window.draw(yes_no_window);
 
-		for (int j=0; j<screen_window.with_border_size_2d().y; ++j)
+		for (i32 j=0; j<screen_window.with_border_size_2d().y; ++j)
 		{
-			for (int i=0; i<screen_window.with_border_size_2d().x; ++i)
+			for (i32 i=0; i<screen_window.with_border_size_2d().x; ++i)
 			{
 				const IntVec2 wb_pos(i, j);
 				//const ecs::EntId id

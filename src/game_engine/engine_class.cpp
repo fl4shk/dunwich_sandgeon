@@ -62,10 +62,10 @@ Engine::NonEcsSerData::NonEcsSerData()
 	//const auto& time_count = get_hrc_now().time_since_epoch().count();
 	//rng.seed(time_count, time_count + 1, time_count + 2);
 
-	//#ifdef DEBUG
-	//printerr("Engine::NonEcsSerData::NonEcsSerData(): Note: ",
-	//	"**NOT** calling `_init_base_rng_seed()`\n");
-	//#endif		// DEBUG
+	#ifdef DEBUG
+	printerr("Engine::NonEcsSerData::NonEcsSerData(): Note: ",
+		"**NOT** calling `_init_base_rng_seed()`\n");
+	#endif		// DEBUG
 	//_init_base_rng_seed();
 }
 Engine::NonEcsSerData::NonEcsSerData(const binser::Value& bv)
@@ -131,12 +131,12 @@ Engine::NonEcsSerData::operator binser::Value () const
 }
 
 //--------
-Engine::Engine(int s_argc, char** s_argv, bool do_create_or_load)
+Engine::Engine(i32 s_argc, char** s_argv, bool do_create_or_load)
 	: _argc(s_argc), _argv(s_argv),
 	ecs_engine(NUM_FILES),
 
 	//_non_ecs_ser_data_arr(NUM_FILES, NonEcsSerData()),
-	key_status(int(KeyKind::Lim)),
+	key_status(i32(KeyKind::Lim)),
 
 	screen_window(IntVec2(), WITH_BORDER_SCREEN_SIZE_2D, false),
 	aux_window(IntVec2(), WITH_BORDER_SCREEN_SIZE_2D, false),
@@ -614,9 +614,9 @@ void Engine::position_set_pos_callback(comp::Position* obj,
 
 GameMode& Engine::set_game_mode(GameMode n_game_mode)
 {
-	//printout("old _game_mode: ", int(_game_mode), "\n");
+	//printout("old _game_mode: ", i32(_game_mode), "\n");
 	_game_mode = n_game_mode;
-	//printout("new _game_mode: ", int(_game_mode), "\n");
+	//printout("new _game_mode: ", i32(_game_mode), "\n");
 
 	switch (game_mode())
 	{

@@ -27,7 +27,7 @@ namespace dunwich_sandgeon
 namespace game_engine
 {
 
-enum class FontColor: u32
+enum class FontColor: i32
 {
 	White,
 
@@ -49,9 +49,9 @@ enum class FontColor: u32
 	Lim,
 };
 
-inline FontColor font_color_add(FontColor font_color, u32 amount)
+inline FontColor font_color_add(FontColor font_color, i32 amount)
 {
-	u32 ret_u32 = u32(font_color);
+	i32 ret_u32 = i32(font_color);
 	ret_u32 += amount;
 	return FontColor(ret_u32);
 }
@@ -86,8 +86,8 @@ public:		// functions
 	//constexpr 
 	inline FgBgColorPair(const binser::Value& bv)
 	{
-		fg = FontColor(bv.at("fg").get<u32>());
-		bg = FontColor(bv.at("bg").get<u32>());
+		fg = FontColor(bv.at("fg").get<i32>());
+		bg = FontColor(bv.at("bg").get<i32>());
 	}
 	GEN_CX_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(FgBgColorPair);
 	constexpr inline ~FgBgColorPair() = default;
@@ -102,8 +102,8 @@ public:		// functions
 	{
 		binser::Value ret;
 
-		ret.insert("fg", u32(fg));
-		ret.insert("bg", u32(bg));
+		ret.insert("fg", i32(fg));
+		ret.insert("bg", i32(bg));
 
 		return ret;
 	}

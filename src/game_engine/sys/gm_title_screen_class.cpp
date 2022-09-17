@@ -37,7 +37,7 @@ void GmTitleScreen::init(ecs::Engine* ecs_engine)
 {
 	_init_start();
 
-	uint i = 0;
+	i32 i = 0;
 	engine->aux_menu = Menu
 	(
 		"file_select",

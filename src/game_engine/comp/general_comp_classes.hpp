@@ -47,7 +47,7 @@ public:		// types
 			X(c, std::nullopt) \
 			X(color_pair, std::nullopt) \
 			X(gs_color_pair, std::nullopt)
-		int c = ' ';
+		i32 c = ' ';
 		FgBgColorPair
 			color_pair = FontColor::White,
 
@@ -82,7 +82,7 @@ private:		// variables
 	bool _in_blink = false;
 public:		// functions
 	inline Drawable() = default;
-	//inline Drawable(int s_c, const FgBgColorPair& s_color)
+	//inline Drawable(i32 s_c, const FgBgColorPair& s_color)
 	//	: data{.c=s_c, .color=s_color}
 	//{
 	//}
@@ -189,10 +189,10 @@ public:		// functions
 //public:		// constants
 //	static const std::string KIND_STR;
 //public:		// variables
-//	uint val = 0;
+//	i32 val = 0;
 //public:		// functions
 //	Weight() = default;
-//	inline Weight(uint s_val)
+//	inline Weight(i32 s_val)
 //		: val(s_val)
 //	{
 //	}
@@ -204,12 +204,14 @@ public:		// functions
 //	virtual operator binser::Value () const;
 //};
 
-// These are stats that increase or stay the same upon level up.
+// These are stats that increase or stay the same upon level up. They are
+// the stats that an entity would have if not wearing armor and don't have
+// buffs applied.
 class BaseStats final: public ecs::Comp
 {
 public:		// constants
 	static const std::string KIND_STR;
-	static constexpr uint
+	static constexpr i32
 		MAX_VAL = 999,
 		DEFAULT_HP = 50,
 		DEFAULT_ATK = 20,
@@ -223,7 +225,7 @@ public:		// variables
 		X(def, std::nullopt) \
 		X(mag_atk, std::nullopt) \
 		X(mag_def, std::nullopt)
-	uint
+	i32
 		hp = DEFAULT_HP,
 		atk = DEFAULT_ATK,
 		def = DEFAULT_DEF,
@@ -231,8 +233,8 @@ public:		// variables
 		mag_def = DEFAULT_MAG_DEF;
 public:		// functions
 	BaseStats() = default;
-	inline BaseStats(uint s_hp, uint s_atk, uint s_def, uint s_mag_atk,
-		uint s_mag_def)
+	inline BaseStats(i32 s_hp, i32 s_atk, i32 s_def, i32 s_mag_atk,
+		i32 s_mag_def)
 		: hp(s_hp), atk(s_atk), def(s_def), mag_atk(s_mag_atk),
 		mag_def(s_mag_def)
 	{
@@ -249,11 +251,11 @@ public:		// functions
 //{
 //public:		// constants
 //	static const std::string KIND_STR;
-//	static constexpr uint
+//	static constexpr i32
 //		MAX_VAL = 999,
 //		DEFAULT_WEIGHT = 40;
 //public:		// variables
-//	uint
+//	i32
 //		weight = DEFAULT_WEIGHT;
 //public:		// functions
 //	OtherStats

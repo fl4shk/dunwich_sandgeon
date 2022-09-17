@@ -29,7 +29,7 @@ namespace game_engine
 namespace comp
 {
 
-static constexpr int STATUS_TIMER_DEFAULT_VAL = 20;
+static constexpr i32 STATUS_TIMER_DEFAULT_VAL = 20;
 
 class StatusOnFire final: public ecs::Comp
 {
@@ -38,10 +38,10 @@ public:		// constants
 public:		// variables
 	#define MEMB_LIST_COMP_STATUS_ON_FIRE(X) \
 		X(timer, std::nullopt)
-	int timer = STATUS_TIMER_DEFAULT_VAL;
+	i32 timer = STATUS_TIMER_DEFAULT_VAL;
 public:		// functions
 	StatusOnFire() = default;
-	inline StatusOnFire(int s_timer)
+	inline StatusOnFire(i32 s_timer)
 		: timer(s_timer)
 	{
 	}
@@ -61,10 +61,10 @@ public:		// constants
 public:		// variables
 	#define MEMB_LIST_COMP_STATUS_POISONED(X) \
 		X(timer, std::nullopt)
-	int timer = STATUS_TIMER_DEFAULT_VAL;
+	i32 timer = STATUS_TIMER_DEFAULT_VAL;
 public:		// functions
 	StatusPoisoned() = default;
-	inline StatusPoisoned(int s_timer)
+	inline StatusPoisoned(i32 s_timer)
 		: timer(s_timer)
 	{
 	}
@@ -84,10 +84,10 @@ public:		// constants
 public:		// variables
 	#define MEMB_LIST_COMP_STATUS_ASLEEP(X) \
 		X(timer, std::nullopt)
-	int timer = STATUS_TIMER_DEFAULT_VAL;
+	i32 timer = STATUS_TIMER_DEFAULT_VAL;
 public:		// functions
 	StatusAsleep() = default;
-	inline StatusAsleep(int s_timer)
+	inline StatusAsleep(i32 s_timer)
 		: timer(s_timer)
 	{
 	}
@@ -104,17 +104,17 @@ class StatusTravelSpeed final: public ecs::Comp
 {
 public:		// constants
 	static const std::string KIND_STR;
-	static constexpr int ABS_MIN_MAX_VAL = 6;
+	static constexpr i32 ABS_MIN_MAX_VAL = 6;
 public:		// variables
 	#define MEMB_LIST_COMP_STATUS_TRAVEL_SPEED(X) \
 		X(timer, std::nullopt) \
 		X(val, std::nullopt)
-	int
+	i32
 		timer = STATUS_TIMER_DEFAULT_VAL,
 		val = 0;
 public:		// functions
 	StatusTravelSpeed() = default;
-	inline StatusTravelSpeed(int s_timer, int s_val)
+	inline StatusTravelSpeed(i32 s_timer, i32 s_val)
 		: timer(s_timer), val(s_val)
 	{
 	}
@@ -131,17 +131,17 @@ class StatusActionSpeed final: public ecs::Comp
 {
 public:		// constants
 	static const std::string KIND_STR;
-	static constexpr int ABS_MIN_MAX_VAL = 6;
+	static constexpr i32 ABS_MIN_MAX_VAL = 6;
 public:		// variables
 	#define MEMB_LIST_COMP_STATUS_ACTION_SPEED(X) \
 		X(timer, std::nullopt) \
 		X(val, std::nullopt)
-	int
+	i32
 		timer = STATUS_TIMER_DEFAULT_VAL,
 		val = 0;
 public:		// functions
 	StatusActionSpeed() = default;
-	inline StatusActionSpeed(int s_timer, int s_val)
+	inline StatusActionSpeed(i32 s_timer, i32 s_val)
 		: timer(s_timer), val(s_val)
 	{
 	}

@@ -81,7 +81,7 @@ protected:		// serialized variables
 		/* X(_pos, std::nullopt) */ \
 		/* X(_drawable_data_v2d, std::nullopt) */ \
 
-	//int _priority = 0;
+	//i32 _priority = 0;
 	IntVec2 _pos;
 	std::vector<std::vector<DrawData>> _drawable_data_v2d;
 //protected:		// static funcs
