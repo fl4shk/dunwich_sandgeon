@@ -33,7 +33,7 @@ std::string GmTitleScreen::kind_str() const
 	return KIND_STR;
 }
 //--------
-void GmTitleScreen::init(ecs::Engine* ecs_engine)
+void GmTitleScreen::_init(ecs::Engine* ecs_engine)
 {
 	_init_start();
 
@@ -51,32 +51,20 @@ void GmTitleScreen::init(ecs::Engine* ecs_engine)
 			Menu::build_spaces_knc_pair(i++),
 			Menu::build_spaces_knc_pair(i++),
 			Menu::build_action_button_knc_pair
-			(
-				"file_select",
-				"File Select",
-				this,
+				("file_select", "File Select", this,
 				std::function<void(GmTitleScreen*)>
-					(&_aux_menu_file_select_func)
-			),
+					(&_aux_menu_file_select_func)),
 			Menu::build_action_button_knc_pair
-			(
-				"options",
-				"Options",
-				this,
+				("options", "Options", this,
 				std::function<void(GmTitleScreen*)>
-					(&_aux_menu_options_func)
-			),
+					(&_aux_menu_options_func)),
 			Menu::build_action_button_knc_pair
-			(
-				"quit_game",
-				"Quit Game",
-				this,
+				("quit_game", "Quit Game", this,
 				std::function<void(GmTitleScreen*)>
-					(&_aux_menu_quit_game_func)
-			),
+					(&_aux_menu_quit_game_func)),
 		}),
 		Vec2(false, true),
-		7
+		Menu::WHOLE_SCREEN_MENU_TAB_AMOUNT_BIG
 	);
 }
 void GmTitleScreen::tick(ecs::Engine* ecs_engine)

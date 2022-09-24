@@ -22,7 +22,7 @@
 
 #include "../misc_includes.hpp"
 #include "font_color_enum.hpp"
-#include "window_size_2d_constants.hpp"
+#include "global_shape_constants.hpp"
 #include "comp/general_comp_classes.hpp"
 
 namespace dunwich_sandgeon
@@ -114,9 +114,9 @@ RopeDeque wrap_rope(const Rope& rope, i32 row_length,
 class MsgLog final
 {
 public:		// constants
-	static constexpr i32
-		WIDGET_SELECTED_SPACING_SIZE = 3,
-		WIDGET_SPACING_SIZE = 6;
+	//static constexpr i32
+	//	WIDGET_SELECTED_SPACING_SIZE = 3,
+	//	WIDGET_SPACING_SIZE = 6;
 	static const std::string
 		WIDGET_SELECTED_SPACING_STR,
 		WIDGET_SPACING_STR;
@@ -182,9 +182,17 @@ public:		// functions
 class Menu final
 {
 public:		// constants
-	// The maximum value of `variable` when using a `HorizPicker` or
-	// `HorizPickerWrap` `kind`.
-	static constexpr i32 HORIZ_PICKER_VAR_MAX = 999;
+	static constexpr i32
+		// The maximum value of `variable` when using a `HorizPicker` or
+		// `HorizPickerWrap` `kind`.
+		HORIZ_PICKER_VAR_MAX = 999,
+		WHOLE_SCREEN_MENU_TAB_AMOUNT_BIG
+			= 7,
+			//= 5,
+			//= 4,
+		WHOLE_SCREEN_MENU_TAB_AMOUNT_SMALL
+			= 5;
+			//= 3;
 
 	static constexpr FgBgColorPair
 		WIDGET_UNSELECTED_COLOR_PAIR = FontColor::Gray,
@@ -203,8 +211,8 @@ public:		// constants
 		WIDGET_HORIZ_PICKER_LEFT_STR,
 		WIDGET_HORIZ_PICKER_INNER_BLANK_STR,
 		WIDGET_HORIZ_PICKER_RIGHT_STR;
-	static constexpr i32 
-		WIDGET_SPACING_SIZE = MsgLog::WIDGET_SPACING_SIZE;
+	//static constexpr i32 
+	//	WIDGET_SPACING_SIZE = MsgLog::WIDGET_SPACING_SIZE;
 
 	static const std::string
 		START_NODE_KEY, END_NODE_KEY;

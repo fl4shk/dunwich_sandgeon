@@ -169,8 +169,8 @@ RopeDeque wrap_rope(const Rope& rope, i32 row_length, bool keep_sep)
 //--------
 const std::string
 	MsgLog::WIDGET_SELECTED_SPACING_STR(spaces_str
-		(MsgLog::WIDGET_SELECTED_SPACING_SIZE)),
-	MsgLog::WIDGET_SPACING_STR(spaces_str(MsgLog::WIDGET_SPACING_SIZE));
+		(MSG_LOG_WIDGET_SELECTED_SPACING_SIZE)),
+	MsgLog::WIDGET_SPACING_STR(spaces_str(MSG_LOG_WIDGET_SPACING_SIZE));
 
 //const i32
 //	MsgLog::DEFAULT_INTERNAL_HEIGHT = SCREEN_SIZE_2D.y;
@@ -660,13 +660,7 @@ auto Menu::build_text_only_knc_pair(const std::string& key,
 	const std::string& s_text) -> KncPair 
 {
 	return
-	{
-		key,
-		{
-			.text=s_text,
-			.kind=Menu::Node::Kind::TextOnly,
-		}
-	};
+		{key, {.text=s_text, .kind=Menu::Node::Kind::TextOnly}};
 }
 auto Menu::build_separator_knc_pair(i32 i) -> KncPair
 {

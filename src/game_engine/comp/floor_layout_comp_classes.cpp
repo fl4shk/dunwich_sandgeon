@@ -16,7 +16,7 @@
 // with Dunwich Sandgeon.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "floor_layout_comp_classes.hpp"
-#include "../window_size_2d_constants.hpp"
+#include "../global_shape_constants.hpp"
 
 namespace dunwich_sandgeon
 {
@@ -80,48 +80,67 @@ void StaticBgTileMap::_init_data()
 	_data
 	= {
 		.data=std::vector<binser::VectorEx<BgTile>>
-		(
-			PFIELD_WINDOW_SIZE_2D.y,
-			{
-				.data=std::vector<BgTile>
-					(PFIELD_WINDOW_SIZE_2D.x, BgTile::Wall),
-				.checked_size=size_t(PFIELD_WINDOW_SIZE_2D.x)
-			}
-		),
+			(PFIELD_WINDOW_SIZE_2D.y,
+			{.data=std::vector<BgTile>
+				(PFIELD_WINDOW_SIZE_2D.x, BgTile::Wall),
+			.checked_size=size_t(PFIELD_WINDOW_SIZE_2D.x)}),
 		.checked_size=size_t(PFIELD_WINDOW_SIZE_2D.y)
 	};
 }
 //--------
 //--------
 const std::string
-	Dungeon::KIND_STR("Dungeon");
+	DungeonGen::KIND_STR("DungeonGen");
 
-auto Dungeon::RoomPath::from_bv(const binser::Value& bv) -> RoomPath
+auto DungeonGen::RoomPath::from_bv(const binser::Value& bv) -> RoomPath
 {
 	RoomPath ret;
 
-	BINSER_MEMB_FROM_BV_DESERIALIZE(rect, std::nullopt);
-	binser::
+	MEMB_LIST_COMP_DUNGEON_ROOM_PATH(BINSER_MEMB_FROM_BV_DESERIALIZE);
 
-	MEMB_AUTOSER_LIST_COMP_DUNGEON_ROOM_PATH \
-		(BINSER_MEMB_FROM_BV_DESERIALIZE);
+	//if (!ret.is_valid())
+	if (!ret.fits_in_pfield())
+	{
+		//throw std::invalid_argument
+		//(
+		//	sconcat
+		//	(
+		//		(func_name ? sconcat(*func_name, "(): ") : std::string()),
+		//		(msg ? sconcat(*msg, ": ") : std::string()),
+		//		data_str, " < ", min_str,
+		//			" || ", data_str, " || ", max_str,
+		//			": ",
+		//		data, " ", min, " ", max
+		//	)
+		//);
+		throw std::invalid_argument(sconcat
+			("game_engine::comp::DungeonGen::RoomPath::from_bv(): ",
+			"`ret.rect` does not fit in the playfield: ", ret.rect));
+	}
+	if (!ret.is_path() && !ret.is_room())
+	{
+		throw std::invalid_argument(sconcat
+			("game_engine::comp::DungeonGen::RoomPath::from_bv(): ",
+			"`ret.rect` is the wrong shape to be a path or a room: ",
+			ret.rect));
+	}
 
 	return ret;
 }
-Dungeon::RoomPath::operator binser::Value () const
+DungeonGen::RoomPath::operator binser::Value () const
 {
 	binser::Value ret;
 
 	//MEMB_EX_MM_LIST_COMP_DUNGEON_ROOM_PATH(BINSER_MEMB_SERIALIZE);
 	//MEMB_EX_CS_LIST_COMP_DUNGEON_ROOM_PATH(BINSER_MEMB_SERIALIZE);
 	//MEMB_AUTOSER_LIST_COMP_DUNGEON_ROOM_PATH(BINSER_MEMB_SERIALIZE);
-	BINSER_MEMB_SERIALIZE(rect);
-	MEMB_AUTOSER_LIST_COMP_DUNGEON_ROOM_PATH(BINSER_MEMB_SERIALIZE);
+	//BINSER_MEMB_SERIALIZE(rect);
+	MEMB_LIST_COMP_DUNGEON_ROOM_PATH(BINSER_MEMB_SERIALIZE);
 
 	return ret;
 }
 
-//auto Dungeon::Path::from_bv(const binser::Value& bv) -> Path
+//auto DungeonGen::Path::from_bv(const binser::Value& bv) -> Path
 //{
 //	Path ret;
 //
@@ -153,7 +172,7 @@ Dungeon::RoomPath::operator binser::Value () const
 //
 //	return ret;
 //}
-//Dungeon::Path::operator binser::Value () const
+//DungeonGen::Path::operator binser::Value () const
 //{
 //	binser::Value ret;
 //
@@ -162,18 +181,19 @@ Dungeon::RoomPath::operator binser::Value () const
 //
 //	return ret;
 //}
-//bool Dungeon::Path::overlaps(const Path& path) const
+//bool DungeonGen::Path::overlaps(const Path& path) const
 //{
 //}
 
-Dungeon::Dungeon()
+DungeonGen::DungeonGen()
 {
 }
-Dungeon::Dungeon(const binser::Value& bv)
+DungeonGen::DungeonGen(const binser::Value& bv)
 {
-	_data.checked_size = MAX_NUM_ROOMS;
+	_data.checked_size = MAX_NUM_ROOM_PATHS;
 	_data.cs_is_max = true;
-	_data.min_size = 0;
+	//_data.min_size = 0;
+	_data.min_size = MIN_NUM_ROOM_PATHS;
 
 	//_path_vec.checked_size = MAX_NUM_PATHS;
 	//_path_vec.cs_is_max = true;
@@ -182,11 +202,11 @@ Dungeon::Dungeon(const binser::Value& bv)
 	MEMB_LIST_COMP_DUNGEON(BINSER_MEMB_DESERIALIZE);
 }
 
-std::string Dungeon::kind_str() const
+std::string DungeonGen::kind_str() const
 {
 	return KIND_STR;
 }
-Dungeon::operator binser::Value () const
+DungeonGen::operator binser::Value () const
 {
 	binser::Value ret;
 

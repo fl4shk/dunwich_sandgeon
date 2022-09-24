@@ -44,7 +44,9 @@ public:		// functions
 	virtual ~GmDungeonGen() = default;
 
 	virtual std::string kind_str() const;
-	virtual void init(ecs::Engine* ecs_engine);
+private:		// functions
+	virtual void _init(ecs::Engine* ecs_engine);
+public:		// functions
 	virtual void tick(ecs::Engine* ecs_engine);
 private:		// functions
 };

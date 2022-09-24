@@ -34,7 +34,7 @@ std::string GmFileSelect::kind_str() const
 	return KIND_STR;
 }
 
-void GmFileSelect::init(ecs::Engine* ecs_engine)
+void GmFileSelect::_init(ecs::Engine* ecs_engine)
 {
 	_init_start();
 
@@ -59,50 +59,30 @@ void GmFileSelect::init(ecs::Engine* ecs_engine)
 			Menu::build_separator_knc_pair(i++),
 			//--------
 			Menu::build_horiz_picker_knc_pair
-			(
-				AUX_MENU_KEY_FILE_QMARK,
-				"File?",
-				game_engine::Engine::NUM_FILES - 1,
-				this,
+				(AUX_MENU_KEY_FILE_QMARK, "File?",
+				game_engine::Engine::NUM_FILES - 1, this,
 				std::function<void(GmFileSelect*, Menu::Node*)>
-					(&_aux_menu_file_qmark_hpick_func)
-			),
+					(&_aux_menu_file_qmark_hpick_func)),
 			Menu::build_action_button_knc_pair
-			(
-				"start_game",
-				"Start Game",
-				this,
+				("start_game", "Start Game", this,
 				std::function<void(GmFileSelect*)>
-					(&_aux_menu_start_game_func)
-			),
+					(&_aux_menu_start_game_func)),
 			Menu::build_action_button_knc_pair
-			(
-				"copy_file",
-				"Copy File",
-				this,
+				("copy_file", "Copy File", this,
 				std::function<void(GmFileSelect*)>
-					(&_aux_menu_copy_file_func)
-			),
+					(&_aux_menu_copy_file_func)),
 			Menu::build_action_button_knc_pair
-			(
-				"erase_file",
-				"Erase File",
-				this,
+				("erase_file", "Erase File", this,
 				std::function<void(GmFileSelect*)>
-					(&_aux_menu_erase_file_func)
-			),
+					(&_aux_menu_erase_file_func)),
 			Menu::build_action_button_knc_pair
-			(
-				"exit",
-				"Exit",
-				this,
+				("exit", "Exit", this,
 				std::function<void(GmFileSelect*)>
-					(&_aux_menu_exit_func)
-			),
+					(&_aux_menu_exit_func)),
 			//--------
 		}),
 		Vec2(false, true),
-		7
+		Menu::WHOLE_SCREEN_MENU_TAB_AMOUNT_BIG
 	);
 }
 void GmFileSelect::tick(ecs::Engine* ecs_engine)

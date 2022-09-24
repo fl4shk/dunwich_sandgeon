@@ -71,7 +71,13 @@ public:		// types
 		FontColor fg, bg;
 	};
 public:		// variables
-	FontColor fg = DEFAULT_FG, bg = DEFAULT_BG;
+	#define MEMB_LIST_FG_BG_COLOR_PAIR(X) \
+		X(fg, std::nullopt) \
+		X(bg, std::nullopt) \
+
+	FontColor
+		fg = DEFAULT_FG,
+		bg = DEFAULT_BG;
 public:		// functions
 	constexpr inline FgBgColorPair() = default;
 	constexpr inline FgBgColorPair(CtorArgs ctor_args)
@@ -110,11 +116,11 @@ public:		// functions
 
 	constexpr inline bool operator == (const FgBgColorPair& other) const
 	{
-		return ((fg == other.fg) && (bg == other.bg));
+		return fg == other.fg && bg == other.bg;
 	}
 	constexpr inline bool operator != (const FgBgColorPair& other) const
 	{
-		return (!((*this) == other));
+		return !(*this == other);
 	}
 };
 

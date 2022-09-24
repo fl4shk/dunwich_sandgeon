@@ -16,7 +16,7 @@
 // with Dunwich Sandgeon.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "real_main_sdl_class.hpp"
-#include "../game_engine/window_size_2d_constants.hpp"
+#include "../game_engine/global_shape_constants.hpp"
 
 namespace dunwich_sandgeon
 {

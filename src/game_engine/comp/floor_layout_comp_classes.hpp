@@ -22,6 +22,7 @@
 
 #include "../../misc_includes.hpp"
 //#include "../shape_classes.hpp"
+#include "../global_shape_constants.hpp"
 #include "general_comp_classes.hpp"
 
 namespace dunwich_sandgeon
@@ -107,7 +108,11 @@ public:		// functions
 	//--------
 };
 //--------
-class Dungeon final: public ecs::Comp
+// The dungeon while it's either being generated has finished generating.
+// As I don't think I'll be including breakable walls, in this game, this
+// `ecs::Comp` can be referenced even after the dungeon has fully been
+// generated for the purposes of, for example, monster AI.
+class DungeonGen final: public ecs::Comp
 {
 public:		// constants
 	static const std::string
@@ -115,8 +120,8 @@ public:		// constants
 
 	static constexpr i32
 		// Chosen arbitrarily; might need to adjust later
-		MIN_NUM_ROOMS = 3,
-		MAX_NUM_ROOMS = 64;
+		MIN_NUM_ROOM_PATHS = 3,
+		MAX_NUM_ROOM_PATHS = 64;
 
 		//MIN_NUM_PATHS = 1,
 		//MAX_NUM_PATHS = 64;
@@ -138,14 +143,14 @@ public:		// types
 				= {10, 10};
 				//= {15, 15};
 	public:		// variables
-		#define MEMB_AUTOSER_LIST_COMP_DUNGEON_ROOM_PATH(X) \
-			/* X(rect, std::nullopt) */ \
+		#define MEMB_LIST_COMP_DUNGEON_ROOM_PATH(X) \
+			X(rect, std::nullopt) \
 			X(conn_set, std::nullopt) \
 
 		IntRect2 rect
 		{
 			.pos=IntVec2(),
-			.size_2d={PATH_THICKNESS, PATH_MIN_LEN}
+			.size_2d{.x=PATH_THICKNESS, .y=PATH_MIN_LEN}
 		};
 		std::set<i32> conn_set;
 	public:		// functions
@@ -155,29 +160,41 @@ public:		// types
 		//--------
 		inline auto operator <=> (const RoomPath& to_cmp) const = default;
 		//--------
+		constexpr inline bool fits_in_pfield() const
+		{
+			//return (rect.pos.x >= 0
+			//	&& rect.pos.x <= PFIELD_WINDOW);
+			return PFIELD_WINDOW_RECT2.arg_inside(rect, false, IntVec2());
+		}
 		constexpr inline bool is_path() const
 		{
-			return ((rect.size_2d.x == PATH_THICKNESS)
-				|| (rect.size_2d.y == PATH_THICKNESS));
+			//return ((rect.size_2d.x == PATH_THICKNESS)
+			//	|| (rect.size_2d.y == PATH_THICKNESS));
+			return is_horiz_path() || is_vert_path();
 		}
 		constexpr inline bool is_horiz_path() const
 		{
-			return ((rect.size_2d.x >= PATH_MIN_LEN)
-				&& (rect.size_2d.y == PATH_THICKNESS));
+			return (rect.size_2d.x >= PATH_MIN_LEN
+				&& rect.size_2d.y == PATH_THICKNESS);
 		}
 		constexpr inline bool is_vert_path() const
 		{
-			return ((rect.size_2d.x == PATH_THICKNESS)
-				&& (rect.size_2d.y >= PATH_MIN_LEN));
+			return (rect.size_2d.x == PATH_THICKNESS
+				&& rect.size_2d.y >= PATH_MIN_LEN);
 		}
 
 		constexpr inline bool is_room() const
 		{
-			return ((rect.size_2d.x >= ROOM_MIN_SIZE_2D.x)
-				&& (rect.size_2d.x <= ROOM_MAX_SIZE_2D.x)
-				&& (rect.size_2d.y >= ROOM_MIN_SIZE_2D.y)
-				&& (rect.size_2d.y <= ROOM_MAX_SIZE_2D.y));
+			return (rect.size_2d.x >= ROOM_MIN_SIZE_2D.x
+				&& rect.size_2d.x <= ROOM_MAX_SIZE_2D.x
+				&& rect.size_2d.y >= ROOM_MIN_SIZE_2D.y
+				&& rect.size_2d.y <= ROOM_MAX_SIZE_2D.y);
 		}
+
+		//constexpr inline bool is_valid() const
+		//{
+		//	return is_path() || is_room();
+		//}
 		//--------
 	};
 	//--------
@@ -190,10 +207,10 @@ private:		// variables
 	//binser::VectorEx<Path> _path_vec;
 public:		// functions
 	//--------
-	Dungeon();
-	Dungeon(const binser::Value& bv);
-	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Dungeon);
-	virtual ~Dungeon() = default;
+	DungeonGen();
+	DungeonGen(const binser::Value& bv);
+	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(DungeonGen);
+	virtual ~DungeonGen() = default;
 
 	virtual std::string kind_str() const;
 	virtual operator binser::Value () const;
@@ -208,12 +225,12 @@ public:		// functions
 	}
 	inline void push_back(RoomPath&& to_push)
 	{
-		if (_data.data.size() + 1 > MAX_NUM_ROOMS)
+		if (_data.data.size() + 1 > MAX_NUM_ROOM_PATHS)
 		{
 			throw std::length_error(sconcat
-				("game_engine::comp::Dungeon::room_push_back(): ",
+				("game_engine::comp::DungeonGen::room_push_back(): ",
 				"`_data` cannot increase in size: ",
-				_data.data.size(), " ", MAX_NUM_ROOMS));
+				_data.data.size(), " ", MAX_NUM_ROOM_PATHS));
 		}
 		_data.data.push_back(std::move(to_push));
 	}
@@ -231,7 +248,7 @@ public:		// functions
 	//	if (_path_vec.data.size() + 1 > MAX_NUM_ROOMS)
 	//	{
 	//		throw std::length_error(sconcat
-	//			("game_engine::comp::Dungeon::path_push_back(): ",
+	//			("game_engine::comp::DungeonGen::path_push_back(): ",
 	//			"`_path_vec` cannot increase in size: ",
 	//			_path_vec.data.size(), " ", MAX_NUM_ROOMS));
 	//	}

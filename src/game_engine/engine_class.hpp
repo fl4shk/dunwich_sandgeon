@@ -26,7 +26,7 @@
 #include "menu_etc_classes.hpp"
 #include "game_options_class.hpp"
 #include "comp/general_comp_classes.hpp"
-#include "window_size_2d_constants.hpp"
+#include "global_shape_constants.hpp"
 
 namespace dunwich_sandgeon
 {
@@ -111,6 +111,7 @@ public:		// types
 
 	//using Rng = pcg32;
 	using Rng = pcg64;
+	using RngSeedT = u64;
 	using LayoutRngArr = std::array<Rng, NUM_FLOORS>;
 	using LayoutRngA2d = std::array<LayoutRngArr, NUM_FILES>;
 public:		// types
@@ -182,6 +183,10 @@ public:		// types
 		{
 			_base_rng_seed = get_hrc_now_rng_seed();
 		}
+		inline void _init_base_rng_seed(RngSeedT s_base_rng_seed)
+		{
+			_base_rng_seed = s_base_rng_seed;
+		}
 	public:		// functions
 		inline void on_init_or_file_erase_seed_rngs_etc
 			(LayoutRngArr& layout_rng_arr)
@@ -207,10 +212,10 @@ public:		// types
 			return rng_run<T>(_rng, max, saturate);
 		}
 		template<typename T>
-		inline auto rand_mm(const T& max, const T& min,
+		inline auto rand_lim(const T& lim_0, const T& lim_1,
 			bool saturate=false)
 		{
-			return rng_run_mm<T>(_rng, max, min, saturate);
+			return rng_run_lim<T>(_rng, lim_0, lim_1, saturate);
 		}
 		template<typename T>
 		inline auto rand_scaled(const T& scale)
@@ -224,10 +229,11 @@ public:		// types
 			return rng_run_scaled<T>(_rng, scale, max, saturate);
 		}
 		template<typename T>
-		inline auto rand_scaled_mm(const T& scale, const T& max,
-			const T& min, bool saturate=false)
+		inline auto rand_scaled_lim(const T& scale, const T& lim_0,
+			const T& lim_1, bool saturate=false)
 		{
-			return rng_run_scaled_mm<T>(_rng, scale, max, min, saturate);
+			return rng_run_scaled_lim<T>(_rng, scale, lim_0, lim_1,
+				saturate);
 		}
 
 		GEN_GETTER_BY_VAL(base_rng_seed);
@@ -608,9 +614,10 @@ public:		// `_non_ecs_ser_data_arr` accessor functions
 		return non_ecs_ser_data().rand<T>(max, saturate);
 	}
 	template<typename T>
-	inline auto rand_mm(const T& max, const T& min, bool saturate=false)
+	inline auto rand_lim(const T& lim_0, const T& lim_1,
+		bool saturate=false)
 	{
-		return non_ecs_ser_data().rand_mm(max, min, saturate);
+		return non_ecs_ser_data().rand_lim(lim_0, lim_1, saturate);
 	}
 	template<typename T>
 	inline auto rand_scaled(const T& scale)
@@ -624,10 +631,10 @@ public:		// `_non_ecs_ser_data_arr` accessor functions
 		return non_ecs_ser_data().rand_scaled<T>(scale, max, saturate);
 	}
 	template<typename T>
-	inline auto rand_scaled_mm(const T& scale, const T& max, const T& min,
-		bool saturate=false)
+	inline auto rand_scaled_lim(const T& scale, const T& lim_0,
+		const T& lim_1, bool saturate=false)
 	{
-		return non_ecs_ser_data().rand_scaled_mm<T>(scale, max, min,
+		return non_ecs_ser_data().rand_scaled_lim<T>(scale, lim_0, lim_1,
 			saturate);
 	}
 	//--------

@@ -33,15 +33,13 @@ std::string GmDungeonGen::kind_str() const
 	return KIND_STR;
 }
 
-void GmDungeonGen::init(ecs::Engine* ecs_engine)
+void GmDungeonGen::_init(ecs::Engine* ecs_engine)
 {
 	_init_start();
 }
 
 void GmDungeonGen::tick(ecs::Engine* ecs_engine)
 {
-	auto engine = game_engine::engine;
-
 	if (_tick_helper(ecs_engine,
 		engine->game_mode() == GameMode::DungeonGen))
 	{

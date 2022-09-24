@@ -15,10 +15,8 @@
 // You should have received a copy of the GNU General Public License along
 // with Dunwich Sandgeon.  If not, see <https://www.gnu.org/licenses/>.
 
-#ifndef src_game_engine_window_size_2d_constants_hpp
-#define src_game_engine_window_size_2d_constants_hpp
-
-// src/game_engine/window_size_2d_constants.hpp
+#ifndef src_game_engine_misc_constants_hpp
+#define src_game_engine_misc_constants_hpp
 
 #include "../misc_includes.hpp"
 #include "../misc_types.hpp"
@@ -28,26 +26,12 @@ namespace dunwich_sandgeon
 namespace game_engine
 {
 //--------
-// This constant has values in the amount of tilemap entries
-extern const IntVec2
-	WITH_BORDER_SCREEN_SIZE_2D,
-	SCREEN_SIZE_2D;
-//--------
-extern const IntVec2
-	PFIELD_WINDOW_POS, PFIELD_WINDOW_END_POS;
-//extern const IntVec2Ex
-//	PFIELD_WINDOW_EX_RANGE;
-extern const IntVec2
-	PFIELD_WINDOW_SIZE_2D;
-//--------
-extern const IntVec2
-	LOG_WINDOW_POS, LOG_WINDOW_END_POS,
-	HUD_WINDOW_POS, HUD_WINDOW_END_POS,
-	POPUP_WINDOW_POS, POPUP_WINDOW_END_POS,
-	YES_NO_WINDOW_POS, YES_NO_WINDOW_END_POS,
-	TEXT_YES_NO_WINDOW_POS, TEXT_YES_NO_WINDOW_END_POS;
+static constexpr i32
+	MSG_LOG_WIDGET_SELECTED_SPACING_SIZE = 3,
+	MSG_LOG_WIDGET_SPACING_SIZE = 6;
 //--------
 } // namespace game_engine
 } // namespace dunwich_sandgeon
 
-#endif		// src_game_engine_window_size_2d_constants_hpp
+#endif		// src_game_engine_misc_constants_hpp
+

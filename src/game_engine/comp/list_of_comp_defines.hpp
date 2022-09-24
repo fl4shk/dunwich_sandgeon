@@ -34,7 +34,7 @@
 	/* comp::DownStairs, */ \
 	/* comp::UpStairs, */ \
 	comp::StaticBgTileMap, \
-	comp::Dungeon, \
+	comp::DungeonGen, \
 	\
 	comp::StatusOnFire, \
 	comp::StatusPoisoned, \

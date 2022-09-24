@@ -62,11 +62,12 @@ Engine::NonEcsSerData::NonEcsSerData()
 	//const auto& time_count = get_hrc_now().time_since_epoch().count();
 	//rng.seed(time_count, time_count + 1, time_count + 2);
 
-	#ifdef DEBUG
-	printerr("Engine::NonEcsSerData::NonEcsSerData(): Note: ",
-		"**NOT** calling `_init_base_rng_seed()`\n");
-	#endif		// DEBUG
-	//_init_base_rng_seed();
+	//#ifdef DEBUG
+	//printerr("Engine::NonEcsSerData::NonEcsSerData(): Note: ",
+	//	"**NOT** calling `_init_base_rng_seed()`\n");
+	//#endif		// DEBUG
+	_init_base_rng_seed(0);
+	//_init_base_rng_seed(1);
 }
 Engine::NonEcsSerData::NonEcsSerData(const binser::Value& bv)
 {
@@ -350,7 +351,13 @@ void Engine::tick()
 	}
 	// testing
 
+	//printerr("Engine::tick(): Note: **NOT** ticking `ecs_engine`.\n");
 	ecs_engine.tick();
+
+	//screen_window.draw(pfield_window);
+	//screen_window.draw(log_window);
+	//screen_window.draw(hud_window);
+
 
 	// testing
 	//if (key_status.key_just_went_down(KeyKind::Start)
@@ -362,43 +369,51 @@ void Engine::tick()
 	//{
 	//}
 
-	if (key_status.key_down_now(KeyKind::ShoulderL)
-		&& key_status.key_up_now(KeyKind::ShoulderR))
 	{
-		_save_to_binser();
-	}
-	else if (key_status.key_down_now(KeyKind::ShoulderR)
-		&& key_status.key_up_now(KeyKind::ShoulderL))
-	{
-		_create_or_load_save_file_etc();
-		//if (auto file=std::fstream(DEFAULT_SAVE_FILE_NAME, 
-		//	std::ios_base::in);
-		//	file.is_open())
+		// `binser` debugging stuff
+
+		//if (key_status.key_down_now(KeyKind::ShoulderL)
+		//	&& key_status.key_up_now(KeyKind::ShoulderR))
 		//{
-		//	binser::Value root;
-		//	std::string errs;
+		//	_save_to_binser();
+		//}
+		//else if (key_status.key_down_now(KeyKind::ShoulderR)
+		//	&& key_status.key_up_now(KeyKind::ShoulderL))
+		//{
+		//	_create_or_load_save_file_etc();
+		//	//if (auto file=std::fstream(DEFAULT_SAVE_FILE_NAME, 
+		//	//	std::ios_base::in);
+		//	//	file.is_open())
+		//	//{
+		//	//	binser::Value root;
+		//	//	std::string errs;
 
-		//	parse_json(file, &root, &errs);
+		//	//	parse_json(file, &root, &errs);
 
-		//	deserialize(root);
+		//	//	deserialize(root);
+		//	//}
 		//}
 	}
-	//printout("Ticking the game engine: ", _tick_counter, "\n");
-	//++_tick_counter;
 
-	//if (game_mode == GameMode::AuxTitleScreen)
-	//{
-	//	printout("game_engine::Engine::tick(): ",
-	//		"Temporary title screen code\n");
+	{
+		//printout("Ticking the game engine: ", _tick_counter, "\n");
+		//++_tick_counter;
 
-	//	yes_no_menu().tick(key_status);
+		//if (game_mode == GameMode::AuxTitleScreen)
+		//{
+		//	printout("game_engine::Engine::tick(): ",
+		//		"Temporary title screen code\n");
 
-	//	yes_no_window().clear();
-	//	yes_no_window().draw(yes_no_menu());
+		//	yes_no_menu().tick(key_status);
 
-	//	screen_window().clear();
-	//	screen_window().draw(yes_no_window());
-	//}
+		//	yes_no_window().clear();
+		//	yes_no_window().draw(yes_no_menu());
+
+		//	screen_window().clear();
+		//	screen_window().draw(yes_no_window());
+		//}
+	}
+
 }
 //--------
 void Engine::_create_or_load_save_file_etc()

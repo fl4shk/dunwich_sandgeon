@@ -46,9 +46,10 @@ public:		// functions
 
 	virtual std::string kind_str() const;
 	//--------
-	virtual void init(ecs::Engine* ecs_engine);
+private:		// functions
+	virtual void _init(ecs::Engine* ecs_engine);
+public:		// functions
 	virtual void tick(ecs::Engine* ecs_engine);
-	//--------
 private:		// functions
 	//--------
 	static void _aux_menu_file_select_func(GmTitleScreen* self);

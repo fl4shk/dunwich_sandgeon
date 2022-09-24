@@ -33,7 +33,7 @@ std::string GmOptions::kind_str() const
 	return KIND_STR;
 }
 
-void GmOptions::init(ecs::Engine* ecs_engine)
+void GmOptions::_init(ecs::Engine* ecs_engine)
 {
 	_init_start();
 
@@ -72,34 +72,21 @@ void GmOptions::init(ecs::Engine* ecs_engine)
 			Menu::build_text_only_knc_pair("title", "Options"),
 			Menu::build_spaces_knc_pair(i++),
 			Menu::build_check_button_knc_pair
-			(
-				"grayscale",
-				"Grayscale",
-				_game_options.grayscale,
-				this,
+				("grayscale", "Grayscale", _game_options.grayscale, this,
 				std::function<void(GmOptions*, Menu::Node*)>
-					(&_aux_menu_grayscale_func)
-			),
+					(&_aux_menu_grayscale_func)),
 			Menu::build_separator_knc_pair(i++),
 			Menu::build_action_button_knc_pair
-			(
-				"save_and_exit",
-				"Save And Exit",
-				this,
+				("save_and_exit", "Save And Exit", this,
 				std::function<void(GmOptions*)>
-					(&_aux_menu_save_and_exit_func)
-			),
+					(&_aux_menu_save_and_exit_func)),
 			Menu::build_action_button_knc_pair
-			(
-				"exit_wo_save",
-				"Exit Without Saving",
-				this,
+				("exit_wo_save", "Exit Without Saving", this,
 				std::function<void(GmOptions*)>
-					(&_aux_menu_exit_wo_save_func)
-			),
+					(&_aux_menu_exit_wo_save_func)),
 		}),
 		Vec2(false, true),
-		7
+		Menu::WHOLE_SCREEN_MENU_TAB_AMOUNT_SMALL
 	);
 }
 void GmOptions::tick(ecs::Engine* ecs_engine)
