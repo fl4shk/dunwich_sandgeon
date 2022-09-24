@@ -18,7 +18,7 @@
 #include "misc_includes.hpp"
 #include "sdl/real_main_sdl_class.hpp"
 
-i32 main(i32 argc, char* argv[])
+int main(int argc, char* argv[])
 {
 	////static_assert(is_specialization<std::array<i32, 5>, std::array>());
 	//static_assert(is_std_array<std::array<std::array<i32, 5>, 3>>());
@@ -42,8 +42,34 @@ i32 main(i32 argc, char* argv[])
 	//dunwich_sandgeon::game_engine::engine->dbg_check_ecs_engine();
 
 	//pcg32
+	////pcg64
 	//	rng3(3), rng4(4);
-	//printout(rng3, "\n", rng4, "\n\n");
+	//const std::string
+	//	rng3_init_str(sconcat("6364136223846793005 ",
+	//		"1442695040888963407 ", "2521675601639303865")),
+	//	rng4_init_str(sconcat("6364136223846793005 ",
+	//		"1442695040888963407 ", "8885811825486096870"));
+	//printout("states: ", rng3, "\t\t", rng4, "\n");
+	//printout("values: ", rng3(), " ", rng4(), "\n\n");
+
+	//printout("states: ", rng3, "\t\t", rng4, "\n");
+	//printout("values: ", rng3(), " ", rng4(), "\n\n");
+
+	//printout("states: ", rng3, "\t\t", rng4, "\n");
+	//printout("\n\n");
+
+	//inv_sconcat(rng3_init_str, rng3);
+	//inv_sconcat(rng4_init_str, rng4);
+
+	//printout("states: ", rng3, "\t\t", rng4, "\n");
+	//printout("values: ", rng3(), " ", rng4(), "\n\n");
+
+	//printout("states: ", rng3, "\t\t", rng4, "\n");
+	//printout("values: ", rng3(), " ", rng4(), "\n\n");
+
+	//printout("states: ", rng3, "\t\t", rng4, "\n");
+	//printout("\n");
+
 	//temp_ostm
 	//	<< sconcat
 	//	(

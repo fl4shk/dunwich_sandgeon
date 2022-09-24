@@ -161,6 +161,8 @@ public:		// functions
 	void draw(const Window& src, bool leave_corner=false);
 	void draw(const Menu& menu);
 	void draw(const MsgLog& msg_log);
+	//void draw(const comp::StaticBgTileMap& bg_tile_map);
+
 	//void draw(const Hud& hud);
 	//void draw(const LayeredWindow& layered_win);
 	//void draw_text(const IntVec2& where, const std::string& what);

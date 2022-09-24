@@ -15,7 +15,9 @@
 // You should have received a copy of the GNU General Public License along
 // with Dunwich Sandgeon.  If not, see <https://www.gnu.org/licenses/>.
 
+#include "drawable_data_map.hpp"
 #include "floor_layout_comp_classes.hpp"
+#include "../engine_class.hpp"
 #include "../global_shape_constants.hpp"
 
 namespace dunwich_sandgeon
@@ -86,6 +88,23 @@ void StaticBgTileMap::_init_data()
 			.checked_size=size_t(PFIELD_WINDOW_SIZE_2D.x)}),
 		.checked_size=size_t(PFIELD_WINDOW_SIZE_2D.y)
 	};
+}
+void StaticBgTileMap::draw() const
+{
+	const auto& temp_size_2d = size_2d();
+
+	if (IntVec2 pos; true)
+	{
+		for (pos.y=0; pos.y<temp_size_2d.y; ++pos.y)
+		{
+			for (pos.x=0; pos.x<temp_size_2d.x; ++pos.x)
+			{
+				engine->pfield_window.drawable_data_at(pos)
+					= drawable_data_map().at(bg_tile_str_map()
+						.at(at(pos)));
+			}
+		}
+	}
 }
 //--------
 //--------

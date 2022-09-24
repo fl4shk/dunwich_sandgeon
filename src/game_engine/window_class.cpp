@@ -118,17 +118,13 @@ Window::Window(const IntVec2& s_some_pos,
 	: _pos(s_some_pos
 		- (!with_border ? IntVec2(1, 1) : IntVec2(0, 0))),
 	_drawable_data_v2d
-	(
-		s_some_size_2d_or_end_pos.y
+		(s_some_size_2d_or_end_pos.y
 			+ (use_end_pos ? (-s_some_pos.y + 1) : 0)
 			+ (!with_border ? 2 : 0),
 		std::vector<DrawData>
-		(
-			s_some_size_2d_or_end_pos.x
-				+ (use_end_pos ? (-s_some_pos.x + 1) : 0)
-				+ (!with_border ? 2 : 0)
-		)
-	)
+		(s_some_size_2d_or_end_pos.x
+			+ (use_end_pos ? (-s_some_pos.x + 1) : 0)
+			+ (!with_border ? 2 : 0)))
 {
 }
 Window::~Window()
@@ -189,12 +185,10 @@ void Window::clear()
 void Window::draw(const Window& src, bool leave_corner)
 {
 	IntVec2 src_pos;
-	for (src_pos.y=0;
-		src_pos.y<i32(src.with_border_size_2d().y);
-		++src_pos.y)
+	for (src_pos.y=0; src_pos.y<src.with_border_size_2d().y; ++src_pos.y)
 	{
 		for (src_pos.x=0;
-			src_pos.x<i32(src.with_border_size_2d().x);
+			src_pos.x<src.with_border_size_2d().x;
 			++src_pos.x)
 		{
 			const auto& SRC_DRAWABLE_DATA
@@ -223,16 +217,16 @@ void Window::draw(const MsgLog& msg_log)
 	//if (msg_log.center().y
 	//	&& (msg_log.data().size() < msg_log.window_size_2d().y))
 	if (msg_log.center().y
-		&& (i32(msg_log.data().size()) <= msg_log.window_size_2d().y))
+		&& i32(msg_log.data().size()) <= msg_log.window_size_2d().y)
 	{
 		temp_pos.y
 			= (msg_log.window_size_2d().y - msg_log.data().size()) / 2;
 	}
 
 	for (i32 j=msg_log.scroll();
-		((j - msg_log.scroll()) < msg_log.window_size_2d().y)
-			&& (j < msg_log.internal_height())
-			&& (j < i32(msg_log.data().size()));
+		j - msg_log.scroll() < msg_log.window_size_2d().y
+			&& j < msg_log.internal_height()
+			&& j < i32(msg_log.data().size());
 		++j, ++temp_pos.y)
 	{
 		const auto& ROPE = msg_log.data().at(j);
@@ -296,46 +290,33 @@ void Window::draw(const MsgLog& msg_log)
 		{
 			for (i32 i=0; i<i32(rope_part.str.size()); ++i, ++temp_pos.x)
 			{
-				draw_at_temp_pos
-				(
-					comp::Drawable::Data
-					{
-						.c=rope_part.str.at(i),
-						.color_pair=rope_part.color_pair,
-						.gs_color_pair=rope_part.gs_color_pair
-					}
-				);
+				draw_at_temp_pos(comp::Drawable::Data
+					{.c=rope_part.str.at(i),
+					.color_pair=rope_part.color_pair,
+					.gs_color_pair=rope_part.gs_color_pair});
 			}
 
 			if ((!msg_log.keep_sep()) && (temp_pos.x < i32(size_2d().x)))
 			{
-				draw_at_temp_pos
-				(
-					comp::Drawable::Data
-					{
-						.c=' ',
-						.color_pair=rope_part.color_pair,
-						.gs_color_pair=rope_part.gs_color_pair
-					}
-				);
+				draw_at_temp_pos(comp::Drawable::Data
+					{.c=' ', .color_pair=rope_part.color_pair,
+					.gs_color_pair=rope_part.gs_color_pair});
 
 				++temp_pos.x;
 			}
 		}
 		for (; temp_pos.x<i32(size_2d().x); ++temp_pos.x)
 		{
-			draw_at_temp_pos
-			(
-				comp::Drawable::Data
-				{
-					.c=' ',
-					.color_pair=FontColor::Black,
-					.gs_color_pair=FontColor::Black
-				}
-			);
+			draw_at_temp_pos(comp::Drawable::Data
+				{.c=' ', .color_pair=FontColor::Black,
+				.gs_color_pair=FontColor::Black});
 		}
 	}
 }
+//void Window::draw(const comp::StaticBgTileMap& bg_tile_map)
+//{
+//	throw std::invalid_argument
+//}
 
 //void Window::draw(const Hud& hud)
 //{

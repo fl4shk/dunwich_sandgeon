@@ -90,21 +90,23 @@ private:		// functions
 	//--------
 public:		// functions
 	//--------
-	inline BgTile& at(const DblVec2& pos)
+	inline BgTile& at(const IntVec2& pos)
 	{
 		return _data.data.at(pos.y).data.at(pos.x);
 	}
-	inline const BgTile& at(const DblVec2& pos) const
+	inline const BgTile& at(const IntVec2& pos) const
 	{
 		return _data.data.at(pos.y).data.at(pos.x);
 	}
 
-	template<typename VecElemT=typename DblVec2::ElemT>
+	template<typename VecElemT=typename IntVec2::ElemT>
 	inline Vec2<VecElemT> size_2d() const
 	{
 		return Vec2<VecElemT>(_data.data.front().data.size(),
 			_data.data.size());
 	}
+
+	void draw() const; 
 	//--------
 };
 //--------

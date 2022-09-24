@@ -37,118 +37,65 @@ const std::unordered_map<std::string, Drawable::Data>& drawable_data_map()
 		DRAWABLE_DATA_MAP
 	= {
 		// ' ', 32
-		{
-			Window::BLANK_KIND_STR,
-			{
-				.c=' ',
-				.color_pair=FontColor::Black,
-				.gs_color_pair=FontColor::Black
-			}
-		},
+		{Window::BLANK_KIND_STR,
+			{.c=' ', .color_pair=FontColor::Black,
+			.gs_color_pair=FontColor::Black}},
 
 		// '#', 35
-		{
-			bg_tile_str_map().at(BgTile::Wall),
-			{
-				.c='#',
-				//.color_pair=FontColor::LightGray,
-				//.gs_color_pair=FontColor::LightGray
-				.color_pair=FontColor::Brown,
-				.gs_color_pair=FontColor::Gray
-			}
-		},
+		{bg_tile_str_map().at(BgTile::Wall),
+			{.c='#',
+			//.color_pair=FontColor::LightGray,
+			//.gs_color_pair=FontColor::LightGray
+			.color_pair=FontColor::Brown,
+			.gs_color_pair=FontColor::Gray}},
 
 		// '+', 43
-		{
-			Window::BORDER_CORNER_KIND_STR,
-			{
-				.c='+',
-				.color_pair=WINDOW_BORDER_COLOR_PAIR,
-				.gs_color_pair=FontColor::White
-			}
-		},
+		{Window::BORDER_CORNER_KIND_STR,
+			{.c='+', .color_pair=WINDOW_BORDER_COLOR_PAIR,
+			.gs_color_pair=FontColor::White}},
 
 		// '-', 45
-		{
-			Window::BORDER_HORIZ_KIND_STR,
-			{
-				.c='-',
-				.color_pair=WINDOW_BORDER_COLOR_PAIR,
-				.gs_color_pair=FontColor::White
-			}
-		},
+		{Window::BORDER_HORIZ_KIND_STR,
+			{.c='-', .color_pair=WINDOW_BORDER_COLOR_PAIR,
+			.gs_color_pair=FontColor::White}},
 
 		// '.', 46
-		{
-			bg_tile_str_map().at(BgTile::Floor),
-			{
-				.c='.',
-				//.color_pair=FontColor::LightGray,
-				//.gs_color_pair=FontColor::LightGray
-				.color_pair=FontColor::Gray,
-				.gs_color_pair=FontColor::Gray
-			}
-		},
+		{bg_tile_str_map().at(BgTile::Floor),
+			{.c='.',
+			//.color_pair=FontColor::LightGray,
+			//.gs_color_pair=FontColor::LightGray
+			.color_pair=FontColor::Gray,
+			.gs_color_pair=FontColor::Gray}},
 
 		// '<', 60
-		{
-			bg_tile_str_map().at(BgTile::DownStairs),
-			{
-				.c='<',
-				.color_pair=FontColor::Brown,
-				.gs_color_pair=FontColor::White
-			}
-		},
+		{bg_tile_str_map().at(BgTile::DownStairs),
+			{.c='<', .color_pair=FontColor::Brown,
+			.gs_color_pair=FontColor::White}},
 
 		// '>', 62
-		{
-			bg_tile_str_map().at(BgTile::UpStairs),
-			{
-				.c='>',
-				.color_pair=FontColor::Brown,
-				.gs_color_pair=FontColor::White
-			}
-		},
+		{bg_tile_str_map().at(BgTile::UpStairs),
+			{.c='>', .color_pair=FontColor::Brown,
+			.gs_color_pair=FontColor::White}},
 
 		// '@', 64
-		{
-			Player::KIND_STR,
-			{
-				.c='@',
-				.color_pair=FontColor::White,
-				.gs_color_pair=FontColor::White
-			}
-		},
+		{Player::KIND_STR,
+			{.c='@', .color_pair=FontColor::White,
+			.gs_color_pair=FontColor::White}},
 
 		// '^', 94,
-		{
-			bg_tile_str_map().at(BgTile::Spikes),
-			{
-				.c='^',
-				.color_pair=FontColor::Gray,
-				.gs_color_pair=FontColor::Gray
-			}
-		},
+		{bg_tile_str_map().at(BgTile::Spikes),
+			{.c='^', .color_pair=FontColor::Gray,
+			.gs_color_pair=FontColor::Gray}},
 
 		// '|', 124
-		{
-			Window::BORDER_VERT_KIND_STR,
-			{
-				.c='|',
-				.color_pair=WINDOW_BORDER_COLOR_PAIR,
-				.gs_color_pair=FontColor::White
-			}
-		},
+		{Window::BORDER_VERT_KIND_STR,
+			{.c='|', .color_pair=WINDOW_BORDER_COLOR_PAIR,
+			.gs_color_pair=FontColor::White}},
 
 		// '~', 126
-		{
-			bg_tile_str_map().at(BgTile::Water),
-			{
-				.c='~',
-				.color_pair=FontColor::Blue,
-				.gs_color_pair=FontColor::White
-			}
-		},
+		{bg_tile_str_map().at(BgTile::Water),
+			{.c='~', .color_pair=FontColor::Blue,
+			.gs_color_pair=FontColor::White}},
 	};
 
 	return DRAWABLE_DATA_MAP;

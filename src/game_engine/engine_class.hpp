@@ -90,8 +90,8 @@ public:		// constants
 	// These are basement floors, going from B1F down to B25F
 	static constexpr i32
 		LOWEST_FLOOR
-			//= 25,
-			= 5,
+			= 25,
+			//= 5,
 		HIGHEST_FLOOR
 			= 1,
 		//LOWEST_FLOOR = 5, HIGHEST_FLOOR = 1,
@@ -566,22 +566,22 @@ public:		// `_non_ecs_ser_data_arr` accessor functions
 		const IntVec2& pos_2d)
 	{
 		return pfield_ent_id_set_fn(file_num,
-			to_pos_vec3_fn(file_num, pos_2d));
+			to_int_vec3_fn(file_num, pos_2d));
 	}
 	//inline const ecs::EntIdSet& pfield_ent_id_set_fn(ecs::FileNum file_num,
 	//	const IntVec2& pos_2d) const
 	//{
 	//	return pfield_ent_id_set_fn(file_num,
-	//		to_pos_vec3_fn(file_num, pos_2d));
+	//		to_int_vec3_fn(file_num, pos_2d));
 	//}
 	inline ecs::EntIdSet& pfield_ent_id_set(const IntVec2& pos_2d)
 	{
-		return pfield_ent_id_set(to_pos_vec3(pos_2d));
+		return pfield_ent_id_set(to_int_vec3(pos_2d));
 	}
 	//inline const ecs::EntIdSet& pfield_ent_id_set(const IntVec2& pos_2d)
 	//	const
 	//{
-	//	return pfield_ent_id_set(to_pos_vec3(pos_2d));
+	//	return pfield_ent_id_set(to_int_vec3(pos_2d));
 	//}
 	//inline EntIdSetVec2d& pfield_ent_id_v2d_fn(ecs::FileNum file_num)
 	//{
@@ -640,14 +640,14 @@ public:		// `_non_ecs_ser_data_arr` accessor functions
 	//--------
 public:		// functions
 	//--------
-	inline IntVec3 to_pos_vec3_fn(ecs::FileNum file_num,
+	inline IntVec3 to_int_vec3_fn(ecs::FileNum file_num,
 		const IntVec2& pos_2d) const
 	{
 		return IntVec3(pos_2d.x, pos_2d.y, floor_fn(file_num));
 	}
-	inline IntVec3 to_pos_vec3(const IntVec2& pos_2d) const
+	inline IntVec3 to_int_vec3(const IntVec2& pos_2d) const
 	{
-		return to_pos_vec3_fn(USE_CURR_FILE_NUM, pos_2d);
+		return to_int_vec3_fn(USE_CURR_FILE_NUM, pos_2d);
 	}
 	//--------
 public:		// functions

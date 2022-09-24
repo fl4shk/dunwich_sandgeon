@@ -17,6 +17,7 @@
 
 #include "gm_dungeon_gen_class.hpp"
 #include "../engine_class.hpp"
+#include "../comp/floor_layout_comp_classes.hpp"
 
 namespace dunwich_sandgeon
 {
@@ -36,6 +37,9 @@ std::string GmDungeonGen::kind_str() const
 void GmDungeonGen::_init(ecs::Engine* ecs_engine)
 {
 	_init_start();
+
+	const auto& bg_tile_map = ecs_engine->create
+		(ecs::make_comp_map_ks(ecs::CompSptr(new ecs::NonSerializable())));
 }
 
 void GmDungeonGen::tick(ecs::Engine* ecs_engine)
