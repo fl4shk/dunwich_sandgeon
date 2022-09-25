@@ -150,32 +150,32 @@ Window::~Window()
 
 void Window::clear()
 {
-	for (i32 j=0; j<with_border_size_2d().y; ++j)
+	for (i32 j=0; j<w_border_size_2d().y; ++j)
 	{
-		for (i32 i=0; i<with_border_size_2d().x; ++i)
+		for (i32 i=0; i<w_border_size_2d().x; ++i)
 		{
 			const IntVec2 index(i, j);
-			if ((j == 0) || (j == with_border_size_2d().y - 1))
+			if ((j == 0) || (j == w_border_size_2d().y - 1))
 			{
-				if ((i == 0) || (i == with_border_size_2d().x - 1))
+				if ((i == 0) || (i == w_border_size_2d().x - 1))
 				{
-					with_border_drawable_data_at(index)
+					w_border_drawable_data_at(index)
 						= BORDER_CORNER_DRAWABLE_DATA();
 				}
 				else
 				{
-					with_border_drawable_data_at(index)
+					w_border_drawable_data_at(index)
 						= BORDER_HORIZ_DRAWABLE_DATA();
 				}
 			}
-			else if ((i == 0) || (i == with_border_size_2d().x - 1))
+			else if ((i == 0) || (i == w_border_size_2d().x - 1))
 			{
-				with_border_drawable_data_at(index)
+				w_border_drawable_data_at(index)
 					= BORDER_VERT_DRAWABLE_DATA();
 			}
 			else
 			{
-				with_border_drawable_data_at(index)
+				w_border_drawable_data_at(index)
 					= BLANK_DRAWABLE_DATA();
 			}
 		}
@@ -185,16 +185,16 @@ void Window::clear()
 void Window::draw(const Window& src, bool leave_corner)
 {
 	IntVec2 src_pos;
-	for (src_pos.y=0; src_pos.y<src.with_border_size_2d().y; ++src_pos.y)
+	for (src_pos.y=0; src_pos.y<src.w_border_size_2d().y; ++src_pos.y)
 	{
 		for (src_pos.x=0;
-			src_pos.x<src.with_border_size_2d().x;
+			src_pos.x<src.w_border_size_2d().x;
 			++src_pos.x)
 		{
 			const auto& SRC_DRAWABLE_DATA
-				= src.with_border_drawable_data_at(src_pos);
+				= src.w_border_drawable_data_at(src_pos);
 			const auto DST_POS = src.pos() + src_pos;
-			auto& dst_drawable_data = with_border_drawable_data_at(DST_POS);
+			auto& dst_drawable_data = w_border_drawable_data_at(DST_POS);
 
 			if (!leave_corner
 				|| (dst_drawable_data != BORDER_CORNER_DRAWABLE_DATA()))

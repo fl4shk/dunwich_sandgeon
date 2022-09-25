@@ -34,6 +34,8 @@ class GmDungeonGen final: public ecs::Sys
 {
 public:		// constants
 	static const std::string KIND_STR;
+private:		// variables
+	ecs::EntId _bg_tile_map_id;
 public:		// functions
 	GmDungeonGen() = default;
 	//inline GmDungeonGen(const binser::Value& bv)

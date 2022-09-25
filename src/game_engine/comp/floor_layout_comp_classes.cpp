@@ -82,11 +82,11 @@ void StaticBgTileMap::_init_data()
 	_data
 	= {
 		.data=std::vector<binser::VectorEx<BgTile>>
-			(PFIELD_WINDOW_SIZE_2D.y,
+			(PFIELD_PHYS_SIZE_2D.y,
 			{.data=std::vector<BgTile>
-				(PFIELD_WINDOW_SIZE_2D.x, BgTile::Wall),
-			.checked_size=size_t(PFIELD_WINDOW_SIZE_2D.x)}),
-		.checked_size=size_t(PFIELD_WINDOW_SIZE_2D.y)
+				(PFIELD_PHYS_SIZE_2D.x, BgTile::Wall),
+			.checked_size=size_t(PFIELD_PHYS_SIZE_2D.x)}),
+		.checked_size=size_t(PFIELD_PHYS_SIZE_2D.y)
 	};
 }
 void StaticBgTileMap::draw() const
@@ -99,9 +99,16 @@ void StaticBgTileMap::draw() const
 		{
 			for (pos.x=0; pos.x<temp_size_2d.x; ++pos.x)
 			{
-				engine->pfield_window.drawable_data_at(pos)
-					= drawable_data_map().at(bg_tile_str_map()
-						.at(at(pos)));
+				try
+				{
+					engine->pfield_window.drawable_data_at(pos)
+						= drawable_data_map().at(bg_tile_str_map()
+							.at(at(pos)));
+				}
+				catch (std::exception& e)
+				{
+					printout(e.what(), "\n");
+				}
 			}
 		}
 	}

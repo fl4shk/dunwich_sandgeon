@@ -38,8 +38,12 @@ void GmDungeonGen::_init(ecs::Engine* ecs_engine)
 {
 	_init_start();
 
-	const auto& bg_tile_map = ecs_engine->create
-		(ecs::make_comp_map_ks(ecs::CompSptr(new ecs::NonSerializable())));
+	// In this case, there shouldn't be any
+	_bg_tile_map_id = ecs_engine->create_singleton_all
+		(ecs::make_comp_map_ks
+			(ecs::CompSptr(new ecs::NonSerializable()),
+			ecs::CompSptr(new comp::StaticBgTileMap())),
+		sconcat("game_engine::sys::", KIND_STR));
 }
 
 void GmDungeonGen::tick(ecs::Engine* ecs_engine)
@@ -48,6 +52,16 @@ void GmDungeonGen::tick(ecs::Engine* ecs_engine)
 		engine->game_mode() == GameMode::DungeonGen))
 	{
 		// TODO: add procedural dungeon generation
+		auto* bg_tile_map
+			= ecs_engine->casted_comp_at<comp::StaticBgTileMap>
+				(_bg_tile_map_id);
+
+		bg_tile_map->draw();
+		engine->screen_window.clear();
+
+		engine->screen_window.draw(engine->pfield_window);
+		engine->screen_window.draw(engine->log_window);
+		engine->screen_window.draw(engine->hud_window);
 	}
 }
 

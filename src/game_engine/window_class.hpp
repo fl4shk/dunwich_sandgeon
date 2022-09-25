@@ -109,20 +109,20 @@ public:		// functions
 	//void deserialize(const binser::Value& bv);
 	//void init_set_border();
 
-	inline DrawData& with_border_drawable_data_at(const IntVec2& index)
+	inline DrawData& w_border_drawable_data_at(const IntVec2& index)
 	{
 		return _drawable_data_v2d.at(index.y).at(index.x);
 	}
-	inline const DrawData& with_border_drawable_data_at
+	inline const DrawData& w_border_drawable_data_at
 		(const IntVec2& index) const
 	{
 		return _drawable_data_v2d.at(index.y).at(index.x);
 	}
-	//inline DrawData& with_border_drawable_data_at(const IntVec2& index)
+	//inline DrawData& w_border_drawable_data_at(const IntVec2& index)
 	//{
 	//	return _drawable_data_v2d.at(index.y).at(index.x);
 	//}
-	//inline const DrawData& with_border_drawable_data_at
+	//inline const DrawData& w_border_drawable_data_at
 	//	(const IntVec2& index) const
 	//{
 	//	return _drawable_data_v2d.at(index.y).at(index.x);
@@ -130,29 +130,29 @@ public:		// functions
 
 	inline DrawData& drawable_data_at(const IntVec2& index)
 	{
-		return with_border_drawable_data_at(index + IntVec2(1, 1));
+		return w_border_drawable_data_at(index + IntVec2(1, 1));
 	}
 	inline const DrawData& drawable_data_at(const IntVec2& index) const
 	{
-		return with_border_drawable_data_at(index + IntVec2(1, 1));
+		return w_border_drawable_data_at(index + IntVec2(1, 1));
 	}
 	//inline DrawData& drawable_data_at(const IntVec2& index)
 	//{
-	//	return with_border_drawable_data_at(index + IntVec2(1, 1));
+	//	return w_border_drawable_data_at(index + IntVec2(1, 1));
 	//}
 	//inline const DrawData& drawable_data_at(const IntVec2& index) const
 	//{
-	//	return with_border_drawable_data_at(index + IntVec2(1, 1));
+	//	return w_border_drawable_data_at(index + IntVec2(1, 1));
 	//}
 
-	inline IntVec2 with_border_size_2d() const
+	inline IntVec2 w_border_size_2d() const
 	{
 		return IntVec2(drawable_data_v2d().front().size(),
 			drawable_data_v2d().size());
 	}
 	inline IntVec2 size_2d() const
 	{
-		return with_border_size_2d() - IntVec2(2, 2);
+		return w_border_size_2d() - IntVec2(2, 2);
 	}
 
 	void clear();

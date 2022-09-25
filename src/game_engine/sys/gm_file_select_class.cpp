@@ -152,7 +152,7 @@ void GmFileSelect::_aux_menu_file_qmark_hpick_func(GmFileSelect* self,
 }
 void GmFileSelect::_aux_menu_start_game_func(GmFileSelect* self)
 {
-	//engine->set_game_mode(GameMode::DungeonGen);
+	engine->set_game_mode(GameMode::DungeonGen);
 	*engine->curr_file_num() = *engine->src_file_num();
 	//engine->fn_state = Engine::FnState::Curr;
 

@@ -165,8 +165,8 @@ public:		// types
 		constexpr inline bool fits_in_pfield() const
 		{
 			//return (rect.pos.x >= 0
-			//	&& rect.pos.x <= PFIELD_WINDOW);
-			return PFIELD_WINDOW_RECT2.arg_inside(rect, false, IntVec2());
+			//	&& rect.pos.x <= PFIELD_SIZE_2D.x);
+			return PFIELD_PHYS_RECT2.arg_inside(rect, false, IntVec2());
 		}
 		constexpr inline bool is_path() const
 		{

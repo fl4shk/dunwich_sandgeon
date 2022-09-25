@@ -49,9 +49,9 @@ const std::string
 //		decltype(pfield_ent_id_v3d)
 //		(
 //			NUM_FLOORS,
-//			EntIdSetVec2d(PFIELD_WINDOW_SIZE_2D.y,
+//			EntIdSetVec2d(W_BORDER_PFIELD_WINDOW_SIZE_2D.y,
 //				std::vector<std::unordered_set<ecs::EntId>>
-//					(PFIELD_WINDOW_SIZE_2D.x,
+//					(W_BORDER_PFIELD_WINDOW_SIZE_2D.x,
 //					std::unordered_set<ecs::EntId>()))
 //		);
 //}
@@ -139,8 +139,8 @@ Engine::Engine(i32 s_argc, char** s_argv, bool do_create_or_load)
 	//_non_ecs_ser_data_arr(NUM_FILES, NonEcsSerData()),
 	key_status(i32(KeyKind::Lim)),
 
-	screen_window(IntVec2(), WITH_BORDER_SCREEN_SIZE_2D, false),
-	aux_window(IntVec2(), WITH_BORDER_SCREEN_SIZE_2D, false),
+	screen_window(IntVec2(), W_BORDER_SCREEN_SIZE_2D, false),
+	aux_window(IntVec2(), W_BORDER_SCREEN_SIZE_2D, false),
 
 	pfield_window(PFIELD_WINDOW_POS, PFIELD_WINDOW_END_POS, true),
 	log_window(LOG_WINDOW_POS, LOG_WINDOW_END_POS, true),
@@ -180,7 +180,7 @@ Engine::Engine(i32 s_argc, char** s_argv, bool do_create_or_load)
 	_copy_dst_file_num = &ecs_engine.copy_dst_file_num;
 
 	//screen_window = Window(this, IntVec2(),
-	//		WITH_BORDER_SCREEN_SIZE_2D, i);
+	//		W_BORDER_SCREEN_SIZE_2D, i);
 	//for (i32 i=0; i<NUM_FILES; ++i)
 	//{
 	//	//--------
@@ -195,9 +195,9 @@ Engine::Engine(i32 s_argc, char** s_argv, bool do_create_or_load)
 	//	//};
 	//	//--------
 	//	_screen_window_vec.push_back
-	//		(Window(IntVec2(), WITH_BORDER_SCREEN_SIZE_2D, i));
+	//		(Window(IntVec2(), W_BORDER_SCREEN_SIZE_2D, i));
 	//	_aux_window_vec.push_back
-	//		(Window(IntVec2(), WITH_BORDER_SCREEN_SIZE_2D, i));
+	//		(Window(IntVec2(), W_BORDER_SCREEN_SIZE_2D, i));
 	//	//--------
 	//	_pfield_window_vec.push_back
 	//		(Window(PFIELD_WINDOW_POS, PFIELD_WINDOW_END_POS, i));
