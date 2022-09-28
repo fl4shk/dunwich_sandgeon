@@ -109,9 +109,10 @@ public:		// types
 	//using EntIdSetVec2d
 	//	= std::vector<std::vector<ecs::EntIdSet>>;
 
-	//using Rng = pcg32;
-	using Rng = pcg64;
-	using RngSeedT = u64;
+	using Rng
+		//= pcg32;
+		= pcg64;
+	using RngSeedT = std::remove_cvref_t<decltype(std::declval<Rng>()())>;
 	using LayoutRngArr = std::array<Rng, NUM_FLOORS>;
 	using LayoutRngA2d = std::array<LayoutRngArr, NUM_FILES>;
 public:		// types
@@ -183,15 +184,16 @@ public:		// types
 		{
 			_base_rng_seed = get_hrc_now_rng_seed();
 		}
-		inline void _init_base_rng_seed(RngSeedT s_base_rng_seed)
+		inline void _dbg_init_base_rng_seed(RngSeedT s_base_rng_seed)
 		{
 			_base_rng_seed = s_base_rng_seed;
 		}
 	public:		// functions
 		inline void on_init_or_file_erase_seed_rngs_etc
-			(LayoutRngArr& layout_rng_arr)
+			(LayoutRngArr& layout_rng_arr, RngSeedT s_base_rng_seed)
 		{
-			_init_base_rng_seed();
+			//_init_base_rng_seed();
+			_dbg_init_base_rng_seed(s_base_rng_seed);
 
 			const i32 i = seed_layout_rng_arr(layout_rng_arr);
 
@@ -201,40 +203,43 @@ public:		// types
 		//template<typename RetT=decltype(_rng())>
 		//inline std::remove_cvref_t<RetT> rand()
 		//	requires std::integral<std::remove_cvref_t<RetT>>
-		template<typename T=decltype(std::declval<Rng>())>
+		template<typename T=RngSeedT>
 		inline auto rand()
 		{
 			return rng_run<T>(_rng);
 		}
-		template<typename T>
-		inline auto rand(const T& max, bool saturate=false)
+		//template<typename T=RngSeedT>
+		//inline auto rand(const T& max, bool saturate=false)
+		//{
+		//	return rng_run<T>(_rng, max, saturate);
+		//}
+		template<typename T=RngSeedT>
+		inline auto rand_lt_bound(const T& bound)
 		{
-			return rng_run<T>(_rng, max, saturate);
+			return rng_run_lt_bound<T>(_rng, bound);
 		}
-		template<typename T>
-		inline auto rand_lim(const T& lim_0, const T& lim_1,
-			bool saturate=false)
+		template<typename T=RngSeedT>
+		inline auto rand(const T& lim_0, const T& lim_1)
 		{
-			return rng_run_lim<T>(_rng, lim_0, lim_1, saturate);
+			return rng_run<T>(_rng, lim_0, lim_1);
 		}
-		template<typename T>
-		inline auto rand_scaled(const T& scale)
-		{
-			return rng_run_scaled<T>(_rng, scale);
-		}
-		template<typename T>
-		inline auto rand_scaled(const T& scale, const T& max,
-			bool saturate=false)
-		{
-			return rng_run_scaled<T>(_rng, scale, max, saturate);
-		}
-		template<typename T>
-		inline auto rand_scaled_lim(const T& scale, const T& lim_0,
-			const T& lim_1, bool saturate=false)
-		{
-			return rng_run_scaled_lim<T>(_rng, scale, lim_0, lim_1,
-				saturate);
-		}
+		//template<typename T=RngSeedT>
+		//inline auto rand_scaled(const T& scale)
+		//{
+		//	return rng_run_scaled<T>(_rng, scale);
+		//}
+		//template<typename T=RngSeedT>
+		//inline auto rand_scaled(const T& scale, const T& max,
+		//	bool saturate=false)
+		//{
+		//	return rng_run_scaled<T>(_rng, scale, max, saturate);
+		//}
+		//template<typename T=RngSeedT>
+		//inline auto rand_scaled_lim(const T& scale, const T& lim_0,
+		//	const T& lim_1)
+		//{
+		//	return rng_run_scaled_lim<T>(_rng, scale, lim_0, lim_1);
+		//}
 
 		GEN_GETTER_BY_VAL(base_rng_seed);
 	};
@@ -245,7 +250,7 @@ private:		// non-serialized variables
 
 	// The RNGs for each file's floors' initial layouts, including the
 	// parts that are static (which are stored in the
-	// `comp::StaticTileMap`).
+	// `comp::StaticBgTileMap`).
 	LayoutRngA2d _layout_rng_a2d;
 public:		// serialized variables
 	ecs::Engine ecs_engine;
@@ -353,7 +358,9 @@ public:		// functions
 
 	void deserialize(const binser::Value& bv);
 
-	inline void err(const auto&... objs) const
+	inline void err
+		(const liborangepower::concepts::HasStdOstmOpLshift auto&... objs)
+		const
 	{
 		printerr(objs...);
 		exit(1);
@@ -415,11 +422,75 @@ public:		// functions
 		return layout_rng_arr_fn(USE_CURR_FILE_NUM);
 	}
 
-	inline auto layout_rand()
+	// Note: `layout_rng_fn()` and `layout_rng()` return the current file
+	// number, current floor, layout RNG itself
+	inline Rng& layout_rng_fn(ecs::FileNum file_num)
 	{
-		return layout_rng_arr().at(floor())();
+		return layout_rng_arr_fn(file_num).at(floor_fn(file_num));
+	}
+	inline const Rng& layout_rng_fn(ecs::FileNum file_num) const
+	{
+		return layout_rng_arr_fn(file_num).at(floor_fn(file_num));
+	}
+	inline Rng& layout_rng()
+	{
+		return layout_rng_fn(USE_CURR_FILE_NUM);
+	}
+	inline const Rng& layout_rng() const
+	{
+		return layout_rng_fn(USE_CURR_FILE_NUM);
 	}
 
+	//inline auto layout_rand()
+	//{
+	//	return layout_rng_arr().at(floor())();
+	//}
+	template<typename T=RngSeedT>
+	inline auto layout_rand()
+	{
+		return rng_run<T>(layout_rng());
+	}
+	//template<typename T=RngSeedT>
+	//inline auto layout_rand(const T& max, bool saturate=false)
+	//{
+	//	return rng_run<T>(layout_rng(), max, saturate);
+	//}
+	template<typename T=RngSeedT>
+	inline auto layout_rand_lt_bound(const T& bound)
+	{
+		return rng_run_lt_bound<T>(layout_rng(), bound);
+	}
+	template<typename T=RngSeedT>
+	inline auto layout_rand(const T& lim_0, const T& lim_1)
+	{
+		return rng_run<T>(layout_rng(), lim_0, lim_1);
+	}
+	//template<typename T=RngSeedT>
+	//inline auto layout_rand_scaled(const T& scale)
+	//{
+	//	return rng_run_scaled<T>(layout_rng(), scale);
+	//}
+	//template<typename T=RngSeedT>
+	//inline auto layout_rand_scaled(const T& scale, const T& max,
+	//	bool saturate=false)
+	//{
+	//	return rng_run_scaled<T>(layout_rng(), scale, max, saturate);
+	//}
+	//template<typename T=RngSeedT>
+	//inline auto layout_rand_scaled_lim(const T& scale, const T& lim_0,
+	//	const T& lim_1)
+	//{
+	//	return rng_run_scaled_lim<T>(layout_rng(), scale, lim_0, lim_1);
+	//}
+
+	//template<CallableLikeRngBounded<double> RngT>
+	//inline DblRect2 rand_rect2(RngT& rng, const DblVec2& pos_max,
+	//	const DblVec2& pos_min, const DblVec2& size_2d_max,
+	//	const DblVec2& size_2d_min)
+	//{
+	//	DblRect2 ret;
+	//}
+	//--------
 	inline std::ostream& dbg_osprint_layout_rng_a2d(std::ostream& os) const
 	{
 		osprintout(os, "Engine::dbg_osprint_layout_rng_a2d(): Start\n");
@@ -603,40 +674,44 @@ public:		// `_non_ecs_ser_data_arr` accessor functions
 	//--------
 	//template<typename RetT=decltype(NonEcsSerData::_rng())>
 	//inline RetT rand()
-	template<typename T=decltype(std::declval<Rng>())>
+	// These are for 
+	template<typename T=RngSeedT>
 	inline auto rand()
 	{
 		return non_ecs_ser_data().rand<T>();
 	}
-	template<typename T>
-	inline auto rand(const T& max, bool saturate=false)
+	//template<typename T=RngSeedT>
+	//inline auto rand(const T& max, bool saturate=false)
+	//{
+	//	return non_ecs_ser_data().rand<T>(max, saturate);
+	//}
+	template<typename T=RngSeedT>
+	inline auto rand_lt_bound(const T& bound)
 	{
-		return non_ecs_ser_data().rand<T>(max, saturate);
+		return non_ecs_ser_data().rand_lt_bound<T>(bound);
 	}
-	template<typename T>
-	inline auto rand_lim(const T& lim_0, const T& lim_1,
-		bool saturate=false)
+	template<typename T=RngSeedT>
+	inline auto rand(const T& lim_0, const T& lim_1)
 	{
-		return non_ecs_ser_data().rand_lim(lim_0, lim_1, saturate);
+		return non_ecs_ser_data().rand<T>(lim_0, lim_1);
 	}
-	template<typename T>
-	inline auto rand_scaled(const T& scale)
-	{
-		return non_ecs_ser_data().rand_scaled<T>(scale);
-	}
-	template<typename T>
-	inline auto rand_scaled(const T& scale, const T& max,
-		bool saturate=false)
-	{
-		return non_ecs_ser_data().rand_scaled<T>(scale, max, saturate);
-	}
-	template<typename T>
-	inline auto rand_scaled_lim(const T& scale, const T& lim_0,
-		const T& lim_1, bool saturate=false)
-	{
-		return non_ecs_ser_data().rand_scaled_lim<T>(scale, lim_0, lim_1,
-			saturate);
-	}
+	//template<typename T=RngSeedT>
+	//inline auto rand_scaled(const T& scale)
+	//{
+	//	return non_ecs_ser_data().rand_scaled<T>(scale);
+	//}
+	//template<typename T=RngSeedT>
+	//inline auto rand_scaled(const T& scale, const T& max,
+	//	bool saturate=false)
+	//{
+	//	return non_ecs_ser_data().rand_scaled<T>(scale, max, saturate);
+	//}
+	//template<typename T=RngSeedT>
+	//inline auto rand_scaled_lim(const T& scale, const T& lim_0,
+	//	const T& lim_1)
+	//{
+	//	return non_ecs_ser_data().rand_scaled_lim<T>(scale, lim_0, lim_1);
+	//}
 	//--------
 public:		// functions
 	//--------

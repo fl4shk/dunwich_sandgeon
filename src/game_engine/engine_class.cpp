@@ -66,8 +66,12 @@ Engine::NonEcsSerData::NonEcsSerData()
 	//printerr("Engine::NonEcsSerData::NonEcsSerData(): Note: ",
 	//	"**NOT** calling `_init_base_rng_seed()`\n");
 	//#endif		// DEBUG
-	_init_base_rng_seed(0);
-	//_init_base_rng_seed(1);
+	printerr("Engine::NonEcsSerData::NonEcsSerData(): Note: ",
+		"**NOT** ",
+		"calling `_dbg_init_base_rng_seed()`\n");
+	_init_base_rng_seed();
+	//_dbg_init_base_rng_seed(0);
+	//_dbg_init_base_rng_seed(1);
 }
 Engine::NonEcsSerData::NonEcsSerData(const binser::Value& bv)
 {
@@ -469,6 +473,14 @@ void Engine::_create_or_load_save_file_etc()
 		//	"Error opening file called \"", _save_file_name, "\" for ",
 		//	"reading.\n");
 
+		//for (ecs::FileNum file_num=0; file_num<NUM_FILES; ++file_num)
+		//{
+		//	auto& temp = non_ecs_ser_data_fn(file_num);
+
+		//	temp.on_init_or_file_erase_seed_rngs_etc
+		//		(layout_rng_arr_fn(file_num), temp.base_rng_seed());
+		//}
+
 		#ifdef DEBUG
 		printerr("Engine::_create_or_load_save_file_etc(): ",
 			"_save_to_binser(true);");
@@ -561,7 +573,7 @@ void Engine::erase_file()
 	//layout_rng_arr_fn(*src_file_num()) = LayoutRngArr();
 	//temp.seed_layout_rng_arr(layout_rng_arr_fn(*src_file_num()));
 	temp.on_init_or_file_erase_seed_rngs_etc
-		(layout_rng_arr_fn(*src_file_num()));
+		(layout_rng_arr_fn(*src_file_num()), temp.base_rng_seed());
 
 	//for (ecs::FileNum file_num=0; file_num<NUM_FILES; ++file_num)
 	//{

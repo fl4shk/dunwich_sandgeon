@@ -27,30 +27,29 @@ namespace game_engine
 namespace comp
 {
 //--------
-const std::unordered_map<BgTile, std::string>& bg_tile_str_map()
-{
-	//--------
-	static const std::unordered_map<BgTile, std::string>
-		BG_TILE_STR_MAP
-	= {
-		//{Tile::Wall, "TileWall"},
-		//{Tile::Floor, "TileFloor"},
-		//{Tile::UpStairs, "TileUpStairs"},
-		//{Tile::DownStairs, "TileDownStairs"},
-
-		//{Tile::Door, "TileDoor"},
-		//{Tile::Pit, "TilePit"},
-		//{Tile::Water, "TileWater"},
-		//{Tile::Spikes, "TileSpikes"},
-		#define X(name) \
-			{ BgTile:: name, "BgTile" #name },
-		LIST_OF_BG_TILE(X)
-		#undef X
-	};
-	//--------
-	return BG_TILE_STR_MAP;
-	//--------
-}
+//const std::unordered_map<BgTile, std::string>& bg_tile_str_map()
+//{
+//	//--------
+//	static const std::unordered_map<BgTile, std::string>
+//		BG_TILE_STR_MAP
+//	= {
+//		//{Tile::Wall, "TileWall"},
+//		//{Tile::Floor, "TileFloor"},
+//		//{Tile::UpStairs, "TileUpStairs"},
+//		//{Tile::DownStairs, "TileDownStairs"},
+//
+//		//{Tile::Door, "TileDoor"},
+//		//{Tile::Pit, "TilePit"},
+//		//{Tile::Water, "TileWater"},
+//		//{Tile::Spikes, "TileSpikes"},
+//		#define X(name) { BgTile:: name, "BgTile" #name },
+//		LIST_OF_BG_TILE(X)
+//		#undef X
+//	};
+//	//--------
+//	return BG_TILE_STR_MAP;
+//	//--------
+//}
 //--------
 const std::string
 	StaticBgTileMap::KIND_STR("StaticBgTileMap");
@@ -93,23 +92,13 @@ void StaticBgTileMap::draw() const
 {
 	const auto& temp_size_2d = size_2d();
 
-	if (IntVec2 pos; true)
+	IntVec2 pos;
+	for (pos.y=0; pos.y<temp_size_2d.y; ++pos.y)
 	{
-		for (pos.y=0; pos.y<temp_size_2d.y; ++pos.y)
+		for (pos.x=0; pos.x<temp_size_2d.x; ++pos.x)
 		{
-			for (pos.x=0; pos.x<temp_size_2d.x; ++pos.x)
-			{
-				try
-				{
-					engine->pfield_window.drawable_data_at(pos)
-						= drawable_data_map().at(bg_tile_str_map()
-							.at(at(pos)));
-				}
-				catch (std::exception& e)
-				{
-					printout(e.what(), "\n");
-				}
-			}
+			engine->pfield_window.drawable_data_at(pos)
+				= drawable_data_map().at(bg_tile_str_map_at(at(pos)));
 		}
 	}
 }
@@ -239,6 +228,44 @@ DungeonGen::operator binser::Value () const
 	MEMB_LIST_COMP_DUNGEON(BINSER_MEMB_SERIALIZE);
 
 	return ret;
+}
+
+void DungeonGen::draw(StaticBgTileMap* bg_tile_map)
+{
+	//bg_tile_map->at({0, 0}) = BgTile::Floor;
+	for (size_t i=0; i<size(); ++i)
+	{
+		const RoomPath& rp = at(i);
+		IntVec2 pos;
+		for (pos.y=rp.rect.pos.y;
+			//pos.y<rp.rect.pos.y + rp.rect.size_2d.y;
+			pos.y<=rp.rect.bottom_y();
+			++pos.y)
+		{
+			for (pos.x=rp.rect.pos.x;
+				//pos.x<rp.rect.pos.x + rp.rect.size_2d.x;
+				pos.x<=rp.rect.right_x();
+				++pos.x)
+			{
+				try
+				{
+					bg_tile_map->at(pos) = BgTile::Floor;
+				}
+				catch (const std::exception& e)
+				{
+					printerr(e.what(), "\n");
+					throw std::out_of_range(sconcat
+						("rp.rect",rp.rect, ", pos", pos, ", ",
+						//"rs{", rp.rect.pos.x + rp.rect.size_2d.x, "}, ",
+						//"bb{", rp.rect.pos.y + rp.rect.size_2d.y, "}"
+						"rs{", rp.rect.right_x(), "}, ",
+						"bs{", rp.rect.bottom_y(), "}, ",
+						"fp{", rp.fits_in_pfield(), "}"
+						));
+				}
+			}
+		}
+	}
 }
 //--------
 } // namespace comp

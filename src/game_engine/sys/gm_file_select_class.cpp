@@ -159,8 +159,9 @@ void GmFileSelect::_aux_menu_start_game_func(GmFileSelect* self)
 	if (!engine->did_init_save_file())
 	{
 		engine->did_init_save_file() = true;
-		engine->non_ecs_ser_data().on_init_or_file_erase_seed_rngs_etc
-			(engine->layout_rng_arr());
+		auto& temp = engine->non_ecs_ser_data();
+		temp.on_init_or_file_erase_seed_rngs_etc
+			(engine->layout_rng_arr(), temp.base_rng_seed());
 	}
 }
 void GmFileSelect::_aux_menu_copy_file_func(GmFileSelect* self)

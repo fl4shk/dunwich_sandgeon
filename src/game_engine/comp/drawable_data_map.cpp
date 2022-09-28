@@ -41,13 +41,16 @@ const std::unordered_map<std::string, Drawable::Data>& drawable_data_map()
 			{.c=' ', .color_pair=FontColor::Black,
 			.gs_color_pair=FontColor::Black}},
 
-		// '#', 35
-		{bg_tile_str_map().at(BgTile::Wall),
-			{.c='#',
-			//.color_pair=FontColor::LightGray,
-			//.gs_color_pair=FontColor::LightGray
-			.color_pair=FontColor::Brown,
-			.gs_color_pair=FontColor::Gray}},
+		// ' ', 32 (again)
+		{bg_tile_str_map_at(BgTile::Wall),
+			{.c=' ', .color_pair=FontColor::Black,
+			.gs_color_pair=FontColor::Black}},
+		//// '#', 35
+		//{bg_tile_str_map_at(BgTile::Wall),
+		//	{.c='#',
+		//	//.color_pair=FontColor::LightGray,
+		//	//.gs_color_pair=FontColor::LightGray
+		//	.color_pair=FontColor::Brown, .gs_color_pair=FontColor::Gray}},
 
 		// '+', 43
 		{Window::BORDER_CORNER_KIND_STR,
@@ -60,7 +63,7 @@ const std::unordered_map<std::string, Drawable::Data>& drawable_data_map()
 			.gs_color_pair=FontColor::White}},
 
 		// '.', 46
-		{bg_tile_str_map().at(BgTile::Floor),
+		{bg_tile_str_map_at(BgTile::Floor),
 			{.c='.',
 			//.color_pair=FontColor::LightGray,
 			//.gs_color_pair=FontColor::LightGray
@@ -68,12 +71,12 @@ const std::unordered_map<std::string, Drawable::Data>& drawable_data_map()
 			.gs_color_pair=FontColor::Gray}},
 
 		// '<', 60
-		{bg_tile_str_map().at(BgTile::DownStairs),
+		{bg_tile_str_map_at(BgTile::DownStairs),
 			{.c='<', .color_pair=FontColor::Brown,
 			.gs_color_pair=FontColor::White}},
 
 		// '>', 62
-		{bg_tile_str_map().at(BgTile::UpStairs),
+		{bg_tile_str_map_at(BgTile::UpStairs),
 			{.c='>', .color_pair=FontColor::Brown,
 			.gs_color_pair=FontColor::White}},
 
@@ -83,7 +86,7 @@ const std::unordered_map<std::string, Drawable::Data>& drawable_data_map()
 			.gs_color_pair=FontColor::White}},
 
 		// '^', 94,
-		{bg_tile_str_map().at(BgTile::Spikes),
+		{bg_tile_str_map_at(BgTile::Spikes),
 			{.c='^', .color_pair=FontColor::Gray,
 			.gs_color_pair=FontColor::Gray}},
 
@@ -93,7 +96,7 @@ const std::unordered_map<std::string, Drawable::Data>& drawable_data_map()
 			.gs_color_pair=FontColor::White}},
 
 		// '~', 126
-		{bg_tile_str_map().at(BgTile::Water),
+		{bg_tile_str_map_at(BgTile::Water),
 			{.c='~', .color_pair=FontColor::Blue,
 			.gs_color_pair=FontColor::White}},
 	};

@@ -60,7 +60,26 @@ enum class BgTile: u8
 	#undef X
 };
 
-extern const std::unordered_map<BgTile, std::string>& bg_tile_str_map();
+//extern const std::unordered_map<BgTile, std::string>& bg_tile_str_map();
+static constexpr inline std::string bg_tile_str_map_at(BgTile bg_tile)
+{
+	switch (bg_tile)
+	{
+		#define X(name) \
+			case BgTile:: name : \
+				return "game_engine::comp::BgTile::" #name ; \
+				break;
+		LIST_OF_BG_TILE(X)
+		#undef X
+
+		default:
+			throw std::invalid_argument(sconcat
+				("game_engine::comp::bg_tile_str_map_at(): Error: "
+				"Invalid `bg_tile`: ", i32(bg_tile)));
+			return "";
+			break;
+	}
+}
 //--------
 // This should be generated when going to a new floor, and it shouldn't be
 // written into save _data (outside of debugging).
@@ -92,7 +111,15 @@ public:		// functions
 	//--------
 	inline BgTile& at(const IntVec2& pos)
 	{
-		return _data.data.at(pos.y).data.at(pos.x);
+		//try
+		//{
+			return _data.data.at(pos.y).data.at(pos.x);
+		//}
+		//catch (const std::exception& e)
+		//{
+		//	printerr(e.what(), "\n");
+		//	throw std::out_of_range(sconcat("`pos`: ", pos));
+		//}
 	}
 	inline const BgTile& at(const IntVec2& pos) const
 	{
@@ -122,8 +149,10 @@ public:		// constants
 
 	static constexpr i32
 		// Chosen arbitrarily; might need to adjust later
-		MIN_NUM_ROOM_PATHS = 3,
-		MAX_NUM_ROOM_PATHS = 64;
+		MIN_NUM_ROOM_PATHS
+			= 3,
+		MAX_NUM_ROOM_PATHS
+			= 15;
 
 		//MIN_NUM_PATHS = 1,
 		//MAX_NUM_PATHS = 64;
@@ -135,7 +164,9 @@ public:		// types
 		static constexpr i32
 			PATH_THICKNESS = 1,
 			PATH_MIN_LEN = 2,
-			PATH_MAX_LEN = 32;
+			PATH_MAX_LEN
+				//= 32;
+				= 20;
 
 		static constexpr IntVec2
 			ROOM_MIN_SIZE_2D
@@ -147,14 +178,11 @@ public:		// types
 	public:		// variables
 		#define MEMB_LIST_COMP_DUNGEON_ROOM_PATH(X) \
 			X(rect, std::nullopt) \
-			X(conn_set, std::nullopt) \
+			X(conn_index_set, std::nullopt) \
 
 		IntRect2 rect
-		{
-			.pos=IntVec2(),
-			.size_2d{.x=PATH_THICKNESS, .y=PATH_MIN_LEN}
-		};
-		std::set<i32> conn_set;
+			{.pos=IntVec2(), .size_2d{.x=PATH_THICKNESS, .y=PATH_MIN_LEN}};
+		std::set<i32> conn_index_set;
 	public:		// functions
 		//--------
 		static RoomPath from_bv(const binser::Value& bv);
@@ -166,7 +194,10 @@ public:		// types
 		{
 			//return (rect.pos.x >= 0
 			//	&& rect.pos.x <= PFIELD_SIZE_2D.x);
-			return PFIELD_PHYS_RECT2.arg_inside(rect, false, IntVec2());
+			//return PFIELD_PHYS_RECT2.arg_inside(rect, false,
+			//	IntVec2());
+			//return PFIELD_PHYS_RECT2.arg_inside(rect, CDIFF_V2);
+			return PFIELD_PHYS_RECT2.arg_inside(rect);
 		}
 		constexpr inline bool is_path() const
 		{
@@ -227,7 +258,7 @@ public:		// functions
 	}
 	inline void push_back(RoomPath&& to_push)
 	{
-		if (_data.data.size() + 1 > MAX_NUM_ROOM_PATHS)
+		if (size() + 1 > MAX_NUM_ROOM_PATHS)
 		{
 			throw std::length_error(sconcat
 				("game_engine::comp::DungeonGen::room_push_back(): ",
@@ -236,6 +267,17 @@ public:		// functions
 		}
 		_data.data.push_back(std::move(to_push));
 	}
+	inline size_t size() const
+	{
+		return _data.data.size();
+	}
+	inline void clear()
+	{
+		//_data.data.resize(0);
+		_data.data.clear();
+	}
+
+	void draw(StaticBgTileMap* bg_tile_map);
 	//--------
 	//inline Path& path_at(size_t index)
 	//{

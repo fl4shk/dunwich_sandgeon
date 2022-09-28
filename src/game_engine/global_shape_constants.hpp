@@ -29,6 +29,11 @@ namespace dunwich_sandgeon
 namespace game_engine
 {
 //--------
+static constexpr double
+	CDIFF = 0.1;
+static constexpr DblVec2
+	CDIFF_V2{.x=CDIFF, .y=CDIFF};
+//--------
 // This constant has values in the amount of tilemap entries
 static constexpr IntVec2
 	W_BORDER_SCREEN_SIZE_2D
@@ -46,31 +51,39 @@ static constexpr IntVec2
 	PFIELD_WINDOW_POS{.x=0, .y=0},
 	PFIELD_WINDOW_END_POS
 		{.x=W_BORDER_SCREEN_SIZE_2D.x - 1 - 20,
-		.y=W_BORDER_SCREEN_SIZE_2D.y - 1 - 10},
+		.y=W_BORDER_SCREEN_SIZE_2D.y - 1 - 10};
 		//{.x=W_BORDER_SCREEN_SIZE_2D.x - 1 - 10,
-		//.y=W_BORDER_SCREEN_SIZE_2D.y - 1 - 10},
-	NO_BORDER_PFIELD_WINDOW_POS
-		(PFIELD_WINDOW_POS + IntVec2{1, 1}),
-	NO_BORDER_PFIELD_WINDOW_END_POS
-		(PFIELD_WINDOW_END_POS - IntVec2{1, 1}),
-	PFIELD_PHYS_POS(NO_BORDER_PFIELD_WINDOW_POS - IntVec2{1, 1}),
-	PFIELD_PHYS_END_POS
-		(NO_BORDER_PFIELD_WINDOW_END_POS - IntVec2{1, 1});
+		//.y=W_BORDER_SCREEN_SIZE_2D.y - 1 - 10};
+	//NO_BORDER_PFIELD_WINDOW_POS
+	//	(PFIELD_WINDOW_POS + IntVec2{1, 1}),
+	//NO_BORDER_PFIELD_WINDOW_END_POS
+	//	(PFIELD_WINDOW_END_POS - IntVec2{1, 1}),
+	//PFIELD_PHYS_POS(NO_BORDER_PFIELD_WINDOW_POS - IntVec2{1, 1}),
+	//PFIELD_PHYS_END_POS
+	//	(NO_BORDER_PFIELD_WINDOW_END_POS - IntVec2{1, 1});
 static constexpr IntRect2
 	PFIELD_WINDOW_RECT2=IntRect2::build_in_grid_r2_w_end_pos
-		(PFIELD_WINDOW_POS, PFIELD_WINDOW_END_POS),
-	PFIELD_PHYS_RECT2=IntRect2::build_in_grid_r2_w_end_pos
-		(PFIELD_PHYS_POS, PFIELD_PHYS_END_POS);
-
-//extern const IntVec2Ex
-//	PFIELD_EX_RANGE;
+		(PFIELD_WINDOW_POS, PFIELD_WINDOW_END_POS);
 static constexpr IntVec2
 	PFIELD_WINDOW_SIZE_2D
 		//{.x=PFIELD_WINDOW_END_POS.x
 		//	- PFIELD_WINDOW_POS.x + 1,
 		//.y=PFIELD_WINDOW_END_POS.y
 		//	- PFIELD_WINDOW_POS.y + 1};
-		= PFIELD_WINDOW_RECT2.size_2d,
+		= PFIELD_WINDOW_RECT2.size_2d;
+//--------
+static constexpr IntVec2
+	PFIELD_PHYS_POS(PFIELD_WINDOW_POS.x, PFIELD_WINDOW_POS.y),
+	PFIELD_PHYS_END_POS
+		(IntVec2{PFIELD_WINDOW_END_POS.x, PFIELD_WINDOW_END_POS.y}
+		- IntVec2{2, 2});
+static constexpr IntRect2
+	PFIELD_PHYS_RECT2=IntRect2::build_in_grid_r2_w_end_pos
+		(PFIELD_PHYS_POS, PFIELD_PHYS_END_POS);
+
+//extern const IntVec2Ex
+//	PFIELD_EX_RANGE;
+static constexpr IntVec2
 	PFIELD_PHYS_SIZE_2D
 		= PFIELD_PHYS_RECT2.size_2d;
 //--------
