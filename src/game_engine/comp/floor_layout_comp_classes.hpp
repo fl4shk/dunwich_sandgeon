@@ -152,7 +152,8 @@ public:		// constants
 		MIN_NUM_ROOM_PATHS
 			= 3,
 		MAX_NUM_ROOM_PATHS
-			= 15;
+			//= 15;
+			= 25;
 
 		//MIN_NUM_PATHS = 1,
 		//MAX_NUM_PATHS = 64;

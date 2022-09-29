@@ -68,6 +68,11 @@ public:		// types
 		GEN_SIDE_R = 2,
 		GEN_SIDE_B = 3, MAX_GEN_SIDE = GEN_SIDE_B,
 
+		GEN_NEXT_SAME_MIN = 0, MIN_GEN_NEXT = GEN_NEXT_SAME_MIN,
+		GEN_NEXT_SAME_MAX = 2,
+		GEN_NEXT_DIFFERENT_MIN = 3,
+		GEN_NEXT_DIFFERENT_MAX = 9, MAX_GEN_NEXT = GEN_NEXT_DIFFERENT_MAX,
+
 		// This is the number of tries to attempt room/path generation
 		// after failing to generate a valid one.
 		GEN_RP_MAX_TRIES = 20;

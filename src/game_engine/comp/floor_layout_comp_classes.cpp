@@ -249,7 +249,14 @@ void DungeonGen::draw(StaticBgTileMap* bg_tile_map)
 			{
 				try
 				{
-					bg_tile_map->at(pos) = BgTile::Floor;
+					if (rp.is_path())
+					{
+						bg_tile_map->at(pos) = BgTile::Floor;
+					}
+					else if (rp.is_room())
+					{
+						bg_tile_map->at(pos) = BgTile::Water;
+					}
 				}
 				catch (const std::exception& e)
 				{
