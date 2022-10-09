@@ -115,6 +115,7 @@ void GmDungeonGen::_gen_single_rp(comp::DungeonGen* dungeon_gen) {
 		_attempted_num_rp = engine->layout_rand<i32>(
 			i32(MIN_NUM_ROOM_PATHS), i32(MAX_NUM_ROOM_PATHS)
 		);
+		_prev_gen_side = 0;
 		_stop_gen_early = false;
 
 		// We always generate a room in this case.
@@ -181,17 +182,32 @@ void GmDungeonGen::_gen_single_rp(comp::DungeonGen* dungeon_gen) {
 				gen_side = engine->layout_rand<i32>(
 					MIN_GEN_SIDE, MAX_GEN_SIDE
 				),
-				gen_next_type = engine->layout_rand<i32>(
-					MIN_GEN_NEXT, MAX_GEN_NEXT
-				),
-				gen_next_conn_rp_index = engine->layout_rand<i32>(
-					MIN_GEN_NEXT, MAX_GEN_NEXT
-				);
+				gen_next_type = (prev_gen_type == GEN_TYPE_PATH)
+					? engine->layout_rand<i32>(
+						MIN_GEN_NEXT_PATH_TYPE, MAX_GEN_NEXT_PATH_TYPE
+					)
+					: engine->layout_rand<i32>(
+						MIN_GEN_NEXT_ROOM_TYPE, MAX_GEN_NEXT_ROOM_TYPE
+					),
+				gen_next_conn_rp_index = (prev_gen_type == GEN_TYPE_PATH)
+					? engine->layout_rand<i32>(
+						MIN_GEN_NEXT_PATH_INDEX, MAX_GEN_NEXT_PATH_INDEX
+					)
+					: engine->layout_rand<i32>(
+						MIN_GEN_NEXT_ROOM_INDEX, MAX_GEN_NEXT_ROOM_INDEX
+					);
 
 			i32 gen_type = 0;
 			if (
-				gen_next_type >= GEN_NEXT_SAME_MIN
-				&& gen_next_type <= GEN_NEXT_SAME_MAX
+				(
+					prev_gen_type == GEN_TYPE_PATH
+					&& gen_next_type >= GEN_NEXT_PATH_SAME_TYPE_MIN
+					&& gen_next_type <= GEN_NEXT_PATH_SAME_TYPE_MIN
+				) || (
+					prev_gen_type == GEN_TYPE_ROOM
+					&& gen_next_type >= GEN_NEXT_ROOM_SAME_TYPE_MIN
+					&& gen_next_type <= GEN_NEXT_ROOM_SAME_TYPE_MIN
+				)
 			) {
 				gen_type = prev_gen_type;
 				//printout(
@@ -199,9 +215,7 @@ void GmDungeonGen::_gen_single_rp(comp::DungeonGen* dungeon_gen) {
 				//	"using `prev_gen_type`: ",
 				//	gen_type, "\n"
 				//);
-			} else // if (gen_next_type >= GEN_NEXT_DIFFERENT_MIN
-				//&& gen_next_type <= GEN_NEXT_DIFFERENT_MAX)
-			{
+			} else { // if (switching types) 
 				do {
 					gen_type = engine->layout_rand<i32>(
 						MIN_GEN_TYPE, MAX_GEN_TYPE
@@ -252,8 +266,21 @@ void GmDungeonGen::_gen_single_rp(comp::DungeonGen* dungeon_gen) {
 			//printout("test 0\n");
 			i32 conn_rp_index;
 			if (
-				gen_next_conn_rp_index >= GEN_NEXT_SAME_MIN
-				&& gen_next_conn_rp_index <= GEN_NEXT_SAME_MAX
+				//gen_next_conn_rp_index >= GEN_NEXT_SAME_MIN
+				//&& gen_next_conn_rp_index <= GEN_NEXT_SAME_MAX
+				(
+					prev_gen_type == GEN_TYPE_PATH
+					&& gen_next_conn_rp_index
+						>= GEN_NEXT_PATH_SAME_INDEX_MIN
+					&& gen_next_conn_rp_index
+						<= GEN_NEXT_PATH_SAME_INDEX_MAX
+				) || (
+					prev_gen_type == GEN_TYPE_ROOM
+					&& gen_next_conn_rp_index
+						>= GEN_NEXT_ROOM_SAME_INDEX_MIN
+					&& gen_next_conn_rp_index
+						<= GEN_NEXT_ROOM_SAME_INDEX_MAX
+				)
 			) {
 				conn_rp_index = prev_rp_index;
 			} else // if (gen_next_conn_rp_index >= GEN_NEXT_DIFFERENT_MIN
@@ -399,6 +426,7 @@ void GmDungeonGen::_gen_single_rp(comp::DungeonGen* dungeon_gen) {
 			//	//--------
 			//	}
 			//}
+			//--------
 			//printout("`gen_type`: ", gen_type, "\n");
 
 			return true;

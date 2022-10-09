@@ -269,11 +269,11 @@ void DungeonGen::draw() {
 								do_draw();
 							}
 						} else { // if (!in_border)
-							if (!rp.door_pt_set.contains(pos)) {
+							//if (!rp.door_pt_set.contains(pos)) {
 								bg_tile = BgTile::RoomFloor;
-							} else {
-								bg_tile = BgTile::Door;
-							}
+							//} else {
+							//	bg_tile = BgTile::Door;
+							//}
 							do_draw();
 						}
 					}
