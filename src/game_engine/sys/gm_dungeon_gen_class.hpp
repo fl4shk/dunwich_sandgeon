@@ -23,20 +23,15 @@
 #include "../../misc_includes.hpp"
 #include "../comp/floor_layout_comp_classes.hpp"
 
-namespace dunwich_sandgeon
-{
-namespace game_engine
-{
-namespace sys
-{
-
+namespace dunwich_sandgeon {
+namespace game_engine {
+namespace sys {
+//--------
 // Game Mode: Dungeon Generation
-class GmDungeonGen final: public ecs::Sys
-{
+class GmDungeonGen final: public ecs::Sys {
 public:		// types
 	//// A `class` representing the next
-	//class GenInfo final
-	//{
+	//class GenInfo final {
 	//public:		// variables
 	//	i32 conn_index = 0;
 	//};
@@ -90,8 +85,7 @@ private:		// variables
 public:		// functions
 	GmDungeonGen() = default;
 	//inline GmDungeonGen(const binser::Value& bv)
-	//	: ecs::Sys(bv)
-	//{
+	//	: ecs::Sys(bv) {
 	//}
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(GmDungeonGen);
 	virtual ~GmDungeonGen() = default;
@@ -108,7 +102,7 @@ private:		// functions
 	//void _connect_room_paths(comp::StaticBgTileMap* bg_tile_map,
 	//	comp::DungeonGen* dungeon_gen);
 };
-
+//--------
 } // namespace sys
 } // namespace game_engine
 } // namespace dunwich_sandgeon

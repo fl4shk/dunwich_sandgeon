@@ -22,10 +22,8 @@
 
 //#include <queue>
 
-namespace dunwich_sandgeon
-{
-namespace game_engine
-{
+namespace dunwich_sandgeon {
+namespace game_engine {
 //--------
 //const IntVec2 Window::SCREEN_SIZE_2D(82, 62);
 //const IntVec2 Window::SCREEN_SIZE_2D(60, 50);
@@ -36,44 +34,34 @@ const std::string
 	Window::BORDER_VERT_KIND_STR("game_engine::Window::BorderVert"),
 	Window::BLANK_KIND_STR("game_engine::Window::Blank");
 //--------
-const comp::Drawable::Data& Window::BORDER_CORNER_DRAWABLE_DATA()
-{
+const comp::Drawable::Data& Window::BORDER_CORNER_DRAWABLE_DATA() {
 	return comp::drawable_data_map().at(BORDER_CORNER_KIND_STR);
 }
-const comp::Drawable::Data& Window::BORDER_HORIZ_DRAWABLE_DATA()
-{
+const comp::Drawable::Data& Window::BORDER_HORIZ_DRAWABLE_DATA() {
 	return comp::drawable_data_map().at(BORDER_HORIZ_KIND_STR);
 }
-const comp::Drawable::Data& Window::BORDER_VERT_DRAWABLE_DATA()
-{
+const comp::Drawable::Data& Window::BORDER_VERT_DRAWABLE_DATA() {
 	return comp::drawable_data_map().at(BORDER_VERT_KIND_STR);
 }
-const comp::Drawable::Data& Window::BLANK_DRAWABLE_DATA()
-{
+const comp::Drawable::Data& Window::BLANK_DRAWABLE_DATA() {
 	return comp::drawable_data_map().at(BLANK_KIND_STR);
 }
 
-Window::Window()
-{
-}
+//Window::Window() {}
 //Window::Window(const IntVec2& s_some_pos, const IntVec2& s_some_size_2d,
 //	bool with_border)
 //	: _pos(s_some_pos
 //		- (!with_border ? IntVec2(1, 1) : IntVec2(0, 0))),
-//	_drawable_data_v2d
-//	(
+//	_drawable_data_v2d(
 //		s_some_size_2d.y + (!with_border ? 2 : 0),
-//		std::vector<DrawData>
-//		(
+//		std::vector<DrawData>(
 //			s_some_size_2d.x + (!with_border ? 2 : 0)
 //		)
 //	)
-//	//_cleared_ent_id_v2d
-//	//(
+//	//_cleared_ent_id_v2d(
 //	//	s_some_size_2d.y
 //	//		+ (!with_border ? 2 : 0),
-//	//	ecs::EntIdVec
-//	//	(
+//	//	ecs::EntIdVec(
 //	//		s_some_size_2d.x
 //	//			+ (!with_border ? 2 : 0),
 //	//		ecs::ENT_NULL_ID
@@ -87,22 +75,18 @@ Window::Window()
 //	bool with_border)
 //	: _pos(s_some_pos
 //		- (!with_border ? IntVec2(1, 1) : IntVec2(0, 0))),
-//	_drawable_data_v2d
-//	(
+//	_drawable_data_v2d(
 //		s_some_end_pos.y - s_some_pos.y + 1
 //			+ (!with_border ? 2 : 0),
-//		std::vector<DrawData>
-//		(
+//		std::vector<DrawData>(
 //			s_some_end_pos.x - s_some_pos.x + 1
 //				+ (!with_border ? 2 : 0)
 //		)
 //	)
-//	//_cleared_ent_id_v2d
-//	//(
+//	//_cleared_ent_id_v2d(
 //	//	s_some_end_pos.y - s_some_pos.y + 1
 //	//		+ (!with_border ? 2 : 0),
-//	//	ecs::EntIdVec
-//	//	(
+//	//	ecs::EntIdVec(
 //	//		s_some_end_pos.x - s_some_pos.x + 1
 //	//			+ (!with_border ? 2 : 0),
 //	//		ecs::ENT_NULL_ID
@@ -117,22 +101,21 @@ Window::Window(const IntVec2& s_some_pos,
 	bool with_border)
 	: _pos(s_some_pos
 		- (!with_border ? IntVec2(1, 1) : IntVec2(0, 0))),
-	_drawable_data_v2d
-		(s_some_size_2d_or_end_pos.y
+	_drawable_data_v2d(
+		s_some_size_2d_or_end_pos.y
 			+ (use_end_pos ? (-s_some_pos.y + 1) : 0)
 			+ (!with_border ? 2 : 0),
-		std::vector<DrawData>
-		(s_some_size_2d_or_end_pos.x
-			+ (use_end_pos ? (-s_some_pos.x + 1) : 0)
-			+ (!with_border ? 2 : 0)))
-{
+		std::vector<DrawData>(
+			s_some_size_2d_or_end_pos.x
+				+ (use_end_pos ? (-s_some_pos.x + 1) : 0)
+				+ (!with_border ? 2 : 0)
+		)
+	) {
 }
-Window::~Window()
-{
+Window::~Window() {
 }
 
-//Window::operator binser::Value () const
-//{
+//Window::operator binser::Value () const {
 //	binser::Value ret;
 //
 //	MEMB_SER_LIST_WINDOW(BINSER_MEMB_SERIALIZE);
@@ -140,41 +123,29 @@ Window::~Window()
 //	return ret;
 //}
 
-//void Window::deserialize(const binser::Value& bv)
-//{
+//void Window::deserialize(const binser::Value& bv) {
 //	//printout("Window::deserialize() before: ", engine == nullptr, "\n");
 //	MEMB_SER_LIST_WINDOW(BINSER_MEMB_DESERIALIZE);
 //	//_ent_id_v2d = _cleared_ent_id_v2d;
 //	//printout("Window::deserialize() after: ", engine == nullptr, "\n");
 //}
 
-void Window::clear()
-{
-	for (i32 j=0; j<w_border_size_2d().y; ++j)
-	{
-		for (i32 i=0; i<w_border_size_2d().x; ++i)
-		{
+void Window::clear() {
+	for (i32 j=0; j<w_border_size_2d().y; ++j) {
+		for (i32 i=0; i<w_border_size_2d().x; ++i) {
 			const IntVec2 index(i, j);
-			if ((j == 0) || (j == w_border_size_2d().y - 1))
-			{
-				if ((i == 0) || (i == w_border_size_2d().x - 1))
-				{
+			if ((j == 0) || (j == w_border_size_2d().y - 1)) {
+				if ((i == 0) || (i == w_border_size_2d().x - 1)) {
 					w_border_drawable_data_at(index)
 						= BORDER_CORNER_DRAWABLE_DATA();
-				}
-				else
-				{
+				} else {
 					w_border_drawable_data_at(index)
 						= BORDER_HORIZ_DRAWABLE_DATA();
 				}
-			}
-			else if ((i == 0) || (i == w_border_size_2d().x - 1))
-			{
+			} else if ((i == 0) || (i == w_border_size_2d().x - 1)) {
 				w_border_drawable_data_at(index)
 					= BORDER_VERT_DRAWABLE_DATA();
-			}
-			else
-			{
+			} else {
 				w_border_drawable_data_at(index)
 					= BLANK_DRAWABLE_DATA();
 			}
@@ -182,75 +153,71 @@ void Window::clear()
 	}
 }
 
-void Window::draw(const Window& src, bool leave_corner)
-{
+void Window::draw(const Window& src, bool leave_corner) {
 	IntVec2 src_pos;
-	for (src_pos.y=0; src_pos.y<src.w_border_size_2d().y; ++src_pos.y)
-	{
-		for (src_pos.x=0;
+	for (src_pos.y=0; src_pos.y<src.w_border_size_2d().y; ++src_pos.y) {
+		for (
+			src_pos.x=0;
 			src_pos.x<src.w_border_size_2d().x;
-			++src_pos.x)
-		{
+			++src_pos.x
+		) {
 			const auto& SRC_DRAWABLE_DATA
 				= src.w_border_drawable_data_at(src_pos);
 			const auto DST_POS = src.pos() + src_pos;
 			auto& dst_drawable_data = w_border_drawable_data_at(DST_POS);
 
-			if (!leave_corner
-				|| (dst_drawable_data != BORDER_CORNER_DRAWABLE_DATA()))
-			{
+			if (
+				!leave_corner
+				|| (dst_drawable_data != BORDER_CORNER_DRAWABLE_DATA())
+			) {
 				dst_drawable_data = SRC_DRAWABLE_DATA;
 			}
 		}
 	}
 }
 
-void Window::draw(const Menu& menu)
-{
+void Window::draw(const Menu& menu) {
 	draw(static_cast<MsgLog>(menu));
 }
 
-void Window::draw(const MsgLog& msg_log)
-{
+void Window::draw(const MsgLog& msg_log) {
 	IntVec2 temp_pos(0, 0);
 
 	//if (msg_log.center().y
 	//	&& (msg_log.data().size() < msg_log.window_size_2d().y))
-	if (msg_log.center().y
-		&& i32(msg_log.data().size()) <= msg_log.window_size_2d().y)
-	{
+	if (
+		msg_log.center().y
+		&& i32(msg_log.data().size()) <= msg_log.window_size_2d().y
+	) {
 		temp_pos.y
 			= (msg_log.window_size_2d().y - msg_log.data().size()) / 2;
 	}
 
-	for (i32 j=msg_log.scroll();
+	for (
+		i32 j=msg_log.scroll();
 		j - msg_log.scroll() < msg_log.window_size_2d().y
 			&& j < msg_log.internal_height()
 			&& j < i32(msg_log.data().size());
-		++j, ++temp_pos.y)
-	{
+		++j, ++temp_pos.y
+	) {
 		const auto& ROPE = msg_log.data().at(j);
 
 		i32 rope_size = 0;
 
-		for (i32 i=0; i<i32(ROPE.size()); ++i)
-		{
+		for (i32 i=0; i<i32(ROPE.size()); ++i) {
 			rope_size += ROPE.at(i).str.size();
 
-			if ((!msg_log.keep_sep()) && (i + 1 < i32(ROPE.size())))
-			{
+			if ((!msg_log.keep_sep()) && (i + 1 < i32(ROPE.size()))) {
 				++rope_size;
 			}
 		}
 		//printout("rope_size: ", rope_size, " ", 
 		//	//std::string("This is a red str. asdf asdf asdf asdf").size(),
 		//	"\n");
-		//for (i32 i=0; i<ROPE.size(); ++i)
-		//{
+		//for (i32 i=0; i<ROPE.size(); ++i) {
 		//	i32 temp_rope_size = ROPE.at(i).str.size();
 
-		//	if ((!msg_log.keep_sep()) && ((i + 1) < ROPE.size()))
-		//	{
+		//	if ((!msg_log.keep_sep()) && ((i + 1) < ROPE.size())) {
 		//		++temp_rope_size;
 		//	}
 
@@ -261,23 +228,21 @@ void Window::draw(const MsgLog& msg_log)
 
 		//if (msg_log.center().x
 		//	&& ((rope_size - 1) < msg_log.window_size_2d().x))
-		if (msg_log.center().x
-			&& (rope_size <= msg_log.window_size_2d().x))
-		{
+		if (
+			msg_log.center().x
+			&& (rope_size <= msg_log.window_size_2d().x)
+		) {
 			//temp_pos.x 
 			//	= ((msg_log.window_size_2d().x - rope_size) / 2) - 1;
 			temp_pos.x 
 				= ((msg_log.window_size_2d().x - rope_size) / 2);
-		}
-		else
-		{
+		} else {
 			temp_pos.x = 0;
 		}
 
 		auto draw_at_temp_pos
 			= [this, &temp_pos](const comp::Drawable::Data& drawable_data)
-			-> void
-		{
+			-> void {
 			//const auto DST_ENT_ID = ent_id_at(temp_pos);
 			//auto dst = engine->ecs_engine
 			//	.casted_comp_at<comp::Drawable>(DST_ENT_ID, file_num());
@@ -286,78 +251,65 @@ void Window::draw(const MsgLog& msg_log)
 			drawable_data_at(temp_pos) = drawable_data;
 		};
 
-		for (const auto& rope_part: ROPE)
-		{
-			for (i32 i=0; i<i32(rope_part.str.size()); ++i, ++temp_pos.x)
-			{
-				draw_at_temp_pos(comp::Drawable::Data
-					{.c=rope_part.str.at(i),
+		for (const auto& rope_part: ROPE) {
+			for (i32 i=0; i<i32(rope_part.str.size()); ++i, ++temp_pos.x) {
+				draw_at_temp_pos(comp::Drawable::Data{
+					.c=rope_part.str.at(i),
 					.color_pair=rope_part.color_pair,
-					.gs_color_pair=rope_part.gs_color_pair});
+					.gs_color_pair=rope_part.gs_color_pair
+				});
 			}
 
-			if ((!msg_log.keep_sep()) && (temp_pos.x < i32(size_2d().x)))
-			{
-				draw_at_temp_pos(comp::Drawable::Data
-					{.c=' ', .color_pair=rope_part.color_pair,
-					.gs_color_pair=rope_part.gs_color_pair});
+			if ((!msg_log.keep_sep()) && (temp_pos.x < i32(size_2d().x))) {
+				draw_at_temp_pos(comp::Drawable::Data{
+					.c=' ', .color_pair=rope_part.color_pair,
+					.gs_color_pair=rope_part.gs_color_pair
+				});
 
 				++temp_pos.x;
 			}
 		}
-		for (; temp_pos.x<i32(size_2d().x); ++temp_pos.x)
-		{
-			draw_at_temp_pos(comp::Drawable::Data
-				{.c=' ', .color_pair=FontColor::Black,
-				.gs_color_pair=FontColor::Black});
+		for (; temp_pos.x<i32(size_2d().x); ++temp_pos.x) {
+			draw_at_temp_pos(comp::Drawable::Data{
+				.c=' ', .color_pair=FontColor::Black,
+				.gs_color_pair=FontColor::Black
+			});
 		}
 	}
 }
-//void Window::draw(const comp::StaticBgTileMap& bg_tile_map)
-//{
+//void Window::draw(const comp::StaticBgTileMap& bg_tile_map) {
 //	throw std::invalid_argument
 //}
 
-//void Window::draw(const Hud& hud)
-//{
-//}
+//void Window::draw(const Hud& hud) {}
 
-//void Window::draw(const LayeredWindow& layered_win)
-//{
+//void Window::draw(const LayeredWindow& layered_win) {
 //	// This might need `std::greater` instead of `std::less`
 //	std::priority_queue<std::pair<i32, std::string>> pq;
 //
-//	for (const auto& pair: layered_win.layer_prio_map())
-//	{
+//	for (const auto& pair: layered_win.layer_prio_map()) {
 //		pq.push(std::pair(pair.second, pair.first));
 //	}
 //
-//	while (!pq.empty())
-//	{
+//	while (!pq.empty()) {
 //		draw(layered_win.layer_at(pq.top().second));
 //		pq.pop();
 //	}
 //}
 //--------
-//LayeredWindow::LayeredWindow()
-//{
+//LayeredWindow::LayeredWindow() {
 //}
 //LayeredWindow::LayeredWindow(const IntVec2& s_pos,
 //	const IntVec2& s_size_2d,
 //	const std::map<std::string, i32>& s_layer_prio_map)
-//	: _layer_prio_map(s_layer_prio_map)
-//{
-//	for (const auto& pair: layer_prio_map())
-//	{
+//	: _layer_prio_map(s_layer_prio_map) {
+//	for (const auto& pair: layer_prio_map()) {
 //		_layer_map[pair.first] = Window(s_pos, s_size_2d);
 //	}
 //}
-//LayeredWindow::~LayeredWindow()
-//{
-//}
+//LayeredWindow::~LayeredWindow() {}
 //
-//void LayeredWindow::tick(InputKind input_kind)
-//{
+//void LayeredWindow::tick(InputKind input_kind) {
 //	// Derived classes should override this function
 //}
 //--------

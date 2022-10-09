@@ -22,15 +22,12 @@
 
 #include "../misc_includes.hpp"
 
-namespace dunwich_sandgeon
-{
-namespace game_engine
-{
-
+namespace dunwich_sandgeon {
+namespace game_engine {
+//--------
 // A base class for a class that has its `tick()` function run on every
 // iteration of the main loop.
-class TickerBase
-{
+class TickerBase {
 public:		// functions
 	TickerBase() = default;
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(TickerBase);
@@ -38,7 +35,7 @@ public:		// functions
 
 	virtual void tick() = 0;
 };
-
+//--------
 } // namespace game_engine
 } // namespace dunwich_sandgeon
 

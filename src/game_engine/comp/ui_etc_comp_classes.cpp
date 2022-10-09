@@ -17,15 +17,11 @@
 
 #include "ui_etc_comp_classes.hpp"
 
-namespace dunwich_sandgeon
-{
-namespace game_engine
-{
-namespace comp
-{
-
-//std::string Text::kind_str() const
-//{
+namespace dunwich_sandgeon {
+namespace game_engine {
+namespace comp {
+//--------
+//std::string Text::kind_str() const {
 //	return "Text";
 //}
 //
@@ -33,8 +29,7 @@ namespace comp
 //	Button::UNSELECTED_STR("( )"),
 //	Button::SELECTED_STR("(_)");
 //
-//std::string Buttons::kind_str()
-//{
+//std::string Buttons::kind_str() {
 //	return "Button";
 //}
 //
@@ -44,11 +39,10 @@ namespace comp
 //	CheckButton::UNSELECTED_CHECKED_STR("[x]");
 //	CheckButton::SELECTED_CHECKED_STR("[X]");
 //
-//std::string CheckButton::kind_str() const
-//{
+//std::string CheckButton::kind_str() const {
 //	return "CheckButton";
 //}
-
+//--------
 } // namespace comp
 } // namespace game_engine
 } // namespace dunwich_sandgeon

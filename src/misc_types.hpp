@@ -23,9 +23,8 @@
 #include "misc_includes.hpp"
 #include "misc_funcs.hpp"
 
-namespace dunwich_sandgeon
-{
-
+namespace dunwich_sandgeon {
+//--------
 using IntVec2 = math::Vec2<i32>;
 using IntVec3 = math::Vec3<i32>;
 
@@ -63,12 +62,11 @@ using DblLineSeg2Ex = binser::LineSeg2Ex<double>;
 using DblRect2Ex = binser::Rect2Ex<double>;
 
 //template<typename FirstT, typename OtherT>
-//inline void set_vec2(Vec2<FirstT>& self, const Vec2<OtherT>& other)
-//{
+//inline void set_vec2(Vec2<FirstT>& self, const Vec2<OtherT>& other) {
 //	self.x = other.x;
 //	self.y = other.y;
 //}
-
+//--------
 } // namespace dunwich_sandgeon
 
 #endif		// src_misc_types_hpp

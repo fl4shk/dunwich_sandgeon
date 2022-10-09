@@ -25,23 +25,17 @@
 #include "../font_color_enum.hpp"
 #include "../playfield_layer_prio_enum.hpp"
 
-namespace dunwich_sandgeon
-{
-namespace game_engine
-{
-
+namespace dunwich_sandgeon {
+namespace game_engine {
 class Engine;
 
-namespace comp
-{
-
-class Drawable final: public ecs::Comp
-{
+namespace comp {
+//--------
+class Drawable final: public ecs::Comp {
 public:		// constants
 	static const std::string KIND_STR;
 public:		// types
-	class Data final
-	{
+	class Data final {
 	public:		// variables
 		#define MEMB_LIST_COMP_DRAWABLE_DATA(X) \
 			X(c, std::nullopt) \
@@ -57,14 +51,12 @@ public:		// types
 		static Data from_bv(const binser::Value& bv);
 		operator binser::Value () const;
 
-		//inline bool operator == (Data to_cmp) const
-		//{
+		//inline bool operator == (Data to_cmp) const {
 		//	return ((c == to_cmp.c)
 		//		&& (color_pair == to_cmp.color_pair)
 		//		&& (gs_color_pair == to_cmp.gs_color_pair));
 		//}
-		//inline bool operator != (Data to_cmp) const
-		//{
+		//inline bool operator != (Data to_cmp) const {
 		//	return (!(*this == to_cmp));
 		//}
 		inline auto operator <=> (const Data& to_cmp) const = default;
@@ -83,11 +75,9 @@ private:		// variables
 public:		// functions
 	inline Drawable() = default;
 	//inline Drawable(i32 s_c, const FgBgColorPair& s_color)
-	//	: data{.c=s_c, .color=s_color}
-	//{
+	//	: data{.c=s_c, .color=s_color} {
 	//}
-	inline Drawable(Data s_data)
-	{
+	inline Drawable(Data s_data) {
 		set_data(s_data);
 	}
 	Drawable(const binser::Value& bv);
@@ -97,24 +87,19 @@ public:		// functions
 	virtual std::string kind_str() const;
 	virtual operator binser::Value () const;
 
-	void blink()
-	{
-		if (!_in_blink)
-		{
+	void blink() {
+		if (!_in_blink) {
 			_data.color_pair.fg = _non_blink_color_pair.bg;
 			_data.gs_color_pair.fg = _non_blink_gs_color_pair.bg;
 			_in_blink = true;
-		}
-		else // if (_in_blink)
-		{
+		} else { // if (_in_blink)
 			_data.color_pair.fg = _non_blink_color_pair.fg;
 			_data.gs_color_pair.fg = _non_blink_gs_color_pair.fg;
 			_in_blink = false;
 		}
 	}
 
-	inline Data& set_data(Data n_data)
-	{
+	inline Data& set_data(Data n_data) {
 		_data = n_data;
 		_non_blink_color_pair = _data.color_pair;
 		_non_blink_gs_color_pair = _data.gs_color_pair;
@@ -126,8 +111,7 @@ public:		// functions
 
 // Note that this is a 3D position within the game world.
 // Which floor the entity is on is what the Z axis represents.
-class Position final: public ecs::Comp
-{
+class Position final: public ecs::Comp {
 	friend class dunwich_sandgeon::game_engine::Engine;
 public:		// constants
 	static const std::string KIND_STR;
@@ -155,8 +139,7 @@ public:		// functions
 	void set_pos(const IntVec3& n_pos);
 };
 
-//class NonSerPosition final: public ecs::Comp
-//{
+//class NonSerPosition final: public ecs::Comp {
 //	friend class dunwich_sandgeon::game_engine::Engine;
 //public:		// constants
 //	static const std::string KIND_STR;
@@ -184,8 +167,7 @@ public:		// functions
 //	void set_pos(const IntVec3& n_pos);
 //};
 
-//class Weight final: public ecs::Comp
-//{
+//class Weight final: public ecs::Comp {
 //public:		// constants
 //	static const std::string KIND_STR;
 //public:		// variables
@@ -193,9 +175,7 @@ public:		// functions
 //public:		// functions
 //	Weight() = default;
 //	inline Weight(i32 s_val)
-//		: val(s_val)
-//	{
-//	}
+//		: val(s_val) {}
 //	Weight(const binser::Value& bv);
 //	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Weight);
 //	virtual ~Weight() = default;
@@ -207,8 +187,7 @@ public:		// functions
 // These are stats that increase or stay the same upon level up. They are
 // the stats that an entity would have if not wearing armor and don't have
 // buffs applied.
-class BaseStats final: public ecs::Comp
-{
+class BaseStats final: public ecs::Comp {
 public:		// constants
 	static const std::string KIND_STR;
 	static constexpr i32
@@ -233,12 +212,12 @@ public:		// variables
 		mag_def = DEFAULT_MAG_DEF;
 public:		// functions
 	BaseStats() = default;
-	inline BaseStats(i32 s_hp, i32 s_atk, i32 s_def, i32 s_mag_atk,
-		i32 s_mag_def)
+	inline BaseStats(
+		i32 s_hp, i32 s_atk, i32 s_def, i32 s_mag_atk,
+		i32 s_mag_def
+	)
 		: hp(s_hp), atk(s_atk), def(s_def), mag_atk(s_mag_atk),
-		mag_def(s_mag_def)
-	{
-	}
+		mag_def(s_mag_def) {}
 	BaseStats(const binser::Value& bv);
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(BaseStats);
 	virtual ~BaseStats() = default;
@@ -247,8 +226,7 @@ public:		// functions
 	virtual operator binser::Value () const;
 };
 
-//class OtherStats final: public ecs::Comp
-//{
+//class OtherStats final: public ecs::Comp {
 //public:		// constants
 //	static const std::string KIND_STR;
 //	static constexpr i32
@@ -260,9 +238,7 @@ public:		// functions
 //public:		// functions
 //	OtherStats
 //};
-
-
-
+//--------
 } // namespace comp
 } // namespace game_engine
 } // namespace dunwich_sandgeon

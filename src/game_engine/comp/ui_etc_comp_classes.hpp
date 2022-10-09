@@ -23,20 +23,16 @@
 #include "../../misc_includes.hpp"
 #include "../font_color_enum.hpp"
 
-namespace dunwich_sandgeon
-{
-namespace game_engine
-{
-namespace comp
-{
-
+namespace dunwich_sandgeon {
+namespace game_engine {
+namespace comp {
+//--------
 //static constexpr FgBgColorPair
 //	UI_SELECTED_COLOR = FontColor::Red,
 //	UI_UNSELECTED_COLOR = FontColor::White;
 //
 //// A single character.
-//class Char final: public ecs::Comp
-//{
+//class Char final: public ecs::Comp {
 //public:		// constants
 //	static constexpr FgBgColorPair
 //		SELECTED_COLOR = FontColor::Red,
@@ -46,15 +42,13 @@ namespace comp
 //public:		// functions
 //};
 
-//class Text final: public ecs::Comp
-//{
+//class Text final: public ecs::Comp {
 //public:		// variables
 //	std::string str = " ";
 //public:		// functions
 //	inline Text() = default;
 //	inline Text(const std::string& s_str)
-//		: str(s_str)
-//	{
+//		: str(s_str) {
 //	}
 //	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Text);
 //	virtual ~Text() = default;
@@ -62,8 +56,7 @@ namespace comp
 //	virtual std::string kind_str() const;
 //};
 //
-//class Button final: public ecs::Comp
-//{
+//class Button final: public ecs::Comp {
 //public:		// constants
 //	static const std::string
 //		UNSELECTED_STR, SELECTED_STR;
@@ -74,8 +67,7 @@ namespace comp
 //public:		// functions
 //	inline Button() = default;
 //	inline Button(const OnEnableFunc& s_on_enable_func)
-//		: on_enable_func(s_on_enable_func)
-//	{
+//		: on_enable_func(s_on_enable_func) {
 //	}
 //	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Button);
 //	virtual ~Button() = default;
@@ -83,8 +75,7 @@ namespace comp
 //	virtual std::string kind_str();
 //};
 //
-//class CheckButton final: public ecs::Comp
-//{
+//class CheckButton final: public ecs::Comp {
 //public:		// constants
 //	static const std::string
 //		UNSELECTED_UNCHECKED_STR, SELECTED_UNCHECKED_STR,
@@ -99,15 +90,14 @@ namespace comp
 //	inline CheckButton(bool s_checked, const OnActFunc& s_on_check_func,
 //		const OnActFunc& s_on_uncheck_func)
 //		: checked(s_checked), on_check_func(s_on_check_func),
-//		on_uncheck_func(s_on_uncheck_func)
-//	{
+//		on_uncheck_func(s_on_uncheck_func) {
 //	}
 //	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(CheckButton);
 //	virtual ~CheckButton() = default;
 //
 //	virtual std::string kind_str() const;
 //};
-
+//--------
 } // namespace comp
 } // namespace game_engine
 } // namespace dunwich_sandgeon

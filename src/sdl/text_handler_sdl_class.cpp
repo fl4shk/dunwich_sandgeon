@@ -17,24 +17,20 @@
 
 #include "text_handler_sdl_class.hpp"
 
-namespace dunwich_sandgeon
-{
-namespace io
-{
-
+namespace dunwich_sandgeon {
+namespace io {
+//--------
 const IntVec2 TextHandlerSdl::TILE_SIZE_2D(8, 8);
 
 //bool TextHandlerSdl::init(sdl::Renderer& s_renderer, i32& s_zoom)
-bool TextHandlerSdl::init(sdl::Renderer& s_renderer)
-{
+bool TextHandlerSdl::init(sdl::Renderer& s_renderer) {
 	//--------
 	_renderer = &s_renderer;
 	//_zoom = &s_zoom;
 
 	_fg_surface = SDL_LoadBMP("gfx/font.bmp");
 
-	if (!_fg_surface)
-	{
+	if (!_fg_surface) {
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
 			"Couldn't load the bitmap font: %s", SDL_GetError());
 		return false;
@@ -42,25 +38,24 @@ bool TextHandlerSdl::init(sdl::Renderer& s_renderer)
 
 	_bg_surface = SDL_LoadBMP("gfx/bg.bmp");
 
-	if (!_bg_surface)
-	{
+	if (!_bg_surface) {
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
 			"Couldn't load the bitmap font: %s", SDL_GetError());
 		return false;
 	}
 	//--------
 	//// Use black pixels for alpha blending
-	//if (SDL_SetColorKey(_fg_surface, SDL_TRUE, 0x000000ff) < 0)
-	//{
+	//if (SDL_SetColorKey(_fg_surface, SDL_TRUE, 0x000000ff) < 0) {
 	//	SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
 	//		"Couldn't set the color key of the font: %s", SDL_GetError());
 	//	return false;
 	//}
 	//--------
-	for (auto font_color=FontColor::White;
+	for (
+		auto font_color=FontColor::White;
 		font_color!=FontColor::Lim;
-		font_color=font_color_add(font_color, 1u))
-	{
+		font_color=font_color_add(font_color, 1u)
+	) {
 		_fg_texture_map[font_color]
 			= sdl::Texture(SDL_CreateTextureFromSurface(*_renderer,
 				_fg_surface));
@@ -70,172 +65,192 @@ bool TextHandlerSdl::init(sdl::Renderer& s_renderer)
 	}
 	//--------
 	// Color the font and bg textures
-	if (SDL_SetTextureColorMod(_fg_texture_map[FontColor::Red],
-		FONT_RED_STCM_R, FONT_RED_STCM_G, FONT_RED_STCM_B) < 0)
-	{
+	if (
+		SDL_SetTextureColorMod(_fg_texture_map[FontColor::Red],
+		FONT_RED_STCM_R, FONT_RED_STCM_G, FONT_RED_STCM_B) < 0
+	) {
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
 			"Couldn't color the fg red: %s", SDL_GetError());
 		return false;
 	}
-	if (SDL_SetTextureColorMod(_bg_texture_map[FontColor::Red],
-		FONT_RED_STCM_R, FONT_RED_STCM_G, FONT_RED_STCM_B) < 0)
-	{
+	if (
+		SDL_SetTextureColorMod(_bg_texture_map[FontColor::Red],
+		FONT_RED_STCM_R, FONT_RED_STCM_G, FONT_RED_STCM_B) < 0
+	) {
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
 			"Couldn't color the bg red: %s", SDL_GetError());
 		return false;
 	}
 
-	if (SDL_SetTextureColorMod(_fg_texture_map[FontColor::Green],
-		FONT_GREEN_STCM_R, FONT_GREEN_STCM_G, FONT_GREEN_STCM_B) < 0)
-	{
+	if (
+		SDL_SetTextureColorMod(_fg_texture_map[FontColor::Green],
+		FONT_GREEN_STCM_R, FONT_GREEN_STCM_G, FONT_GREEN_STCM_B) < 0
+	) {
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
 			"Couldn't color the fg green: %s", SDL_GetError());
 		return false;
 	}
-	if (SDL_SetTextureColorMod(_bg_texture_map[FontColor::Green],
-		FONT_GREEN_STCM_R, FONT_GREEN_STCM_G, FONT_GREEN_STCM_B) < 0)
-	{
+	if (
+		SDL_SetTextureColorMod(_bg_texture_map[FontColor::Green],
+		FONT_GREEN_STCM_R, FONT_GREEN_STCM_G, FONT_GREEN_STCM_B) < 0
+	) {
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
 			"Couldn't color the bg green: %s", SDL_GetError());
 		return false;
 	}
 
-	if (SDL_SetTextureColorMod(_fg_texture_map[FontColor::Brown],
-		FONT_BROWN_STCM_R, FONT_BROWN_STCM_G, FONT_BROWN_STCM_B) < 0)
-	{
+	if (
+		SDL_SetTextureColorMod(_fg_texture_map[FontColor::Brown],
+		FONT_BROWN_STCM_R, FONT_BROWN_STCM_G, FONT_BROWN_STCM_B) < 0
+	) {
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
 			"Couldn't color the fg brown: %s", SDL_GetError());
 		return false;
 	}
-	if (SDL_SetTextureColorMod(_bg_texture_map[FontColor::Brown],
-		FONT_BROWN_STCM_R, FONT_BROWN_STCM_G, FONT_BROWN_STCM_B) < 0)
-	{
+	if (
+		SDL_SetTextureColorMod(_bg_texture_map[FontColor::Brown],
+		FONT_BROWN_STCM_R, FONT_BROWN_STCM_G, FONT_BROWN_STCM_B) < 0
+	) {
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
 			"Couldn't color the bg brown: %s", SDL_GetError());
 		return false;
 	}
 
-	if (SDL_SetTextureColorMod(_fg_texture_map[FontColor::Yellow],
-		FONT_YELLOW_STCM_R, FONT_YELLOW_STCM_G, FONT_YELLOW_STCM_B) < 0)
-	{
+	if (
+		SDL_SetTextureColorMod(_fg_texture_map[FontColor::Yellow],
+		FONT_YELLOW_STCM_R, FONT_YELLOW_STCM_G, FONT_YELLOW_STCM_B) < 0
+	) {
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
 			"Couldn't color the fg yellow: %s", SDL_GetError());
 		return false;
 	}
-	if (SDL_SetTextureColorMod(_bg_texture_map[FontColor::Yellow],
-		FONT_YELLOW_STCM_R, FONT_YELLOW_STCM_G, FONT_YELLOW_STCM_B) < 0)
-	{
+	if (
+		SDL_SetTextureColorMod(_bg_texture_map[FontColor::Yellow],
+		FONT_YELLOW_STCM_R, FONT_YELLOW_STCM_G, FONT_YELLOW_STCM_B) < 0
+	) {
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
 			"Couldn't color the bg yellow: %s", SDL_GetError());
 		return false;
 	}
 	//--------
-	if (SDL_SetTextureColorMod(_fg_texture_map[FontColor::Blue],
-		FONT_BLUE_STCM_R, FONT_BLUE_STCM_G, FONT_BLUE_STCM_B) < 0)
-	{
+	if (
+		SDL_SetTextureColorMod(_fg_texture_map[FontColor::Blue],
+		FONT_BLUE_STCM_R, FONT_BLUE_STCM_G, FONT_BLUE_STCM_B) < 0
+	) {
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
 			"Couldn't color the fg blue: %s", SDL_GetError());
 		return false;
 	}
-	if (SDL_SetTextureColorMod(_bg_texture_map[FontColor::Blue],
-		FONT_BLUE_STCM_R, FONT_BLUE_STCM_G, FONT_BLUE_STCM_B) < 0)
-	{
+	if (
+		SDL_SetTextureColorMod(_bg_texture_map[FontColor::Blue],
+		FONT_BLUE_STCM_R, FONT_BLUE_STCM_G, FONT_BLUE_STCM_B) < 0
+	) {
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
 			"Couldn't color the bg blue: %s", SDL_GetError());
 		return false;
 	}
 
-	if (SDL_SetTextureColorMod(_fg_texture_map[FontColor::Purple],
-		FONT_PURPLE_STCM_R, FONT_PURPLE_STCM_G, FONT_PURPLE_STCM_B) < 0)
-	{
+	if (
+		SDL_SetTextureColorMod(_fg_texture_map[FontColor::Purple],
+		FONT_PURPLE_STCM_R, FONT_PURPLE_STCM_G, FONT_PURPLE_STCM_B) < 0
+	) {
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
 			"Couldn't color the fg purple: %s", SDL_GetError());
 		return false;
 	}
-	if (SDL_SetTextureColorMod(_bg_texture_map[FontColor::Purple],
-		FONT_PURPLE_STCM_R, FONT_PURPLE_STCM_G, FONT_PURPLE_STCM_B) < 0)
-	{
+	if (
+		SDL_SetTextureColorMod(_bg_texture_map[FontColor::Purple],
+		FONT_PURPLE_STCM_R, FONT_PURPLE_STCM_G, FONT_PURPLE_STCM_B) < 0
+	) {
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
 			"Couldn't color the bg purple: %s", SDL_GetError());
 		return false;
 	}
 
-	if (SDL_SetTextureColorMod(_fg_texture_map[FontColor::Cyan],
-		FONT_CYAN_STCM_R, FONT_CYAN_STCM_G, FONT_CYAN_STCM_B) < 0)
-	{
+	if (
+		SDL_SetTextureColorMod(_fg_texture_map[FontColor::Cyan],
+		FONT_CYAN_STCM_R, FONT_CYAN_STCM_G, FONT_CYAN_STCM_B) < 0
+	) {
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
 			"Couldn't color the fg cyan: %s", SDL_GetError());
 		return false;
 	}
-	if (SDL_SetTextureColorMod(_bg_texture_map[FontColor::Cyan],
-		FONT_CYAN_STCM_R, FONT_CYAN_STCM_G, FONT_CYAN_STCM_B) < 0)
-	{
+	if (
+		SDL_SetTextureColorMod(_bg_texture_map[FontColor::Cyan],
+		FONT_CYAN_STCM_R, FONT_CYAN_STCM_G, FONT_CYAN_STCM_B) < 0
+	) {
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
 			"Couldn't color the bg cyan: %s", SDL_GetError());
 		return false;
 	}
 
-	if (SDL_SetTextureColorMod(_fg_texture_map[FontColor::Gray],
-		FONT_GRAY_STCM_R, FONT_GRAY_STCM_G,
-			FONT_GRAY_STCM_B) < 0)
-	{
+	if (
+		SDL_SetTextureColorMod(_fg_texture_map[FontColor::Gray],
+		FONT_GRAY_STCM_R, FONT_GRAY_STCM_G, FONT_GRAY_STCM_B) < 0
+	) {
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
 			"Couldn't color the fg light gray: %s", SDL_GetError());
 		return false;
 	}
-	if (SDL_SetTextureColorMod(_bg_texture_map[FontColor::Gray],
-		FONT_GRAY_STCM_R, FONT_GRAY_STCM_G,
-			FONT_GRAY_STCM_B) < 0)
-	{
+	if (
+		SDL_SetTextureColorMod(_bg_texture_map[FontColor::Gray],
+		FONT_GRAY_STCM_R, FONT_GRAY_STCM_G, FONT_GRAY_STCM_B) < 0
+	) {
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
 			"Couldn't color the bg light gray: %s", SDL_GetError());
 		return false;
 	}
 
-	//if (SDL_SetTextureColorMod(_fg_texture_map[FontColor::LightGray],
+	//if (
+	//	SDL_SetTextureColorMod(_fg_texture_map[FontColor::LightGray],
 	//	FONT_LIGHT_GRAY_STCM_R, FONT_LIGHT_GRAY_STCM_G,
-	//		FONT_LIGHT_GRAY_STCM_B) < 0)
-	//{
+	//		FONT_LIGHT_GRAY_STCM_B) < 0
+	//) {
 	//	SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
 	//		"Couldn't color the fg light gray: %s", SDL_GetError());
 	//	return false;
 	//}
-	//if (SDL_SetTextureColorMod(_bg_texture_map[FontColor::LightGray],
+	//if (
+	//	SDL_SetTextureColorMod(_bg_texture_map[FontColor::LightGray],
 	//	FONT_LIGHT_GRAY_STCM_R, FONT_LIGHT_GRAY_STCM_G,
-	//		FONT_LIGHT_GRAY_STCM_B) < 0)
-	//{
+	//		FONT_LIGHT_GRAY_STCM_B) < 0
+	//) {
 	//	SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
 	//		"Couldn't color the bg light gray: %s", SDL_GetError());
 	//	return false;
 	//}
 	//--------
-	//if (SDL_SetTextureColorMod(_fg_texture_map[FontColor::DarkGray],
+	//if (
+	//	SDL_SetTextureColorMod(_fg_texture_map[FontColor::DarkGray],
 	//	FONT_DARK_GRAY_STCM_R, FONT_DARK_GRAY_STCM_G,
-	//		FONT_DARK_GRAY_STCM_B) < 0)
-	//{
+	//		FONT_DARK_GRAY_STCM_B) < 0
+	//) {
 	//	SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
 	//		"Couldn't color the fg dark gray: %s", SDL_GetError());
 	//	return false;
 	//}
-	//if (SDL_SetTextureColorMod(_bg_texture_map[FontColor::DarkGray],
+	//if (
+	//	SDL_SetTextureColorMod(_bg_texture_map[FontColor::DarkGray],
 	//	FONT_DARK_GRAY_STCM_R, FONT_DARK_GRAY_STCM_G,
-	//		FONT_DARK_GRAY_STCM_B) < 0)
-	//{
+	//		FONT_DARK_GRAY_STCM_B) < 0
+	//) {
 	//	SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
 	//		"Couldn't color the bg dark gray: %s", SDL_GetError());
 	//	return false;
 	//}
 
-	if (SDL_SetTextureColorMod(_fg_texture_map[FontColor::Black],
-		FONT_BLACK_STCM_R, FONT_BLACK_STCM_G, FONT_BLACK_STCM_B) < 0)
-	{
+	if (
+		SDL_SetTextureColorMod(_fg_texture_map[FontColor::Black],
+		FONT_BLACK_STCM_R, FONT_BLACK_STCM_G, FONT_BLACK_STCM_B) < 0
+	) {
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
 			"Couldn't color the fg black: %s", SDL_GetError());
 		return false;
 	}
-	if (SDL_SetTextureColorMod(_bg_texture_map[FontColor::Black],
-		FONT_BLACK_STCM_R, FONT_BLACK_STCM_G, FONT_BLACK_STCM_B) < 0)
-	{
+	if (
+		SDL_SetTextureColorMod(_bg_texture_map[FontColor::Black],
+		FONT_BLACK_STCM_R, FONT_BLACK_STCM_G, FONT_BLACK_STCM_B) < 0
+	) {
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
 			"Couldn't color the bg black: %s", SDL_GetError());
 		return false;
@@ -245,9 +260,10 @@ bool TextHandlerSdl::init(sdl::Renderer& s_renderer)
 	//--------
 }
 
-void TextHandlerSdl::draw_char(i32 c, const FgBgColorPair& color_pair,
-	const IntVec2& draw_pos)
-{
+void TextHandlerSdl::draw_char(
+	i32 c, const FgBgColorPair& color_pair,
+	const IntVec2& draw_pos
+) {
 	const auto draw_char_fg_surface_size_2d
 		= _get_draw_char_fg_surface_size_2d();
 	const IntVec2
@@ -276,11 +292,10 @@ void TextHandlerSdl::draw_char(i32 c, const FgBgColorPair& color_pair,
 	SDL_RenderCopy(*_renderer, _fg_texture_map.at(color_pair.fg),
 		fg_src_rect, dst_rect);
 }
-IntVec2 TextHandlerSdl::_get_draw_char_fg_surface_size_2d() const
-{
+IntVec2 TextHandlerSdl::_get_draw_char_fg_surface_size_2d() const {
 	return IntVec2(_fg_surface->w / TILE_SIZE_2D.x,
 		_fg_surface->h / TILE_SIZE_2D.y);
 }
-
+//--------
 } // namespace io
 } // namespace dunwich_sandgeon

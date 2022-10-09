@@ -22,15 +22,11 @@
 
 #include "../../misc_includes.hpp"
 
-namespace dunwich_sandgeon
-{
-namespace game_engine
-{
-namespace comp
-{
-
-class Player final: public ecs::Comp
-{
+namespace dunwich_sandgeon {
+namespace game_engine {
+namespace comp {
+//--------
+class Player final: public ecs::Comp {
 public:		// constants
 	static const std::string KIND_STR;
 	static constexpr i32
@@ -66,7 +62,7 @@ public:		// functions
 	virtual std::string kind_str() const;
 	virtual operator binser::Value () const;
 };
-
+//--------
 } // namespace comp
 } // namespace game_engine
 } // namespace dunwich_sandgeon

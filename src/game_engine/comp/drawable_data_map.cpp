@@ -21,40 +21,44 @@
 //#include "block_comp_classes.hpp"
 #include "floor_layout_comp_classes.hpp"
 
-namespace dunwich_sandgeon
-{
-namespace game_engine
-{
-namespace comp
-{
-
+namespace dunwich_sandgeon {
+namespace game_engine {
+namespace comp {
+//--------
 static constexpr FgBgColorPair
 	WINDOW_BORDER_COLOR_PAIR = FontColor::Green;
 
-const std::unordered_map<std::string, Drawable::Data>& drawable_data_map()
-{
+auto drawable_data_map()
+-> const std::unordered_map<std::string, Drawable::Data>& {
 	static std::unordered_map<std::string, Drawable::Data>
-		DRAWABLE_DATA_MAP
-	= {
+		DRAWABLE_DATA_MAP = {
 		// ' ', 32
 		{Window::BLANK_KIND_STR,
 			{.c=' ', .color_pair=FontColor::Black,
 			.gs_color_pair=FontColor::Black}},
 
 		// ' ', 32 (again)
-		{bg_tile_str_map_at(BgTile::Wall),
+		{bg_tile_str_map_at(BgTile::Blank),
 			{.c=' ', .color_pair=FontColor::Black,
 			.gs_color_pair=FontColor::Black}},
-		//// '#', 35
-		//{bg_tile_str_map_at(BgTile::Wall),
-		//	{.c='#',
-		//	//.color_pair=FontColor::LightGray,
-		//	//.gs_color_pair=FontColor::LightGray
-		//	.color_pair=FontColor::Brown, .gs_color_pair=FontColor::Gray}},
+
+		// '#', 35
+		{bg_tile_str_map_at(BgTile::Wall),
+			{.c='#',
+			//.color_pair=FontColor::LightGray,
+			//.gs_color_pair=FontColor::LightGray
+			.color_pair=FontColor::Brown, .gs_color_pair=FontColor::Gray}},
 
 		// '+', 43
 		{Window::BORDER_CORNER_KIND_STR,
 			{.c='+', .color_pair=WINDOW_BORDER_COLOR_PAIR,
+			.gs_color_pair=FontColor::White}},
+
+		// ',', 44
+		{bg_tile_str_map_at(BgTile::PathFloor),
+			{.c=',',
+			//.color_pair=FontColor::White,
+			.color_pair=FontColor::Brown,
 			.gs_color_pair=FontColor::White}},
 
 		// '-', 45
@@ -63,11 +67,18 @@ const std::unordered_map<std::string, Drawable::Data>& drawable_data_map()
 			.gs_color_pair=FontColor::White}},
 
 		// '.', 46
-		{bg_tile_str_map_at(BgTile::Floor),
+		//{bg_tile_str_map_at(BgTile::Floor),
+		//	{.c='.',
+		//	//.color_pair=FontColor::LightGray,
+		//	//.gs_color_pair=FontColor::LightGray
+		//	.color_pair=FontColor::Gray,
+		//	.gs_color_pair=FontColor::Gray}},
+		{bg_tile_str_map_at(BgTile::RoomFloor),
 			{.c='.',
 			//.color_pair=FontColor::LightGray,
 			//.gs_color_pair=FontColor::LightGray
-			.color_pair=FontColor::Gray,
+			//.color_pair=FontColor::Gray,
+			.color_pair=FontColor::Brown,
 			.gs_color_pair=FontColor::Gray}},
 
 		// '<', 60
@@ -79,6 +90,14 @@ const std::unordered_map<std::string, Drawable::Data>& drawable_data_map()
 		{bg_tile_str_map_at(BgTile::UpStairs),
 			{.c='>', .color_pair=FontColor::Brown,
 			.gs_color_pair=FontColor::White}},
+
+		// '?', 63
+		{bg_tile_str_map_at(BgTile::Error),
+			{.c='?',
+			//.color_pair=FontColor::LightGray,
+			//.gs_color_pair=FontColor::LightGray
+			.color_pair={FontColor::Black, FontColor::White},
+				.gs_color_pair={FontColor::Black, FontColor::White}}},
 
 		// '@', 64
 		{Player::KIND_STR,
@@ -103,7 +122,7 @@ const std::unordered_map<std::string, Drawable::Data>& drawable_data_map()
 
 	return DRAWABLE_DATA_MAP;
 }
-
+//--------
 } // namespace comp
 } // namespace game_engine
 } // namespace dunwich_sandgeon

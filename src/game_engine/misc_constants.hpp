@@ -21,10 +21,8 @@
 #include "../misc_includes.hpp"
 #include "../misc_types.hpp"
 
-namespace dunwich_sandgeon
-{
-namespace game_engine
-{
+namespace dunwich_sandgeon {
+namespace game_engine {
 //--------
 static constexpr i32
 	MSG_LOG_WIDGET_SELECTED_SPACING_SIZE = 3,

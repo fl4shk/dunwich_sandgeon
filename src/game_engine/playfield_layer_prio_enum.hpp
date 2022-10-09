@@ -22,18 +22,15 @@
 
 #include "../misc_includes.hpp"
 
-namespace dunwich_sandgeon
-{
-namespace game_engine
-{
-
-enum class PlayfieldLayerPrio: i32
-{
+namespace dunwich_sandgeon {
+namespace game_engine {
+//--------
+enum class PlayfieldLayerPrio: i32 {
 	Block,
 	Item,
 	Char,
 };
-
+//--------
 } // namespace game_engine
 } // namespace dunwich_sandgeon
 

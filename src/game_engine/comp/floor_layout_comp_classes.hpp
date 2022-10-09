@@ -25,35 +25,28 @@
 #include "../global_shape_constants.hpp"
 #include "general_comp_classes.hpp"
 
-namespace dunwich_sandgeon
-{
-namespace game_engine
-{
-namespace comp
-{
+namespace dunwich_sandgeon {
+namespace game_engine {
+namespace comp {
 //--------
 #define LIST_OF_BG_TILE(X) \
-	X(Wall) \
-	X(Floor) \
-	X(UpStairs) \
-	X(DownStairs) \
+	X(Blank) \
+	X(Error) \
 	\
-	X(Door) \
+	X(Wall) \
+	/* X(Door) */ \
+	\
+	X(RoomFloor) \
+	X(PathFloor) \
+	/* X(Floor) */ \
 	X(Pit) \
 	X(Water) \
 	X(Spikes) \
+	\
+	X(UpStairs) \
+	X(DownStairs) \
 
-enum class BgTile: u8
-{
-	//Wall,
-	//Floor,
-	//UpStairs,
-	//DownStairs,
-
-	//Door,
-	//Pit,
-	//Water,
-	//Spikes,
+enum class BgTile: u8 {
 	#define X(name) \
 		name ,
 	LIST_OF_BG_TILE(X)
@@ -61,10 +54,8 @@ enum class BgTile: u8
 };
 
 //extern const std::unordered_map<BgTile, std::string>& bg_tile_str_map();
-static constexpr inline std::string bg_tile_str_map_at(BgTile bg_tile)
-{
-	switch (bg_tile)
-	{
+static constexpr inline std::string bg_tile_str_map_at(BgTile bg_tile) {
+	switch (bg_tile) {
 		#define X(name) \
 			case BgTile:: name : \
 				return "game_engine::comp::BgTile::" #name ; \
@@ -73,76 +64,66 @@ static constexpr inline std::string bg_tile_str_map_at(BgTile bg_tile)
 		#undef X
 
 		default:
-			throw std::invalid_argument(sconcat
-				("game_engine::comp::bg_tile_str_map_at(): Error: "
-				"Invalid `bg_tile`: ", i32(bg_tile)));
+			throw std::invalid_argument(sconcat(
+				"game_engine::comp::bg_tile_str_map_at(): Error: "
+				"Invalid `bg_tile`: ", i32(bg_tile)
+			));
 			return "";
 			break;
 	}
 }
 //--------
-// This should be generated when going to a new floor, and it shouldn't be
-// written into save _data (outside of debugging).
-class StaticBgTileMap final: public ecs::Comp
-{
-public:		// constants
-	static const std::string
-		KIND_STR;
-private:		// variables
-	#define MEMB_LIST_COMP_STATIC_LAYOUT(X) \
-		X(_data, std::nullopt) \
-
-	binser::VectorEx<binser::VectorEx<BgTile>> _data;
-public:		// functions
-	//--------
-	StaticBgTileMap();
-	StaticBgTileMap(const binser::Value& bv);
-	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(StaticBgTileMap);
-	virtual ~StaticBgTileMap() = default;
-
-	virtual std::string kind_str() const;
-	virtual operator binser::Value () const;
-	//--------
-private:		// functions
-	//--------
-	void _init_data();
-	//--------
-public:		// functions
-	//--------
-	inline BgTile& at(const IntVec2& pos)
-	{
-		//try
-		//{
-			return _data.data.at(pos.y).data.at(pos.x);
-		//}
-		//catch (const std::exception& e)
-		//{
-		//	printerr(e.what(), "\n");
-		//	throw std::out_of_range(sconcat("`pos`: ", pos));
-		//}
-	}
-	inline const BgTile& at(const IntVec2& pos) const
-	{
-		return _data.data.at(pos.y).data.at(pos.x);
-	}
-
-	template<typename VecElemT=typename IntVec2::ElemT>
-	inline Vec2<VecElemT> size_2d() const
-	{
-		return Vec2<VecElemT>(_data.data.front().data.size(),
-			_data.data.size());
-	}
-
-	void draw() const; 
-	//--------
-};
+//// This should be generated when going to a new floor, and it shouldn't be
+//// written into save _data (outside of debugging).
+//class StaticBgTileMap final: public ecs::Comp {
+//public:		// constants
+//	static const std::string
+//		KIND_STR;
+//private:		// variables
+//	#define MEMB_LIST_COMP_STATIC_LAYOUT(X)
+//		X(_data, std::nullopt)
+//
+//	binser::VectorEx<binser::VectorEx<BgTile>> _data;
+//public:		// functions
+//	//--------
+//	StaticBgTileMap();
+//	StaticBgTileMap(const binser::Value& bv);
+//	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(StaticBgTileMap);
+//	virtual ~StaticBgTileMap() = default;
+//
+//	virtual std::string kind_str() const;
+//	virtual operator binser::Value () const;
+//	//--------
+//	// This also clear
+//	void init_data();
+//	//--------
+//	inline BgTile& at(const IntVec2& pos) {
+//		//try {
+//			return _data.data.at(pos.y).data.at(pos.x);
+//		//} catch (const std::exception& e) {
+//		//	printerr(e.what(), "\n");
+//		//	throw std::out_of_range(sconcat("`pos`: ", pos));
+//		//}
+//	}
+//	inline const BgTile& at(const IntVec2& pos) const {
+//		return _data.data.at(pos.y).data.at(pos.x);
+//	}
+//
+//	template<typename VecElemT=typename IntVec2::ElemT>
+//	inline Vec2<VecElemT> size_2d() const {
+//		return Vec2<VecElemT>(_data.data.front().data.size(),
+//			_data.data.size());
+//	}
+//
+//	void draw() const; 
+//	//--------
+//};
 //--------
 // The dungeon while it's either being generated has finished generating.
 // As I don't think I'll be including breakable walls, in this game, this
 // `ecs::Comp` can be referenced even after the dungeon has fully been
 // generated for the purposes of, for example, monster AI.
-class DungeonGen final: public ecs::Comp
-{
+class DungeonGen final: public ecs::Comp {
 public:		// constants
 	static const std::string
 		KIND_STR;
@@ -150,7 +131,9 @@ public:		// constants
 	static constexpr i32
 		// Chosen arbitrarily; might need to adjust later
 		MIN_NUM_ROOM_PATHS
-			= 3,
+			//= 3,
+			// hopefully this many won't ever cause the generation to fail
+			= 8,
 		MAX_NUM_ROOM_PATHS
 			//= 15;
 			= 25;
@@ -159,8 +142,7 @@ public:		// constants
 		//MAX_NUM_PATHS = 64;
 public:		// types
 	//--------
-	class RoomPath final
-	{
+	class RoomPath final {
 	public:		// constants
 		static constexpr i32
 			PATH_THICKNESS = 1,
@@ -181,8 +163,10 @@ public:		// types
 			X(rect, std::nullopt) \
 			X(conn_index_set, std::nullopt) \
 
-		IntRect2 rect
-			{.pos=IntVec2(), .size_2d{.x=PATH_THICKNESS, .y=PATH_MIN_LEN}};
+		IntRect2 rect{
+			.pos=IntVec2(),
+			.size_2d{.x=PATH_THICKNESS, .y=PATH_MIN_LEN}
+		};
 		std::set<i32> conn_index_set;
 	public:		// functions
 		//--------
@@ -191,8 +175,7 @@ public:		// types
 		//--------
 		inline auto operator <=> (const RoomPath& to_cmp) const = default;
 		//--------
-		constexpr inline bool fits_in_pfield() const
-		{
+		constexpr inline bool fits_in_pfield() const {
 			//return (rect.pos.x >= 0
 			//	&& rect.pos.x <= PFIELD_SIZE_2D.x);
 			//return PFIELD_PHYS_RECT2.arg_inside(rect, false,
@@ -200,33 +183,28 @@ public:		// types
 			//return PFIELD_PHYS_RECT2.arg_inside(rect, CDIFF_V2);
 			return PFIELD_PHYS_RECT2.arg_inside(rect);
 		}
-		constexpr inline bool is_path() const
-		{
+		constexpr inline bool is_path() const {
 			//return ((rect.size_2d.x == PATH_THICKNESS)
 			//	|| (rect.size_2d.y == PATH_THICKNESS));
 			return is_horiz_path() || is_vert_path();
 		}
-		constexpr inline bool is_horiz_path() const
-		{
+		constexpr inline bool is_horiz_path() const {
 			return (rect.size_2d.x >= PATH_MIN_LEN
 				&& rect.size_2d.y == PATH_THICKNESS);
 		}
-		constexpr inline bool is_vert_path() const
-		{
+		constexpr inline bool is_vert_path() const {
 			return (rect.size_2d.x == PATH_THICKNESS
 				&& rect.size_2d.y >= PATH_MIN_LEN);
 		}
 
-		constexpr inline bool is_room() const
-		{
+		constexpr inline bool is_room() const {
 			return (rect.size_2d.x >= ROOM_MIN_SIZE_2D.x
 				&& rect.size_2d.x <= ROOM_MAX_SIZE_2D.x
 				&& rect.size_2d.y >= ROOM_MIN_SIZE_2D.y
 				&& rect.size_2d.y <= ROOM_MAX_SIZE_2D.y);
 		}
 
-		//constexpr inline bool is_valid() const
-		//{
+		//constexpr inline bool is_valid() const {
 		//	return is_path() || is_room();
 		//}
 		//--------
@@ -249,53 +227,46 @@ public:		// functions
 	virtual std::string kind_str() const;
 	virtual operator binser::Value () const;
 	//--------
-	inline RoomPath& at(size_t index)
-	{
+	inline RoomPath& at(size_t index) {
 		return _data.data.at(index);
 	}
-	inline const RoomPath& at(size_t index) const
-	{
+	inline const RoomPath& at(size_t index) const {
 		return _data.data.at(index);
 	}
-	inline void push_back(RoomPath&& to_push)
-	{
-		if (size() + 1 > MAX_NUM_ROOM_PATHS)
-		{
-			throw std::length_error(sconcat
-				("game_engine::comp::DungeonGen::room_push_back(): ",
+	inline void push_back(RoomPath&& to_push) {
+		if (size() + 1 > MAX_NUM_ROOM_PATHS) {
+			throw std::length_error(sconcat(
+				"game_engine::comp::DungeonGen::room_push_back(): ",
 				"`_data` cannot increase in size: ",
-				_data.data.size(), " ", MAX_NUM_ROOM_PATHS));
+				_data.data.size(), " ", MAX_NUM_ROOM_PATHS
+			));
 		}
 		_data.data.push_back(std::move(to_push));
 	}
-	inline size_t size() const
-	{
+	inline size_t size() const {
 		return _data.data.size();
 	}
-	inline void clear()
-	{
+	inline void clear() {
 		//_data.data.resize(0);
 		_data.data.clear();
 	}
 
-	void draw(StaticBgTileMap* bg_tile_map);
+	//void draw(StaticBgTileMap* bg_tile_map);
+	void draw();
 	//--------
-	//inline Path& path_at(size_t index)
-	//{
+	//inline Path& path_at(size_t index) {
 	//	return _path_vec.data.at(index);
 	//}
-	//inline const Path& path_at(size_t index) const
-	//{
+	//inline const Path& path_at(size_t index) const {
 	//	return _path_vec.data.at(index);
 	//}
-	//inline void path_push_back(Path&& to_push)
-	//{
-	//	if (_path_vec.data.size() + 1 > MAX_NUM_ROOMS)
-	//	{
-	//		throw std::length_error(sconcat
-	//			("game_engine::comp::DungeonGen::path_push_back(): ",
+	//inline void path_push_back(Path&& to_push) {
+	//	if (_path_vec.data.size() + 1 > MAX_NUM_PATHS) {
+	//		throw std::length_error(sconcat(
+	//			"game_engine::comp::DungeonGen::path_push_back(): ",
 	//			"`_path_vec` cannot increase in size: ",
-	//			_path_vec.data.size(), " ", MAX_NUM_ROOMS));
+	//			_path_vec.data.size(), " ", MAX_NUM_PATHS
+	//		));
 	//	}
 	//	_path_vec.data.push_back(std::move(to_push));
 	//}

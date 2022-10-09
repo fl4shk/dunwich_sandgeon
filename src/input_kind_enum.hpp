@@ -22,11 +22,9 @@
 
 #include "misc_includes.hpp"
 
-namespace dunwich_sandgeon
-{
-
-enum class InputKind: i32
-{
+namespace dunwich_sandgeon {
+//--------
+enum class InputKind: i32 {
 	None,
 
 	Left,
@@ -55,15 +53,14 @@ enum class InputKind: i32
 	Lim,
 };
 
-inline InputKind input_kind_add(InputKind input_kind, i32 amount)
-{
+inline InputKind input_kind_add(InputKind input_kind, i32 amount) {
 	i32 ret_u32 = static_cast<i32>(input_kind);
 	ret_u32 += amount;
 	return static_cast<InputKind>(ret_u32);
 }
 
 extern const std::map<InputKind, std::string> INPUT_KIND_TO_STR_MAP;
-
+//--------
 } // namespace dunwich_sandgeon
 
 #endif		// src_input_kind_enum_hpp

@@ -28,13 +28,10 @@
 #include "comp/general_comp_classes.hpp"
 #include "global_shape_constants.hpp"
 
-namespace dunwich_sandgeon
-{
-namespace game_engine
-{
+namespace dunwich_sandgeon {
+namespace game_engine {
 //--------
-enum class KeyKind: i32
-{
+enum class KeyKind: i32 {
 	LeftL,
 	UpL,
 	RightL,
@@ -70,8 +67,7 @@ enum class KeyKind: i32
 
 // An `enum` to specify which `game_engine::Window` is the
 // currently-selected one, as well as what game mode the game is in.
-enum class GameMode
-{
+enum class GameMode {
 	#define X(arg) \
 		arg,
 	LIST_OF_GAME_MODES(X)
@@ -79,13 +75,11 @@ enum class GameMode
 };
 //--------
 template<typename ObjT>
-concept EngineErrWhenEntNullIdObj = requires(ObjT obj)
-{
+concept EngineErrWhenEntNullIdObj = requires(ObjT obj) {
 	{ obj.ent_id() } -> std::same_as<ecs::EntId>;
 };
 
-class Engine final
-{
+class Engine final {
 public:		// constants
 	// These are basement floors, going from B1F down to B25F
 	static constexpr i32
@@ -116,8 +110,7 @@ public:		// types
 	using LayoutRngArr = std::array<Rng, NUM_FLOORS>;
 	using LayoutRngA2d = std::array<LayoutRngArr, NUM_FILES>;
 public:		// types
-	class NonEcsSerData final
-	{
+	class NonEcsSerData final {
 		friend class Engine;
 	public:		// variables
 		#define MEMB_AUTOSER_LIST_ENGINE_NON_ECS_SER_DATA(X) \
@@ -162,36 +155,31 @@ public:		// types
 		operator binser::Value () const;
 
 		inline i32 seed_layout_rng_arr(LayoutRngArr& layout_rng_arr)
-			const
-		{
+			const {
 			i32 i;
-			for (i=0; i<i32(layout_rng_arr.size()); ++i)
-			{
+			for (i=0; i<i32(layout_rng_arr.size()); ++i) {
 				//layout_rng_arr.at(i).seed(_base_rng_seed + i);
 				layout_rng_arr.at(i) = Rng(_base_rng_seed + i);
 			}
 			return i;
 		}
-		//inline void seed_rngs_etc(LayoutRngArr& layout_rng_arr)
-		//{
+		//inline void seed_rngs_etc(LayoutRngArr& layout_rng_arr) {
 		//	const i32 i = seed_layout_rng_arr(layout_rng_arr);
 
 		//	//_rng.seed(_base_rng_seed + i);
 		//	_rng = Rng(_base_rng_seed + i);
 		//}
 	private:		// functions
-		inline void _init_base_rng_seed()
-		{
+		inline void _init_base_rng_seed() {
 			_base_rng_seed = get_hrc_now_rng_seed();
 		}
-		inline void _dbg_init_base_rng_seed(RngSeedT s_base_rng_seed)
-		{
+		inline void _dbg_init_base_rng_seed(RngSeedT s_base_rng_seed) {
 			_base_rng_seed = s_base_rng_seed;
 		}
 	public:		// functions
-		inline void on_init_or_file_erase_seed_rngs_etc
-			(LayoutRngArr& layout_rng_arr, RngSeedT s_base_rng_seed)
-		{
+		inline void on_init_or_file_erase_seed_rngs_etc(
+			LayoutRngArr& layout_rng_arr, RngSeedT s_base_rng_seed
+		) {
 			//_init_base_rng_seed();
 			_dbg_init_base_rng_seed(s_base_rng_seed);
 
@@ -204,40 +192,35 @@ public:		// types
 		//inline std::remove_cvref_t<RetT> rand()
 		//	requires std::integral<std::remove_cvref_t<RetT>>
 		template<typename T=RngSeedT>
-		inline auto rand()
-		{
+		inline auto rand() {
 			return rng_run<T>(_rng);
 		}
 		//template<typename T=RngSeedT>
-		//inline auto rand(const T& max, bool saturate=false)
-		//{
+		//inline auto rand(const T& max, bool saturate=false) {
 		//	return rng_run<T>(_rng, max, saturate);
 		//}
 		template<typename T=RngSeedT>
-		inline auto rand_lt_bound(const T& bound)
-		{
+		inline auto rand_lt_bound(const T& bound) {
 			return rng_run_lt_bound<T>(_rng, bound);
 		}
 		template<typename T=RngSeedT>
-		inline auto rand(const T& lim_0, const T& lim_1)
-		{
+		inline auto rand(const T& lim_0, const T& lim_1) {
 			return rng_run<T>(_rng, lim_0, lim_1);
 		}
 		//template<typename T=RngSeedT>
-		//inline auto rand_scaled(const T& scale)
-		//{
+		//inline auto rand_scaled(const T& scale) {
 		//	return rng_run_scaled<T>(_rng, scale);
 		//}
 		//template<typename T=RngSeedT>
-		//inline auto rand_scaled(const T& scale, const T& max,
-		//	bool saturate=false)
-		//{
+		//inline auto rand_scaled(
+		//	const T& scale, const T& max, bool saturate=false
+		//) {
 		//	return rng_run_scaled<T>(_rng, scale, max, saturate);
 		//}
 		//template<typename T=RngSeedT>
-		//inline auto rand_scaled_lim(const T& scale, const T& lim_0,
-		//	const T& lim_1)
-		//{
+		//inline auto rand_scaled_lim(
+		//	const T& scale, const T& lim_0, const T& lim_1
+		//) {
 		//	return rng_run_scaled_lim<T>(_rng, scale, lim_0, lim_1);
 		//}
 
@@ -278,8 +261,7 @@ public:		// non-serialized variables
 	////	final_input_kind = InputKind::None;
 	//InputKind input_kind;
 
-	//struct
-	//{
+	//struct {
 	//	bool req_start = false;
 	//	std::string text;
 	//} text_input;
@@ -342,8 +324,7 @@ private:		// non-serialized variables
 public:		// non-serialized variables
 
 	// File number state
-	//enum class FnState: i32
-	//{
+	//enum class FnState: i32 {
 	//	Curr,
 	//	Src,
 	//};
@@ -358,18 +339,16 @@ public:		// functions
 
 	void deserialize(const binser::Value& bv);
 
-	inline void err
-		(const liborangepower::concepts::HasStdOstmOpLshift auto&... objs)
-		const
-	{
+	inline void err(
+		const liborangepower::concepts::HasStdOstmOpLshift auto&... objs
+	) const {
 		printerr(objs...);
 		exit(1);
 	}
 
 	//void dbg_check_ecs_engine(const IntVec2& wb_pos=IntVec2(0, 0));
 
-	//inline void tick()
-	//{
+	//inline void tick() {
 	//	ecs_engine.tick();
 	//}
 	void tick();
@@ -387,120 +366,100 @@ private:		// functions
 	void _inner_draw_menu_w_pre_clear(Window& window, Menu& menu);
 public:		// functions
 	//--------
-	inline void draw_aux_menu_w_pre_clear()
-	{
+	inline void draw_aux_menu_w_pre_clear() {
 		_inner_draw_menu_w_pre_clear(aux_window, aux_menu);
 	}
-	inline void draw_popup_menu_w_pre_clear()
-	{
+	inline void draw_popup_menu_w_pre_clear() {
 		_inner_draw_menu_w_pre_clear(popup_window, popup_menu);
 	}
-	inline void draw_yes_no_menu_w_pre_clear()
-	{
+	inline void draw_yes_no_menu_w_pre_clear() {
 		_inner_draw_menu_w_pre_clear(yes_no_window, yes_no_menu);
 	}
-	inline void draw_text_yes_no_menu_w_pre_clear()
-	{
+	inline void draw_text_yes_no_menu_w_pre_clear() {
 		_inner_draw_menu_w_pre_clear(text_yes_no_window, text_yes_no_menu);
 	}
 	//--------
-	inline LayoutRngArr& layout_rng_arr_fn(ecs::FileNum file_num)
-	{
+	inline LayoutRngArr& layout_rng_arr_fn(ecs::FileNum file_num) {
 		return _layout_rng_a2d.at(_sel_file_num(file_num));
 	}
 	inline const LayoutRngArr& layout_rng_arr_fn(ecs::FileNum file_num)
-		const
-	{
+		const {
 		return _layout_rng_a2d.at(_sel_file_num(file_num));
 	}
-	inline LayoutRngArr& layout_rng_arr()
-	{
+	inline LayoutRngArr& layout_rng_arr() {
 		return layout_rng_arr_fn(USE_CURR_FILE_NUM);
 	}
-	inline const LayoutRngArr& layout_rng_arr() const
-	{
+	inline const LayoutRngArr& layout_rng_arr() const {
 		return layout_rng_arr_fn(USE_CURR_FILE_NUM);
 	}
 
 	// Note: `layout_rng_fn()` and `layout_rng()` return the current file
 	// number, current floor, layout RNG itself
-	inline Rng& layout_rng_fn(ecs::FileNum file_num)
-	{
+	inline Rng& layout_rng_fn(ecs::FileNum file_num) {
 		return layout_rng_arr_fn(file_num).at(floor_fn(file_num));
 	}
-	inline const Rng& layout_rng_fn(ecs::FileNum file_num) const
-	{
+	inline const Rng& layout_rng_fn(ecs::FileNum file_num) const {
 		return layout_rng_arr_fn(file_num).at(floor_fn(file_num));
 	}
-	inline Rng& layout_rng()
-	{
+	inline Rng& layout_rng() {
 		return layout_rng_fn(USE_CURR_FILE_NUM);
 	}
-	inline const Rng& layout_rng() const
-	{
+	inline const Rng& layout_rng() const {
 		return layout_rng_fn(USE_CURR_FILE_NUM);
 	}
 
-	//inline auto layout_rand()
-	//{
+	//inline auto layout_rand() {
 	//	return layout_rng_arr().at(floor())();
 	//}
 	template<typename T=RngSeedT>
-	inline auto layout_rand()
-	{
+	inline auto layout_rand() {
 		return rng_run<T>(layout_rng());
 	}
 	//template<typename T=RngSeedT>
-	//inline auto layout_rand(const T& max, bool saturate=false)
-	//{
+	//inline auto layout_rand(const T& max, bool saturate=false) {
 	//	return rng_run<T>(layout_rng(), max, saturate);
 	//}
 	template<typename T=RngSeedT>
-	inline auto layout_rand_lt_bound(const T& bound)
-	{
+	inline auto layout_rand_lt_bound(const T& bound) {
 		return rng_run_lt_bound<T>(layout_rng(), bound);
 	}
 	template<typename T=RngSeedT>
-	inline auto layout_rand(const T& lim_0, const T& lim_1)
-	{
+	inline auto layout_rand(const T& lim_0, const T& lim_1) {
 		return rng_run<T>(layout_rng(), lim_0, lim_1);
 	}
 	//template<typename T=RngSeedT>
-	//inline auto layout_rand_scaled(const T& scale)
-	//{
+	//inline auto layout_rand_scaled(const T& scale) {
 	//	return rng_run_scaled<T>(layout_rng(), scale);
 	//}
 	//template<typename T=RngSeedT>
-	//inline auto layout_rand_scaled(const T& scale, const T& max,
-	//	bool saturate=false)
-	//{
+	//inline auto layout_rand_scaled(
+	//	const T& scale, const T& max, bool saturate=false
+	//) {
 	//	return rng_run_scaled<T>(layout_rng(), scale, max, saturate);
 	//}
 	//template<typename T=RngSeedT>
-	//inline auto layout_rand_scaled_lim(const T& scale, const T& lim_0,
-	//	const T& lim_1)
-	//{
+	//inline auto layout_rand_scaled_lim(
+	//	const T& scale, const T& lim_0, const T& lim_1
+	//) {
 	//	return rng_run_scaled_lim<T>(layout_rng(), scale, lim_0, lim_1);
 	//}
 
 	//template<CallableLikeRngBounded<double> RngT>
-	//inline DblRect2 rand_rect2(RngT& rng, const DblVec2& pos_max,
-	//	const DblVec2& pos_min, const DblVec2& size_2d_max,
-	//	const DblVec2& size_2d_min)
-	//{
+	//inline DblRect2 rand_rect2(
+	//	RngT& rng, const DblVec2& pos_max, const DblVec2& pos_min,
+	//	const DblVec2& size_2d_max, const DblVec2& size_2d_min
+	//) {
 	//	DblRect2 ret;
 	//}
 	//--------
-	inline std::ostream& dbg_osprint_layout_rng_a2d(std::ostream& os) const
-	{
+	inline std::ostream& dbg_osprint_layout_rng_a2d(std::ostream& os)
+		const {
 		osprintout(os, "Engine::dbg_osprint_layout_rng_a2d(): Start\n");
 
-		for (ecs::FileNum file_num=0; file_num<NUM_FILES; ++file_num)
-		{
+		for (ecs::FileNum file_num=0; file_num<NUM_FILES; ++file_num) {
 			dbg_osprint_layout_rng_arr_fn(os, file_num);
 
-			if (file_num + 1 < NUM_FILES)
-			{
+			if (file_num + 1 < NUM_FILES) {
 				osprintout(os, "\n");
 			}
 		}
@@ -508,167 +467,138 @@ public:		// functions
 		osprintout(os, "Engine::dbg_osprint_layout_rng_a2d(): End\n\n");
 		return os;
 	}
-	inline std::ostream& dbg_osprint_layout_rng_arr_fn(std::ostream& os,
-		ecs::FileNum file_num) const
-	{
+	inline std::ostream& dbg_osprint_layout_rng_arr_fn(
+		std::ostream& os, ecs::FileNum file_num
+	) const {
 		const auto& lr_arr = layout_rng_arr_fn(file_num);
 
-		for (i32 i=0; i<i32(lr_arr.size()); ++i)
-		{
+		for (i32 i=0; i<i32(lr_arr.size()); ++i) {
 			osprintout(os, i, ": ", lr_arr.at(i), "\n");
 		}
 
 		return os;
 	}
-	//inline void dbg_osprint_layout_rng_arr() const
-	//{
+	//inline void dbg_osprint_layout_rng_arr() const {
 	//	dbg_osprint_layout_rng_arr_fn(USE_CURR_FILE_NUM);
 	//}
 	//--------
 public:		// `_non_ecs_ser_data_arr` accessor functions
 	//--------
-	inline NonEcsSerData& non_ecs_ser_data_fn(ecs::FileNum file_num)
-	{
+	inline NonEcsSerData& non_ecs_ser_data_fn(ecs::FileNum file_num) {
 		return _non_ecs_ser_data_arr.at(_sel_file_num(file_num));
 	}
 	inline const NonEcsSerData& non_ecs_ser_data_fn(ecs::FileNum file_num)
-		const
-	{
+		const {
 		return _non_ecs_ser_data_arr.at(_sel_file_num(file_num));
 	}
-	inline NonEcsSerData& non_ecs_ser_data()
-	{
+	inline NonEcsSerData& non_ecs_ser_data() {
 		return non_ecs_ser_data_fn(USE_CURR_FILE_NUM);
 	}
-	inline const NonEcsSerData& non_ecs_ser_data() const
-	{
+	inline const NonEcsSerData& non_ecs_ser_data() const {
 		return non_ecs_ser_data_fn(USE_CURR_FILE_NUM);
 	}
 	//--------
-	inline bool& did_init_save_file_fn(ecs::FileNum file_num)
-	{
+	inline bool& did_init_save_file_fn(ecs::FileNum file_num) {
 		return non_ecs_ser_data_fn(file_num).did_init_save_file;
 	}
-	inline const bool& did_init_save_file_fn(ecs::FileNum file_num) const
-	{
+	inline const bool& did_init_save_file_fn(ecs::FileNum file_num) const {
 		return non_ecs_ser_data_fn(file_num).did_init_save_file;
 	}
-	inline bool& did_init_save_file()
-	{
+	inline bool& did_init_save_file() {
 		return did_init_save_file_fn(USE_CURR_FILE_NUM);
 	}
-	inline const bool& did_init_save_file() const
-	{
+	inline const bool& did_init_save_file() const {
 		return did_init_save_file_fn(USE_CURR_FILE_NUM);
 	}
 	//--------
-	inline MsgLog& log_msg_log_fn(ecs::FileNum file_num)
-	{
+	inline MsgLog& log_msg_log_fn(ecs::FileNum file_num) {
 		return non_ecs_ser_data_fn(file_num).log_msg_log;
 	}
-	inline const MsgLog& log_msg_log_fn(ecs::FileNum file_num) const
-	{
+	inline const MsgLog& log_msg_log_fn(ecs::FileNum file_num) const {
 		return non_ecs_ser_data_fn(file_num).log_msg_log;
 	}
-	inline MsgLog& log_msg_log()
-	{
+	inline MsgLog& log_msg_log() {
 		return log_msg_log_fn(USE_CURR_FILE_NUM);
 	}
-	inline const MsgLog& log_msg_log() const
-	{
+	inline const MsgLog& log_msg_log() const {
 		return log_msg_log_fn(USE_CURR_FILE_NUM);
 	}
 	//--------
-	inline MsgLog& hud_msg_log_fn(ecs::FileNum file_num)
-	{
+	inline MsgLog& hud_msg_log_fn(ecs::FileNum file_num) {
 		return non_ecs_ser_data_fn(file_num).hud_msg_log;
 	}
-	inline const MsgLog& hud_msg_log_fn(ecs::FileNum file_num) const
-	{
+	inline const MsgLog& hud_msg_log_fn(ecs::FileNum file_num) const {
 		return non_ecs_ser_data_fn(file_num).hud_msg_log;
 	}
-	inline MsgLog& hud_msg_log()
-	{
+	inline MsgLog& hud_msg_log() {
 		return hud_msg_log_fn(USE_CURR_FILE_NUM);
 	}
-	inline const MsgLog& hud_msg_log() const
-	{
+	inline const MsgLog& hud_msg_log() const {
 		return hud_msg_log_fn(USE_CURR_FILE_NUM);
 	}
 	//--------
-	inline i32& floor_fn(ecs::FileNum file_num)
-	{
+	inline i32& floor_fn(ecs::FileNum file_num) {
 		return non_ecs_ser_data_fn(file_num).floor;
 	}
-	inline const i32& floor_fn(ecs::FileNum file_num) const
-	{
+	inline const i32& floor_fn(ecs::FileNum file_num) const {
 		return non_ecs_ser_data_fn(file_num).floor;
 	}
-	inline i32& floor()
-	{
+	inline i32& floor() {
 		return floor_fn(USE_CURR_FILE_NUM);
 	}
-	inline const i32& floor() const
-	{
+	inline const i32& floor() const {
 		return floor_fn(USE_CURR_FILE_NUM);
 	}
 	//--------
-	inline ecs::EntIdSet& pfield_ent_id_set_fn(ecs::FileNum file_num,
-		const IntVec3& pos)
-	{
+	inline ecs::EntIdSet& pfield_ent_id_set_fn(
+		ecs::FileNum file_num, const IntVec3& pos
+	) {
 		return non_ecs_ser_data_fn(file_num).pfield_ent_id_map[pos];
 	}
-	//inline const ecs::EntIdSet& pfield_ent_id_set_fn
-	//	(ecs::FileNum file_num, const IntVec3& pos) const
-	//{
+	//inline const ecs::EntIdSet& pfield_ent_id_set_fn(
+	//	ecs::FileNum file_num, const IntVec3& pos
+	//) const {
 	//	return non_ecs_ser_data(file_num).pfield_ent_id_map[pos];
 	//}
-	inline ecs::EntIdSet& pfield_ent_id_set(const IntVec3& pos)
-	{
+	inline ecs::EntIdSet& pfield_ent_id_set(const IntVec3& pos) {
 		return pfield_ent_id_set_fn(USE_CURR_FILE_NUM, pos);
 	}
 	//inline const ecs::EntIdSet& pfield_ent_id_set(const IntVec3& pos)
-	//	const
-	//{
+	//	const {
 	//	return pfield_ent_id_set_fn(USE_CURR_FILE_NUM, pos);
 	//}
 	//--------
-	inline ecs::EntIdSet& pfield_ent_id_set_fn(ecs::FileNum file_num,
-		const IntVec2& pos_2d)
-	{
+	inline ecs::EntIdSet& pfield_ent_id_set_fn(
+		ecs::FileNum file_num, const IntVec2& pos_2d
+	) {
 		return pfield_ent_id_set_fn(file_num,
 			to_int_vec3_fn(file_num, pos_2d));
 	}
-	//inline const ecs::EntIdSet& pfield_ent_id_set_fn(ecs::FileNum file_num,
-	//	const IntVec2& pos_2d) const
-	//{
+	//inline const ecs::EntIdSet& pfield_ent_id_set_fn(
+	//	ecs::FileNum file_num, const IntVec2& pos_2d
+	//) const {
 	//	return pfield_ent_id_set_fn(file_num,
 	//		to_int_vec3_fn(file_num, pos_2d));
 	//}
-	inline ecs::EntIdSet& pfield_ent_id_set(const IntVec2& pos_2d)
-	{
+	inline ecs::EntIdSet& pfield_ent_id_set(const IntVec2& pos_2d) {
 		return pfield_ent_id_set(to_int_vec3(pos_2d));
 	}
 	//inline const ecs::EntIdSet& pfield_ent_id_set(const IntVec2& pos_2d)
-	//	const
-	//{
+	//	const {
 	//	return pfield_ent_id_set(to_int_vec3(pos_2d));
 	//}
-	//inline EntIdSetVec2d& pfield_ent_id_v2d_fn(ecs::FileNum file_num)
-	//{
+	//inline EntIdSetVec2d& pfield_ent_id_v2d_fn(ecs::FileNum file_num) {
 	//	return pfield_ent_id_v3d_fn(file_num).at(floor_fn(file_num));
 	//}
-	//inline const EntIdSetVec2d& pfield_ent_id_v2d_fn(ecs::FileNum file_num)
-	//	const
-	//{
+	//inline const EntIdSetVec2d& pfield_ent_id_v2d_fn(
+	//	ecs::FileNum file_num
+	//) const {
 	//	return pfield_ent_id_v3d_fn(file_num).at(floor_fn(file_num));
 	//}
-	//inline EntIdSetVec2d& pfield_ent_id_v2d()
-	//{
+	//inline EntIdSetVec2d& pfield_ent_id_v2d() {
 	//	return pfield_ent_id_v2d_fn(USE_CURR_FILE_NUM);
 	//}
-	//inline const EntIdSetVec2d& pfield_ent_id_v2d() const
-	//{
+	//inline const EntIdSetVec2d& pfield_ent_id_v2d() const {
 	//	return pfield_ent_id_v2d_fn(USE_CURR_FILE_NUM);
 	//}
 	//--------
@@ -676,59 +606,52 @@ public:		// `_non_ecs_ser_data_arr` accessor functions
 	//inline RetT rand()
 	// These are for 
 	template<typename T=RngSeedT>
-	inline auto rand()
-	{
+	inline auto rand() {
 		return non_ecs_ser_data().rand<T>();
 	}
 	//template<typename T=RngSeedT>
-	//inline auto rand(const T& max, bool saturate=false)
-	//{
+	//inline auto rand(const T& max, bool saturate=false) {
 	//	return non_ecs_ser_data().rand<T>(max, saturate);
 	//}
 	template<typename T=RngSeedT>
-	inline auto rand_lt_bound(const T& bound)
-	{
+	inline auto rand_lt_bound(const T& bound) {
 		return non_ecs_ser_data().rand_lt_bound<T>(bound);
 	}
 	template<typename T=RngSeedT>
-	inline auto rand(const T& lim_0, const T& lim_1)
-	{
+	inline auto rand(const T& lim_0, const T& lim_1) {
 		return non_ecs_ser_data().rand<T>(lim_0, lim_1);
 	}
 	//template<typename T=RngSeedT>
-	//inline auto rand_scaled(const T& scale)
-	//{
+	//inline auto rand_scaled(const T& scale) {
 	//	return non_ecs_ser_data().rand_scaled<T>(scale);
 	//}
 	//template<typename T=RngSeedT>
-	//inline auto rand_scaled(const T& scale, const T& max,
-	//	bool saturate=false)
-	//{
+	//inline auto rand_scaled(
+	//	const T& scale, const T& max, bool saturate=false
+	//) {
 	//	return non_ecs_ser_data().rand_scaled<T>(scale, max, saturate);
 	//}
 	//template<typename T=RngSeedT>
-	//inline auto rand_scaled_lim(const T& scale, const T& lim_0,
-	//	const T& lim_1)
-	//{
+	//inline auto rand_scaled_lim(
+	//	const T& scale, const T& lim_0, const T& lim_1
+	//) {
 	//	return non_ecs_ser_data().rand_scaled_lim<T>(scale, lim_0, lim_1);
 	//}
 	//--------
 public:		// functions
 	//--------
-	inline IntVec3 to_int_vec3_fn(ecs::FileNum file_num,
-		const IntVec2& pos_2d) const
-	{
+	inline IntVec3 to_int_vec3_fn(
+		ecs::FileNum file_num, const IntVec2& pos_2d
+	) const {
 		return IntVec3(pos_2d.x, pos_2d.y, floor_fn(file_num));
 	}
-	inline IntVec3 to_int_vec3(const IntVec2& pos_2d) const
-	{
+	inline IntVec3 to_int_vec3(const IntVec2& pos_2d) const {
 		return to_int_vec3_fn(USE_CURR_FILE_NUM, pos_2d);
 	}
 	//--------
 public:		// functions
 	//--------
-	//inline i32 fn_state_index() const
-	//{
+	//inline i32 fn_state_index() const {
 	//	return
 	//		fn_state == FnState::Curr
 	//		? *curr_file_num()
@@ -736,17 +659,14 @@ public:		// functions
 	//}
 	//--------
 private:		// static functions
-	inline ecs::FileNum _sel_file_num(ecs::FileNum some_file_num) const
-	{
+	inline ecs::FileNum _sel_file_num(ecs::FileNum some_file_num) const {
 		return ecs_engine.sel_file_num(some_file_num);
 	}
-	//inline i32 _sel_file_num(ecs::FileNum some_file_num) const
-	//{
+	//inline i32 _sel_file_num(ecs::FileNum some_file_num) const {
 	//	//return (some_file_num == USE_CURR_FILE_NUM)
 	//	//	? *curr_file_num()
 	//	//	: some_file_num;
-	//	switch (some_file_num)
-	//	{
+	//	switch (some_file_num) {
 	//	//--------
 	//	case USE_CURR_FILE_NUM:
 	//		return *curr_file_num();
@@ -768,25 +688,21 @@ public:		// functions
 	void position_set_pos_callback(comp::Position* obj,
 		const IntVec3& n_pos);
 
-	inline Menu build_yes_no_menu(auto* self,
-		const std::function<void(decltype(self))>& yes_func,
-		const std::function<void(decltype(self))>& no_func)
-	{
-		return Menu
-		(
+	inline Menu build_yes_no_menu(
+		auto* self, const std::function<void(decltype(self))>& yes_func,
+		const std::function<void(decltype(self))>& no_func
+	) {
+		return Menu(
 			"yes",
 			yes_no_window.size_2d(),
-			Menu::build_node_map
-			({
-				Menu::build_action_button_knc_pair
-				(
+			Menu::build_node_map({
+				Menu::build_action_button_knc_pair(
 					"yes",
 					"Yes",
 					self,
 					yes_func
 				),
-				Menu::build_action_button_knc_pair
-				(
+				Menu::build_action_button_knc_pair(
 					"no",
 					"No",
 					self,
@@ -796,32 +712,27 @@ public:		// functions
 			Vec2<bool>({.x=false, .y=true})
 		);
 	}
-	inline Menu build_text_yes_no_menu(auto* self,
-		const std::string& s_text,
+	inline Menu build_text_yes_no_menu(
+		auto* self, const std::string& s_text,
 		const std::function<void(decltype(self))>& yes_func,
 		const std::function<void(decltype(self))>& no_func,
-		i32 s_tab_amount=0)
-	{
-		return Menu
-		(
+		i32 s_tab_amount=0
+	) {
+		return Menu(
 			"yes",
 			text_yes_no_window.size_2d(),
-			Menu::build_node_map
-			({
-				Menu::build_text_only_knc_pair
-				(
+			Menu::build_node_map({
+				Menu::build_text_only_knc_pair(
 					"<text[0]>",
 					s_text
 				),
-				Menu::build_action_button_knc_pair
-				(
+				Menu::build_action_button_knc_pair(
 					"yes",
 					"Yes",
 					self,
 					yes_func
 				),
-				Menu::build_action_button_knc_pair
-				(
+				Menu::build_action_button_knc_pair(
 					"no",
 					"No",
 					self,
@@ -835,8 +746,7 @@ public:		// functions
 
 
 	GameMode& set_game_mode(GameMode n_game_mode);
-	inline decltype(_game_mode) game_mode() const
-	{
+	inline decltype(_game_mode) game_mode() const {
 		return _game_mode;
 	}
 
@@ -848,11 +758,10 @@ private:		// functions
 	//static void _yes_no_menu_act_no(Engine* self);
 
 	template<EngineErrWhenEntNullIdObj ObjT>
-	inline void _err_when_ent_id_is_null(ObjT* obj,
-		const std::string& func_name) const
-	{
-		if (obj->ent_id() == ecs::ENT_NULL_ID)
-		{
+	inline void _err_when_ent_id_is_null(
+		ObjT* obj, const std::string& func_name
+	) const {
+		if (obj->ent_id() == ecs::ENT_NULL_ID) {
 			const std::string err_msg(sconcat("Engine::", func_name,
 				"(): Internal error.\n"));
 			throw std::invalid_argument(err_msg.c_str());

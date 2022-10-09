@@ -33,7 +33,7 @@
 	/* comp::Floor, */ \
 	/* comp::DownStairs, */ \
 	/* comp::UpStairs, */ \
-	comp::StaticBgTileMap, \
+	/* comp::StaticBgTileMap, */\
 	comp::DungeonGen, \
 	\
 	comp::StatusOnFire, \

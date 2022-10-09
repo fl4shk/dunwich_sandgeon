@@ -17,31 +17,25 @@
 
 #include "player_comp_class.hpp"
 
-namespace dunwich_sandgeon
-{
-namespace game_engine
-{
-namespace comp
-{
-
+namespace dunwich_sandgeon {
+namespace game_engine {
+namespace comp {
+//--------
 const std::string Player::KIND_STR("Player");
-Player::Player(const binser::Value& bv)
-{
+Player::Player(const binser::Value& bv) {
 	MEMB_LIST_COMP_PLAYER(BINSER_MEMB_DESERIALIZE);
 }
-std::string Player::kind_str() const
-{
+std::string Player::kind_str() const {
 	return KIND_STR;
 }
-Player::operator binser::Value () const
-{
+Player::operator binser::Value () const {
 	binser::Value ret;
 
 	MEMB_LIST_COMP_PLAYER(BINSER_MEMB_SERIALIZE);
 
 	return ret;
 }
-
+//--------
 } // namespace comp
 } // namespace game_engine
 } // namespace dunwich_sandgeon

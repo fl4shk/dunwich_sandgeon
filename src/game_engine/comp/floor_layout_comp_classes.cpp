@@ -20,19 +20,14 @@
 #include "../engine_class.hpp"
 #include "../global_shape_constants.hpp"
 
-namespace dunwich_sandgeon
-{
-namespace game_engine
-{
-namespace comp
-{
+namespace dunwich_sandgeon {
+namespace game_engine {
+namespace comp {
 //--------
-//const std::unordered_map<BgTile, std::string>& bg_tile_str_map()
-//{
+//const std::unordered_map<BgTile, std::string>& bg_tile_str_map() {
 //	//--------
 //	static const std::unordered_map<BgTile, std::string>
-//		BG_TILE_STR_MAP
-//	= {
+//		BG_TILE_STR_MAP = {
 //		//{Tile::Wall, "TileWall"},
 //		//{Tile::Floor, "TileFloor"},
 //		//{Tile::UpStairs, "TileUpStairs"},
@@ -51,99 +46,87 @@ namespace comp
 //	//--------
 //}
 //--------
-const std::string
-	StaticBgTileMap::KIND_STR("StaticBgTileMap");
-
-StaticBgTileMap::StaticBgTileMap()
-{
-	_init_data();
-}
-StaticBgTileMap::StaticBgTileMap(const binser::Value& bv)
-{
-	_init_data();
-	MEMB_LIST_COMP_STATIC_LAYOUT(BINSER_MEMB_DESERIALIZE);
-}
-std::string StaticBgTileMap::kind_str() const
-{
-	return KIND_STR;
-}
-StaticBgTileMap::operator binser::Value () const
-{
-	binser::Value ret;
-
-	MEMB_LIST_COMP_STATIC_LAYOUT(BINSER_MEMB_SERIALIZE);
-
-	return ret;
-}
-
-void StaticBgTileMap::_init_data()
-{
-	_data
-	= {
-		.data=std::vector<binser::VectorEx<BgTile>>
-			(PFIELD_PHYS_SIZE_2D.y,
-			{.data=std::vector<BgTile>
-				(PFIELD_PHYS_SIZE_2D.x, BgTile::Wall),
-			.checked_size=size_t(PFIELD_PHYS_SIZE_2D.x)}),
-		.checked_size=size_t(PFIELD_PHYS_SIZE_2D.y)
-	};
-}
-void StaticBgTileMap::draw() const
-{
-	const auto& temp_size_2d = size_2d();
-
-	IntVec2 pos;
-	for (pos.y=0; pos.y<temp_size_2d.y; ++pos.y)
-	{
-		for (pos.x=0; pos.x<temp_size_2d.x; ++pos.x)
-		{
-			engine->pfield_window.drawable_data_at(pos)
-				= drawable_data_map().at(bg_tile_str_map_at(at(pos)));
-		}
-	}
-}
+//const std::string
+//	StaticBgTileMap::KIND_STR("StaticBgTileMap");
+//
+//StaticBgTileMap::StaticBgTileMap() {
+//	_init_data();
+//}
+//StaticBgTileMap::StaticBgTileMap(const binser::Value& bv) {
+//	_init_data();
+//	MEMB_LIST_COMP_STATIC_LAYOUT(BINSER_MEMB_DESERIALIZE);
+//}
+//std::string StaticBgTileMap::kind_str() const {
+//	return KIND_STR;
+//}
+//StaticBgTileMap::operator binser::Value () const {
+//	binser::Value ret;
+//
+//	MEMB_LIST_COMP_STATIC_LAYOUT(BINSER_MEMB_SERIALIZE);
+//
+//	return ret;
+//}
+//
+//void StaticBgTileMap::init_data() {
+//	_data = {
+//		.data=std::vector<binser::VectorEx<BgTile>>(
+//			PFIELD_PHYS_SIZE_2D.y,
+//			{
+//				.data=std::vector<BgTile>(PFIELD_PHYS_SIZE_2D.x, 
+//					BgTile::Blank),
+//				.checked_size=size_t(PFIELD_PHYS_SIZE_2D.x)
+//			}
+//		),
+//		.checked_size=size_t(PFIELD_PHYS_SIZE_2D.y)
+//	};
+//}
+//void StaticBgTileMap::draw() const {
+//	const auto& temp_size_2d = size_2d();
+//
+//	IntVec2 pos;
+//	for (pos.y=0; pos.y<temp_size_2d.y; ++pos.y) {
+//		for (pos.x=0; pos.x<temp_size_2d.x; ++pos.x) {
+//			engine->pfield_window.drawable_data_at(pos)
+//				= drawable_data_map().at(bg_tile_str_map_at(at(pos)));
+//		}
+//	}
+//}
 //--------
 //--------
 const std::string
 	DungeonGen::KIND_STR("DungeonGen");
 
-auto DungeonGen::RoomPath::from_bv(const binser::Value& bv) -> RoomPath
-{
+auto DungeonGen::RoomPath::from_bv(const binser::Value& bv) -> RoomPath {
 	RoomPath ret;
 
 	MEMB_LIST_COMP_DUNGEON_ROOM_PATH(BINSER_MEMB_FROM_BV_DESERIALIZE);
 
 	//if (!ret.is_valid())
-	if (!ret.fits_in_pfield())
-	{
-		//throw std::invalid_argument
-		//(
-		//	sconcat
-		//	(
+	if (!ret.fits_in_pfield()) {
+		//throw std::invalid_argument(sconcat(
 		//		(func_name ? sconcat(*func_name, "(): ") : std::string()),
 		//		(msg ? sconcat(*msg, ": ") : std::string()),
 		//		data_str, " < ", min_str,
 		//			" || ", data_str, " || ", max_str,
 		//			": ",
 		//		data, " ", min, " ", max
-		//	)
-		//);
-		throw std::invalid_argument(sconcat
-			("game_engine::comp::DungeonGen::RoomPath::from_bv(): ",
-			"`ret.rect` does not fit in the playfield: ", ret.rect));
+		//));
+		throw std::invalid_argument(sconcat(
+			"game_engine::comp::DungeonGen::RoomPath::from_bv(): ",
+			"`ret.rect` does not fit in the playfield: ", ret.rect
+		));
 	}
-	if (!ret.is_path() && !ret.is_room())
-	{
-		throw std::invalid_argument(sconcat
-			("game_engine::comp::DungeonGen::RoomPath::from_bv(): ",
+	if (!ret.is_path() && !ret.is_room()) {
+		throw std::invalid_argument(sconcat(
+			"game_engine::comp::DungeonGen::RoomPath::from_bv(): ",
 			"`ret.rect` is the wrong shape to be a path or a room: ",
-			ret.rect));
+			ret.rect
+		));
 	}
 
 	return ret;
 }
-DungeonGen::RoomPath::operator binser::Value () const
-{
+DungeonGen::RoomPath::operator binser::Value () const {
 	binser::Value ret;
 
 	//MEMB_EX_MM_LIST_COMP_DUNGEON_ROOM_PATH(BINSER_MEMB_SERIALIZE);
@@ -155,8 +138,7 @@ DungeonGen::RoomPath::operator binser::Value () const
 	return ret;
 }
 
-//auto DungeonGen::Path::from_bv(const binser::Value& bv) -> Path
-//{
+//auto DungeonGen::Path::from_bv(const binser::Value& bv) -> Path {
 //	Path ret;
 //
 //	#define X(...) BINSER_MEMB_FROM_BV_DESERIALIZE_EX_MM(__VA_ARGS__)
@@ -171,24 +153,21 @@ DungeonGen::RoomPath::operator binser::Value () const
 //	MEMB_AUTOSER_LIST_COMP_DUNGEON_PATH(X);
 //	#undef X
 //
-//	//if (DblVec2Ex temp_pos=PFIELD_WINDOW_EX_RANGE;
-//	//	true)
-//	//{
+//	//if (DblVec2Ex temp_pos=PFIELD_WINDOW_EX_RANGE; true) {
 //	//	binser::get_bv_memb(temp_pos, bv, "pos", std::nullopt);
 //	//	ret.pos = std::move(temp_pos.data);
 //	//}
-//	//if (binser::ScalarEx<decltype(size)> temp_size
-//	//	={.data=0u, .max=MAX_SIZE, .min=MIN_SIZE};
-//	//	true)
-//	//{
+//	//if (binser::ScalarEx<decltype(size)> temp_size={
+//	//		.data=0u, .max=MAX_SIZE, .min=MIN_SIZE
+//	//	};
+//	//	true) {
 //	//	binser::get_bv_memb(temp_size, bv, "size", std::nullopt);
 //	//	ret.size = std::move(temp_size.data);
 //	//}
 //
 //	return ret;
 //}
-//DungeonGen::Path::operator binser::Value () const
-//{
+//DungeonGen::Path::operator binser::Value () const {
 //	binser::Value ret;
 //
 //	MEMB_EX_MM_LIST_COMP_DUNGEON_PATH(BINSER_MEMB_SERIALIZE);
@@ -196,15 +175,11 @@ DungeonGen::RoomPath::operator binser::Value () const
 //
 //	return ret;
 //}
-//bool DungeonGen::Path::overlaps(const Path& path) const
-//{
+//bool DungeonGen::Path::overlaps(const Path& path) const {
 //}
 
-DungeonGen::DungeonGen()
-{
-}
-DungeonGen::DungeonGen(const binser::Value& bv)
-{
+DungeonGen::DungeonGen() {}
+DungeonGen::DungeonGen(const binser::Value& bv) {
 	_data.checked_size = MAX_NUM_ROOM_PATHS;
 	_data.cs_is_max = true;
 	//_data.min_size = 0;
@@ -217,12 +192,10 @@ DungeonGen::DungeonGen(const binser::Value& bv)
 	MEMB_LIST_COMP_DUNGEON(BINSER_MEMB_DESERIALIZE);
 }
 
-std::string DungeonGen::kind_str() const
-{
+std::string DungeonGen::kind_str() const {
 	return KIND_STR;
 }
-DungeonGen::operator binser::Value () const
-{
+DungeonGen::operator binser::Value () const {
 	binser::Value ret;
 
 	MEMB_LIST_COMP_DUNGEON(BINSER_MEMB_SERIALIZE);
@@ -230,45 +203,35 @@ DungeonGen::operator binser::Value () const
 	return ret;
 }
 
-void DungeonGen::draw(StaticBgTileMap* bg_tile_map)
-{
+//void DungeonGen::draw(StaticBgTileMap* bg_tile_map)
+void DungeonGen::draw() {
 	//bg_tile_map->at({0, 0}) = BgTile::Floor;
-	for (size_t i=0; i<size(); ++i)
-	{
+	for (size_t i=0; i<size(); ++i) {
 		const RoomPath& rp = at(i);
 		IntVec2 pos;
-		for (pos.y=rp.rect.pos.y;
-			//pos.y<rp.rect.pos.y + rp.rect.size_2d.y;
-			pos.y<=rp.rect.bottom_y();
-			++pos.y)
-		{
-			for (pos.x=rp.rect.pos.x;
-				//pos.x<rp.rect.pos.x + rp.rect.size_2d.x;
-				pos.x<=rp.rect.right_x();
-				++pos.x)
-			{
-				try
-				{
-					if (rp.is_path())
-					{
-						bg_tile_map->at(pos) = BgTile::Floor;
+		for (pos.y=rp.rect.pos.y; pos.y<=rp.rect.bottom_y(); ++pos.y) {
+			for (pos.x=rp.rect.pos.x; pos.x<=rp.rect.right_x(); ++pos.x) {
+				try {
+					BgTile bg_tile = BgTile::Error;
+
+					if (rp.is_path()) {
+						bg_tile = BgTile::PathFloor;
+					} else if (rp.is_room()) {
+						bg_tile = BgTile::RoomFloor;
 					}
-					else if (rp.is_room())
-					{
-						bg_tile_map->at(pos) = BgTile::Water;
-					}
-				}
-				catch (const std::exception& e)
-				{
-					printerr(e.what(), "\n");
-					throw std::out_of_range(sconcat
-						("rp.rect",rp.rect, ", pos", pos, ", ",
-						//"rs{", rp.rect.pos.x + rp.rect.size_2d.x, "}, ",
-						//"bb{", rp.rect.pos.y + rp.rect.size_2d.y, "}"
+					engine->pfield_window.drawable_data_at(pos)
+						= drawable_data_map()
+						.at(bg_tile_str_map_at(bg_tile));
+				} catch (const std::exception& e) {
+					printerr("game_engine::comp::DungeonGen::draw(): "
+						"Exception thrown: ", e.what(), "\n");
+					throw std::out_of_range(sconcat(
+						"rp.rect",rp.rect, ", pos", pos, ", ",
 						"rs{", rp.rect.right_x(), "}, ",
 						"bs{", rp.rect.bottom_y(), "}, ",
 						"fp{", rp.fits_in_pfield(), "}"
-						));
+						
+					));
 				}
 			}
 		}

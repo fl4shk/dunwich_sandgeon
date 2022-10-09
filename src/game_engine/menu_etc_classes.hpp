@@ -25,15 +25,12 @@
 #include "global_shape_constants.hpp"
 #include "comp/general_comp_classes.hpp"
 
-namespace dunwich_sandgeon
-{
-namespace game_engine
-{
-class RopePart final
-{
+namespace dunwich_sandgeon {
+namespace game_engine {
+//--------
+class RopePart final {
 public:		// types
-	class CtorArgs final
-	{
+	class CtorArgs final {
 	public:		// variables
 		std::string str;
 		FgBgColorPair
@@ -54,39 +51,33 @@ public:		// variables
 
 	inline RopePart(const CtorArgs& ctor_args)
 		: str(ctor_args.str), color_pair(ctor_args.color_pair),
-		gs_color_pair(ctor_args.gs_color_pair)
-	{
+		gs_color_pair(ctor_args.gs_color_pair) {
 	}
 	inline RopePart(CtorArgs&& ctor_args)
 		: str(std::move(ctor_args.str)),
 		color_pair(ctor_args.color_pair),
-		gs_color_pair(ctor_args.gs_color_pair)
-	{
+		gs_color_pair(ctor_args.gs_color_pair) {
 	}
 	inline RopePart(comp::Drawable::Data drawable_data)
 		: str(""), color_pair(drawable_data.color_pair),
-		gs_color_pair(drawable_data.gs_color_pair)
-	{
+		gs_color_pair(drawable_data.gs_color_pair) {
 		str += drawable_data.c;
 	}
 
 	inline RopePart(const std::string& s_str,
 		FgBgColorPair s_color_pair, FgBgColorPair s_gs_color_pair)
 		: str(s_str), color_pair(s_color_pair),
-		gs_color_pair(s_gs_color_pair)
-	{
+		gs_color_pair(s_gs_color_pair) {
 	}
 	inline RopePart(std::string&& s_str,
 		FgBgColorPair s_color_pair, FgBgColorPair s_gs_color_pair)
 		: str(std::move(s_str)), color_pair(s_color_pair),
-		gs_color_pair(s_gs_color_pair)
-	{
+		gs_color_pair(s_gs_color_pair) {
 	}
 	inline RopePart(char c,
 		FgBgColorPair s_color_pair, FgBgColorPair s_gs_color_pair)
 		: str(""), color_pair(s_color_pair),
-		gs_color_pair(s_gs_color_pair)
-	{
+		gs_color_pair(s_gs_color_pair) {
 		str += c;
 	}
 	RopePart(const binser::Value& bv);
@@ -111,8 +102,7 @@ Rope split_rope_by_whitespace(const Rope& rope, bool keep_sep=false);
 RopeDeque wrap_rope(const Rope& rope, i32 row_length,
 	bool keep_sep=false);
 
-class MsgLog final
-{
+class MsgLog final {
 public:		// constants
 	//static constexpr i32
 	//	WIDGET_SELECTED_SPACING_SIZE = 3,
@@ -149,8 +139,7 @@ public:		// functions
 		Vec2<bool> s_center=Vec2(false, false), bool s_keep_sep=false)
 		: _internal_height(s_internal_height),
 		_window_size_2d(s_window_size_2d), _center(s_center),
-		_keep_sep(s_keep_sep)
-	{
+		_keep_sep(s_keep_sep) {
 	}
 	MsgLog(const RopeDeque& s_data,
 		i32 s_internal_height=DEFAULT_INTERNAL_HEIGHT,
@@ -179,8 +168,7 @@ public:		// functions
 };
 
 
-class Menu final
-{
+class Menu final {
 public:		// constants
 	static constexpr i32
 		// The maximum value of `variable` when using a `HorizPicker` or
@@ -223,12 +211,10 @@ public:		// constants
 		TAB_STR;
 
 public:		// types
-	class Node final
-	{
+	class Node final {
 	public:		// types
 		//--------
-		enum class Kind
-		{
+		enum class Kind {
 			// Beginning of node list
 			Start,
 
@@ -274,8 +260,7 @@ public:		// types
 		//using DataActionParamFunc = std::function<void(i32)>;
 
 		using DataVariant 
-			= std::variant
-			<
+			= std::variant<
 				std::monostate,			// Sorry, nothing
 				bool,					// CheckButton
 				DataValue,				// HorizPicker
@@ -287,8 +272,7 @@ public:		// types
 		using OnUpdateFunc = std::function<void(Node*)>;
 		//--------
 		// No connections
-		class NoConn final
-		{
+		class NoConn final {
 		public:		// variables
 			std::string text;
 			Kind kind;
@@ -296,8 +280,7 @@ public:		// types
 			i32 variable = 0;
 			OnUpdateFunc on_update_func = nullptr;
 		};
-		class CtorArgs final
-		{
+		class CtorArgs final {
 		public:		// variables
 			NoConn no_conn;
 			std::string up, down;
@@ -335,8 +318,7 @@ public:		// types
 			data(s_data),
 			variable(s_variable),
 			on_update_func(s_on_update_func),
-			up(s_up), down(s_down)
-		{
+			up(s_up), down(s_down) {
 		}
 
 		Node(const NoConn& s_most_args, const std::string& s_up="",
@@ -353,8 +335,7 @@ public:		// types
 	};
 
 	template<typename SelfT>
-	class ActionButtonFuncobj final
-	{
+	class ActionButtonFuncobj final {
 	public:		// types
 		using Func = std::function<void(SelfT*)>;
 	private:		// variables
@@ -363,20 +344,17 @@ public:		// types
 	public:		// functions
 		ActionButtonFuncobj() = default;
 		inline ActionButtonFuncobj(SelfT* s_self, const Func& s_func)
-			: _self(s_self), _func(s_func)
-		{
+			: _self(s_self), _func(s_func) {
 		}
 		GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(ActionButtonFuncobj);
 		~ActionButtonFuncobj() = default;
 
-		inline void operator () () const
-		{
+		inline void operator () () const {
 			_func(_self);
 		}
 	};
 	//template<typename SelfT>
-	//class ActionButtonParamFuncobj final
-	//{
+	//class ActionButtonParamFuncobj final {
 	//protected:		// variables
 	//	SelfT* _self = nullptr;
 	//	std::function<void(SelfT*, i32)> _func = nullptr;
@@ -384,20 +362,17 @@ public:		// types
 	//	inline ActionButtonParamFuncobj() = default;
 	//	inline ActionButtonParamFuncobj(SelfT* s_self,
 	//		const std::function<void(SelfT*, i32)>& s_func)
-	//		: _self(s_self), _func(s_func)
-	//	{
+	//		: _self(s_self), _func(s_func) {
 	//	}
 	//	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(ActionButtonParamFuncobj);
 	//	inline ~ActionButtonParamFuncobj() = default;
 
-	//	inline void operator () (i32 param) const
-	//	{
+	//	inline void operator () (i32 param) const {
 	//		_func(_self, param);
 	//	}
 	//};
 	template<typename SelfT>
-	class OnUpdateFuncobj final
-	{
+	class OnUpdateFuncobj final {
 	public:		// types
 		using Func = std::function<void(SelfT*, Node*)>;
 	private:		// variables
@@ -407,14 +382,12 @@ public:		// types
 		OnUpdateFuncobj() = default;
 		inline OnUpdateFuncobj(SelfT* s_self,
 			const Func& s_on_update_func)
-			: _self(s_self), _on_update_func(s_on_update_func)
-		{
+			: _self(s_self), _on_update_func(s_on_update_func) {
 		}
 		GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(OnUpdateFuncobj);
 		~OnUpdateFuncobj() = default;
 
-		inline void operator () (Node* node) const
-		{
+		inline void operator () (Node* node) const {
 			_on_update_func(_self, node);
 		}
 	};
@@ -440,20 +413,16 @@ public:		// functions
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Menu);
 	~Menu() = default;
 
-	inline Node& at(const std::string& key)
-	{
-		if (!_node_map.contains(key))
-		{
+	inline Node& at(const std::string& key) {
+		if (!_node_map.contains(key)) {
 			fprintf(stderr, "game_engine::Menu::at(): Internal error.\n");
 			//exit(1);
 		}
 
 		return _node_map.at(key);
 	}
-	inline const Node& at(const std::string& key) const
-	{
-		if (!_node_map.contains(key))
-		{
+	inline const Node& at(const std::string& key) const {
+		if (!_node_map.contains(key)) {
 			fprintf(stderr,
 				"game_engine::Menu::at() const: Internal error.\n");
 			//exit(1);
@@ -462,18 +431,16 @@ public:		// functions
 		return _node_map.at(key);
 	}
 
-	inline Node& next_node(const EngineKeyStatus& key_status)
-	{
+	inline Node& next_node(const EngineKeyStatus& key_status) {
 		return at(next_sel_key(key_status));
 	}
 	inline const Node& next_node(const EngineKeyStatus& key_status)
-		const
-	{
+		const {
 		return at(next_sel_key(key_status));
 	}
-	inline const std::string& next_sel_key
-		(const EngineKeyStatus& key_status) const
-	{
+	inline const std::string& next_sel_key(
+		const EngineKeyStatus& key_status
+	) const {
 		bool did_find = false;
 		const std::string& maybe_ret = _inner_next_sel_key(sel_key(),
 			key_status, did_find);
@@ -485,8 +452,7 @@ private:		// functions
 		const EngineKeyStatus& key_status, bool& did_find) const;
 
 public:		// functions
-	inline std::string tab_amount_str() const
-	{
+	inline std::string tab_amount_str() const {
 		return spaces_str(tab_amount() * TAB_SIZE);
 	}
 
@@ -510,12 +476,11 @@ public:		// static builder functions
 	static KncPair build_spaces_knc_pair(i32 i);
 
 	template<typename SelfT>
-	static inline KncPair build_action_button_knc_pair
-		(const std::string& key, const std::string& s_text,
-		SelfT* self, const std::function<void(SelfT*)>& button_func)
-	{
-		return
-		{
+	static inline KncPair build_action_button_knc_pair(
+		const std::string& key, const std::string& s_text,
+		SelfT* self, const std::function<void(SelfT*)>& button_func
+	) {
+		return {
 			key,
 			{
 				.text=s_text,
@@ -527,13 +492,12 @@ public:		// static builder functions
 		};
 	}
 	template<typename SelfT>
-	static inline KncPair build_check_button_knc_pair
-		(const std::string& key, const std::string& s_text, bool s_data,
+	static inline KncPair build_check_button_knc_pair(
+		const std::string& key, const std::string& s_text, bool s_data,
 		SelfT* self,
-		const std::function<void(SelfT*, Node*)>& s_on_update_func)
-	{
-		return
-		{
+		const std::function<void(SelfT*, Node*)>& s_on_update_func
+	) {
+		return {
 			key,
 			{
 				.text=s_text,
@@ -546,13 +510,12 @@ public:		// static builder functions
 		};
 	}
 	template<typename SelfT>
-	static inline KncPair build_horiz_picker_knc_pair
-		(const std::string& key, const std::string& s_text,
+	static inline KncPair build_horiz_picker_knc_pair(
+		const std::string& key, const std::string& s_text,
 		i32 s_variable, SelfT* self,
-		const std::function<void(SelfT*, Node*)>& s_on_update_func)
-	{
-		return
-		{
+		const std::function<void(SelfT*, Node*)>& s_on_update_func
+	) {
+		return {
 			key,
 			{
 				.text=s_text,
@@ -568,11 +531,10 @@ public:		// static builder functions
 	static NodeMap build_node_map(const std::vector<KncPair>& vec);
 };
 
-//class Hud final
-//{
+//class Hud final {
 //private:		// variables
 //};
-
+//--------
 } // namespace game_engine
 } // namespace dunwich_sandgeon
 

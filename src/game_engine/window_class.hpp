@@ -28,11 +28,9 @@
 #include "comp/general_comp_classes.hpp"
 //#include "engine_class.hpp"
 
-namespace dunwich_sandgeon
-{
-namespace game_engine
-{
-
+namespace dunwich_sandgeon {
+namespace game_engine {
+//--------
 class Engine;
 class Menu;
 class MsgLog;
@@ -41,8 +39,7 @@ class MsgLog;
 //class LayeredWindow;
 
 // A window made out of `Entity`s
-class Window
-{
+class Window {
 public:		// types
 	using DrawData = comp::Drawable::Data;
 public:		// constants
@@ -87,11 +84,11 @@ protected:		// serialized variables
 //protected:		// static funcs
 //	static inline DblVec2 _init_pos(const DblVec2& s_some_pos,
 //		)
-//	static inline std::vector<std::vector<DrawData>> _init_dd2vd
-//		(const DblVec2& s_some_pos,
-//		const DblVec2& s_some_size_2d_or_end_pos,
-//		bool use_end_pos,
-//		bool first_two_args_are_with_border)
+//	static inline std::vector<std::vector<DrawData>> _init_dd2vd(
+//		const DblVec2& s_some_pos,
+//		const DblVec2& s_some_size_2d_or_end_pos, bool use_end_pos,
+//		bool first_two_args_are_with_border
+//	);
 public:		// functions
 	Window();
 	//Window(const DblVec2& s_some_pos, const DblVec2& s_some_size_2d,
@@ -109,49 +106,39 @@ public:		// functions
 	//void deserialize(const binser::Value& bv);
 	//void init_set_border();
 
-	inline DrawData& w_border_drawable_data_at(const IntVec2& index)
-	{
+	inline DrawData& w_border_drawable_data_at(const IntVec2& index) {
 		return _drawable_data_v2d.at(index.y).at(index.x);
 	}
-	inline const DrawData& w_border_drawable_data_at
-		(const IntVec2& index) const
-	{
+	inline const DrawData& w_border_drawable_data_at(const IntVec2& index)
+		const {
 		return _drawable_data_v2d.at(index.y).at(index.x);
 	}
-	//inline DrawData& w_border_drawable_data_at(const IntVec2& index)
-	//{
+	//inline DrawData& w_border_drawable_data_at(const IntVec2& index) {
 	//	return _drawable_data_v2d.at(index.y).at(index.x);
 	//}
-	//inline const DrawData& w_border_drawable_data_at
-	//	(const IntVec2& index) const
-	//{
+	//inline const DrawData& w_border_drawable_data_at(const IntVec2& index)
+	//	const {
 	//	return _drawable_data_v2d.at(index.y).at(index.x);
 	//}
 
-	inline DrawData& drawable_data_at(const IntVec2& index)
-	{
+	inline DrawData& drawable_data_at(const IntVec2& index) {
 		return w_border_drawable_data_at(index + IntVec2(1, 1));
 	}
-	inline const DrawData& drawable_data_at(const IntVec2& index) const
-	{
+	inline const DrawData& drawable_data_at(const IntVec2& index) const {
 		return w_border_drawable_data_at(index + IntVec2(1, 1));
 	}
-	//inline DrawData& drawable_data_at(const IntVec2& index)
-	//{
+	//inline DrawData& drawable_data_at(const IntVec2& index) {
 	//	return w_border_drawable_data_at(index + IntVec2(1, 1));
 	//}
-	//inline const DrawData& drawable_data_at(const IntVec2& index) const
-	//{
+	//inline const DrawData& drawable_data_at(const IntVec2& index) const {
 	//	return w_border_drawable_data_at(index + IntVec2(1, 1));
 	//}
 
-	inline IntVec2 w_border_size_2d() const
-	{
+	inline IntVec2 w_border_size_2d() const {
 		return IntVec2(drawable_data_v2d().front().size(),
 			drawable_data_v2d().size());
 	}
-	inline IntVec2 size_2d() const
-	{
+	inline IntVec2 size_2d() const {
 		return w_border_size_2d() - IntVec2(2, 2);
 	}
 
@@ -173,8 +160,7 @@ public:		// functions
 	GEN_GETTER_BY_CON_REF(drawable_data_v2d);
 };
 
-//class LayeredWindow
-//{
+//class LayeredWindow {
 //protected:		// variables
 //	std::map<std::string, Window> _layer_map;
 //	std::map<std::string, uint> _layer_prio_map;
@@ -187,18 +173,14 @@ public:		// functions
 //
 //	virtual void tick(InputKind input_kind);
 //
-//	inline Window& layer_at(const std::string& key)
-//	{
+//	inline Window& layer_at(const std::string& key) {
 //		return _layer_map.at(key);
 //	}
-//	inline const Window& layer_at(const std::string& key) const
-//	{
+//	inline const Window& layer_at(const std::string& key) const {
 //		return _layer_map.at(key);
 //	}
-//	inline IntVec2 size_2d() const
-//	{
-//		for (const auto& pair: layer_map())
-//		{
+//	inline IntVec2 size_2d() const {
+//		for (const auto& pair: layer_map()) {
 //			// All layers have the same size
 //			return pair.second.size_2d();
 //		}
@@ -207,7 +189,7 @@ public:		// functions
 //	GEN_GETTER_BY_CON_REF(layer_map);
 //	GEN_GETTER_BY_CON_REF(layer_prio_map);
 //};
-
+//--------
 } // namespace game_engine
 } // namespace dunwich_sandgeon
 

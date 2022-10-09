@@ -22,13 +22,10 @@
 
 #include "../misc_includes.hpp"
 
-namespace dunwich_sandgeon
-{
-namespace game_engine
-{
-
-enum class FontColor: i32
-{
+namespace dunwich_sandgeon {
+namespace game_engine {
+//--------
+enum class FontColor: i32 {
 	White,
 
 	Red,
@@ -49,8 +46,7 @@ enum class FontColor: i32
 	Lim,
 };
 
-inline FontColor font_color_add(FontColor font_color, i32 amount)
-{
+inline FontColor font_color_add(FontColor font_color, i32 amount) {
 	i32 ret_u32 = i32(font_color);
 	ret_u32 += amount;
 	return FontColor(ret_u32);
@@ -58,15 +54,13 @@ inline FontColor font_color_add(FontColor font_color, i32 amount)
 
 extern const std::map<FontColor, std::string> FONT_COLOR_TO_STR_MAP;
 
-class FgBgColorPair final
-{
+class FgBgColorPair final {
 public:		// constants
 	static constexpr FontColor
 		DEFAULT_FG = FontColor::White,
 		DEFAULT_BG = FontColor::Black;
 public:		// types
-	class CtorArgs final
-	{
+	class CtorArgs final {
 	public:		// variables
 		FontColor fg, bg;
 	};
@@ -81,31 +75,26 @@ public:		// variables
 public:		// functions
 	constexpr inline FgBgColorPair() = default;
 	constexpr inline FgBgColorPair(CtorArgs ctor_args)
-		: fg(ctor_args.fg), bg(ctor_args.bg)
-	{
+		: fg(ctor_args.fg), bg(ctor_args.bg) {
 	}
 	constexpr inline FgBgColorPair(FontColor s_fg,
 		FontColor s_bg=DEFAULT_BG)
-		: fg(s_fg), bg(s_bg)
-	{
+		: fg(s_fg), bg(s_bg) {
 	}
 	//constexpr 
-	inline FgBgColorPair(const binser::Value& bv)
-	{
+	inline FgBgColorPair(const binser::Value& bv) {
 		fg = FontColor(bv.at("fg").get<i32>());
 		bg = FontColor(bv.at("bg").get<i32>());
 	}
 	GEN_CX_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(FgBgColorPair);
 	constexpr inline ~FgBgColorPair() = default;
 
-	constexpr inline FgBgColorPair& operator = (FontColor n_fg)
-	{
+	constexpr inline FgBgColorPair& operator = (FontColor n_fg) {
 		fg = n_fg;
 		bg = DEFAULT_BG;
 		return *this;
 	}
-	inline operator binser::Value () const
-	{
+	inline operator binser::Value () const {
 		binser::Value ret;
 
 		ret.insert("fg", i32(fg));
@@ -114,16 +103,14 @@ public:		// functions
 		return ret;
 	}
 
-	constexpr inline bool operator == (const FgBgColorPair& other) const
-	{
+	constexpr inline bool operator == (const FgBgColorPair& other) const {
 		return fg == other.fg && bg == other.bg;
 	}
-	constexpr inline bool operator != (const FgBgColorPair& other) const
-	{
+	constexpr inline bool operator != (const FgBgColorPair& other) const {
 		return !(*this == other);
 	}
 };
-
+//--------
 } // namespace game_engine
 } // namespace dunwich_sandgeon
 

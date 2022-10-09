@@ -24,15 +24,12 @@
 #include "../misc_types.hpp"
 #include "../game_engine/font_color_enum.hpp"
 
-namespace dunwich_sandgeon
-{
-namespace io
-{
-
+namespace dunwich_sandgeon {
+namespace io {
+//--------
 class RealMainSdl;
 
-class TextHandlerSdl final
-{
+class TextHandlerSdl final {
 public:		// types
 	using FontColor = game_engine::FontColor;
 	using FgBgColorPair = game_engine::FgBgColorPair;
@@ -106,15 +103,15 @@ public:		// functions
 
 	void draw_char(i32 c, const FgBgColorPair& color_pair,
 		const IntVec2& draw_pos);
-	inline void draw_char(i32 c, FontColor fg_color,
-		const IntVec2& draw_pos)
-	{
+	inline void draw_char(
+		i32 c, FontColor fg_color, const IntVec2& draw_pos
+	) {
 		draw_char(c, FgBgColorPair(fg_color), draw_pos);
 	}
 private:		// functions
 	IntVec2 _get_draw_char_fg_surface_size_2d() const;
 };
-
+//--------
 } // namespace io
 } // namespace dunwich_sandgeon
 

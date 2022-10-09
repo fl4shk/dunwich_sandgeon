@@ -22,17 +22,13 @@
 
 #include "../../misc_includes.hpp"
 
-namespace dunwich_sandgeon
-{
-namespace game_engine
-{
-namespace comp
-{
-
+namespace dunwich_sandgeon {
+namespace game_engine {
+namespace comp {
+//--------
 static constexpr i32 STATUS_TIMER_DEFAULT_VAL = 20;
 
-class StatusOnFire final: public ecs::Comp
-{
+class StatusOnFire final: public ecs::Comp {
 public:		// constants
 	static const std::string KIND_STR;
 public:		// variables
@@ -42,8 +38,7 @@ public:		// variables
 public:		// functions
 	StatusOnFire() = default;
 	inline StatusOnFire(i32 s_timer)
-		: timer(s_timer)
-	{
+		: timer(s_timer) {
 	}
 	StatusOnFire(const binser::Value& bv);
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(StatusOnFire);
@@ -54,8 +49,7 @@ public:		// functions
 };
 
 // Take damage slowly
-class StatusPoisoned final: public ecs::Comp
-{
+class StatusPoisoned final: public ecs::Comp {
 public:		// constants
 	static const std::string KIND_STR;
 public:		// variables
@@ -65,8 +59,7 @@ public:		// variables
 public:		// functions
 	StatusPoisoned() = default;
 	inline StatusPoisoned(i32 s_timer)
-		: timer(s_timer)
-	{
+		: timer(s_timer) {
 	}
 	StatusPoisoned(const binser::Value& bv);
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(StatusPoisoned);
@@ -77,8 +70,7 @@ public:		// functions
 };
 
 // Can do nothing
-class StatusAsleep final: public ecs::Comp
-{
+class StatusAsleep final: public ecs::Comp {
 public:		// constants
 	static const std::string KIND_STR;
 public:		// variables
@@ -88,8 +80,7 @@ public:		// variables
 public:		// functions
 	StatusAsleep() = default;
 	inline StatusAsleep(i32 s_timer)
-		: timer(s_timer)
-	{
+		: timer(s_timer) {
 	}
 	StatusAsleep(const binser::Value& bv);
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(StatusAsleep);
@@ -100,8 +91,7 @@ public:		// functions
 };
 
 // Speed of movement
-class StatusTravelSpeed final: public ecs::Comp
-{
+class StatusTravelSpeed final: public ecs::Comp {
 public:		// constants
 	static const std::string KIND_STR;
 	static constexpr i32 ABS_MIN_MAX_VAL = 6;
@@ -115,8 +105,7 @@ public:		// variables
 public:		// functions
 	StatusTravelSpeed() = default;
 	inline StatusTravelSpeed(i32 s_timer, i32 s_val)
-		: timer(s_timer), val(s_val)
-	{
+		: timer(s_timer), val(s_val) {
 	}
 	StatusTravelSpeed(const binser::Value& bv);
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(StatusTravelSpeed);
@@ -127,8 +116,7 @@ public:		// functions
 };
 
 // Speed of actions besides movement
-class StatusActionSpeed final: public ecs::Comp
-{
+class StatusActionSpeed final: public ecs::Comp {
 public:		// constants
 	static const std::string KIND_STR;
 	static constexpr i32 ABS_MIN_MAX_VAL = 6;
@@ -142,8 +130,7 @@ public:		// variables
 public:		// functions
 	StatusActionSpeed() = default;
 	inline StatusActionSpeed(i32 s_timer, i32 s_val)
-		: timer(s_timer), val(s_val)
-	{
+		: timer(s_timer), val(s_val) {
 	}
 	StatusActionSpeed(const binser::Value& bv);
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(StatusActionSpeed);
@@ -152,7 +139,7 @@ public:		// functions
 	virtual std::string kind_str() const;
 	virtual operator binser::Value () const;
 };
-
+//--------
 } // namespace comp
 } // namespace game_engine
 } // namespace dunwich_sandgeon

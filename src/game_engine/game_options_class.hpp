@@ -22,13 +22,10 @@
 
 #include "../misc_includes.hpp"
 
-namespace dunwich_sandgeon
-{
-namespace game_engine
-{
-
-class GameOptions final
-{
+namespace dunwich_sandgeon {
+namespace game_engine {
+//--------
+class GameOptions final {
 public:		// variables
 	#define MEMB_LIST_GAME_OPTIONS(X) \
 		X(grayscale, std::nullopt)
@@ -42,7 +39,7 @@ public:		// functions
 
 	operator binser::Value () const;
 };
-
+//--------
 } // namespace game_engine
 } // namespace dunwich_sandgeon
 

@@ -17,11 +17,9 @@
 
 #include "input_kind_enum.hpp"
 
-namespace dunwich_sandgeon
-{
-
-const std::map<InputKind, std::string> INPUT_KIND_TO_STR_MAP
-= {
+namespace dunwich_sandgeon {
+//--------
+const std::map<InputKind, std::string> INPUT_KIND_TO_STR_MAP = {
 	{InputKind::None, "None"},
 
 	{InputKind::Left, "Left"},
@@ -49,5 +47,5 @@ const std::map<InputKind, std::string> INPUT_KIND_TO_STR_MAP
 
 	{InputKind::Lim, "Lim"},
 };
-
+//--------
 } // namespace dunwich_sandgeon

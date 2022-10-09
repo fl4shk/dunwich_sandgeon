@@ -17,13 +17,10 @@
 
 #include "font_color_enum.hpp"
 
-namespace dunwich_sandgeon
-{
-namespace game_engine
-{
-
-const std::map<FontColor, std::string> FONT_COLOR_TO_STR_MAP
-= {
+namespace dunwich_sandgeon {
+namespace game_engine {
+//--------
+const std::map<FontColor, std::string> FONT_COLOR_TO_STR_MAP = {
 	{FontColor::White, "White"},
 
 	{FontColor::Red, "Red"},
@@ -42,6 +39,6 @@ const std::map<FontColor, std::string> FONT_COLOR_TO_STR_MAP
 
 	{FontColor::Lim, "Lim"},
 };
-
+//--------
 } // namespace game_engine
 } // namespace dunwich_sandgeon

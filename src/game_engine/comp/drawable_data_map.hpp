@@ -23,15 +23,12 @@
 #include "../../misc_includes.hpp"
 #include "general_comp_classes.hpp"
 
-namespace dunwich_sandgeon
-{
-namespace game_engine
-{
-namespace comp
-{
-
+namespace dunwich_sandgeon {
+namespace game_engine {
+namespace comp {
+//--------
 const std::unordered_map<std::string, Drawable::Data>& drawable_data_map();
-
+//--------
 } // namespace comp
 } // namespace game_engine
 } // namespace dunwich_sandgeon

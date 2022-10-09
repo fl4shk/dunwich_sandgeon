@@ -17,37 +17,30 @@
 
 #include "game_options_class.hpp"
 
-namespace dunwich_sandgeon
-{
-namespace game_engine
-{
-
-GameOptions::GameOptions()
-{
+namespace dunwich_sandgeon {
+namespace game_engine {
+//--------
+GameOptions::GameOptions() {
 }
 
 GameOptions::GameOptions(bool s_grayscale)
-	: grayscale(s_grayscale)
-{
+	: grayscale(s_grayscale) {
 }
 
-GameOptions::GameOptions(const binser::Value& bv)
-{
+GameOptions::GameOptions(const binser::Value& bv) {
 	MEMB_LIST_GAME_OPTIONS(BINSER_MEMB_DESERIALIZE);
 }
 
-GameOptions::~GameOptions()
-{
+GameOptions::~GameOptions() {
 }
 
-GameOptions::operator binser::Value () const
-{
+GameOptions::operator binser::Value () const {
 	binser::Value ret;
 
 	MEMB_LIST_GAME_OPTIONS(BINSER_MEMB_SERIALIZE);
 
 	return ret;
 }
-
+//--------
 } // namespace game_engine
 } // namespace dunwich_sandgeon

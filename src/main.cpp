@@ -18,8 +18,7 @@
 #include "misc_includes.hpp"
 #include "sdl/real_main_sdl_class.hpp"
 
-int main(int argc, char* argv[])
-{
+int main(int argc, char* argv[]) {
 	////static_assert(is_specialization<std::array<i32, 5>, std::array>());
 	//static_assert(is_std_array<std::array<std::array<i32, 5>, 3>>());
 	//static_assert(is_std_array<std::array<i32, 5>>());
@@ -70,13 +69,11 @@ int main(int argc, char* argv[])
 	//printout("states: ", rng3, "\t\t", rng4, "\n");
 	//printout("\n");
 
-	//temp_ostm
-	//	<< sconcat
-	//	(
-	//		//"47026247687942121848144207491837523525 ",
-	//		"47026247687942121848144207491837523520 ",
-	//		"117397592171526113268558934119004209487 ",
-	//		"237373757935471646366144288263181576297"
+	//temp_ostm << sconcat(
+	//	//"47026247687942121848144207491837523525 ",
+	//	"47026247687942121848144207491837523520 ",
+	//	"117397592171526113268558934119004209487 ",
+	//	"237373757935471646366144288263181576297"
 	//	);
 
 	//temp_ostm << pcg32(4);

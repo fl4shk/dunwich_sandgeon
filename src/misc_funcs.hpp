@@ -22,8 +22,7 @@
 
 #include "misc_includes.hpp"
 
-namespace dunwich_sandgeon
-{
+namespace dunwich_sandgeon {
 
 
 } // namespace dunwich_sandgeon

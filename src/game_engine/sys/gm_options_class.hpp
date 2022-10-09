@@ -24,16 +24,12 @@
 #include "../menu_etc_classes.hpp"
 #include "../game_options_class.hpp"
 
-namespace dunwich_sandgeon
-{
-namespace game_engine
-{
-namespace sys
-{
-
+namespace dunwich_sandgeon {
+namespace game_engine {
+namespace sys {
+//--------
 // Game Mode: Options
-class GmOptions final: public ecs::Sys
-{
+class GmOptions final: public ecs::Sys {
 public:		// constants
 	static const std::string KIND_STR;
 private:		// variables
@@ -41,8 +37,7 @@ private:		// variables
 public:		// functions
 	GmOptions() = default;
 	//inline GmOptions(const binser::Value& bv)
-	//	: ecs::Sys(bv)
-	//{
+	//	: ecs::Sys(bv) {
 	//}
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(GmOptions);
 	virtual ~GmOptions() = default;
@@ -58,7 +53,7 @@ private:		// functions
 	static void _aux_menu_save_and_exit_func(GmOptions* self);
 	static void _aux_menu_exit_wo_save_func(GmOptions* self);
 };
-
+//--------
 } // namespace sys
 } // namespace game_engine
 } // namespace dunwich_sandgeon

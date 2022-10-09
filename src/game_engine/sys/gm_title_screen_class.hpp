@@ -22,24 +22,19 @@
 
 #include "../../misc_includes.hpp"
 
-namespace dunwich_sandgeon
-{
-namespace game_engine
-{
-namespace sys
-{
-
+namespace dunwich_sandgeon {
+namespace game_engine {
+namespace sys {
+//--------
 // Game Mode: Title Screen
-class GmTitleScreen final: public ecs::Sys 
-{
+class GmTitleScreen final: public ecs::Sys {
 public:		// constants
 	static const std::string KIND_STR;
 public:		// functions
 	//--------
 	GmTitleScreen() = default;
 	//inline GmTitleScreen(const binser::Value& bv)
-	//	: ecs::Sys(bv)
-	//{
+	//	: ecs::Sys(bv) {
 	//}
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(GmTitleScreen);
 	virtual ~GmTitleScreen() = default;
@@ -57,7 +52,7 @@ private:		// functions
 	static void _aux_menu_quit_game_func(GmTitleScreen* self);
 	//--------
 };
-
+//--------
 } // namespace sys
 } // namespace game_engine
 } // namespace dunwich_sandgeon

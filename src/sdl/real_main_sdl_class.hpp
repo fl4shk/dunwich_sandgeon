@@ -25,13 +25,10 @@
 #include "../game_engine/engine_class.hpp"
 #include "text_handler_sdl_class.hpp"
 
-namespace dunwich_sandgeon
-{
-namespace io
-{
-
-class RealMainSdl final
-{
+namespace dunwich_sandgeon {
+namespace io {
+//--------
+class RealMainSdl final {
 public:		// types
 	using FontColor = game_engine::FontColor;
 	using FgBgColorPair = game_engine::FgBgColorPair;
@@ -74,8 +71,7 @@ public:		// functions
 	//GEN_GETTER_BY_VAL(zoom);
 private:		// functions
 	static Uint32 _global_timer_callback(Uint32 interval, void* self);
-	//inline void _set_scale_etc(float n_scale)
-	//{
+	//inline void _set_scale_etc(float n_scale) {
 	//	_scale = n_scale;
 	//	_update_logical_size_2d();
 	//	_update_renderer_scale_etc();
@@ -85,7 +81,7 @@ private:		// functions
 	//void _update_renderer_scale_etc(bool use_default_scale=true);
 	void _update_engine_key_status();
 };
-
+//--------
 } // namespace io
 } // namespace dunwich_sandgeon
 

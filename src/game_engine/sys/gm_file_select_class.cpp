@@ -18,24 +18,19 @@
 #include "gm_file_select_class.hpp"
 #include "../engine_class.hpp"
 
-namespace dunwich_sandgeon
-{
-namespace game_engine
-{
-namespace sys
-{
-
+namespace dunwich_sandgeon {
+namespace game_engine {
+namespace sys {
+//--------
 const std::string
 	GmFileSelect::KIND_STR("GmFileSelect"),
 	GmFileSelect::AUX_MENU_KEY_FILE_QMARK("file_qmark");
 
-std::string GmFileSelect::kind_str() const
-{
+std::string GmFileSelect::kind_str() const {
 	return KIND_STR;
 }
 
-void GmFileSelect::_init(ecs::Engine* ecs_engine)
-{
+void GmFileSelect::_init(ecs::Engine* ecs_engine) {
 	_init_start();
 
 	//*engine->src_file_num() = *engine->curr_file_num();
@@ -46,50 +41,58 @@ void GmFileSelect::_init(ecs::Engine* ecs_engine)
 	_win_state = WinState::Aux;
 
 	i32 i = 0;
-	engine->aux_menu = Menu
-	(
+	engine->aux_menu = Menu(
 		AUX_MENU_KEY_FILE_QMARK,
 		engine->aux_window.size_2d(),
-		Menu::build_node_map
-		({
+		Menu::build_node_map({
 			//--------
 			Menu::build_text_only_knc_pair("title", "Select A File"),
 			//--------
 			//Menu::build_spaces_knc_pair(i++),
 			Menu::build_separator_knc_pair(i++),
 			//--------
-			Menu::build_horiz_picker_knc_pair
-				(AUX_MENU_KEY_FILE_QMARK, "File?",
+			Menu::build_horiz_picker_knc_pair(
+				AUX_MENU_KEY_FILE_QMARK, "File?",
 				game_engine::Engine::NUM_FILES - 1, this,
-				std::function<void(GmFileSelect*, Menu::Node*)>
-					(&_aux_menu_file_qmark_hpick_func)),
-			Menu::build_action_button_knc_pair
-				("start_game", "Start Game", this,
-				std::function<void(GmFileSelect*)>
-					(&_aux_menu_start_game_func)),
-			Menu::build_action_button_knc_pair
-				("copy_file", "Copy File", this,
-				std::function<void(GmFileSelect*)>
-					(&_aux_menu_copy_file_func)),
-			Menu::build_action_button_knc_pair
-				("erase_file", "Erase File", this,
-				std::function<void(GmFileSelect*)>
-					(&_aux_menu_erase_file_func)),
-			Menu::build_action_button_knc_pair
-				("exit", "Exit", this,
-				std::function<void(GmFileSelect*)>
-					(&_aux_menu_exit_func)),
+				std::function<void(GmFileSelect*, Menu::Node*)>(
+					&_aux_menu_file_qmark_hpick_func
+				)
+			),
+			Menu::build_action_button_knc_pair(
+				"start_game", "Start Game", this,
+				std::function<void(GmFileSelect*)>(
+					&_aux_menu_start_game_func
+				)
+			),
+			Menu::build_action_button_knc_pair(
+				"copy_file", "Copy File", this,
+				std::function<void(GmFileSelect*)>(
+					&_aux_menu_copy_file_func
+				)
+			),
+			Menu::build_action_button_knc_pair(
+				"erase_file", "Erase File", this,
+				std::function<void(GmFileSelect*)>(
+					&_aux_menu_erase_file_func
+				)
+			),
+			Menu::build_action_button_knc_pair(
+				"exit", "Exit", this,
+				std::function<void(GmFileSelect*)>(
+					&_aux_menu_exit_func
+				)
+			),
 			//--------
 		}),
 		Vec2(false, true),
 		Menu::WHOLE_SCREEN_MENU_TAB_AMOUNT_BIG
 	);
 }
-void GmFileSelect::tick(ecs::Engine* ecs_engine)
-{
-	if (_tick_helper(ecs_engine,
-		engine->game_mode() == GameMode::FileSelect))
-	{
+void GmFileSelect::tick(ecs::Engine* ecs_engine) {
+	if (
+		_tick_helper(ecs_engine,
+			engine->game_mode() == GameMode::FileSelect)
+	) {
 		//const i32& cfn = *engine->curr_file_num();
 		//const ecs::FileNum& sfn = *engine->src_file_num();
 		//auto& screen_window = engine->screen_window;
@@ -101,8 +104,7 @@ void GmFileSelect::tick(ecs::Engine* ecs_engine)
 
 		//screen_window.clear();
 
-		switch (_win_state)
-		{
+		switch (_win_state) {
 		//--------
 		case WinState::Aux:
 			aux_menu.tick(engine->key_status);
@@ -138,9 +140,9 @@ void GmFileSelect::tick(ecs::Engine* ecs_engine)
 	}
 }
 //--------
-void GmFileSelect::_aux_menu_file_qmark_hpick_func(GmFileSelect* self,
-	Menu::Node* node)
-{
+void GmFileSelect::_aux_menu_file_qmark_hpick_func(
+	GmFileSelect* self, Menu::Node* node
+) {
 	//*engine->curr_file_num()
 	//	= std::get<Menu::Node::DataValue>(node->data)();
 	ecs::FileNum& sfn = *engine->src_file_num();
@@ -150,61 +152,57 @@ void GmFileSelect::_aux_menu_file_qmark_hpick_func(GmFileSelect* self,
 	Menu::Node& other_node = aux_menu.at(AUX_MENU_KEY_FILE_QMARK);
 	std::get<Menu::Node::DataValue>(other_node.data)() = sfn;
 }
-void GmFileSelect::_aux_menu_start_game_func(GmFileSelect* self)
-{
+void GmFileSelect::_aux_menu_start_game_func(GmFileSelect* self) {
 	engine->set_game_mode(GameMode::DungeonGen);
 	*engine->curr_file_num() = *engine->src_file_num();
 	//engine->fn_state = Engine::FnState::Curr;
 
-	if (!engine->did_init_save_file())
-	{
+	if (!engine->did_init_save_file()) {
 		engine->did_init_save_file() = true;
 		auto& temp = engine->non_ecs_ser_data();
-		temp.on_init_or_file_erase_seed_rngs_etc
-			(engine->layout_rng_arr(), temp.base_rng_seed());
+		temp.on_init_or_file_erase_seed_rngs_etc(
+			engine->layout_rng_arr(), temp.base_rng_seed()
+		);
 	}
 }
-void GmFileSelect::_aux_menu_copy_file_func(GmFileSelect* self)
-{
+void GmFileSelect::_aux_menu_copy_file_func(GmFileSelect* self) {
 	self->_win_state = WinState::Popup;
 
 	i32 i = 0;
-	engine->popup_menu = Menu
-	(
+	engine->popup_menu = Menu(
 		"dst_file_qmark",
 		engine->popup_window.size_2d(),
-		Menu::build_node_map
-		({
+		Menu::build_node_map({
 			//--------
 			Menu::build_text_only_knc_pair("title",
 				sconcat("Copy File ", *engine->src_file_num(), " To?")),
 			//--------
 			Menu::build_separator_knc_pair(i++),
 			//--------
-			Menu::build_horiz_picker_knc_pair
-			(
+			Menu::build_horiz_picker_knc_pair(
 				"dst_file_qmark",
 				"Destination File?",
 				Engine::NUM_FILES - 1,
 				self,
-				std::function<void(GmFileSelect*, Menu::Node*)>
-					(&_popup_menu_dest_file_qmark_hpick_func)
+				std::function<void(GmFileSelect*, Menu::Node*)>(
+					&_popup_menu_dest_file_qmark_hpick_func
+				)
 			),
-			Menu::build_action_button_knc_pair
-			(
+			Menu::build_action_button_knc_pair(
 				"do_the_copy",
 				"Do The Copy",
 				self,
-				std::function<void(GmFileSelect*)>
-					(&_popup_menu_do_the_copy_func)
+				std::function<void(GmFileSelect*)>(
+					&_popup_menu_do_the_copy_func
+				)
 			),
-			Menu::build_action_button_knc_pair
-			(
+			Menu::build_action_button_knc_pair(
 				"cancel",
 				"Cancel",
 				self,
-				std::function<void(GmFileSelect*)>
-					(&_popup_menu_cancel_func)
+				std::function<void(GmFileSelect*)>(
+					&_popup_menu_cancel_func
+				)
 			)
 			//--------
 		}),
@@ -212,68 +210,62 @@ void GmFileSelect::_aux_menu_copy_file_func(GmFileSelect* self)
 		0
 	);
 }
-void GmFileSelect::_aux_menu_erase_file_func(GmFileSelect* self)
-{
+void GmFileSelect::_aux_menu_erase_file_func(GmFileSelect* self) {
 	self->_win_state = WinState::TextYesNoErase;
-	engine->text_yes_no_menu = engine->build_text_yes_no_menu
-	(
+	engine->text_yes_no_menu = engine->build_text_yes_no_menu(
 		self,
 		sconcat("Really erase file ", *engine->src_file_num(), "?"),
-		std::function<void(GmFileSelect*)>
-			(&_text_yes_no_menu_erase_yes_func),
-		std::function<void(GmFileSelect*)>
-			(&_text_yes_no_menu_erase_no_func)
+		std::function<void(GmFileSelect*)>(
+			&_text_yes_no_menu_erase_yes_func
+		),
+		std::function<void(GmFileSelect*)>(
+			&_text_yes_no_menu_erase_no_func
+		)
 	);
 }
-void GmFileSelect::_aux_menu_exit_func(GmFileSelect* self)
-{
+void GmFileSelect::_aux_menu_exit_func(GmFileSelect* self) {
 	engine->set_game_mode(GameMode::TitleScreen);
 	*engine->curr_file_num() = *engine->src_file_num();
 	//engine->fn_state = Engine::FnState::Curr;
 }
 //--------
-void GmFileSelect::_popup_menu_dest_file_qmark_hpick_func
-	(GmFileSelect* self, Menu::Node* node)
-{
+void GmFileSelect::_popup_menu_dest_file_qmark_hpick_func(
+	GmFileSelect* self, Menu::Node* node
+) {
 	*engine->copy_dst_file_num()
 		= std::get<Menu::Node::DataValue>(node->data)();
 }
-void GmFileSelect::_popup_menu_do_the_copy_func(GmFileSelect* self)
-{
+void GmFileSelect::_popup_menu_do_the_copy_func(GmFileSelect* self) {
 	self->_win_state = WinState::TextYesNoCopy;
-	engine->text_yes_no_menu = engine->build_text_yes_no_menu
-	(
+	engine->text_yes_no_menu = engine->build_text_yes_no_menu(
 		self,
 		sconcat("Really copy file ", *engine->src_file_num(),
 			" to file ", *engine->copy_dst_file_num(), "?"),
-		std::function<void(GmFileSelect*)>
-			(&_text_yes_no_menu_copy_yes_func),
-		std::function<void(GmFileSelect*)>
-			(&_text_yes_no_menu_copy_no_func)
+		std::function<void(GmFileSelect*)>(
+			&_text_yes_no_menu_copy_yes_func
+		),
+		std::function<void(GmFileSelect*)>(
+			&_text_yes_no_menu_copy_no_func
+		)
 	);
 }
-void GmFileSelect::_popup_menu_cancel_func(GmFileSelect* self)
-{
+void GmFileSelect::_popup_menu_cancel_func(GmFileSelect* self) {
 	self->_win_state = WinState::Aux;
 }
 //--------
-void GmFileSelect::_text_yes_no_menu_copy_yes_func(GmFileSelect* self)
-{
+void GmFileSelect::_text_yes_no_menu_copy_yes_func(GmFileSelect* self) {
 	self->_win_state = WinState::Aux;
 	engine->copy_file();
 }
-void GmFileSelect::_text_yes_no_menu_copy_no_func(GmFileSelect* self)
-{
+void GmFileSelect::_text_yes_no_menu_copy_no_func(GmFileSelect* self) {
 	self->_win_state = WinState::Aux;
 }
-void GmFileSelect::_text_yes_no_menu_erase_yes_func(GmFileSelect* self)
-{
+void GmFileSelect::_text_yes_no_menu_erase_yes_func(GmFileSelect* self) {
 	self->_win_state = WinState::Aux;
 	engine->erase_file();
 	//engine->dbg_print_layout_rng_arr();
 }
-void GmFileSelect::_text_yes_no_menu_erase_no_func(GmFileSelect* self)
-{
+void GmFileSelect::_text_yes_no_menu_erase_no_func(GmFileSelect* self) {
 	self->_win_state = WinState::Aux;
 }
 //--------

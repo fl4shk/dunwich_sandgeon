@@ -23,23 +23,18 @@
 #include "../../misc_includes.hpp"
 #include "../menu_etc_classes.hpp"
 
-namespace dunwich_sandgeon
-{
-namespace game_engine
-{
-namespace sys
-{
-
+namespace dunwich_sandgeon {
+namespace game_engine {
+namespace sys {
+//--------
 // Game Mode: Prepare Before Game
-class GmFileSelect final: public ecs::Sys
-{
+class GmFileSelect final: public ecs::Sys {
 public:		// constants
 	static const std::string
 		KIND_STR,
 		AUX_MENU_KEY_FILE_QMARK;
 public:		// types
-	enum class WinState: i32
-	{
+	enum class WinState: i32 {
 		Aux,
 		Popup,
 		TextYesNoCopy,
@@ -53,8 +48,7 @@ private:		// variables
 public:		// functions
 	GmFileSelect() = default;
 	//inline GmFileSelect(const binser::Value& bv)
-	//	: ecs::Sys(bv)
-	//{
+	//	: ecs::Sys(bv) {
 	//}
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(GmFileSelect);
 	virtual ~GmFileSelect() = default;
@@ -74,8 +68,9 @@ private:		// functions
 	static void _aux_menu_exit_func(GmFileSelect* self);
 	//--------
 	// The popup window is used as the file copying window
-	static void _popup_menu_dest_file_qmark_hpick_func
-		(GmFileSelect* self, Menu::Node* node);
+	static void _popup_menu_dest_file_qmark_hpick_func(
+		GmFileSelect* self, Menu::Node* node
+	);
 	static void _popup_menu_do_the_copy_func(GmFileSelect* self);
 	static void _popup_menu_cancel_func(GmFileSelect* self);
 	//--------
@@ -85,7 +80,7 @@ private:		// functions
 	static void _text_yes_no_menu_erase_no_func(GmFileSelect* self);
 	//--------
 };
-
+//--------
 } // namespace sys
 } // namespace game_engine
 } // namespace dunwich_sandgeon

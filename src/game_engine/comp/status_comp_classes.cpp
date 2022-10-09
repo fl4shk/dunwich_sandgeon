@@ -17,24 +17,18 @@
 
 #include "status_comp_classes.hpp"
 
-namespace dunwich_sandgeon
-{
-namespace game_engine
-{
-namespace comp
-{
-
+namespace dunwich_sandgeon {
+namespace game_engine {
+namespace comp {
+//--------
 const std::string StatusOnFire::KIND_STR("StatusOnFire");
-StatusOnFire::StatusOnFire(const binser::Value& bv)
-{
+StatusOnFire::StatusOnFire(const binser::Value& bv) {
 	MEMB_LIST_COMP_STATUS_ON_FIRE(BINSER_MEMB_DESERIALIZE);
 }
-std::string StatusOnFire::kind_str() const
-{
+std::string StatusOnFire::kind_str() const {
 	return KIND_STR;
 }
-StatusOnFire::operator binser::Value () const
-{
+StatusOnFire::operator binser::Value () const {
 	binser::Value ret;
 
 	MEMB_LIST_COMP_STATUS_ON_FIRE(BINSER_MEMB_SERIALIZE);
@@ -43,16 +37,13 @@ StatusOnFire::operator binser::Value () const
 }
 
 const std::string StatusPoisoned::KIND_STR("StatusPoisoned");
-StatusPoisoned::StatusPoisoned(const binser::Value& bv)
-{
+StatusPoisoned::StatusPoisoned(const binser::Value& bv) {
 	MEMB_LIST_COMP_STATUS_POISONED(BINSER_MEMB_DESERIALIZE);
 }
-std::string StatusPoisoned::kind_str() const
-{
+std::string StatusPoisoned::kind_str() const {
 	return KIND_STR;
 }
-StatusPoisoned::operator binser::Value () const
-{
+StatusPoisoned::operator binser::Value () const {
 	binser::Value ret;
 
 	MEMB_LIST_COMP_STATUS_POISONED(BINSER_MEMB_SERIALIZE);
@@ -61,16 +52,13 @@ StatusPoisoned::operator binser::Value () const
 }
 
 const std::string StatusAsleep::KIND_STR("StatusAsleep");
-StatusAsleep::StatusAsleep(const binser::Value& bv)
-{
+StatusAsleep::StatusAsleep(const binser::Value& bv) {
 	MEMB_LIST_COMP_STATUS_ASLEEP(BINSER_MEMB_DESERIALIZE);
 }
-std::string StatusAsleep::kind_str() const
-{
+std::string StatusAsleep::kind_str() const {
 	return KIND_STR;
 }
-StatusAsleep::operator binser::Value () const
-{
+StatusAsleep::operator binser::Value () const {
 	binser::Value ret;
 
 	MEMB_LIST_COMP_STATUS_ASLEEP(BINSER_MEMB_SERIALIZE);
@@ -79,16 +67,13 @@ StatusAsleep::operator binser::Value () const
 }
 
 const std::string StatusTravelSpeed::KIND_STR("StatusTravelSpeed");
-StatusTravelSpeed::StatusTravelSpeed(const binser::Value& bv)
-{
+StatusTravelSpeed::StatusTravelSpeed(const binser::Value& bv) {
 	MEMB_LIST_COMP_STATUS_TRAVEL_SPEED(BINSER_MEMB_DESERIALIZE);
 }
-std::string StatusTravelSpeed::kind_str() const
-{
+std::string StatusTravelSpeed::kind_str() const {
 	return KIND_STR;
 }
-StatusTravelSpeed::operator binser::Value () const
-{
+StatusTravelSpeed::operator binser::Value () const {
 	binser::Value ret;
 
 	MEMB_LIST_COMP_STATUS_TRAVEL_SPEED(BINSER_MEMB_SERIALIZE);
@@ -97,23 +82,20 @@ StatusTravelSpeed::operator binser::Value () const
 }
 
 const std::string StatusActionSpeed::KIND_STR("StatusActionSpeed");
-StatusActionSpeed::StatusActionSpeed(const binser::Value& bv)
-{
+StatusActionSpeed::StatusActionSpeed(const binser::Value& bv) {
 	MEMB_LIST_COMP_STATUS_ACTION_SPEED(BINSER_MEMB_DESERIALIZE);
 }
-std::string StatusActionSpeed::kind_str() const
-{
+std::string StatusActionSpeed::kind_str() const {
 	return KIND_STR;
 }
-StatusActionSpeed::operator binser::Value () const
-{
+StatusActionSpeed::operator binser::Value () const {
 	binser::Value ret;
 
 	MEMB_LIST_COMP_STATUS_ACTION_SPEED(BINSER_MEMB_SERIALIZE);
 
 	return ret;
 }
-
+//--------
 } // namespace comp
 } // namespace game_engine
 } // namespace dunwich_sandgeon
