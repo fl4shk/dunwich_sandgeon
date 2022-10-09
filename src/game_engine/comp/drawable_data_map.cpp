@@ -26,7 +26,8 @@ namespace game_engine {
 namespace comp {
 //--------
 static constexpr FgBgColorPair
-	WINDOW_BORDER_COLOR_PAIR = FontColor::Green;
+	WINDOW_BORDER_COLOR_PAIR = FontColor::Green,
+	GS_WINDOW_BORDER_COLOR_PAIR = FontColor::White;
 
 auto drawable_data_map()
 -> const std::unordered_map<std::string, Drawable::Data>& {
@@ -52,19 +53,24 @@ auto drawable_data_map()
 		// '+', 43
 		{Window::BORDER_CORNER_KIND_STR,
 			{.c='+', .color_pair=WINDOW_BORDER_COLOR_PAIR,
-			.gs_color_pair=FontColor::White}},
+			.gs_color_pair=GS_WINDOW_BORDER_COLOR_PAIR}},
+		{bg_tile_str_map_at(BgTile::Door),
+			{.c='+', .color_pair=FontColor::Gray,
+			.gs_color_pair=FontColor::Gray}},
 
 		// ',', 44
 		{bg_tile_str_map_at(BgTile::PathFloor),
 			{.c=',',
 			//.color_pair=FontColor::White,
-			.color_pair=FontColor::Brown,
-			.gs_color_pair=FontColor::White}},
+			//.color_pair=FontColor::Brown,
+			//.gs_color_pair=FontColor::White
+			.color_pair=FontColor::Gray,
+			.gs_color_pair=FontColor::Gray}},
 
 		// '-', 45
 		{Window::BORDER_HORIZ_KIND_STR,
 			{.c='-', .color_pair=WINDOW_BORDER_COLOR_PAIR,
-			.gs_color_pair=FontColor::White}},
+			.gs_color_pair=GS_WINDOW_BORDER_COLOR_PAIR}},
 
 		// '.', 46
 		//{bg_tile_str_map_at(BgTile::Floor),
@@ -78,17 +84,21 @@ auto drawable_data_map()
 			//.color_pair=FontColor::LightGray,
 			//.gs_color_pair=FontColor::LightGray
 			//.color_pair=FontColor::Gray,
-			.color_pair=FontColor::Brown,
+			.color_pair=FontColor::Green,
 			.gs_color_pair=FontColor::Gray}},
 
 		// '<', 60
 		{bg_tile_str_map_at(BgTile::DownStairs),
-			{.c='<', .color_pair=FontColor::Brown,
+			{.c='<',
+			//.color_pair=FontColor::Brown,
+			.color_pair=FontColor::White,
 			.gs_color_pair=FontColor::White}},
 
 		// '>', 62
 		{bg_tile_str_map_at(BgTile::UpStairs),
-			{.c='>', .color_pair=FontColor::Brown,
+			{.c='>',
+			//.color_pair=FontColor::Brown,
+			.color_pair=FontColor::White,
 			.gs_color_pair=FontColor::White}},
 
 		// '?', 63
@@ -112,7 +122,7 @@ auto drawable_data_map()
 		// '|', 124
 		{Window::BORDER_VERT_KIND_STR,
 			{.c='|', .color_pair=WINDOW_BORDER_COLOR_PAIR,
-			.gs_color_pair=FontColor::White}},
+			.gs_color_pair=GS_WINDOW_BORDER_COLOR_PAIR}},
 
 		// '~', 126
 		{bg_tile_str_map_at(BgTile::Water),

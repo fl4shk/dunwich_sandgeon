@@ -208,20 +208,75 @@ void DungeonGen::draw() {
 	//bg_tile_map->at({0, 0}) = BgTile::Floor;
 	for (size_t i=0; i<size(); ++i) {
 		const RoomPath& rp = at(i);
-		IntVec2 pos;
-		for (pos.y=rp.rect.pos.y; pos.y<=rp.rect.bottom_y(); ++pos.y) {
-			for (pos.x=rp.rect.pos.x; pos.x<=rp.rect.right_x(); ++pos.x) {
+		IntVec2
+			pos, local_pos;
+		for (
+			pos.y=math::max_va(
+				rp.rect.top_y() - i32(1),
+				PFIELD_PHYS_RECT2.top_y()
+			),
+				local_pos.y=0;
+			pos.y<=math::min_va(
+				rp.rect.bottom_y() + i32(1),
+				PFIELD_PHYS_RECT2.bottom_y()
+			);
+			++pos.y, ++local_pos.y
+		) {
+			for (
+				pos.x=math::max_va(
+					rp.rect.left_x() - i32(1),
+					PFIELD_PHYS_RECT2.left_x()
+				),
+					local_pos.x=0;
+				pos.x<=math::min_va(
+					rp.rect.right_x() + i32(1),
+					PFIELD_PHYS_RECT2.right_x()
+				);
+				++pos.x, ++local_pos.x
+			) {
 				try {
 					BgTile bg_tile = BgTile::Error;
 
+					auto do_draw = [&pos, &bg_tile]() -> void {
+						engine->pfield_window.drawable_data_at(pos)
+							= drawable_data_map().at(
+								bg_tile_str_map_at(bg_tile)
+							);
+					};
+					const bool in_border = (!(
+						(local_pos.x > 0)
+						&& (local_pos.x < rp.rect.size_2d.x + 1)
+						&& (local_pos.y > 0)
+						&& (local_pos.y < rp.rect.size_2d.y + 1)
+					));
+
 					if (rp.is_path()) {
 						bg_tile = BgTile::PathFloor;
+						if (!in_border) {
+							do_draw();
+						}
 					} else if (rp.is_room()) {
-						bg_tile = BgTile::RoomFloor;
+						if (in_border) {
+							// I'm doing this the slow/easy way for now.
+							bool did_intersect = false;
+							for (size_t j=0; j<i; ++j) {
+								if (at(j).rect.intersect(pos)) {
+									did_intersect = true;
+								}
+							}
+							if (!did_intersect) {
+								bg_tile = BgTile::Wall;
+								do_draw();
+							}
+						} else { // if (!in_border)
+							if (!rp.door_pt_set.contains(pos)) {
+								bg_tile = BgTile::RoomFloor;
+							} else {
+								bg_tile = BgTile::Door;
+							}
+							do_draw();
+						}
 					}
-					engine->pfield_window.drawable_data_at(pos)
-						= drawable_data_map()
-						.at(bg_tile_str_map_at(bg_tile));
 				} catch (const std::exception& e) {
 					printerr("game_engine::comp::DungeonGen::draw(): "
 						"Exception thrown: ", e.what(), "\n");

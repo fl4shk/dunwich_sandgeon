@@ -67,6 +67,17 @@ public:		// types
 		GEN_NEXT_SAME_MAX = 2,
 		GEN_NEXT_DIFFERENT_MIN = 3,
 		GEN_NEXT_DIFFERENT_MAX = 9, MAX_GEN_NEXT = GEN_NEXT_DIFFERENT_MAX,
+		//GEN_NEXT_ROOM_SAME_INDEX_MIN = 0, MIN_GEN_NEXT_ROOM_INDEX = 0,
+		//GEN_NEXT_ROOM_SAME_INDEX_MAX = 2,
+		//GEN_NEXT_ROOM_DIFF_INDEX_MIN = 3,
+		//GEN_NEXT_ROOM_DIFF_INDEX_MAX = 9,
+		//	MAX_GEN_NEXT_ROOM_INDEX = GEN_NEXT_ROOM_DIFF_INDEX_MAX,
+
+		//GEN_NEXT_PATH_SAME_INDEX_MIN = 0, MIN_GEN_NEXT_PATH_INDEX = 0,
+		//GEN_NEXT_PATH_SAME_INDEX_MAX = 4,
+		//GEN_NEXT_PATH_DIFF_INDEX_MIN = 5,
+		//GEN_NEXT_PATH_DIFF_INDEX_MAX = 9,
+		//	MAX_GEN_NEXT_PATH_INDEX = GEN_NEXT_PATH_DIFF_INDEX_MAX,
 
 		// This is the number of tries to attempt room/path generation
 		// after failing to generate a valid one.
@@ -82,6 +93,8 @@ private:		// variables
 
 	i32
 		_attempted_num_rp = 0;
+	bool
+		_stop_gen_early = false;
 public:		// functions
 	GmDungeonGen() = default;
 	//inline GmDungeonGen(const binser::Value& bv)

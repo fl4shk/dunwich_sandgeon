@@ -34,7 +34,7 @@ namespace comp {
 	X(Error) \
 	\
 	X(Wall) \
-	/* X(Door) */ \
+	X(Door) \
 	\
 	X(RoomFloor) \
 	X(PathFloor) \
@@ -146,28 +146,36 @@ public:		// types
 	public:		// constants
 		static constexpr i32
 			PATH_THICKNESS = 1,
-			PATH_MIN_LEN = 2,
+			PATH_MIN_LEN
+				//= 2,
+				= 5,
 			PATH_MAX_LEN
 				//= 32;
 				= 20;
 
 		static constexpr IntVec2
-			ROOM_MIN_SIZE_2D
-				//= {3, 3},
-				= {4, 4},
-			ROOM_MAX_SIZE_2D
-				= {10, 10};
-				//= {15, 15};
+			ROOM_MIN_SIZE_2D{
+				//3, 3
+				4, 4,
+			},
+			ROOM_MAX_SIZE_2D{
+				10, 10,
+				//15, 15,
+			};
 	public:		// variables
 		#define MEMB_LIST_COMP_DUNGEON_ROOM_PATH(X) \
 			X(rect, std::nullopt) \
 			X(conn_index_set, std::nullopt) \
+			X(door_pt_set, std::nullopt) \
 
 		IntRect2 rect{
 			.pos=IntVec2(),
 			.size_2d{.x=PATH_THICKNESS, .y=PATH_MIN_LEN}
 		};
 		std::set<i32> conn_index_set;
+
+		// These are coordinates within `rect`
+		std::set<IntVec2> door_pt_set;
 	public:		// functions
 		//--------
 		static RoomPath from_bv(const binser::Value& bv);
