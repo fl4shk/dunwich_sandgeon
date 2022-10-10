@@ -135,7 +135,8 @@ public:		// constants
 			//= 5,
 			// hopefully this many won't ever cause the generation to fail
 			//= 8,
-			= 10,
+			//= 10,
+			= 13,
 		MAX_NUM_ROOM_PATHS
 			//= 15;
 			= 25;
