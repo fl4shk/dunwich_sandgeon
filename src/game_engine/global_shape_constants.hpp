@@ -55,17 +55,14 @@ static constexpr IntVec2
 		//.y=W_BORDER_SCREEN_SIZE_2D.y - 1 - 10,
 	};
 	//NO_BORDER_PFIELD_WINDOW_POS(PFIELD_WINDOW_POS + IntVec2{1, 1}),
-	//NO_BORDER_PFIELD_WINDOW_END_POS(
-	//	PFIELD_WINDOW_END_POS - IntVec2{1, 1}
-	//),
+	//NO_BORDER_PFIELD_WINDOW_END_POS
+	//	(PFIELD_WINDOW_END_POS - IntVec2{1, 1}),
 	//PFIELD_PHYS_POS(NO_BORDER_PFIELD_WINDOW_POS - IntVec2{1, 1}),
-	//PFIELD_PHYS_END_POS(
-	//	NO_BORDER_PFIELD_WINDOW_END_POS - IntVec2{1, 1}
-	//);
+	//PFIELD_PHYS_END_POS
+	//	(NO_BORDER_PFIELD_WINDOW_END_POS - IntVec2{1, 1});
 static constexpr IntRect2
-	PFIELD_WINDOW_RECT2=IntRect2::build_in_grid(
-		PFIELD_WINDOW_POS, PFIELD_WINDOW_END_POS
-	);
+	PFIELD_WINDOW_RECT2=IntRect2::build_in_grid
+		(PFIELD_WINDOW_POS, PFIELD_WINDOW_END_POS);
 static constexpr IntVec2
 	PFIELD_WINDOW_SIZE_2D
 		//{
@@ -85,9 +82,17 @@ static constexpr IntVec2
 		PFIELD_WINDOW_END_POS - IntVec2{2, 2}
 	);
 static constexpr IntRect2
-	PFIELD_PHYS_RECT2=IntRect2::build_in_grid(
-		PFIELD_PHYS_POS, PFIELD_PHYS_END_POS
-	);
+	PFIELD_PHYS_RECT2=IntRect2::build_in_grid
+		(PFIELD_PHYS_POS, PFIELD_PHYS_END_POS);
+constexpr inline bool r2_fits_in_pfield(const IntRect2& rect) {
+	//return (rect.pos.x >= 0
+	//	&& rect.pos.x <= PFIELD_SIZE_2D.x);
+	//return PFIELD_PHYS_RECT2.arg_inside(rect, false,
+	//	IntVec2());
+	//return PFIELD_PHYS_RECT2.arg_inside(rect, CDIFF_V2);
+	//return PFIELD_PHYS_RECT2.arg_inside(rect);
+	return PFIELD_PHYS_RECT2.arg_inside<true>(rect);
+}
 
 //extern const IntVec2Ex
 //	PFIELD_EX_RANGE;
@@ -98,40 +103,34 @@ static constexpr IntVec2
 static constexpr IntVec2
 	LOG_WINDOW_POS{.x=0, .y=PFIELD_WINDOW_END_POS.y},
 	//LOG_WINDOW_POS{.x=0, .y=PFIELD_WINDOW_SIZE_2D.y},
-	LOG_WINDOW_END_POS{
-		.x=PFIELD_WINDOW_SIZE_2D.x, .y=W_BORDER_SCREEN_SIZE_2D.y - 1
-	},
+	LOG_WINDOW_END_POS
+		{.x=PFIELD_WINDOW_SIZE_2D.x, .y=W_BORDER_SCREEN_SIZE_2D.y - 1},
 
 	HUD_WINDOW_POS{
 		.x=PFIELD_WINDOW_END_POS.x, .y=PFIELD_WINDOW_POS.y
 		//.x=PFIELD_WINDOW_SIZE_2D.x, .y=PFIELD_WINDOW_POS.y,
 	},
-	HUD_WINDOW_END_POS{
-		.x=W_BORDER_SCREEN_SIZE_2D.x - 1,
-		.y=W_BORDER_SCREEN_SIZE_2D.y - 1
-	},
+	HUD_WINDOW_END_POS
+		{.x=W_BORDER_SCREEN_SIZE_2D.x - 1,
+		.y=W_BORDER_SCREEN_SIZE_2D.y - 1},
 
 	POPUP_WINDOW_POS{.x=13, .y=10},
-	POPUP_WINDOW_END_POS{
-		.x=HUD_WINDOW_POS.x - 1, .y=W_BORDER_SCREEN_SIZE_2D.y - 15
-	},
+	POPUP_WINDOW_END_POS
+		{.x=HUD_WINDOW_POS.x - 1, .y=W_BORDER_SCREEN_SIZE_2D.y - 15},
 
 	YES_NO_WINDOW_POS{.x=2, .y=W_BORDER_SCREEN_SIZE_2D.y / 2},
-	YES_NO_WINDOW_END_POS{
-		.x=YES_NO_WINDOW_POS.x + 3
+	YES_NO_WINDOW_END_POS
+		{.x=YES_NO_WINDOW_POS.x + 3
 			+ MSG_LOG_WIDGET_SELECTED_SPACING_SIZE
 			+ MSG_LOG_WIDGET_SPACING_SIZE
 			+ 1,
-		.y=YES_NO_WINDOW_POS.y + 2 + 1 + 2
-	},
+		.y=YES_NO_WINDOW_POS.y + 2 + 1 + 2},
 
-	TEXT_YES_NO_WINDOW_POS{
-		.x=2, .y=W_BORDER_SCREEN_SIZE_2D.y / 2
-	},
-	TEXT_YES_NO_WINDOW_END_POS{
-		.x=TEXT_YES_NO_WINDOW_POS.x + 30 + 1 + 2,
-		.y=TEXT_YES_NO_WINDOW_POS.y + 4 + 1 + 2
-	};
+	TEXT_YES_NO_WINDOW_POS
+		{.x=2, .y=W_BORDER_SCREEN_SIZE_2D.y / 2},
+	TEXT_YES_NO_WINDOW_END_POS
+		{.x=TEXT_YES_NO_WINDOW_POS.x + 30 + 1 + 2,
+		.y=TEXT_YES_NO_WINDOW_POS.y + 4 + 1 + 2};
 //--------
 } // namespace game_engine
 } // namespace dunwich_sandgeon

@@ -97,7 +97,9 @@ public:		// types
 
 		// This is the number of tries to attempt room/path generation
 		// after failing to generate a valid one.
-		GEN_RP_MAX_TRIES = 20;
+		GEN_RP_LIM_TRIES
+			//= 20;
+			= 50;
 		//--------
 public:		// constants
 	static const std::string

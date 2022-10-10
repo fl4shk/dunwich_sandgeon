@@ -132,8 +132,10 @@ public:		// constants
 		// Chosen arbitrarily; might need to adjust later
 		MIN_NUM_ROOM_PATHS
 			//= 3,
+			//= 5,
 			// hopefully this many won't ever cause the generation to fail
-			= 8,
+			//= 8,
+			= 10,
 		MAX_NUM_ROOM_PATHS
 			//= 15;
 			= 25;
@@ -165,7 +167,7 @@ public:		// types
 	public:		// variables
 		#define MEMB_LIST_COMP_DUNGEON_ROOM_PATH(X) \
 			X(rect, std::nullopt) \
-			X(gen_side, std::nullopt) \
+			/* X(gen_side, std::nullopt) */ \
 			X(conn_index_set, std::nullopt) \
 			X(door_pt_set, std::nullopt) \
 
@@ -173,7 +175,7 @@ public:		// types
 			.pos=IntVec2(),
 			.size_2d{.x=PATH_THICKNESS, .y=PATH_MIN_LEN}
 		};
-		i32 gen_side = 0;
+		//i32 gen_side = 0;
 
 		std::set<i32> conn_index_set;
 
@@ -193,7 +195,8 @@ public:		// types
 			//	IntVec2());
 			//return PFIELD_PHYS_RECT2.arg_inside(rect, CDIFF_V2);
 			//return PFIELD_PHYS_RECT2.arg_inside(rect);
-			return PFIELD_PHYS_RECT2.arg_inside<true>(rect);
+			//return PFIELD_PHYS_RECT2.arg_inside<true>(rect);
+			return r2_fits_in_pfield(rect);
 		}
 		constexpr inline bool is_path() const {
 			//return ((rect.size_2d.x == PATH_THICKNESS)
