@@ -270,11 +270,7 @@ void GmDungeonGen::_gen_single_rp(comp::DungeonGen* dungeon_gen) {
 				//const i32 conn_rp_index = engine->layout_rand<i32>(0, 0);
 				//printout("test 1\n");
 				auto& conn_rp = dungeon_gen->at(conn_rp_index);
-				//gen_side = engine->layout_rand<i32>
-				//	(MIN_GEN_SIDE, MAX_GEN_SIDE);
 
-				//gen_side = engine->layout_rand<i32>
-				//	(MIN_GEN_SIDE, MAX_GEN_SIDE);
 				if (
 					//(conn_rp.is_path() && gen_type == GEN_TYPE_PATH)
 					//|| (conn_rp.is_room() && gen_type == GEN_TYPE_ROOM)
@@ -469,6 +465,27 @@ void GmDungeonGen::_gen_single_rp(comp::DungeonGen* dungeon_gen) {
 						//&&
 						r2_fits_in_pfield(bottom_side_r2)
 						&& item.rect.intersect(bottom_side_r2));
+				if (
+					(
+						rp.is_horiz_path()
+						&& (
+							top_side_r2_did_hit
+							|| bottom_side_r2_did_hit
+						)
+					) || (
+						rp.is_vert_path()
+						&& (
+							left_side_r2_did_hit
+							|| right_side_r2_did_hit
+						)
+					)
+					|| (
+						i32(i) != conn_rp_index
+						&& item.rect.intersect(rp.rect)
+					)
+				) {
+					return false;
+				}
 
 				if (
 					!item.rect.intersect(rp.rect)
@@ -497,29 +514,30 @@ void GmDungeonGen::_gen_single_rp(comp::DungeonGen* dungeon_gen) {
 									- IntVec2{0, 1});
 						}
 					}
-				} else if (
-					i32(i) != conn_rp_index
-					//&& item.rect.intersect(rp.rect)
-					&& (
-						left_side_r2_did_hit
-						|| top_side_r2_did_hit
-						|| right_side_r2_did_hit
-						|| bottom_side_r2_did_hit
-					)
-				) {
-					//printout("debug: failed dungeon generation: ",
-					//	"rp.tl:", rp.rect.tl_corner(), " ",
-					//	"rp.br:", rp.rect.br_corner(), "; ",
-					//	"item.tl:", item.rect.tl_corner(), " ",
-					//	"item.br:", item.rect.br_corner(), "; ",
-					//	//item.rect, "; ",
-					//	//"left: ", left_side_r2, " ",
-					//	//"top: ", top_side_r2, " ",
-					//	//"right: ", right_side_r2, " ", 
-					//	//"bottom: ", bottom_side_r2,
-					//	"\n");
-					return false;
 				}
+				//else if (
+				//	i32(i) != conn_rp_index
+				//	//&& item.rect.intersect(rp.rect)
+				//	&& (
+				//		left_side_r2_did_hit
+				//		|| top_side_r2_did_hit
+				//		|| right_side_r2_did_hit
+				//		|| bottom_side_r2_did_hit
+				//	)
+				//) {
+				//	//printout("debug: failed dungeon generation: ",
+				//	//	"rp.tl:", rp.rect.tl_corner(), " ",
+				//	//	"rp.br:", rp.rect.br_corner(), "; ",
+				//	//	"item.tl:", item.rect.tl_corner(), " ",
+				//	//	"item.br:", item.rect.br_corner(), "; ",
+				//	//	//item.rect, "; ",
+				//	//	//"left: ", left_side_r2, " ",
+				//	//	//"top: ", top_side_r2, " ",
+				//	//	//"right: ", right_side_r2, " ", 
+				//	//	//"bottom: ", bottom_side_r2,
+				//	//	"\n");
+				//	return false;
+				//}
 			}
 			//--------
 			rp.conn_index_set.insert(conn_rp_index);
