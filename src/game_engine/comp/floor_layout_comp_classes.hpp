@@ -192,7 +192,8 @@ public:		// types
 			//return PFIELD_PHYS_RECT2.arg_inside(rect, false,
 			//	IntVec2());
 			//return PFIELD_PHYS_RECT2.arg_inside(rect, CDIFF_V2);
-			return PFIELD_PHYS_RECT2.arg_inside(rect);
+			//return PFIELD_PHYS_RECT2.arg_inside(rect);
+			return PFIELD_PHYS_RECT2.arg_inside<true>(rect);
 		}
 		constexpr inline bool is_path() const {
 			//return ((rect.size_2d.x == PATH_THICKNESS)
