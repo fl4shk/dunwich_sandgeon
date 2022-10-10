@@ -414,73 +414,110 @@ void GmDungeonGen::_gen_single_rp(comp::DungeonGen* dungeon_gen) {
 			//const IntRect2 inflated_rect
 			//	= rp.rect.build_in_grid_inflated_lim
 			//		(tl_amount, br_amount, PFIELD_PHYS_RECT2);
+			const IntRect2
+				left_side_r2 = IntRect2::build_in_grid
+					(rp.rect.tl_corner() - IntVec2{1, 0},
+					rp.rect.bl_corner() - IntVec2{1, 0}),
+				top_side_r2 = IntRect2::build_in_grid
+					(rp.rect.tl_corner() - IntVec2{0, 1},
+					rp.rect.tr_corner() - IntVec2{0, 1}),
+				right_side_r2 = IntRect2::build_in_grid
+					(rp.rect.tr_corner() + IntVec2{1, 0},
+					rp.rect.br_corner() + IntVec2{1, 0}),
+				bottom_side_r2 = IntRect2::build_in_grid
+					(rp.rect.bl_corner() + IntVec2{0, 1},
+					rp.rect.br_corner() + IntVec2{0, 1});
+				//left_side_r2
+				//	{.pos=rp.rect.pos - IntVec2{1, 0},
+				//	.size_2d{1, rp.rect.size_2d.y}},
+				//top_side_r2
+				//	{.pos=rp.rect.pos - IntVec2{0, 1},
+				//	.size_2d{rp.rect.size_2d.x, 1}},
+				//right_side_r2
+				//	{.pos=rp.rect.pos + IntVec2{rp.rect.size_2d.x, 0},
+				//	.size_2d{1, rp.rect.size_2d.y}},
+				//bottom_side_r2
+				//	{.pos=rp.rect.pos + IntVec2{0, rp.rect.size_2d.y},
+				//	.size_2d{rp.rect.size_2d.x, 1}};
+
 
 			for (size_t i=0; i<dungeon_gen->size(); ++i) {
-				const IntRect2
-					//left_side_r2 = IntRect2::build_in_grid
-					//	(rp.rect.tl_corner() - IntVec2{1, 0},
-					//	rp.rect.bl_corner() - IntVec2{1, 0}),
-					//top_side_r2 = IntRect2::build_in_grid
-					//	(rp.rect.tl_corner() - IntVec2{0, 1},
-					//	rp.rect.tr_corner() - IntVec2{0, 1}),
-					//right_side_r2 = IntRect2::build_in_grid
-					//	(rp.rect.tr_corner() + IntVec2{1, 0},
-					//	rp.rect.br_corner() + IntVec2{1, 0}),
-					//bottom_side_r2 = IntRect2::build_in_grid
-					//	(rp.rect.bl_corner() + IntVec2{0, 1},
-					//	rp.rect.br_corner() + IntVec2{0, 1});
-					left_side_r2
-						{.pos=rp.rect.pos - IntVec2{1, 0},
-						.size_2d{1, rp.rect.size_2d.y}},
-					top_side_r2
-						{.pos=rp.rect.pos - IntVec2{0, 1},
-						.size_2d{rp.rect.size_2d.x, 1}},
-					right_side_r2
-						{.pos=rp.rect.pos + IntVec2{rp.rect.size_2d.x, 0},
-						.size_2d{1, rp.rect.size_2d.y}},
-					bottom_side_r2
-						{.pos=rp.rect.pos + IntVec2{0, rp.rect.size_2d.y},
-						.size_2d{rp.rect.size_2d.x, 1}};
 				const auto& item = dungeon_gen->at(i);
 
+				const bool
+					left_side_r2_did_hit
+						= (//i32(i) != conn_rp_index
+						//gen_side == GEN_SIDE_L
+						//&&
+						r2_fits_in_pfield(left_side_r2)
+						&& item.rect.intersect(left_side_r2)),
+					top_side_r2_did_hit
+						= (//i32(i) != conn_rp_index
+						//&& gen_side == GEN_SIDE_T
+						//&&
+						r2_fits_in_pfield(top_side_r2)
+						&& item.rect.intersect(top_side_r2)),
+					right_side_r2_did_hit
+						= (//i32(i) != conn_rp_index
+						//&& gen_side == GEN_SIDE_R
+						//&&
+						r2_fits_in_pfield(right_side_r2)
+						&& item.rect.intersect(right_side_r2)),
+					bottom_side_r2_did_hit
+						= (//i32(i) != conn_rp_index
+						//&& gen_side == GEN_SIDE_R
+						//&&
+						r2_fits_in_pfield(bottom_side_r2)
+						&& item.rect.intersect(bottom_side_r2));
+
 				if (
+					!item.rect.intersect(rp.rect)
+					&& item.is_room()
+				) {
+					if (rp.is_horiz_path()) {
+						if (left_side_r2_did_hit) {
+							rp.door_pt_set.insert
+								(left_side_r2.tl_corner()
+									+ IntVec2{1, 0});
+						}
+						if (right_side_r2_did_hit) {
+							rp.door_pt_set.insert
+								(right_side_r2.tr_corner()
+									- IntVec2{1, 0});
+						}
+					} else if (rp.is_vert_path()) {
+						if (top_side_r2_did_hit) {
+							rp.door_pt_set.insert
+								(top_side_r2.tl_corner()
+									+ IntVec2{0, 1});
+						}
+						if (bottom_side_r2_did_hit) {
+							rp.door_pt_set.insert
+								(bottom_side_r2.bl_corner()
+									- IntVec2{0, 1});
+						}
+					}
+				} else if (
 					i32(i) != conn_rp_index
+					//&& item.rect.intersect(rp.rect)
 					&& (
-						item.rect.intersect(rp.rect)
-						|| (
-							//gen_side == GEN_SIDE_L
-							//&&
-							r2_fits_in_pfield(left_side_r2)
-							&& item.rect.intersect(left_side_r2)
-						) || (
-							//gen_side == GEN_SIDE_T
-							//&&
-							r2_fits_in_pfield(top_side_r2)
-							&& item.rect.intersect(top_side_r2)
-						) || (
-							//gen_side == GEN_SIDE_R
-							//&&
-							r2_fits_in_pfield(right_side_r2)
-							&& item.rect.intersect(right_side_r2)
-						) || (
-							//gen_side == GEN_SIDE_B
-							//&&
-							r2_fits_in_pfield(bottom_side_r2)
-							&& item.rect.intersect(bottom_side_r2)
-						)
+						left_side_r2_did_hit
+						|| top_side_r2_did_hit
+						|| right_side_r2_did_hit
+						|| bottom_side_r2_did_hit
 					)
 				) {
-					printout("debug: failed dungeon generation: ",
-						"rp.tl:", rp.rect.tl_corner(), " ",
-						"rp.br:", rp.rect.br_corner(), "; ",
-						"item.tl:", item.rect.tl_corner(), " ",
-						"item.br:", item.rect.br_corner(), "; ",
-						//item.rect, "; ",
-						//"left: ", left_side_r2, " ",
-						//"top: ", top_side_r2, " ",
-						//"right: ", right_side_r2, " ", 
-						//"bottom: ", bottom_side_r2,
-						"\n");
+					//printout("debug: failed dungeon generation: ",
+					//	"rp.tl:", rp.rect.tl_corner(), " ",
+					//	"rp.br:", rp.rect.br_corner(), "; ",
+					//	"item.tl:", item.rect.tl_corner(), " ",
+					//	"item.br:", item.rect.br_corner(), "; ",
+					//	//item.rect, "; ",
+					//	//"left: ", left_side_r2, " ",
+					//	//"top: ", top_side_r2, " ",
+					//	//"right: ", right_side_r2, " ", 
+					//	//"bottom: ", bottom_side_r2,
+					//	"\n");
 					return false;
 				}
 			}

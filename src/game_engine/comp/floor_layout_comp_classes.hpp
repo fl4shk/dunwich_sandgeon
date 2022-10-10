@@ -179,7 +179,7 @@ public:		// types
 
 		std::set<i32> conn_index_set;
 
-		/// These are coordinates within `rect`
+		/// These are coordinates within pfield-space
 		std::set<IntVec2> door_pt_set;
 	public:		// functions
 		//--------
