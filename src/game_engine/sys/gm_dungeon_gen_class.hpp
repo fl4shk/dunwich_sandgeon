@@ -108,8 +108,7 @@ private:		// variables
 		_dungeon_gen_id;
 
 	i32
-		_attempted_num_rp = 0,
-		_prev_gen_side = 0;
+		_attempted_num_rp = 0;
 	bool
 		_stop_gen_early = false;
 public:		// functions

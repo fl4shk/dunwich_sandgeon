@@ -112,10 +112,9 @@ void GmDungeonGen::_gen_single_rp(comp::DungeonGen* dungeon_gen) {
 	};
 
 	if (dungeon_gen->size() == 0) {
-		_attempted_num_rp = engine->layout_rand<i32>(
-			i32(MIN_NUM_ROOM_PATHS), i32(MAX_NUM_ROOM_PATHS)
-		);
-		_prev_gen_side = 0;
+		_attempted_num_rp = engine->layout_rand<i32>
+			(i32(MIN_NUM_ROOM_PATHS), i32(MAX_NUM_ROOM_PATHS));
+		//_prev_gen_side = 0;
 		_stop_gen_early = false;
 
 		// We always generate a room in this case.
@@ -125,21 +124,17 @@ void GmDungeonGen::_gen_single_rp(comp::DungeonGen* dungeon_gen) {
 			//--------
 			//printout("testificate 2\n");
 			//--------
-			rp.rect.pos.x = engine->layout_rand<i32>(
-				PFIELD_PHYS_RECT2.left_x(),
-				PFIELD_PHYS_RECT2.right_x() - ROOM_MIN_SIZE_2D.x - 1
-			);
-			rp.rect.pos.y = engine->layout_rand<i32>(
-				PFIELD_PHYS_RECT2.top_y(),
-				PFIELD_PHYS_RECT2.bottom_y() - ROOM_MIN_SIZE_2D.y - 1
-			);
+			rp.rect.pos.x = engine->layout_rand<i32>
+				(PFIELD_PHYS_RECT2.left_x(),
+				PFIELD_PHYS_RECT2.right_x() - ROOM_MIN_SIZE_2D.x - 1);
+			rp.rect.pos.y = engine->layout_rand<i32>
+				(PFIELD_PHYS_RECT2.top_y(),
+				PFIELD_PHYS_RECT2.bottom_y() - ROOM_MIN_SIZE_2D.y - 1);
 
-			rp.rect.size_2d.x = engine->layout_rand<i32>(
-				ROOM_MIN_SIZE_2D.x, ROOM_MAX_SIZE_2D.x
-			);
-			rp.rect.size_2d.y = engine->layout_rand<i32>(
-				ROOM_MIN_SIZE_2D.y, ROOM_MAX_SIZE_2D.y
-			);
+			rp.rect.size_2d.x = engine->layout_rand<i32>
+				(ROOM_MIN_SIZE_2D.x, ROOM_MAX_SIZE_2D.x);
+			rp.rect.size_2d.y = engine->layout_rand<i32>
+				(ROOM_MIN_SIZE_2D.y, ROOM_MAX_SIZE_2D.y);
 			//--------
 			if (rp.fits_in_pfield()) {
 				break;
@@ -177,27 +172,30 @@ void GmDungeonGen::_gen_single_rp(comp::DungeonGen* dungeon_gen) {
 				& prev_rp = dungeon_gen->at(prev_rp_index);
 			const i32 
 				prev_gen_type
-					= prev_rp.is_path() ? GEN_TYPE_PATH : GEN_TYPE_ROOM,
-				//gen_type = GEN_TYPE_ROOM,
-				gen_side = engine->layout_rand<i32>(
-					MIN_GEN_SIDE, MAX_GEN_SIDE
-				),
-				gen_next_type = (prev_gen_type == GEN_TYPE_PATH)
-					? engine->layout_rand<i32>(
-						MIN_GEN_NEXT_PATH_TYPE, MAX_GEN_NEXT_PATH_TYPE
-					)
-					: engine->layout_rand<i32>(
-						MIN_GEN_NEXT_ROOM_TYPE, MAX_GEN_NEXT_ROOM_TYPE
-					),
-				gen_next_conn_rp_index = (prev_gen_type == GEN_TYPE_PATH)
-					? engine->layout_rand<i32>(
-						MIN_GEN_NEXT_PATH_INDEX, MAX_GEN_NEXT_PATH_INDEX
-					)
-					: engine->layout_rand<i32>(
-						MIN_GEN_NEXT_ROOM_INDEX, MAX_GEN_NEXT_ROOM_INDEX
-					);
+					= prev_rp.is_path() ? GEN_TYPE_PATH : GEN_TYPE_ROOM;
 
-			i32 gen_type = 0;
+			i32
+				//gen_side,
+				gen_next_type,
+				gen_next_conn_rp_index,
+				gen_type;
+
+			//gen_type = GEN_TYPE_ROOM,
+			//rp.gen_side = engine->layout_rand<i32>
+			//	(MIN_GEN_SIDE, MAX_GEN_SIDE),
+
+			gen_next_type = (prev_gen_type == GEN_TYPE_PATH)
+				? engine->layout_rand<i32>
+					(MIN_GEN_NEXT_PATH_TYPE, MAX_GEN_NEXT_PATH_TYPE)
+				: engine->layout_rand<i32>
+					(MIN_GEN_NEXT_ROOM_TYPE, MAX_GEN_NEXT_ROOM_TYPE),
+			gen_next_conn_rp_index = (prev_gen_type == GEN_TYPE_PATH)
+				? engine->layout_rand<i32>
+					(MIN_GEN_NEXT_PATH_INDEX, MAX_GEN_NEXT_PATH_INDEX)
+				: engine->layout_rand<i32>
+					(MIN_GEN_NEXT_ROOM_INDEX, MAX_GEN_NEXT_ROOM_INDEX);
+
+			gen_type = 0;
 			if (
 				(
 					prev_gen_type == GEN_TYPE_PATH
@@ -217,9 +215,8 @@ void GmDungeonGen::_gen_single_rp(comp::DungeonGen* dungeon_gen) {
 				//);
 			} else { // if (switching types) 
 				do {
-					gen_type = engine->layout_rand<i32>(
-						MIN_GEN_TYPE, MAX_GEN_TYPE
-					);
+					gen_type = engine->layout_rand<i32>
+						(MIN_GEN_TYPE, MAX_GEN_TYPE);
 				} while (gen_type == prev_gen_type);
 
 				//printout(
@@ -229,37 +226,6 @@ void GmDungeonGen::_gen_single_rp(comp::DungeonGen* dungeon_gen) {
 				//	"`gen_type`: ", gen_type, "; ",
 				//	"`prev_gen_type`: ", prev_gen_type, "\n"
 				//);
-			}
-			//--------
-			i32
-				thickness = 0,
-				length = 0;
-
-			if (gen_type == GEN_TYPE_PATH) {
-				thickness = PATH_THICKNESS;
-				length = engine->layout_rand<i32>
-					(PATH_MIN_LEN, PATH_MAX_LEN);
-			} else { // if (gen_type == GEN_TYPE_ROOM)
-				const IntVec2 temp_vec2{
-					.x=engine->layout_rand<i32>(
-						ROOM_MIN_SIZE_2D.x, ROOM_MAX_SIZE_2D.x
-					),
-					.y=engine->layout_rand<i32>(
-						ROOM_MIN_SIZE_2D.y, ROOM_MAX_SIZE_2D.y
-					)
-				};
-
-				if (gen_side == GEN_SIDE_L || gen_side == GEN_SIDE_R) {
-					thickness = temp_vec2.y;
-					length = temp_vec2.x;
-				} else // if (gen_side == GEN_SIDE_T
-					//|| gen_side == GEN_SIDE_B)
-				{
-					//thickness = engine->layout_rand<i32>
-					//	(ROOM_MIN_SIZE_2D.x, ROOM_MAX_SIZE_2D.x);
-					thickness = temp_vec2.x;
-					length = temp_vec2.y;
-				}
 			}
 			//--------
 			// Which `RoomPath` are we connecting to?
@@ -300,47 +266,107 @@ void GmDungeonGen::_gen_single_rp(comp::DungeonGen* dungeon_gen) {
 			//printout("test 1\n");
 			auto& conn_rp = dungeon_gen->at(conn_rp_index);
 
+			if (
+				(conn_rp.is_path() && gen_type == GEN_TYPE_PATH)
+				|| (conn_rp.is_room() && gen_type == GEN_TYPE_ROOM)
+			) {
+				do {
+					rp.gen_side = engine->layout_rand<i32>
+						(MIN_GEN_SIDE, MAX_GEN_SIDE);
+				} while (rp.gen_side == conn_rp.gen_side);
+			} else { 
+				if (
+					conn_rp.gen_side == GEN_SIDE_L
+					|| conn_rp.gen_side == GEN_SIDE_R
+				) {
+					rp.gen_side
+						= engine->layout_rand<i32>(0, 1)
+						? GEN_SIDE_L
+						: GEN_SIDE_R;
+				} else {
+					rp.gen_side
+						= engine->layout_rand<i32>(0, 1)
+						? GEN_SIDE_T
+						: GEN_SIDE_B;
+				}
+			}
+			//--------
+			i32
+				thickness = 0,
+				length = 0;
+
+			if (gen_type == GEN_TYPE_PATH) {
+				thickness = PATH_THICKNESS;
+				length = engine->layout_rand<i32>
+					(PATH_MIN_LEN, PATH_MAX_LEN);
+			} else { // if (gen_type == GEN_TYPE_ROOM)
+				const IntVec2 temp_vec2{
+					.x=engine->layout_rand<i32>
+						(ROOM_MIN_SIZE_2D.x, ROOM_MAX_SIZE_2D.x),
+					.y=engine->layout_rand<i32>
+						(ROOM_MIN_SIZE_2D.y, ROOM_MAX_SIZE_2D.y)
+				};
+				//thickness = engine->layout_rand<i32>
+				//	(ROOM_MIN_SIZE_2D.x, ROOM_MAX_SIZE_2D.x);
+				//length = engine->layout_rand<i32>
+				//	(ROOM_MIN_SIZE_2D.y, ROOM_MAX_SIZE_2D.y);
+
+				if (
+					rp.gen_side == GEN_SIDE_L
+					|| rp.gen_side == GEN_SIDE_R
+				) {
+					thickness = temp_vec2.y;
+					length = temp_vec2.x;
+				} else // if (
+					//rp.gen_side == GEN_SIDE_T || rp.gen_side == GEN_SIDE_B
+				//)
+				{
+					//thickness = engine->layout_rand<i32>
+					//	(ROOM_MIN_SIZE_2D.x, ROOM_MAX_SIZE_2D.x);
+					thickness = temp_vec2.x;
+					length = temp_vec2.y;
+				}
+			}
+			//--------
 			const i32
 				conn_rp_lx = conn_rp.rect.left_x(),
 				conn_rp_ty = conn_rp.rect.top_y(),
 				conn_rp_rx = conn_rp.rect.right_x(),
 				conn_rp_by = conn_rp.rect.bottom_y();
 
-			switch (gen_side) {
+			switch (rp.gen_side) {
 			//--------
 			case GEN_SIDE_L:
-				rp.rect.pos = IntVec2{
-					.x=conn_rp_lx,
-					.y=engine->layout_rand<i32>(conn_rp_ty, conn_rp_by)
-				} - IntVec2{length, 0};
+				rp.rect.pos = IntVec2
+					{.x=conn_rp_lx,
+					.y=engine->layout_rand<i32>(conn_rp_ty, conn_rp_by)}
+						- IntVec2{length, 0};
 				rp.rect.size_2d = {.x=length, .y=thickness};
 				break;
 			case GEN_SIDE_T:
-				rp.rect.pos = IntVec2{
-					.x=engine->layout_rand<i32>(conn_rp_lx, conn_rp_rx),
-					.y=conn_rp_ty
-				} - IntVec2{0, length};
+				rp.rect.pos = IntVec2
+					{.x=engine->layout_rand<i32>(conn_rp_lx, conn_rp_rx),
+					.y=conn_rp_ty} - IntVec2{0, length};
 				rp.rect.size_2d = {.x=thickness, .y=length};
 				break;
 			case GEN_SIDE_R:
-				rp.rect.pos = IntVec2{
-					.x=conn_rp_rx,
-					.y=engine->layout_rand<i32>(conn_rp_ty, conn_rp_by)
-				} + IntVec2{1, 0};
+				rp.rect.pos = IntVec2
+					{.x=conn_rp_rx,
+					.y=engine->layout_rand<i32>(conn_rp_ty, conn_rp_by)}
+						+ IntVec2{1, 0};
 				rp.rect.size_2d = {.x=length, .y=thickness};
 				break;
 			case GEN_SIDE_B:
-				rp.rect.pos = IntVec2{
-					.x=engine->layout_rand<i32>(conn_rp_lx, conn_rp_rx),
-					.y=conn_rp_by
-				} + IntVec2{0, 1};
+				rp.rect.pos = IntVec2
+					{.x=engine->layout_rand<i32>(conn_rp_lx, conn_rp_rx),
+					.y=conn_rp_by} + IntVec2{0, 1};
 				rp.rect.size_2d = {.x=thickness, .y=length};
 				break;
 			default:
-				throw std::runtime_error(sconcat(
-					"game_engine::sys::GmDungeonGen::_gen_single_rp(): ",
-					"(1st) `switch (gen_side)`: Eek! `", gen_side, "`"
-				));
+				throw std::runtime_error(sconcat
+					("game_engine::sys::GmDungeonGen::_gen_single_rp(): ",
+					"(1st) `switch (rp.gen_side)`: Eek! `", rp.gen_side,
+					"`"));
 				break;
 			//--------
 			}
@@ -354,8 +380,77 @@ void GmDungeonGen::_gen_single_rp(comp::DungeonGen* dungeon_gen) {
 			}
 			//printout("rp.fits_in_pfield(): ", rp.rect, "\n");
 
+		
+			//const IntVec2
+			//	tl_amount
+			//		{.x=rp.gen_side == GEN_SIDE_L ? 0 : 1,
+			//		.y=rp.gen_side == GEN_SIDE_T ? 0 : 1},
+			//	br_amount
+			//		{.x=rp.gen_side == GEN_SIDE_R ? 0 : 1,
+			//		.y=rp.gen_side == GEN_SIDE_B ? 0 : 1};
+			//const IntRect2 inflated_rect
+			//	= rp.rect.build_in_grid_inflated_lim
+			//		(tl_amount, br_amount, PFIELD_PHYS_RECT2);
+
 			for (size_t i=0; i<dungeon_gen->size(); ++i) {
-				if (dungeon_gen->at(i).rect.intersect(rp.rect)) {
+				const IntRect2
+					//left_side_r2 = IntRect2::build_in_grid
+					//	(rp.rect.tl_corner() - IntVec2{1, 0},
+					//	rp.rect.bl_corner() - IntVec2{1, 0}),
+					//top_side_r2 = IntRect2::build_in_grid
+					//	(rp.rect.tl_corner() - IntVec2{0, 1},
+					//	rp.rect.tr_corner() - IntVec2{0, 1}),
+					//right_side_r2 = IntRect2::build_in_grid
+					//	(rp.rect.tr_corner() + IntVec2{1, 0},
+					//	rp.rect.br_corner() + IntVec2{1, 0}),
+					//bottom_side_r2 = IntRect2::build_in_grid
+					//	(rp.rect.bl_corner() + IntVec2{0, 1},
+					//	rp.rect.br_corner() + IntVec2{0, 1});
+					left_side_r2 = {
+						.pos=rp.rect.pos - IntVec2{1, 0},
+						.size_2d{1, rp.rect.size_2d.y},
+					},
+					top_side_r2 = {
+						.pos=rp.rect.pos - IntVec2{0, 1},
+						.size_2d{rp.rect.size_2d.x, 1},
+					},
+					right_side_r2 = {
+						.pos=rp.rect.pos + IntVec2{rp.rect.size_2d.x, 0},
+						.size_2d{1, rp.rect.size_2d.y},
+					},
+					bottom_side_r2 = {
+						.pos=rp.rect.pos + IntVec2{0, rp.rect.size_2d.y},
+						.size_2d={rp.rect.size_2d.x, 1},
+					};
+				const auto& item = dungeon_gen->at(i);
+
+				if (
+					item.rect.intersect(rp.rect)
+					|| (
+						rp.gen_side == GEN_SIDE_L
+						&& PFIELD_PHYS_RECT2.intersect(left_side_r2)
+						&& item.rect.intersect(left_side_r2)
+					) || (
+						rp.gen_side == GEN_SIDE_T
+						&& PFIELD_PHYS_RECT2.intersect(top_side_r2)
+						&& item.rect.intersect(top_side_r2)
+					) || (
+						rp.gen_side == GEN_SIDE_R
+						&& PFIELD_PHYS_RECT2.intersect(right_side_r2)
+						&& item.rect.intersect(right_side_r2)
+					) || (
+						rp.gen_side == GEN_SIDE_B
+						&& PFIELD_PHYS_RECT2.intersect(bottom_side_r2)
+						&& item.rect.intersect(bottom_side_r2)
+					)
+				) {
+					printout("debug: failed dungeon generation: ",
+						rp.rect, " ", item.rect, "; ",
+						"left: ", left_side_r2, " ",
+						"top: ", top_side_r2, " ",
+						"right: ", right_side_r2, " ", 
+						"bottom: ", bottom_side_r2,
+						"\n");
 					return false;
 				}
 			}
@@ -370,7 +465,7 @@ void GmDungeonGen::_gen_single_rp(comp::DungeonGen* dungeon_gen) {
 			//	room_ptr = 
 			//}
 			//if (rp.is_path() && conn_rp.is_room()) {
-			//	switch (gen_side) {
+			//	switch (rp.gen_side) {
 			//	//--------
 			//	case GEN_SIDE_L:
 			//		conn_rp.door_pt_set.insert({
@@ -389,11 +484,11 @@ void GmDungeonGen::_gen_single_rp(comp::DungeonGen* dungeon_gen) {
 			//		});
 			//		break;
 			//	default:
-			//		throw std::runtime_error(sconcat(
-			//			"game_engine::sys::GmDungeonGen",
+			//		throw std::runtime_error(sconcat
+			//			("game_engine::sys::GmDungeonGen",
 			//			"::_gen_single_rp(): ",
-			//			"(2nd) `switch (gen_side)`: Eek! `", gen_side, "`"
-			//		));
+			//			"(2nd) `switch (rp.gen_side)`: Eek! `",
+			//			rp.gen_side, "`"));
 			//		break;
 			//	//--------
 			//	}
@@ -417,11 +512,11 @@ void GmDungeonGen::_gen_single_rp(comp::DungeonGen* dungeon_gen) {
 			//		});
 			//		break;
 			//	default:
-			//		throw std::runtime_error(sconcat(
-			//			"game_engine::sys::GmDungeonGen",
+			//		throw std::runtime_error(sconcat
+			//			("game_engine::sys::GmDungeonGen",
 			//			"::_gen_single_rp(): ",
-			//			"(3rd) `switch (gen_side)`: Eek! `", gen_side, "`"
-			//		));
+			//			"(3rd) `switch (rp.gen_side)`: Eek! `",
+			//			rp.gen_side, "`"));
 			//		break;
 			//	//--------
 			//	}
@@ -451,6 +546,11 @@ void GmDungeonGen::_gen_single_rp(comp::DungeonGen* dungeon_gen) {
 			// floor.  This is to prevent infinite loops in the dungeon
 			// generation.
 			_stop_gen_early = tries >= GEN_RP_MAX_TRIES;
+			if (_stop_gen_early) {
+				printout("stopping room generation early: ",
+					dungeon_gen->size(), " ", _attempted_num_rp,
+					"\n");
+			}
 		}
 
 		do_push_back();

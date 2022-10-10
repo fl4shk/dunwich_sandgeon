@@ -165,17 +165,20 @@ public:		// types
 	public:		// variables
 		#define MEMB_LIST_COMP_DUNGEON_ROOM_PATH(X) \
 			X(rect, std::nullopt) \
+			X(gen_side, std::nullopt) \
 			X(conn_index_set, std::nullopt) \
-			/* X(door_pt_set, std::nullopt) */ \
+			X(door_pt_set, std::nullopt) \
 
 		IntRect2 rect{
 			.pos=IntVec2(),
 			.size_2d{.x=PATH_THICKNESS, .y=PATH_MIN_LEN}
 		};
+		i32 gen_side = 0;
+
 		std::set<i32> conn_index_set;
 
-		//// These are coordinates within `rect`
-		//std::set<IntVec2> door_pt_set;
+		/// These are coordinates within `rect`
+		std::set<IntVec2> door_pt_set;
 	public:		// functions
 		//--------
 		static RoomPath from_bv(const binser::Value& bv);

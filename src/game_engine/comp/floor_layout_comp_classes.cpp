@@ -250,12 +250,33 @@ void DungeonGen::draw() {
 						&& (local_pos.y < rp.rect.size_2d.y + 1)
 					));
 
-					if (rp.is_path()) {
-						bg_tile = BgTile::PathFloor;
-						if (!in_border) {
-							do_draw();
-						}
-					} else if (rp.is_room()) {
+					//if (rp.is_path()) {
+						//bg_tile = BgTile::PathFloor;
+						//if (!in_border) {
+						//	do_draw();
+						//}
+
+						//if (in_border) {
+						//	// I'm doing this the slow/easy way for now.
+						//	bool did_intersect = false;
+						//	for (size_t j=0; j<i; ++j) {
+						//		if (at(j).rect.intersect(pos)) {
+						//			did_intersect = true;
+						//		}
+						//	}
+						//	if (!did_intersect) {
+						//		bg_tile = BgTile::Wall;
+						//		do_draw();
+						//	}
+						//} else { // if (!in_border)
+						//	if (!rp.door_pt_set.contains(pos)) {
+						//		bg_tile = BgTile::PathFloor;
+						//	} else {
+						//		bg_tile = BgTile::Door;
+						//	}
+						//	do_draw();
+						//}
+					//} else if (rp.is_room()) {
 						if (in_border) {
 							// I'm doing this the slow/easy way for now.
 							bool did_intersect = false;
@@ -269,14 +290,17 @@ void DungeonGen::draw() {
 								do_draw();
 							}
 						} else { // if (!in_border)
-							//if (!rp.door_pt_set.contains(pos)) {
-								bg_tile = BgTile::RoomFloor;
-							//} else {
-							//	bg_tile = BgTile::Door;
-							//}
+							if (!rp.door_pt_set.contains(pos)) {
+								bg_tile
+									= rp.is_path()
+									? BgTile::PathFloor
+									: BgTile::RoomFloor;
+							} else {
+								bg_tile = BgTile::Door;
+							}
 							do_draw();
 						}
-					}
+					//}
 				} catch (const std::exception& e) {
 					printerr("game_engine::comp::DungeonGen::draw(): "
 						"Exception thrown: ", e.what(), "\n");
