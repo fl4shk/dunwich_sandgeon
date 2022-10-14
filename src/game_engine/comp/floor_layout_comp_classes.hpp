@@ -134,9 +134,9 @@ public:		// constants
 			//= 3,
 			//= 5,
 			// hopefully this many won't ever cause the generation to fail
-			//= 8,
+			= 8,
 			//= 10,
-			= 13,
+			//= 13,
 		MAX_NUM_ROOM_PATHS
 			//= 15;
 			= 25;
@@ -182,6 +182,7 @@ public:		// types
 
 		/// These are coordinates within pfield-space
 		std::set<IntVec2> door_pt_set;
+		//bool show = false;
 	public:		// functions
 		//--------
 		static RoomPath from_bv(const binser::Value& bv);
@@ -189,7 +190,7 @@ public:		// types
 		//--------
 		inline auto operator <=> (const RoomPath& to_cmp) const = default;
 		//--------
-		constexpr inline bool fits_in_pfield() const {
+		constexpr inline bool fits_in_pfield_nb() const {
 			//return (rect.pos.x >= 0
 			//	&& rect.pos.x <= PFIELD_SIZE_2D.x);
 			//return PFIELD_PHYS_RECT2.arg_inside(rect, false,
@@ -197,7 +198,7 @@ public:		// types
 			//return PFIELD_PHYS_RECT2.arg_inside(rect, CDIFF_V2);
 			//return PFIELD_PHYS_RECT2.arg_inside(rect);
 			//return PFIELD_PHYS_RECT2.arg_inside<true>(rect);
-			return r2_fits_in_pfield(rect);
+			return r2_fits_in_pfield_nb(rect);
 		}
 		constexpr inline bool is_path() const {
 			//return ((rect.size_2d.x == PATH_THICKNESS)
@@ -231,6 +232,7 @@ private:		// variables
 		X(_data, std::nullopt) \
 		/* X(_path_vec, std::nullopt) */ \
 
+	//std::vector<RoomPath> _data;
 	binser::VectorEx<RoomPath> _data;
 	//binser::VectorEx<Path> _path_vec;
 public:		// functions
@@ -243,6 +245,18 @@ public:		// functions
 	virtual std::string kind_str() const;
 	virtual operator binser::Value () const;
 	//--------
+	inline auto begin() {
+		return _data.data.begin();
+	}
+	inline auto end() {
+		return _data.data.end();
+	}
+	inline auto cbegin() const {
+		return _data.data.cbegin();
+	}
+	inline auto cend() const {
+		return _data.data.cend();
+	}
 	inline RoomPath& at(size_t index) {
 		return _data.data.at(index);
 	}
@@ -253,7 +267,7 @@ public:		// functions
 		if (size() + 1 > MAX_NUM_ROOM_PATHS) {
 			throw std::length_error(sconcat(
 				"game_engine::comp::DungeonGen::room_push_back(): ",
-				"`_data` cannot increase in size: ",
+				"`_data.data` cannot increase in size: ",
 				_data.data.size(), " ", MAX_NUM_ROOM_PATHS
 			));
 		}

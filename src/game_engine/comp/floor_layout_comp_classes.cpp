@@ -102,7 +102,7 @@ auto DungeonGen::RoomPath::from_bv(const binser::Value& bv) -> RoomPath {
 	MEMB_LIST_COMP_DUNGEON_ROOM_PATH(BINSER_MEMB_FROM_BV_DESERIALIZE);
 
 	//if (!ret.is_valid())
-	if (!ret.fits_in_pfield()) {
+	if (!ret.fits_in_pfield_nb()) {
 		//throw std::invalid_argument(sconcat(
 		//		(func_name ? sconcat(*func_name, "(): ") : std::string()),
 		//		(msg ? sconcat(*msg, ": ") : std::string()),
@@ -206,7 +206,9 @@ DungeonGen::operator binser::Value () const {
 //void DungeonGen::draw(StaticBgTileMap* bg_tile_map)
 void DungeonGen::draw() {
 	//bg_tile_map->at({0, 0}) = BgTile::Floor;
-	for (size_t i=0; i<size(); ++i) {
+	for (size_t i=0; i<size(); ++i) 
+	//for (size_t i=1; i<size(); ++i)
+	{
 		const RoomPath& rp = at(i);
 		IntVec2
 			pos, local_pos;
@@ -238,17 +240,19 @@ void DungeonGen::draw() {
 					BgTile bg_tile = BgTile::Error;
 
 					auto do_draw = [&pos, &bg_tile]() -> void {
-						engine->pfield_window.drawable_data_at(pos)
-							= drawable_data_map().at(
-								bg_tile_str_map_at(bg_tile)
-							);
+						//if (rp.show) {
+							engine->pfield_window.drawable_data_at(pos)
+								= drawable_data_map().at
+									(bg_tile_str_map_at(bg_tile));
+						//}
 					};
-					const bool in_border = (!(
-						(local_pos.x > 0)
-						&& (local_pos.x < rp.rect.size_2d.x + 1)
-						&& (local_pos.y > 0)
-						&& (local_pos.y < rp.rect.size_2d.y + 1)
-					));
+					const bool in_border = 
+						(!
+							((local_pos.x > 0)
+							&& (local_pos.x < rp.rect.size_2d.x + 1)
+							&& (local_pos.y > 0)
+							&& (local_pos.y < rp.rect.size_2d.y + 1))
+						);
 
 					//if (rp.is_path()) {
 						//bg_tile = BgTile::PathFloor;
@@ -280,7 +284,9 @@ void DungeonGen::draw() {
 						if (in_border) {
 							// I'm doing this the slow/easy way for now.
 							bool did_intersect = false;
-							for (size_t j=0; j<i; ++j) {
+							for (size_t j=0; j<i; ++j)
+							//for (size_t j=1; j<i; ++j)
+							{
 								if (at(j).rect.intersect(pos)) {
 									did_intersect = true;
 								}
@@ -308,7 +314,7 @@ void DungeonGen::draw() {
 						"rp.rect",rp.rect, ", pos", pos, ", ",
 						"rs{", rp.rect.right_x(), "}, ",
 						"bs{", rp.rect.bottom_y(), "}, ",
-						"fp{", rp.fits_in_pfield(), "}"
+						"fp{", rp.fits_in_pfield_nb(), "}"
 						
 					));
 				}
