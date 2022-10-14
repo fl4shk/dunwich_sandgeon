@@ -101,8 +101,8 @@ public:		// constants
 			MAX_GEN_NEXT_PATH_INDEX = GEN_NEXT_PATH_DIFF_INDEX_MAX,
 
 		GEN_CONNECT_YES_MIN = 0, MIN_GEN_CONNECT = GEN_CONNECT_YES_MIN,
-		GEN_CONNECT_YES_MAX = 8,
-		GEN_CONNECT_NO_MIN = 7,
+		GEN_CONNECT_YES_MAX = 7,
+		GEN_CONNECT_NO_MIN = 8,
 		GEN_CONNECT_NO_MAX = 9, MAX_GEN_CONNECT = GEN_CONNECT_NO_MAX,
 
 		// This is the number of tries to attempt room/path generation
