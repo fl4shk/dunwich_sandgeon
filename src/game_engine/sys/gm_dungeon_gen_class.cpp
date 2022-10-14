@@ -700,6 +700,7 @@ auto GmDungeonGen::GenInnards::_inner_gen_post_first() const
 						|| (to_edit_rp->is_vert_path()
 							&& !temp_rp->is_vert_path())
 					) //&& !_path_sides_hit_wrongly(*temp_rp, *to_edit_rp)
+					&& temp_rp->is_valid()
 					&& !any_path_sides_hit_wrongly(*temp_rp,
 						((dbg_str == "item")
 							? std::optional<size_t>(item_index)

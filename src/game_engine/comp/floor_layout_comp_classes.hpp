@@ -221,9 +221,9 @@ public:		// types
 				&& rect.size_2d.y <= ROOM_MAX_SIZE_2D.y);
 		}
 
-		//constexpr inline bool is_valid() const {
-		//	return is_path() || is_room();
-		//}
+		constexpr inline bool is_valid() const {
+			return is_path() || is_room();
+		}
 		//--------
 	};
 	//--------
