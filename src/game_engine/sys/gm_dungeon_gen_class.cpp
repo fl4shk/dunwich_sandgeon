@@ -648,7 +648,9 @@ auto GmDungeonGen::GenInnards::_inner_gen_post_first() const
 				auto& temp_rp_pair
 					= temp_rp_pair_vec.at(extend_side);
 				RoomPath
-					* temp_rp = nullptr, * to_edit_rp = nullptr;
+					* temp_rp = nullptr,
+					* to_edit_rp = nullptr,
+					* to_keep_rp = nullptr;
 				std::string dbg_str = "";
 
 				if (temp_rp_pair.first) {
@@ -663,6 +665,15 @@ auto GmDungeonGen::GenInnards::_inner_gen_post_first() const
 						printout("first testificate 1\n");
 						dbg_str = "to_push_rp";
 						to_edit_rp = &to_push_rp;
+						to_keep_rp = &item;
+						printout("Debug: **MAYBE** doing extension: ",
+							dbg_str,
+							"{", to_edit_rp->rect.tl_corner(), " ",
+								to_edit_rp->rect.br_corner(), "} ",
+							"temp_rp",
+							"{", temp_rp->rect.tl_corner(), " ",
+								temp_rp->rect.br_corner(), "}",
+							"\n");
 					}
 				} else if (temp_rp_pair.second) {
 					temp_rp = &(*temp_rp_pair.second);
@@ -676,12 +687,13 @@ auto GmDungeonGen::GenInnards::_inner_gen_post_first() const
 						printout("second testificate 1\n");
 						dbg_str = "item";
 						to_edit_rp = &item;
+						to_keep_rp = &to_push_rp;
 					}
 				}
 				//else {
 				//	printout("testificate\n");
 				//}
-				if (temp_rp && to_edit_rp
+				if (temp_rp && to_edit_rp && to_keep_rp
 					&& !(
 						(to_edit_rp->is_horiz_path()
 							&& !temp_rp->is_horiz_path())
@@ -692,11 +704,18 @@ auto GmDungeonGen::GenInnards::_inner_gen_post_first() const
 						((dbg_str == "item")
 							? std::optional<size_t>(item_index)
 							: std::nullopt))
+					&& !_path_sides_hit_wrongly(*temp_rp, *to_keep_rp)
+					//&& !any_path_sides_hit_wrongly(*to_edit_rp,
+					//	((dbg_str == "item")
+					//		? std::optional<size_t>(item_index)
+					//		: std::nullopt))
 				) {
 					printout("Debug: doing extension: ",
-						dbg_str,
-						"{", to_edit_rp->rect.tl_corner(), " ",
-							to_edit_rp->rect.br_corner(), "} ",
+						"dbg_str{\"", dbg_str, "\"} ",
+						"to_push_rp{", to_push_rp.rect.tl_corner(), " ",
+							to_push_rp.rect.br_corner(), "} ",
+						"item{", item.rect.tl_corner(), " ",
+							item.rect.br_corner(), "} ",
 						"temp_rp",
 						"{", temp_rp->rect.tl_corner(), " ",
 							temp_rp->rect.br_corner(), "}",
@@ -761,7 +780,15 @@ bool GmDungeonGen::GenInnards::any_path_sides_hit_wrongly(
 	for (size_t k=0; k<_dungeon_gen->size(); ++k) {
 		const auto& some_item = _dungeon_gen->at(k);
 		if (index && (*index == k)) {
+			continue;
 		} else if (_path_sides_hit_wrongly(to_check_rp, some_item)) {
+			printout("any_path_sides_hit_wrongly(): wrong hit found: ",
+				"to_check_rp{", to_check_rp.rect.tl_corner(), " ",
+					to_check_rp.rect.br_corner(), "} ",
+				"_dungeon_gen->at(", k, ")",
+					"{", some_item.rect.tl_corner(), " ",
+						some_item.rect.br_corner(), "}",
+					"\n");
 			return true;
 		}
 	}
