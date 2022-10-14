@@ -684,7 +684,7 @@ auto GmDungeonGen::GenInnards::_inner_gen_post_first() const
 				if (temp_rp && to_edit_rp
 					&& !(
 						(to_edit_rp->is_horiz_path()
-						&& !temp_rp->is_horiz_path())
+							&& !temp_rp->is_horiz_path())
 						|| (to_edit_rp->is_vert_path()
 							&& !temp_rp->is_vert_path())
 					) //&& !_path_sides_hit_wrongly(*temp_rp, *to_edit_rp)
