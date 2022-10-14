@@ -87,7 +87,9 @@ void GmDungeonGen::tick(ecs::Engine* ecs_engine) {
 			//}
 			GenInnards innards(this, dungeon_gen);
 			innards.gen_single_rp();
-			innards.finalize(true);
+			innards.finalize(
+				//true
+			);
 			//else {
 			//	printout("Debug: We're already done generating\n");
 			//}
@@ -210,7 +212,13 @@ bool GmDungeonGen::GenInnards::gen_single_rp() {
 auto GmDungeonGen::GenInnards::_inner_gen_post_first()
 -> std::optional<RoomPath> {
 	//--------
-	RoomPath to_push_rp(_inner_gen_post_first_initial_rp());
+	RoomPath to_push_rp;
+
+	if (auto temp=_inner_gen_post_first_initial_rp(); temp) {
+		to_push_rp = std::move(*temp);
+	} else {
+		return std::nullopt;
+	}
 	//--------
 	// This is a simple algorithm that could be made faster and
 	// more complicated, but I figure any platform running this
@@ -220,19 +228,6 @@ auto GmDungeonGen::GenInnards::_inner_gen_post_first()
 		return std::nullopt;
 	}
 	//printout("to_push_rp.fits_in_pfield_nb(): ", to_push_rp.rect, "\n");
-
-
-	//const IntVec2
-	//	tl_amount
-	//		{.x=gen_side == GEN_SIDE_L ? 0 : 1,
-	//		.y=gen_side == GEN_SIDE_T ? 0 : 1},
-	//	br_amount
-	//		{.x=gen_side == GEN_SIDE_R ? 0 : 1,
-	//		.y=gen_side == GEN_SIDE_B ? 0 : 1};
-	//const IntRect2 inflated_rect
-	//	= to_push_rp.rect.build_in_grid_inflated_lim
-	//		(tl_amount, br_amount, PFIELD_PHYS_RECT2);
-
 
 	//bool found_intersect = false;
 	//auto any_intersect = [this](
@@ -253,12 +248,20 @@ auto GmDungeonGen::GenInnards::_inner_gen_post_first()
 	//};
 	//any_intersect();
 
-	if (any_intersect(to_push_rp, std::nullopt)) {
-		//printout("Debug: found early intersect!\n");
-		return std::nullopt;
-	}
-	if (any_path_sides_hit_wrongly(to_push_rp, std::nullopt)) {
-		return std::nullopt;
+	//if (any_intersect(to_push_rp, std::nullopt)) {
+	//	//printout("Debug: found early intersect!\n");
+	//	return std::nullopt;
+	//}
+	//if (any_path_sides_hit_wrongly(to_push_rp, std::nullopt)) {
+	//	return std::nullopt;
+	//}
+	for (const auto& item: *_dungeon_gen) {
+		if (
+			item.rect.intersect(to_push_rp.rect)
+			|| _path_sides_hit_wrongly(to_push_rp, item)
+		) {
+			return std::nullopt;
+		}
 	}
 
 	//for (
@@ -272,9 +275,9 @@ auto GmDungeonGen::GenInnards::_inner_gen_post_first()
 	//	auto should_gen_connect = []() -> bool {
 	//		const i32
 	//			temp = engine->layout_rand<i32>
-	//				(GEN_CONNECT.whole_min(), GEN_CONNECT.whole_max());
-	//		return (temp >= GEN_CONNECT.yes_min
-	//			&& temp <= GEN_CONNECT.yes_max);
+	//				(GEN_YN_CONNECT.full_min(), GEN_YN_CONNECT.full_max());
+	//		return (temp >= GEN_YN_CONNECT.yes_min
+	//			&& temp <= GEN_YN_CONNECT.yes_max);
 	//	};
 	//	auto dbg_print_before = [this, &to_push_rp, &item]() -> void {
 	//		printout("before:\n",
@@ -499,7 +502,7 @@ auto GmDungeonGen::GenInnards::_inner_gen_post_first()
 	//--------
 };
 auto GmDungeonGen::GenInnards::_inner_gen_post_first_initial_rp()
--> RoomPath {
+-> std::optional<RoomPath> {
 	//--------
 	RoomPath to_push_rp;
 
@@ -523,20 +526,22 @@ auto GmDungeonGen::GenInnards::_inner_gen_post_first_initial_rp()
 
 	_gen_next_type = (prev_gen_type == GEN_TYPE_PATH)
 		? engine->layout_rand<i32>
-			(GEN_PATH_TYPE.whole_min(), GEN_PATH_TYPE.whole_max())
+			(GEN_NEXT_PATH_TYPE.full_min(),
+			GEN_NEXT_PATH_TYPE.full_max())
 		: engine->layout_rand<i32>
-			(GEN_ROOM_TYPE.whole_min(), GEN_ROOM_TYPE.whole_max()),
+			(GEN_NEXT_ROOM_TYPE.full_min(),
+			GEN_NEXT_ROOM_TYPE.full_max()),
 
 	_gen_type = 0;
 	if (
 		(
 			prev_gen_type == GEN_TYPE_PATH
-			&& _gen_next_type >= GEN_PATH_TYPE.same_min
-			&& _gen_next_type <= GEN_PATH_TYPE.same_max
+			&& _gen_next_type >= GEN_NEXT_PATH_TYPE.same_min
+			&& _gen_next_type <= GEN_NEXT_PATH_TYPE.same_max
 		) || (
 			prev_gen_type == GEN_TYPE_ROOM
-			&& _gen_next_type >= GEN_ROOM_TYPE.same_min
-			&& _gen_next_type <= GEN_ROOM_TYPE.same_max
+			&& _gen_next_type >= GEN_NEXT_ROOM_TYPE.same_min
+			&& _gen_next_type <= GEN_NEXT_ROOM_TYPE.same_max
 		)
 	) {
 		_gen_type = prev_gen_type;
@@ -546,49 +551,79 @@ auto GmDungeonGen::GenInnards::_inner_gen_post_first_initial_rp()
 				(MIN_GEN_TYPE, MAX_GEN_TYPE);
 		} while (_gen_type == prev_gen_type);
 	}
-	//--------
-	_gen_next_conn_rp_index = (prev_gen_type == GEN_TYPE_PATH)
-		? engine->layout_rand<i32>
-			(GEN_PATH_INDEX.whole_min(), GEN_PATH_INDEX.whole_max())
-		: engine->layout_rand<i32>
-			(GEN_ROOM_INDEX.whole_min(), GEN_ROOM_INDEX.whole_max());
+	////--------
+	//_gen_next_conn_rp_index = (prev_gen_type == GEN_TYPE_PATH)
+	//	? engine->layout_rand<i32>
+	//		(GEN_NEXT_PATH_INDEX.full_min(),
+	//		GEN_NEXT_PATH_INDEX.full_max())
+	//	: engine->layout_rand<i32>
+	//		(GEN_NEXT_ROOM_INDEX.full_min(),
+	//		GEN_NEXT_ROOM_INDEX.full_max());
 
-	// Which `RoomPath` are we connecting to?
-	//printout("test 0\n");
-	//i32 _conn_rp_index;
-	if (
-		//_gen_next_conn_rp_index >= GEN_NEXT_SAME_MIN
-		//&& _gen_next_conn_rp_index <= GEN_NEXT_SAME_MAX
-		(
-			prev_gen_type == GEN_TYPE_PATH
-			&& _gen_next_conn_rp_index >= GEN_PATH_INDEX.same_min
-			&& _gen_next_conn_rp_index <= GEN_PATH_INDEX.same_max
-		) || (
-			prev_gen_type == GEN_TYPE_ROOM
-			&& _gen_next_conn_rp_index >= GEN_ROOM_INDEX.same_min
-			&& _gen_next_conn_rp_index <= GEN_ROOM_INDEX.same_max
-		)
-	) {
-		_conn_rp_index = prev_rp_index;
-	} else //if (
-		//_gen_next_conn_rp_index >= GEN_NEXT_DIFF_MIN
-		//&& _gen_next_conn_rp_index <= GEN_NEXT_DIFF_MAX
-	//)
-	{
-		if (prev_rp_index == 0) {
-			_conn_rp_index = prev_rp_index;
-		} else { // if (prev_rp_index > 0)
-			// Force a different room from the last one to be
-			// picked in this case
-			_conn_rp_index
-				= engine->layout_rand<i32>
-					(0, prev_rp_index - 1);
-		}
-	}
-	//if (prev_gen_type == GEN_TYPE_PATH) {
-	//} else { // if (prev_gen_type == GEN_TYPE_ROOM)
+	//// Which `RoomPath` are we connecting to?
+	////printout("test 0\n");
+	////i32 _conn_rp_index;
+	//if (
+	//	//_gen_next_conn_rp_index >= GEN_NEXT_SAME_MIN
+	//	//&& _gen_next_conn_rp_index <= GEN_NEXT_SAME_MAX
+	//	(
+	//		prev_gen_type == GEN_TYPE_PATH
+	//		&& _gen_next_conn_rp_index >= GEN_NEXT_PATH_INDEX.same_min
+	//		&& _gen_next_conn_rp_index <= GEN_NEXT_PATH_INDEX.same_max
+	//	) || (
+	//		prev_gen_type == GEN_TYPE_ROOM
+	//		&& _gen_next_conn_rp_index >= GEN_NEXT_ROOM_INDEX.same_min
+	//		&& _gen_next_conn_rp_index <= GEN_NEXT_ROOM_INDEX.same_max
+	//	)
+	//) {
+	//	_conn_rp_index = prev_rp_index;
+	//} else //if (
+	//	//_gen_next_conn_rp_index >= GEN_NEXT_DIFF_MIN
+	//	//&& _gen_next_conn_rp_index <= GEN_NEXT_DIFF_MAX
+	////)
+	//{
+	//	if (prev_rp_index == 0) {
+	//		_conn_rp_index = prev_rp_index;
+	//	} else { // if (prev_rp_index > 0)
+	//		// Force a different room from the last one to be
+	//		// picked in this case
+	//		_conn_rp_index
+	//			= engine->layout_rand<i32>
+	//				(0, prev_rp_index - 1);
+	//	}
 	//}
-
+	auto index_stuff = [&](const GenNext& some_gen_next_index) -> void {
+		
+		_gen_next_conn_rp_index
+			= engine->layout_rand<i32>
+			(some_gen_next_index.full_min(),
+			some_gen_next_index.full_max());
+		if ( 
+			_gen_next_conn_rp_index >= some_gen_next_index.same_min
+			&& _gen_next_conn_rp_index <= some_gen_next_index.same_max
+		) {
+			_conn_rp_index = prev_rp_index;
+		} else {
+			if (prev_rp_index == 0) {
+				_conn_rp_index = prev_rp_index;
+			} else { // if (prev_rp_index > 0)
+				// Force a different room from the last one to be
+				// picked in this case
+				_conn_rp_index
+					= engine->layout_rand<i32>(0, prev_rp_index - 1);
+			}
+		}
+	};
+	if (prev_gen_type == GEN_TYPE_PATH) {
+		if (_gen_type == GEN_TYPE_PATH) {
+			index_stuff(GEN_NEXT_PATH_INDEX_NOW_PATH);
+		} else { // if (_gen_type == GEN_TYPE_ROOM) 
+			index_stuff(GEN_NEXT_PATH_INDEX_NOW_ROOM);
+		}
+	} else { // if (prev_gen_type == GEN_TYPE_ROOM)
+		index_stuff(GEN_NEXT_ROOM_INDEX);
+	}
+	//--------
 	//const i32 _conn_rp_index = engine->layout_rand<i32>(0, 0);
 	//printout("test 1\n");
 	const auto& conn_rp = _dungeon_gen->at(_conn_rp_index);
@@ -761,16 +796,18 @@ bool GmDungeonGen::GenInnards::any_path_sides_hit_wrongly(
 	}
 	return false;
 }
-void GmDungeonGen::GenInnards::finalize(bool do_clear) const {
-	if (do_clear) {
-		//for (i=0; i<_dungeon_gen->size(); ++i)
-		for (auto& some_rp: *_dungeon_gen) {
-			//auto& some_rp = _dungeon_gen->at(i);
-			//_dungeon_gen->at(i).door_pt_set.clear();
-			some_rp.conn_index_set.clear();
-			some_rp.door_pt_set.clear();
-		}
-	}
+void GmDungeonGen::GenInnards::finalize(
+	//bool do_clear
+) const {
+	//if (do_clear) {
+	//	//for (i=0; i<_dungeon_gen->size(); ++i)
+	//	for (auto& some_rp: *_dungeon_gen) {
+	//		//auto& some_rp = _dungeon_gen->at(i);
+	//		//_dungeon_gen->at(i).door_pt_set.clear();
+	//		some_rp.conn_index_set.clear();
+	//		some_rp.door_pt_set.clear();
+	//	}
+	//}
 	for (
 		size_t item_index=0;
 		item_index<_dungeon_gen->size();
@@ -804,87 +841,33 @@ void GmDungeonGen::GenInnards::finalize(bool do_clear) const {
 				if (rp.is_room() && item.is_path()) {
 					if (item.is_horiz_path()) {
 						if (_ls_r2_hit(item, rp)) {
-							//printout("insert doors: ",
-							//	"_ls_r2_hit(item, rp)",
-							//	"\n");
-							item.door_pt_set.insert
-								(
-									//_ls_r2(rp).tl_corner()
-									//	+ IntVec2{1, 0}
-									item.rect.tl_corner()
-									//	- IntVec2{1, 0}
-								);
+							item.door_pt_set.insert(item.rect.tl_corner());
 						}
 						if (_rs_r2_hit(item, rp)) {
-							//printout("insert doors: ",
-							//	"_rs_r2_hit(item, rp)",
-							//	"\n");
-							item.door_pt_set.insert
-								(
-									//_rs_r2(rp).tr_corner()
-									//	- IntVec2{1, 0}
-									item.rect.tr_corner()
-									//	+ IntVec2{1, 0}
-								);
+							item.door_pt_set.insert(item.rect.tr_corner());
 						}
 					} else { // if (item.is_vert_path())
 						if (_ts_r2_hit(item, rp)) {
-							item.door_pt_set.insert
-								(
-									//_ts_r2(rp).tl_corner()
-									//	+ IntVec2{0, 1}
-									item.rect.tl_corner()
-									//	- IntVec2{0, 1}
-								);
+							item.door_pt_set.insert(item.rect.tl_corner());
 						}
 						if (_bs_r2_hit(item, rp)) {
-							item.door_pt_set.insert
-								(
-									//_bs_r2(rp).bl_corner()
-									//	- IntVec2{0, 1}
-									item.rect.bl_corner()
-									//	+ IntVec2{0, 1}
-								);
+							item.door_pt_set.insert(item.rect.bl_corner());
 						}
 					}
 				} else if (rp.is_path() && item.is_room()) {
 					if (rp.is_horiz_path()) {
 						if (_ls_r2_hit(rp, item)) {
-							rp.door_pt_set.insert
-								(
-									//_ls_r2(item).tl_corner()
-									//	+ IntVec2{1, 0}
-									rp.rect.tl_corner()
-									//	- IntVec2{1, 0}
-								);
+							rp.door_pt_set.insert(rp.rect.tl_corner());
 						}
 						if (_rs_r2_hit(rp, item)) {
-							rp.door_pt_set.insert
-								(
-									//_rs_r2(item).tr_corner()
-									//	- IntVec2{1, 0}
-									rp.rect.tr_corner()
-									//	+ IntVec2{1, 0}
-								);
+							rp.door_pt_set.insert(rp.rect.tr_corner());
 						}
 					} else { // if (rp.is_vert_path())
 						if (_ts_r2_hit(rp, item)) {
-							rp.door_pt_set.insert
-								(
-									//_ts_r2(item).tl_corner()
-									//	+ IntVec2{0, 1}
-									rp.rect.tl_corner()
-									//	- IntVec2{0, 1}
-								);
+							rp.door_pt_set.insert(rp.rect.tl_corner());
 						}
 						if (_bs_r2_hit(rp, item)) {
-							rp.door_pt_set.insert
-								(
-									//_bs_r2(item).bl_corner()
-									//	- IntVec2{0, 1}
-									rp.rect.bl_corner()
-									//	+ IntVec2{0, 1}
-								);
+							rp.door_pt_set.insert(rp.rect.bl_corner());
 						}
 					}
 				}

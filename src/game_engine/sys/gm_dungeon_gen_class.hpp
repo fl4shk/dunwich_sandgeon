@@ -47,10 +47,10 @@ public:		// types
 			diff_min,
 			diff_max;
 	public:		// functions
-		constexpr inline i32 whole_min() const {
+		constexpr inline i32 full_min() const {
 			return same_min;
 		}
-		constexpr inline i32 whole_max() const {
+		constexpr inline i32 full_max() const {
 			return diff_max;
 		}
 	};
@@ -62,10 +62,10 @@ public:		// types
 			yes_min,
 			yes_max;
 	public:		// functions
-		constexpr inline i32 whole_min() const {
+		constexpr inline i32 full_min() const {
 			return no_min;
 		}
-		constexpr inline i32 whole_max() const {
+		constexpr inline i32 full_max() const {
 			return yes_max;
 		}
 	};
@@ -99,25 +99,48 @@ public:		// constants
 		GEN_SIDE_T = 1,
 		GEN_SIDE_R = 2,
 		GEN_SIDE_B = 3, MAX_GEN_SIDE = GEN_SIDE_B;
-		//--------
+	//--------
 	static constexpr GenNext
 		//GEN_NEXT_SAME_MIN = 0, MIN_GEN_NEXT = GEN_NEXT_SAME_MIN,
 		//GEN_NEXT_SAME_MAX = 2,
 		//GEN_NEXT_DIFFERENT_MIN = 3,
 		//GEN_NEXT_DIFFERENT_MAX = 9, MAX_GEN_NEXT = GEN_NEXT_DIFFERENT_MAX,
-		GEN_ROOM_TYPE
-			{.same_min=0, .same_max=0, .diff_min=1, .diff_max=9},
-		GEN_ROOM_INDEX
-			{.same_min=0, .same_max=3, .diff_min=4, .diff_max=9},
-		GEN_PATH_TYPE
-			{.same_min=0, .same_max=0, .diff_min=1, .diff_max=9},
-		GEN_PATH_INDEX
-			{.same_min=0, .same_max=5, .diff_min=6, .diff_max=9};
-		//--------
-	static constexpr GenYesNo
-		GEN_CONNECT
-			{.no_min=0, .no_max=0, .yes_min=1, .yes_max=9};
-		//--------
+		GEN_NEXT_ROOM_TYPE
+			{.same_min=0,
+			.same_max=0,
+			.diff_min=1,
+			.diff_max=9},
+		GEN_NEXT_ROOM_INDEX
+			{.same_min=0,
+			.same_max=3,
+			.diff_min=4,
+			.diff_max=9},
+
+		GEN_NEXT_PATH_TYPE
+			{.same_min=0,
+			.same_max=0,
+			.diff_min=1,
+			.diff_max=9},
+		// generating a room, and previously generated a path
+		GEN_NEXT_PATH_INDEX_NOW_ROOM
+			{.same_min=0,
+			.same_max=92,
+			.diff_min=93,
+			.diff_max=99},
+		// generating a path, and previously generated a path
+		GEN_NEXT_PATH_INDEX_NOW_PATH
+			{.same_min=0,
+			.same_max=5,
+			.diff_min=6,
+			.diff_max=9};
+	//--------
+	//static constexpr GenYesNo
+	//	GEN_YN_CONNECT
+	//		{.no_min=0,
+	//		.no_max=0,
+	//		.yes_min=1,
+	//		.yes_max=9};
+	//--------
 	static constexpr i32
 		// This is the number of tries to attempt room/path generation
 		// after failing to generate a valid one.
@@ -190,7 +213,7 @@ private:		// types
 		std::optional<RoomPath> _inner_gen_post_first();
 	private:		// functions
 		//--------
-		RoomPath _inner_gen_post_first_initial_rp();
+		std::optional<RoomPath> _inner_gen_post_first_initial_rp();
 		//--------
 	public:		// functions
 		void _do_push_back(RoomPath&& to_push_rp) const;
@@ -201,7 +224,9 @@ private:		// types
 		bool any_path_sides_hit_wrongly(
 			const RoomPath& to_check_rp, const std::optional<size_t>& index
 		) const;
-		void finalize(bool do_clear) const;
+		void finalize(
+			//bool do_clear
+		) const;
 		//void insert_doors(bool do_clear) const;
 	private:		// static functions
 		//--------
