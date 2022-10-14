@@ -39,6 +39,37 @@ public:		// types
 	//--------
 	using RoomPath = comp::DungeonGen::RoomPath;
 	//--------
+	class GenNext final {
+	public:		// variables
+		i32
+			same_min,
+			same_max,
+			diff_min,
+			diff_max;
+	public:		// functions
+		constexpr inline i32 whole_min() const {
+			return same_min;
+		}
+		constexpr inline i32 whole_max() const {
+			return diff_max;
+		}
+	};
+	class GenYesNo final {
+	public:		// variables
+		i32
+			no_min,
+			no_max,
+			yes_min,
+			yes_max;
+	public:		// functions
+		constexpr inline i32 whole_min() const {
+			return no_min;
+		}
+		constexpr inline i32 whole_max() const {
+			return yes_max;
+		}
+	};
+	//--------
 public:		// constants
 	//--------
 	static constexpr i32
@@ -60,51 +91,34 @@ public:		// constants
 		//PATH_THRESH_MAX = 0,
 		//ROOM_THRESH_MIN = 1,
 		//ROOM_THRESH_MAX = 1,
+		//--------
 		GEN_TYPE_PATH = 0, MIN_GEN_TYPE = GEN_TYPE_PATH,
 		GEN_TYPE_ROOM = 1, MAX_GEN_TYPE = GEN_TYPE_ROOM,
-
+		//--------
 		GEN_SIDE_L = 0, MIN_GEN_SIDE = GEN_SIDE_L,
 		GEN_SIDE_T = 1,
 		GEN_SIDE_R = 2,
-		GEN_SIDE_B = 3, MAX_GEN_SIDE = GEN_SIDE_B,
-
+		GEN_SIDE_B = 3, MAX_GEN_SIDE = GEN_SIDE_B;
+		//--------
+	static constexpr GenNext
 		//GEN_NEXT_SAME_MIN = 0, MIN_GEN_NEXT = GEN_NEXT_SAME_MIN,
 		//GEN_NEXT_SAME_MAX = 2,
 		//GEN_NEXT_DIFFERENT_MIN = 3,
 		//GEN_NEXT_DIFFERENT_MAX = 9, MAX_GEN_NEXT = GEN_NEXT_DIFFERENT_MAX,
-		GEN_NEXT_ROOM_SAME_TYPE_MIN = 0,
-			MIN_GEN_NEXT_ROOM_TYPE = GEN_NEXT_ROOM_SAME_TYPE_MIN,
-		GEN_NEXT_ROOM_SAME_TYPE_MAX = 0,
-		GEN_NEXT_ROOM_DIFF_TYPE_MIN = 1,
-		GEN_NEXT_ROOM_DIFF_TYPE_MAX = 9,
-			MAX_GEN_NEXT_ROOM_TYPE = GEN_NEXT_ROOM_DIFF_TYPE_MAX,
-
-		GEN_NEXT_ROOM_SAME_INDEX_MIN = 0,
-			MIN_GEN_NEXT_ROOM_INDEX = GEN_NEXT_ROOM_SAME_INDEX_MIN,
-		GEN_NEXT_ROOM_SAME_INDEX_MAX = 3,
-		GEN_NEXT_ROOM_DIFF_INDEX_MIN = 4,
-		GEN_NEXT_ROOM_DIFF_INDEX_MAX = 9,
-			MAX_GEN_NEXT_ROOM_INDEX = GEN_NEXT_ROOM_DIFF_INDEX_MAX,
-
-		GEN_NEXT_PATH_SAME_TYPE_MIN = 0,
-			MIN_GEN_NEXT_PATH_TYPE = GEN_NEXT_PATH_SAME_TYPE_MIN,
-		GEN_NEXT_PATH_SAME_TYPE_MAX = 0,
-		GEN_NEXT_PATH_DIFF_TYPE_MIN = 1,
-		GEN_NEXT_PATH_DIFF_TYPE_MAX = 9,
-			MAX_GEN_NEXT_PATH_TYPE = GEN_NEXT_PATH_DIFF_TYPE_MAX,
-
-		GEN_NEXT_PATH_SAME_INDEX_MIN = 0,
-			MIN_GEN_NEXT_PATH_INDEX = GEN_NEXT_PATH_SAME_INDEX_MIN ,
-		GEN_NEXT_PATH_SAME_INDEX_MAX = 5,
-		GEN_NEXT_PATH_DIFF_INDEX_MIN = 6,
-		GEN_NEXT_PATH_DIFF_INDEX_MAX = 9,
-			MAX_GEN_NEXT_PATH_INDEX = GEN_NEXT_PATH_DIFF_INDEX_MAX,
-
-		GEN_CONNECT_YES_MIN = 0, MIN_GEN_CONNECT = GEN_CONNECT_YES_MIN,
-		GEN_CONNECT_YES_MAX = 8,
-		GEN_CONNECT_NO_MIN = 9,
-		GEN_CONNECT_NO_MAX = 9, MAX_GEN_CONNECT = GEN_CONNECT_NO_MAX,
-
+		GEN_ROOM_TYPE
+			{.same_min=0, .same_max=0, .diff_min=1, .diff_max=9},
+		GEN_ROOM_INDEX
+			{.same_min=0, .same_max=3, .diff_min=4, .diff_max=9},
+		GEN_PATH_TYPE
+			{.same_min=0, .same_max=0, .diff_min=1, .diff_max=9},
+		GEN_PATH_INDEX
+			{.same_min=0, .same_max=5, .diff_min=6, .diff_max=9};
+		//--------
+	static constexpr GenYesNo
+		GEN_CONNECT
+			{.no_min=0, .no_max=0, .yes_min=1, .yes_max=9};
+		//--------
+	static constexpr i32
 		// This is the number of tries to attempt room/path generation
 		// after failing to generate a valid one.
 		GEN_RP_LIM_TRIES
@@ -157,12 +171,12 @@ private:		// types
 		//	* _item = nullptr;
 		//	//* _conn_rp = nullptr;
 
-		//i32
-		//	_gen_side = 0,
-		//	_gen_next_type = 0,
-		//	_gen_next_conn_rp_index = 0,
-		//	_gen_type = 0,
-		//	_conn_rp_index = 0;
+		i32
+			_gen_side = 0,
+			_gen_next_type = 0,
+			_gen_next_conn_rp_index = 0,
+			_gen_type = 0,
+			_conn_rp_index = 0;
 		//size_t
 		//	_check_i;
 	public:		// functions
@@ -172,11 +186,14 @@ private:		// types
 			: _self(s_self), _dungeon_gen(s_dungeon_gen) {
 		}
 		bool gen_single_rp();
+	public:		// functions
+		std::optional<RoomPath> _inner_gen_post_first();
 	private:		// functions
 		//--------
-		std::optional<RoomPath> _inner_gen_post_first() const;
-		void _do_push_back(RoomPath&& to_push_rp) const;
+		RoomPath _inner_gen_post_first_initial_rp();
 		//--------
+	public:		// functions
+		void _do_push_back(RoomPath&& to_push_rp) const;
 	public:		// functions
 		bool any_intersect(
 			const RoomPath& to_check_rp, const std::optional<size_t>& index

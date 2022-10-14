@@ -207,232 +207,10 @@ bool GmDungeonGen::GenInnards::gen_single_rp() {
 
 	return _self->_done_generating;
 }
-auto GmDungeonGen::GenInnards::_inner_gen_post_first() const
+auto GmDungeonGen::GenInnards::_inner_gen_post_first()
 -> std::optional<RoomPath> {
 	//--------
-	RoomPath to_push_rp;
-	//--------
-	const i32
-		prev_rp_index = _dungeon_gen->size() - 1;
-	const RoomPath
-		& prev_rp = _dungeon_gen->at(prev_rp_index);
-	const i32 
-		prev_gen_type
-			= prev_rp.is_path() ? GEN_TYPE_PATH : GEN_TYPE_ROOM;
-	i32
-		gen_side = 0,
-		gen_next_type = 0,
-		gen_next_conn_rp_index = 0,
-		gen_type = 0,
-		conn_rp_index = 0;
-
-	//gen_type = GEN_TYPE_ROOM,
-	//gen_side = engine->layout_rand<i32>
-	//	(MIN_GEN_SIDE, MAX_GEN_SIDE),
-
-	gen_next_type = (prev_gen_type == GEN_TYPE_PATH)
-		? engine->layout_rand<i32>
-			(MIN_GEN_NEXT_PATH_TYPE, MAX_GEN_NEXT_PATH_TYPE)
-		: engine->layout_rand<i32>
-			(MIN_GEN_NEXT_ROOM_TYPE, MAX_GEN_NEXT_ROOM_TYPE),
-	gen_next_conn_rp_index = (prev_gen_type == GEN_TYPE_PATH)
-		? engine->layout_rand<i32>
-			(MIN_GEN_NEXT_PATH_INDEX, MAX_GEN_NEXT_PATH_INDEX)
-		: engine->layout_rand<i32>
-			(MIN_GEN_NEXT_ROOM_INDEX, MAX_GEN_NEXT_ROOM_INDEX);
-
-	gen_type = 0;
-	if (
-		(
-			prev_gen_type == GEN_TYPE_PATH
-			&& gen_next_type >= GEN_NEXT_PATH_SAME_TYPE_MIN
-			&& gen_next_type <= GEN_NEXT_PATH_SAME_TYPE_MAX
-		) || (
-			prev_gen_type == GEN_TYPE_ROOM
-			&& gen_next_type >= GEN_NEXT_ROOM_SAME_TYPE_MIN
-			&& gen_next_type <= GEN_NEXT_ROOM_SAME_TYPE_MAX
-		)
-	) {
-		gen_type = prev_gen_type;
-		//printout(
-		//	"game_engine::sys::GmDungeonGen
-		//	"::_gen_single_rp(): ",
-		//	"using `prev_gen_type`: ",
-		//	gen_type, "\n"
-		//);
-	} else { // if (switching types) 
-		do {
-			gen_type = engine->layout_rand<i32>
-				(MIN_GEN_TYPE, MAX_GEN_TYPE);
-		} while (gen_type == prev_gen_type);
-
-		//printout(
-		//	"game_engine::sys::GmDungeonGen::_gen_single_rp(): ",
-		//	"randomizing `gen_type`, ",
-		//	"but picking something different: ",
-		//	"`gen_type`: ", gen_type, "; ",
-		//	"`prev_gen_type`: ", prev_gen_type, "\n"
-		//);
-	}
-	//--------
-	// Which `RoomPath` are we connecting to?
-	//printout("test 0\n");
-	//i32 conn_rp_index;
-	if (
-		//gen_next_conn_rp_index >= GEN_NEXT_SAME_MIN
-		//&& gen_next_conn_rp_index <= GEN_NEXT_SAME_MAX
-		(
-			prev_gen_type == GEN_TYPE_PATH
-			&& gen_next_conn_rp_index
-				>= GEN_NEXT_PATH_SAME_INDEX_MIN
-			&& gen_next_conn_rp_index
-				<= GEN_NEXT_PATH_SAME_INDEX_MAX
-		) || (
-			prev_gen_type == GEN_TYPE_ROOM
-			&& gen_next_conn_rp_index
-				>= GEN_NEXT_ROOM_SAME_INDEX_MIN
-			&& gen_next_conn_rp_index
-				<= GEN_NEXT_ROOM_SAME_INDEX_MAX
-		)
-	) {
-		conn_rp_index = prev_rp_index;
-	} else //if (
-		//gen_next_conn_rp_index >= GEN_NEXT_DIFFERENT_MIN
-		//&& gen_next_conn_rp_index <= GEN_NEXT_DIFFERENT_MAX
-	//)
-	{
-		if (prev_rp_index == 0) {
-			conn_rp_index = prev_rp_index;
-		} else { // if (prev_rp_index > 0)
-			// Force a different room from the last one to be
-			// picked in this case
-			conn_rp_index
-				= engine->layout_rand<i32>
-					(0, prev_rp_index - 1);
-		}
-	}
-
-	//const i32 conn_rp_index = engine->layout_rand<i32>(0, 0);
-	//printout("test 1\n");
-	const auto& conn_rp = _dungeon_gen->at(conn_rp_index);
-
-	if (
-		//(conn_rp.is_path() && gen_type == GEN_TYPE_PATH)
-		//|| (conn_rp.is_room() && gen_type == GEN_TYPE_ROOM)
-		(conn_rp.is_path() && gen_type == GEN_TYPE_PATH)
-		|| conn_rp.is_room()
-	) {
-		gen_side = engine->layout_rand<i32>
-			(MIN_GEN_SIDE, MAX_GEN_SIDE);
-	} else {
-		if (conn_rp.is_horiz_path()) {
-			gen_side
-				= engine->layout_rand<i32>(0, 1)
-				? GEN_SIDE_L
-				: GEN_SIDE_R;
-		} else { // if (conn_rp.is_vert_path())
-			gen_side
-				= engine->layout_rand<i32>(0, 1)
-				? GEN_SIDE_T
-				: GEN_SIDE_B;
-		}
-		//else if (conn_rp.is_room()) {
-		//	gen_side = engine->layout_rand<i32>
-		//		(MIN_GEN_SIDE, MAX_GEN_SIDE);
-		//}
-	}
-	//if (inner_gen_tries > GEN_RP_LIM_TRIES) {
-	//	printout("debug: failed dungeon generation ",
-	//		"(inner_gen_tries too large): ",
-	//		"\n");
-	//	return std::nullopt;
-	//}
-	//--------
-	i32
-		thickness = 0,
-		length = 0;
-	//IntVec2
-	//	temp_size_2d;
-
-	if (gen_type == GEN_TYPE_PATH) {
-		thickness
-			//temp_size_2d.x
-			= PATH_THICKNESS,
-		length
-			//temp_size_2d.y
-			= engine->layout_rand<i32>
-				(PATH_MIN_LEN, PATH_MAX_LEN);
-	} else { // if (gen_type == GEN_TYPE_ROOM)
-		const IntVec2 temp_vec2
-		//temp_size_2d = 
-			{.x=engine->layout_rand<i32>
-				(ROOM_MIN_SIZE_2D.x, ROOM_MAX_SIZE_2D.x),
-			.y=engine->layout_rand<i32>
-				(ROOM_MIN_SIZE_2D.y, ROOM_MAX_SIZE_2D.y)};
-		//thickness = engine->layout_rand<i32>
-		//	(ROOM_MIN_SIZE_2D.x, ROOM_MAX_SIZE_2D.x);
-		//length = engine->layout_rand<i32>
-		//	(ROOM_MIN_SIZE_2D.y, ROOM_MAX_SIZE_2D.y);
-
-		if (
-			gen_side == GEN_SIDE_L
-			|| gen_side == GEN_SIDE_R
-		) {
-			thickness = temp_vec2.y;
-			length = temp_vec2.x;
-		} else // if (
-			//gen_side == GEN_SIDE_T || gen_side == GEN_SIDE_B
-		//)
-		{
-			//thickness = engine->layout_rand<i32>
-			//	(ROOM_MIN_SIZE_2D.x, ROOM_MAX_SIZE_2D.x);
-			thickness = temp_vec2.x;
-			length = temp_vec2.y;
-		}
-	}
-	//--------
-	const i32
-		conn_rp_lx = conn_rp.rect.left_x(),
-		conn_rp_ty = conn_rp.rect.top_y(),
-		conn_rp_rx = conn_rp.rect.right_x(),
-		conn_rp_by = conn_rp.rect.bottom_y();
-
-	switch (gen_side) {
-	//--------
-	case GEN_SIDE_L:
-		to_push_rp.rect.pos = IntVec2
-			{.x=conn_rp_lx,
-			.y=engine->layout_rand<i32>(conn_rp_ty, conn_rp_by)}
-				- IntVec2{length, 0};
-		to_push_rp.rect.size_2d = {.x=length, .y=thickness};
-		break;
-	case GEN_SIDE_T:
-		to_push_rp.rect.pos = IntVec2
-			{.x=engine->layout_rand<i32>(conn_rp_lx, conn_rp_rx),
-			.y=conn_rp_ty} - IntVec2{0, length};
-		to_push_rp.rect.size_2d = {.x=thickness, .y=length};
-		break;
-	case GEN_SIDE_R:
-		to_push_rp.rect.pos = IntVec2
-			{.x=conn_rp_rx,
-			.y=engine->layout_rand<i32>(conn_rp_ty, conn_rp_by)}
-				+ IntVec2{1, 0};
-		to_push_rp.rect.size_2d = {.x=length, .y=thickness};
-		break;
-	case GEN_SIDE_B:
-		to_push_rp.rect.pos = IntVec2
-			{.x=engine->layout_rand<i32>(conn_rp_lx, conn_rp_rx),
-			.y=conn_rp_by} + IntVec2{0, 1};
-		to_push_rp.rect.size_2d = {.x=thickness, .y=length};
-		break;
-	default:
-		throw std::runtime_error(sconcat
-			("game_engine::sys::GmDungeonGen::_gen_single_rp(): ",
-			"(1st) `switch (gen_side)`: Eek! `", gen_side,
-			"`"));
-		break;
-	//--------
-	}
+	RoomPath to_push_rp(_inner_gen_post_first_initial_rp());
 	//--------
 	// This is a simple algorithm that could be made faster and
 	// more complicated, but I figure any platform running this
@@ -479,263 +257,237 @@ auto GmDungeonGen::GenInnards::_inner_gen_post_first() const
 		//printout("Debug: found early intersect!\n");
 		return std::nullopt;
 	}
-
 	if (any_path_sides_hit_wrongly(to_push_rp, std::nullopt)) {
 		return std::nullopt;
 	}
-	for (
-		size_t item_index=0;
-		item_index<_dungeon_gen->size();
-		++item_index
-	) {
-	//for (const auto& item: *_dungeon_gen)
-		auto& item = _dungeon_gen->at(item_index);
-		//if (
-		//	//(
-		//	//	to_push_rp.is_horiz_path()
-		//	//	&& (_ts_r2_hit(to_push_rp, item)
-		//	//		|| _bs_r2_hit(to_push_rp, item))
-		//	//) || (
-		//	//	to_push_rp.is_vert_path()
-		//	//	&& (_ls_r2_hit(to_push_rp, item)
-		//	//		|| _rs_r2_hit(to_push_rp, item))
-		//	//) || (
-		//	//	item.is_horiz_path()
-		//	//	&& (_ts_r2_hit(item, to_push_rp)
-		//	//		|| _bs_r2_hit(item, to_push_rp))
-		//	//) || (
-		//	//	item.is_vert_path()
-		//	//	&& (_ls_r2_hit(item, to_push_rp)
-		//	//		|| _rs_r2_hit(item, to_push_rp))
-		//	//)
-		//	////|| (i32(i) != conn_rp_index
-		//	////	&&
-		//	////	item.rect.intersect(to_push_rp.rect))
-		//	_path_sides_hit_wrongly(to_push_rp, item)
-		//) {
-		//	//printout("debug: failed generation\n");
-		//	return std::nullopt;
-		//}
 
-		auto should_gen_connect = []() -> bool {
-			const i32
-				temp = engine->layout_rand<i32>
-					(MIN_GEN_CONNECT, MAX_GEN_CONNECT);
-			return (temp >= GEN_CONNECT_YES_MIN
-				&& temp <= GEN_CONNECT_YES_MAX);
-		};
-		auto dbg_print_before = [this, &to_push_rp, &item]() -> void {
-			printout("before:\n",
-				"to_push_rp.tl:", to_push_rp.rect.tl_corner(), " ",
-				"to_push_rp.br:", to_push_rp.rect.br_corner(), "\n",
-				"item.tl:", item.rect.tl_corner(), " "
-				"item.br:", item.rect.br_corner(), "\n");
-		};
-		auto dbg_print_after = [this, &to_push_rp, &item]() -> void {
-			printout("after:\n",
-				"to_push_rp.tl:", to_push_rp.rect.tl_corner(), " ",
-				"to_push_rp.br:", to_push_rp.rect.br_corner(), "\n",
-				"item.tl:", item.rect.tl_corner(), " "
-				"item.br:", item.rect.br_corner(), "\n");
-		};
+	//for (
+	//	size_t item_index=0;
+	//	item_index<_dungeon_gen->size();
+	//	++item_index
+	//) {
+	////for (const auto& item: *_dungeon_gen)
+	//	auto& item = _dungeon_gen->at(item_index);
 
-		using TempRpPair
-			= std::pair<std::optional<RoomPath>,
-				std::optional<RoomPath>>;
+	//	auto should_gen_connect = []() -> bool {
+	//		const i32
+	//			temp = engine->layout_rand<i32>
+	//				(GEN_CONNECT.whole_min(), GEN_CONNECT.whole_max());
+	//		return (temp >= GEN_CONNECT.yes_min
+	//			&& temp <= GEN_CONNECT.yes_max);
+	//	};
+	//	auto dbg_print_before = [this, &to_push_rp, &item]() -> void {
+	//		printout("before:\n",
+	//			"to_push_rp.tl:", to_push_rp.rect.tl_corner(), " ",
+	//			"to_push_rp.br:", to_push_rp.rect.br_corner(), "\n",
+	//			"item.tl:", item.rect.tl_corner(), " "
+	//			"item.br:", item.rect.br_corner(), "\n");
+	//	};
+	//	auto dbg_print_after = [this, &to_push_rp, &item]() -> void {
+	//		printout("after:\n",
+	//			"to_push_rp.tl:", to_push_rp.rect.tl_corner(), " ",
+	//			"to_push_rp.br:", to_push_rp.rect.br_corner(), "\n",
+	//			"item.tl:", item.rect.tl_corner(), " "
+	//			"item.br:", item.rect.br_corner(), "\n");
+	//	};
 
-		std::vector<TempRpPair> temp_rp_pair_vec
-			(MAX_GEN_SIDE - MIN_GEN_SIDE + 1,
-			TempRpPair(std::nullopt, std::nullopt));
-		auto gen_temp_rp_pair_vec_elem = [&](
-			bool sides_did_hit, i32 some_side,
-			const std::pair<IntVec2, IntVec2>& rp_offset_pair,
-			const std::pair<IntVec2, IntVec2>& item_offset_pair,
-			const std::string& dbg_str, bool do_dbg_print
-		) -> void {
-			//auto possible_to_extend_that_way = []
-			if (
-				//_ls_and_rs_hit(to_push_rp, item)
-				sides_did_hit
-				&& should_gen_connect()
-			) {
-				RoomPath temp_rp;
-				if (!engine->layout_rand<i32>(0, 1)) {
-					if (do_dbg_print) {
-						printout(dbg_str, " 0\n");
-						dbg_print_before();
-					}
-					temp_rp.rect
-						= to_push_rp.rect.build_in_grid_inflated_lim
-						(rp_offset_pair.first,
-						rp_offset_pair.second,
-						PFIELD_PHYS_NO_BORDER_RECT2);
-					temp_rp_pair_vec.at(some_side).first
-						= std::move(temp_rp);
-					if (do_dbg_print) {
-						dbg_print_after();
-					}
-				} else {
-					if (do_dbg_print) {
-						printout(dbg_str, " 1\n");
-						dbg_print_before();
-					}
-					temp_rp.rect
-						= item.rect.build_in_grid_inflated_lim
-						(item_offset_pair.first,
-						item_offset_pair.second,
-						PFIELD_PHYS_NO_BORDER_RECT2);
-					temp_rp_pair_vec.at(some_side).second
-						= std::move(temp_rp);
-					if (do_dbg_print) {
-						dbg_print_after();
-					}
-				}
-			}
-		};
-		gen_temp_rp_pair_vec_elem
-			(_ls_and_rs_hit(to_push_rp, item), GEN_SIDE_L,
-			std::pair(IntVec2{1, 0}, IntVec2()),
-			std::pair(IntVec2(), IntVec2{1, 0}),
-			"ls", false);
-		gen_temp_rp_pair_vec_elem
-			(_ts_and_bs_hit(to_push_rp, item), GEN_SIDE_T,
-			std::pair(IntVec2{0, 1}, IntVec2()),
-			std::pair(IntVec2(), IntVec2{0, 1}),
-			"ts", false);
-		gen_temp_rp_pair_vec_elem
-			(_ls_and_rs_hit(item, to_push_rp), GEN_SIDE_R,
-			std::pair(IntVec2(), IntVec2{1, 0}),
-			std::pair(IntVec2{1, 0}, IntVec2()),
-			"rs", false);
-		//if (_ts_and_bs_hit(item, to_push_rp)) {
-		//	printout("to_push_rp.bs intersects item.ts:\n",
-		//		"\t_rp{", to_push_rp.rect.tl_corner(), " ",
-		//			to_push_rp.rect.br_corner(), "} ",
-		//		"item{", item.rect.tl_corner(), " ",
-		//			item.rect.br_corner(), "}\n",
-		//		"\t_rp_bs{", _rp_bs_r2().tl_corner(), " ",
-		//			_rp_bs_r2().br_corner(), "} ",
-		//		"item_ts{", _ts_r2(item).tl_corner(), " ",
-		//			_ts_r2(item).br_corner(), "}",
-		//		"\n");
-		//}
-		gen_temp_rp_pair_vec_elem
-			(_ts_and_bs_hit(item, to_push_rp), GEN_SIDE_B,
-			std::pair(IntVec2(), IntVec2{0, 1}),
-			std::pair(IntVec2{0, 1}, IntVec2()),
-			"bs", false);
-		if (
-			const i32 check_first_extend_side=engine->layout_rand<i32>
-				(MIN_GEN_SIDE, MAX_GEN_SIDE);
-			true
-		) {
-			i32
-				i
-					//= MIN_GEN_SIDE;
-					= std::abs(MAX_GEN_SIDE - MIN_GEN_SIDE),
-				extend_side = check_first_extend_side;
+	//	using TempRpPair
+	//		= std::pair<std::optional<RoomPath>,
+	//			std::optional<RoomPath>>;
 
-			auto end_loop = [&i, &extend_side]() -> void {
-				//++i;
-				--i;
-				++extend_side;
-				if (extend_side > MAX_GEN_SIDE) {
-					extend_side = MIN_GEN_SIDE;
-				}
-			};
-			//while (i <= MAX_GEN_SIDE)
-			while (i >= 0) {
-				auto& temp_rp_pair
-					= temp_rp_pair_vec.at(extend_side);
-				RoomPath
-					* temp_rp = nullptr,
-					* to_edit_rp = nullptr,
-					* to_keep_rp = nullptr;
-				std::string dbg_str = "";
+	//	std::vector<TempRpPair> temp_rp_pair_vec
+	//		(MAX_GEN_SIDE - MIN_GEN_SIDE + 1,
+	//		TempRpPair(std::nullopt, std::nullopt));
+	//	auto gen_temp_rp_pair_vec_elem = [&](
+	//		bool sides_did_hit, i32 some_side,
+	//		const std::pair<IntVec2, IntVec2>& rp_offset_pair,
+	//		const std::pair<IntVec2, IntVec2>& item_offset_pair,
+	//		const std::string& dbg_str, bool do_dbg_print
+	//	) -> void {
+	//		//auto possible_to_extend_that_way = []
+	//		if (
+	//			//_ls_and_rs_hit(to_push_rp, item)
+	//			sides_did_hit
+	//			&& should_gen_connect()
+	//		) {
+	//			RoomPath temp_rp;
+	//			if (!engine->layout_rand<i32>(0, 1)) {
+	//				if (do_dbg_print) {
+	//					printout(dbg_str, " 0\n");
+	//					dbg_print_before();
+	//				}
+	//				temp_rp.rect
+	//					= to_push_rp.rect.build_in_grid_inflated_lim
+	//					(rp_offset_pair.first,
+	//					rp_offset_pair.second,
+	//					PFIELD_PHYS_NO_BORDER_RECT2);
+	//				temp_rp_pair_vec.at(some_side).first
+	//					= std::move(temp_rp);
+	//				if (do_dbg_print) {
+	//					dbg_print_after();
+	//				}
+	//			} else {
+	//				if (do_dbg_print) {
+	//					printout(dbg_str, " 1\n");
+	//					dbg_print_before();
+	//				}
+	//				temp_rp.rect
+	//					= item.rect.build_in_grid_inflated_lim
+	//					(item_offset_pair.first,
+	//					item_offset_pair.second,
+	//					PFIELD_PHYS_NO_BORDER_RECT2);
+	//				temp_rp_pair_vec.at(some_side).second
+	//					= std::move(temp_rp);
+	//				if (do_dbg_print) {
+	//					dbg_print_after();
+	//				}
+	//			}
+	//		}
+	//	};
+	//	gen_temp_rp_pair_vec_elem
+	//		(_ls_and_rs_hit(to_push_rp, item), GEN_SIDE_L,
+	//		std::pair(IntVec2{1, 0}, IntVec2()),
+	//		std::pair(IntVec2(), IntVec2{1, 0}),
+	//		"ls", false);
+	//	gen_temp_rp_pair_vec_elem
+	//		(_ts_and_bs_hit(to_push_rp, item), GEN_SIDE_T,
+	//		std::pair(IntVec2{0, 1}, IntVec2()),
+	//		std::pair(IntVec2(), IntVec2{0, 1}),
+	//		"ts", false);
+	//	gen_temp_rp_pair_vec_elem
+	//		(_ls_and_rs_hit(item, to_push_rp), GEN_SIDE_R,
+	//		std::pair(IntVec2(), IntVec2{1, 0}),
+	//		std::pair(IntVec2{1, 0}, IntVec2()),
+	//		"rs", false);
+	//	//if (_ts_and_bs_hit(item, to_push_rp)) {
+	//	//	printout("to_push_rp.bs intersects item.ts:\n",
+	//	//		"\t_rp{", to_push_rp.rect.tl_corner(), " ",
+	//	//			to_push_rp.rect.br_corner(), "} ",
+	//	//		"item{", item.rect.tl_corner(), " ",
+	//	//			item.rect.br_corner(), "}\n",
+	//	//		"\t_rp_bs{", _rp_bs_r2().tl_corner(), " ",
+	//	//			_rp_bs_r2().br_corner(), "} ",
+	//	//		"item_ts{", _ts_r2(item).tl_corner(), " ",
+	//	//			_ts_r2(item).br_corner(), "}",
+	//	//		"\n");
+	//	//}
+	//	gen_temp_rp_pair_vec_elem
+	//		(_ts_and_bs_hit(item, to_push_rp), GEN_SIDE_B,
+	//		std::pair(IntVec2(), IntVec2{0, 1}),
+	//		std::pair(IntVec2{0, 1}, IntVec2()),
+	//		"bs", false);
+	//	if (
+	//		const i32 check_first_extend_side=engine->layout_rand<i32>
+	//			(MIN_GEN_SIDE, MAX_GEN_SIDE);
+	//		true
+	//	) {
+	//		i32
+	//			i
+	//				//= MIN_GEN_SIDE;
+	//				= std::abs(MAX_GEN_SIDE - MIN_GEN_SIDE),
+	//			extend_side = check_first_extend_side;
 
-				if (temp_rp_pair.first) {
-					temp_rp = &(*temp_rp_pair.first);
+	//		auto end_loop = [&i, &extend_side]() -> void {
+	//			//++i;
+	//			--i;
+	//			++extend_side;
+	//			if (extend_side > MAX_GEN_SIDE) {
+	//				extend_side = MIN_GEN_SIDE;
+	//			}
+	//		};
+	//		//while (i <= MAX_GEN_SIDE)
+	//		while (i >= 0) {
+	//			auto& temp_rp_pair
+	//				= temp_rp_pair_vec.at(extend_side);
+	//			RoomPath
+	//				* temp_rp = nullptr,
+	//				* to_edit_rp = nullptr,
+	//				* to_keep_rp = nullptr;
+	//			std::string dbg_str = "";
 
-					if (any_intersect(*temp_rp, std::nullopt)) {
-						printout("first testificate 0 \n");
-						//return std::nullopt;
-						//end_loop();
-						//continue;
-					} else {
-						printout("first testificate 1\n");
-						dbg_str = "to_push_rp";
-						to_edit_rp = &to_push_rp;
-						to_keep_rp = &item;
-						printout("Debug: **MAYBE** doing extension: ",
-							dbg_str,
-							"{", to_edit_rp->rect.tl_corner(), " ",
-								to_edit_rp->rect.br_corner(), "} ",
-							"temp_rp",
-							"{", temp_rp->rect.tl_corner(), " ",
-								temp_rp->rect.br_corner(), "}",
-							"\n");
-					}
-				} else if (temp_rp_pair.second) {
-					temp_rp = &(*temp_rp_pair.second);
+	//			if (temp_rp_pair.first) {
+	//				temp_rp = &(*temp_rp_pair.first);
 
-					if (any_intersect(*temp_rp, item_index)) {
-						printout("second testificate 0\n");
-						//return std::nullopt;
-						//end_loop();
-						//continue;
-					} else {
-						printout("second testificate 1\n");
-						dbg_str = "item";
-						to_edit_rp = &item;
-						to_keep_rp = &to_push_rp;
-					}
-				}
-				//else {
-				//	printout("testificate\n");
-				//}
-				if (temp_rp && to_edit_rp && to_keep_rp
-					&& !(
-						(to_edit_rp->is_horiz_path()
-							&& !temp_rp->is_horiz_path())
-						|| (to_edit_rp->is_vert_path()
-							&& !temp_rp->is_vert_path())
-					) //&& !_path_sides_hit_wrongly(*temp_rp, *to_edit_rp)
-					&& temp_rp->is_valid()
-					&& !any_path_sides_hit_wrongly(*temp_rp,
-						((dbg_str == "item")
-							? std::optional<size_t>(item_index)
-							: std::nullopt))
-					&& !_path_sides_hit_wrongly(*temp_rp, *to_keep_rp)
-					//&& !any_path_sides_hit_wrongly(*to_edit_rp,
-					//	((dbg_str == "item")
-					//		? std::optional<size_t>(item_index)
-					//		: std::nullopt))
-				) {
-					printout("Debug: doing extension: ",
-						"dbg_str{\"", dbg_str, "\"} ",
-						"to_push_rp{", to_push_rp.rect.tl_corner(), " ",
-							to_push_rp.rect.br_corner(), "} ",
-						"item{", item.rect.tl_corner(), " ",
-							item.rect.br_corner(), "} ",
-						"temp_rp",
-						"{", temp_rp->rect.tl_corner(), " ",
-							temp_rp->rect.br_corner(), "}",
-						"\n");
-					to_edit_rp->rect = temp_rp->rect;
-				}
-				end_loop();
-			}
-			//if (i > MAX_GEN_SIDE) {
-			//	printout("testificate\n");
-			//	return std::nullopt;
-			//}
-		}
+	//				if (any_intersect(*temp_rp, std::nullopt)) {
+	//					printout("first testificate 0 \n");
+	//					//return std::nullopt;
+	//					//end_loop();
+	//					//continue;
+	//				} else {
+	//					printout("first testificate 1\n");
+	//					dbg_str = "to_push_rp";
+	//					to_edit_rp = &to_push_rp;
+	//					to_keep_rp = &item;
+	//					//printout("Debug: **MAYBE** doing extension: ",
+	//					//	dbg_str,
+	//					//	"{", to_edit_rp->rect.tl_corner(), " ",
+	//					//		to_edit_rp->rect.br_corner(), "} ",
+	//					//	"temp_rp",
+	//					//	"{", temp_rp->rect.tl_corner(), " ",
+	//					//		temp_rp->rect.br_corner(), "}",
+	//					//	"\n");
+	//				}
+	//			} else if (temp_rp_pair.second) {
+	//				temp_rp = &(*temp_rp_pair.second);
 
-		//maybe_extend_l();
-		//maybe_extend_t();
-		//maybe_extend_r();
-		//maybe_extend_b();
-	}
+	//				if (any_intersect(*temp_rp, item_index)) {
+	//					printout("second testificate 0\n");
+	//					//return std::nullopt;
+	//					//end_loop();
+	//					//continue;
+	//				} else {
+	//					printout("second testificate 1\n");
+	//					dbg_str = "item";
+	//					to_edit_rp = &item;
+	//					to_keep_rp = &to_push_rp;
+	//				}
+	//			}
+	//			//else {
+	//			//	printout("testificate\n");
+	//			//}
+	//			if (temp_rp && to_edit_rp && to_keep_rp
+	//				&& !(
+	//					(to_edit_rp->is_horiz_path()
+	//						&& !temp_rp->is_horiz_path())
+	//					|| (to_edit_rp->is_vert_path()
+	//						&& !temp_rp->is_vert_path())
+	//				) //&& !_path_sides_hit_wrongly(*temp_rp, *to_edit_rp)
+	//				&& temp_rp->is_valid()
+	//				&& !any_path_sides_hit_wrongly(*temp_rp,
+	//					((dbg_str == "item")
+	//						? std::optional<size_t>(item_index)
+	//						: std::nullopt))
+	//				&& !_path_sides_hit_wrongly(*temp_rp, *to_keep_rp)
+	//				//&& !any_path_sides_hit_wrongly(*to_edit_rp,
+	//				//	((dbg_str == "item")
+	//				//		? std::optional<size_t>(item_index)
+	//				//		: std::nullopt))
+	//			) {
+	//				printout("Debug: doing extension: ",
+	//					"dbg_str{\"", dbg_str, "\"} ",
+	//					"to_push_rp{", to_push_rp.rect.tl_corner(), " ",
+	//						to_push_rp.rect.br_corner(), "} ",
+	//					"item{", item.rect.tl_corner(), " ",
+	//						item.rect.br_corner(), "} ",
+	//					"temp_rp",
+	//					"{", temp_rp->rect.tl_corner(), " ",
+	//						temp_rp->rect.br_corner(), "}",
+	//					"\n");
+	//				to_edit_rp->rect = temp_rp->rect;
+	//			}
+	//			end_loop();
+	//		}
+	//		//if (i > MAX_GEN_SIDE) {
+	//		//	printout("testificate\n");
+	//		//	return std::nullopt;
+	//		//}
+	//	}
+
+	//	//maybe_extend_l();
+	//	//maybe_extend_t();
+	//	//maybe_extend_r();
+	//	//maybe_extend_b();
+	//}
 	//--------
 	//to_push_rp.conn_index_set.insert(conn_rp_index);
 	//conn_rp.conn_index_set.insert(_dungeon_gen->size());
@@ -746,6 +498,220 @@ auto GmDungeonGen::GenInnards::_inner_gen_post_first() const
 	return to_push_rp;
 	//--------
 };
+auto GmDungeonGen::GenInnards::_inner_gen_post_first_initial_rp()
+-> RoomPath {
+	//--------
+	RoomPath to_push_rp;
+
+	const i32
+		prev_rp_index = _dungeon_gen->size() - 1;
+	const RoomPath
+		& prev_rp = _dungeon_gen->at(prev_rp_index);
+	const i32 
+		prev_gen_type
+			= prev_rp.is_path() ? GEN_TYPE_PATH : GEN_TYPE_ROOM;
+
+	_gen_side = 0;
+	_gen_next_type = 0;
+	_gen_next_conn_rp_index = 0;
+	_gen_type = 0;
+	_conn_rp_index = 0;
+
+	//_gen_type = GEN_TYPE_ROOM,
+	//_gen_side = engine->layout_rand<i32>
+	//	(MIN_GEN_SIDE, MAX_GEN_SIDE),
+
+	_gen_next_type = (prev_gen_type == GEN_TYPE_PATH)
+		? engine->layout_rand<i32>
+			(GEN_PATH_TYPE.whole_min(), GEN_PATH_TYPE.whole_max())
+		: engine->layout_rand<i32>
+			(GEN_ROOM_TYPE.whole_min(), GEN_ROOM_TYPE.whole_max()),
+
+	_gen_type = 0;
+	if (
+		(
+			prev_gen_type == GEN_TYPE_PATH
+			&& _gen_next_type >= GEN_PATH_TYPE.same_min
+			&& _gen_next_type <= GEN_PATH_TYPE.same_max
+		) || (
+			prev_gen_type == GEN_TYPE_ROOM
+			&& _gen_next_type >= GEN_ROOM_TYPE.same_min
+			&& _gen_next_type <= GEN_ROOM_TYPE.same_max
+		)
+	) {
+		_gen_type = prev_gen_type;
+	} else { // if (switching types
+		do {
+			_gen_type = engine->layout_rand<i32>
+				(MIN_GEN_TYPE, MAX_GEN_TYPE);
+		} while (_gen_type == prev_gen_type);
+	}
+	//--------
+	_gen_next_conn_rp_index = (prev_gen_type == GEN_TYPE_PATH)
+		? engine->layout_rand<i32>
+			(GEN_PATH_INDEX.whole_min(), GEN_PATH_INDEX.whole_max())
+		: engine->layout_rand<i32>
+			(GEN_ROOM_INDEX.whole_min(), GEN_ROOM_INDEX.whole_max());
+
+	// Which `RoomPath` are we connecting to?
+	//printout("test 0\n");
+	//i32 _conn_rp_index;
+	if (
+		//_gen_next_conn_rp_index >= GEN_NEXT_SAME_MIN
+		//&& _gen_next_conn_rp_index <= GEN_NEXT_SAME_MAX
+		(
+			prev_gen_type == GEN_TYPE_PATH
+			&& _gen_next_conn_rp_index >= GEN_PATH_INDEX.same_min
+			&& _gen_next_conn_rp_index <= GEN_PATH_INDEX.same_max
+		) || (
+			prev_gen_type == GEN_TYPE_ROOM
+			&& _gen_next_conn_rp_index >= GEN_ROOM_INDEX.same_min
+			&& _gen_next_conn_rp_index <= GEN_ROOM_INDEX.same_max
+		)
+	) {
+		_conn_rp_index = prev_rp_index;
+	} else //if (
+		//_gen_next_conn_rp_index >= GEN_NEXT_DIFF_MIN
+		//&& _gen_next_conn_rp_index <= GEN_NEXT_DIFF_MAX
+	//)
+	{
+		if (prev_rp_index == 0) {
+			_conn_rp_index = prev_rp_index;
+		} else { // if (prev_rp_index > 0)
+			// Force a different room from the last one to be
+			// picked in this case
+			_conn_rp_index
+				= engine->layout_rand<i32>
+					(0, prev_rp_index - 1);
+		}
+	}
+	//if (prev_gen_type == GEN_TYPE_PATH) {
+	//} else { // if (prev_gen_type == GEN_TYPE_ROOM)
+	//}
+
+	//const i32 _conn_rp_index = engine->layout_rand<i32>(0, 0);
+	//printout("test 1\n");
+	const auto& conn_rp = _dungeon_gen->at(_conn_rp_index);
+
+	if (
+		//(conn_rp.is_path() && _gen_type == GEN_TYPE_PATH)
+		//|| (conn_rp.is_room() && _gen_type == GEN_TYPE_ROOM)
+		(conn_rp.is_path() && _gen_type == GEN_TYPE_PATH)
+		|| conn_rp.is_room()
+	) {
+		_gen_side = engine->layout_rand<i32>
+			(MIN_GEN_SIDE, MAX_GEN_SIDE);
+	} else {
+		if (conn_rp.is_horiz_path()) {
+			_gen_side
+				= engine->layout_rand<i32>(0, 1)
+				? GEN_SIDE_L
+				: GEN_SIDE_R;
+		} else { // if (conn_rp.is_vert_path())
+			_gen_side
+				= engine->layout_rand<i32>(0, 1)
+				? GEN_SIDE_T
+				: GEN_SIDE_B;
+		}
+		//else if (conn_rp.is_room()) {
+		//	_gen_side = engine->layout_rand<i32>
+		//		(MIN_GEN_SIDE, MAX_GEN_SIDE);
+		//}
+	}
+	//if (inner_gen_tries > GEN_RP_LIM_TRIES) {
+	//	printout("debug: failed dungeon generation ",
+	//		"(inner_gen_tries too large): ",
+	//		"\n");
+	//	return std::nullopt;
+	//}
+	//--------
+	i32
+		thickness = 0,
+		length = 0;
+	//IntVec2
+	//	temp_size_2d;
+
+	if (_gen_type == GEN_TYPE_PATH) {
+		thickness
+			//temp_size_2d.x
+			= PATH_THICKNESS,
+		length
+			//temp_size_2d.y
+			= engine->layout_rand<i32>
+				(PATH_MIN_LEN, PATH_MAX_LEN);
+	} else { // if (_gen_type == GEN_TYPE_ROOM)
+		const IntVec2 temp_vec2
+		//temp_size_2d = 
+			{.x=engine->layout_rand<i32>
+				(ROOM_MIN_SIZE_2D.x, ROOM_MAX_SIZE_2D.x),
+			.y=engine->layout_rand<i32>
+				(ROOM_MIN_SIZE_2D.y, ROOM_MAX_SIZE_2D.y)};
+		//thickness = engine->layout_rand<i32>
+		//	(ROOM_MIN_SIZE_2D.x, ROOM_MAX_SIZE_2D.x);
+		//length = engine->layout_rand<i32>
+		//	(ROOM_MIN_SIZE_2D.y, ROOM_MAX_SIZE_2D.y);
+
+		if (
+			_gen_side == GEN_SIDE_L
+			|| _gen_side == GEN_SIDE_R
+		) {
+			thickness = temp_vec2.y;
+			length = temp_vec2.x;
+		} else // if (
+			//_gen_side == GEN_SIDE_T || _gen_side == GEN_SIDE_B
+		//)
+		{
+			//thickness = engine->layout_rand<i32>
+			//	(ROOM_MIN_SIZE_2D.x, ROOM_MAX_SIZE_2D.x);
+			thickness = temp_vec2.x;
+			length = temp_vec2.y;
+		}
+	}
+	//--------
+	const i32
+		conn_rp_lx = conn_rp.rect.left_x(),
+		conn_rp_ty = conn_rp.rect.top_y(),
+		conn_rp_rx = conn_rp.rect.right_x(),
+		conn_rp_by = conn_rp.rect.bottom_y();
+
+	switch (_gen_side) {
+	//--------
+	case GEN_SIDE_L:
+		to_push_rp.rect.pos = IntVec2
+			{.x=conn_rp_lx,
+			.y=engine->layout_rand<i32>(conn_rp_ty, conn_rp_by)}
+				- IntVec2{length, 0};
+		to_push_rp.rect.size_2d = {.x=length, .y=thickness};
+		break;
+	case GEN_SIDE_T:
+		to_push_rp.rect.pos = IntVec2
+			{.x=engine->layout_rand<i32>(conn_rp_lx, conn_rp_rx),
+			.y=conn_rp_ty} - IntVec2{0, length};
+		to_push_rp.rect.size_2d = {.x=thickness, .y=length};
+		break;
+	case GEN_SIDE_R:
+		to_push_rp.rect.pos = IntVec2
+			{.x=conn_rp_rx,
+			.y=engine->layout_rand<i32>(conn_rp_ty, conn_rp_by)}
+				+ IntVec2{1, 0};
+		to_push_rp.rect.size_2d = {.x=length, .y=thickness};
+		break;
+	case GEN_SIDE_B:
+		to_push_rp.rect.pos = IntVec2
+			{.x=engine->layout_rand<i32>(conn_rp_lx, conn_rp_rx),
+			.y=conn_rp_by} + IntVec2{0, 1};
+		to_push_rp.rect.size_2d = {.x=thickness, .y=length};
+		break;
+	default:
+		throw std::runtime_error(sconcat
+			("game_engine::sys::GmDungeonGen::_gen_single_rp(): ",
+			"(1st) `switch (_gen_side)`: Eek! `", _gen_side,
+			"`"));
+		break;
+	//--------
+	}
+	return to_push_rp;
+}
 void GmDungeonGen::GenInnards::_do_push_back(RoomPath&& to_push_rp) const {
 	#ifdef DEBUG
 	printout("Generated this `RoomPath`: ",
@@ -783,13 +749,13 @@ bool GmDungeonGen::GenInnards::any_path_sides_hit_wrongly(
 		if (index && (*index == k)) {
 			continue;
 		} else if (_path_sides_hit_wrongly(to_check_rp, some_item)) {
-			printout("any_path_sides_hit_wrongly(): wrong hit found: ",
-				"to_check_rp{", to_check_rp.rect.tl_corner(), " ",
-					to_check_rp.rect.br_corner(), "} ",
-				"_dungeon_gen->at(", k, ")",
-					"{", some_item.rect.tl_corner(), " ",
-						some_item.rect.br_corner(), "}",
-					"\n");
+			//printout("any_path_sides_hit_wrongly(): wrong hit found: ",
+			//	"to_check_rp{", to_check_rp.rect.tl_corner(), " ",
+			//		to_check_rp.rect.br_corner(), "} ",
+			//	"_dungeon_gen->at(", k, ")",
+			//		"{", some_item.rect.tl_corner(), " ",
+			//			some_item.rect.br_corner(), "}",
+			//		"\n");
 			return true;
 		}
 	}
@@ -799,6 +765,7 @@ void GmDungeonGen::GenInnards::finalize(bool do_clear) const {
 	if (do_clear) {
 		//for (i=0; i<_dungeon_gen->size(); ++i)
 		for (auto& some_rp: *_dungeon_gen) {
+			//auto& some_rp = _dungeon_gen->at(i);
 			//_dungeon_gen->at(i).door_pt_set.clear();
 			some_rp.conn_index_set.clear();
 			some_rp.door_pt_set.clear();
@@ -821,15 +788,14 @@ void GmDungeonGen::GenInnards::finalize(bool do_clear) const {
 				& rp = _dungeon_gen->at(rp_index),
 				& item = _dungeon_gen->at(item_index);
 			//--------
-			if (!item.rect.intersect(rp.rect)) {
+			//if (!item.rect.intersect(rp.rect)) 
+			//{
 				//--------
 				// set `conn_index_set`
 				// We only need to check intersection with one of the two
 				// `RoomPath`'s sides
-				if (_ls_r2_hit(rp, item)
-					|| _ts_r2_hit(rp, item)
-					|| _rs_r2_hit(rp, item)
-					|| _bs_r2_hit(rp, item)) {
+				if (_ls_r2_hit(rp, item) || _ts_r2_hit(rp, item)
+					|| _rs_r2_hit(rp, item) || _bs_r2_hit(rp, item)) {
 					rp.conn_index_set.insert(item_index);
 					item.conn_index_set.insert(rp_index);
 				}
@@ -838,55 +804,103 @@ void GmDungeonGen::GenInnards::finalize(bool do_clear) const {
 				if (rp.is_room() && item.is_path()) {
 					if (item.is_horiz_path()) {
 						if (_ls_r2_hit(item, rp)) {
+							//printout("insert doors: ",
+							//	"_ls_r2_hit(item, rp)",
+							//	"\n");
 							item.door_pt_set.insert
-								(_ls_r2(rp).tl_corner()
-									+ IntVec2{1, 0});
+								(
+									//_ls_r2(rp).tl_corner()
+									//	+ IntVec2{1, 0}
+									item.rect.tl_corner()
+									//	- IntVec2{1, 0}
+								);
 						}
 						if (_rs_r2_hit(item, rp)) {
+							//printout("insert doors: ",
+							//	"_rs_r2_hit(item, rp)",
+							//	"\n");
 							item.door_pt_set.insert
-								(_rs_r2(rp).tr_corner()
-									- IntVec2{1, 0});
+								(
+									//_rs_r2(rp).tr_corner()
+									//	- IntVec2{1, 0}
+									item.rect.tr_corner()
+									//	+ IntVec2{1, 0}
+								);
 						}
 					} else { // if (item.is_vert_path())
 						if (_ts_r2_hit(item, rp)) {
 							item.door_pt_set.insert
-								(_ts_r2(rp).tl_corner()
-									+ IntVec2{0, 1});
+								(
+									//_ts_r2(rp).tl_corner()
+									//	+ IntVec2{0, 1}
+									item.rect.tl_corner()
+									//	- IntVec2{0, 1}
+								);
 						}
 						if (_bs_r2_hit(item, rp)) {
 							item.door_pt_set.insert
-								(_bs_r2(rp).bl_corner()
-									- IntVec2{0, 1});
+								(
+									//_bs_r2(rp).bl_corner()
+									//	- IntVec2{0, 1}
+									item.rect.bl_corner()
+									//	+ IntVec2{0, 1}
+								);
 						}
 					}
 				} else if (rp.is_path() && item.is_room()) {
 					if (rp.is_horiz_path()) {
 						if (_ls_r2_hit(rp, item)) {
 							rp.door_pt_set.insert
-								(_ls_r2(item).tl_corner()
-									+ IntVec2{1, 0});
+								(
+									//_ls_r2(item).tl_corner()
+									//	+ IntVec2{1, 0}
+									rp.rect.tl_corner()
+									//	- IntVec2{1, 0}
+								);
 						}
 						if (_rs_r2_hit(rp, item)) {
 							rp.door_pt_set.insert
-								(_rs_r2(item).tr_corner()
-									- IntVec2{1, 0});
+								(
+									//_rs_r2(item).tr_corner()
+									//	- IntVec2{1, 0}
+									rp.rect.tr_corner()
+									//	+ IntVec2{1, 0}
+								);
 						}
 					} else { // if (rp.is_vert_path())
 						if (_ts_r2_hit(rp, item)) {
 							rp.door_pt_set.insert
-								(_ts_r2(item).tl_corner()
-									+ IntVec2{0, 1});
+								(
+									//_ts_r2(item).tl_corner()
+									//	+ IntVec2{0, 1}
+									rp.rect.tl_corner()
+									//	- IntVec2{0, 1}
+								);
 						}
 						if (_bs_r2_hit(rp, item)) {
 							rp.door_pt_set.insert
-								(_bs_r2(item).bl_corner()
-									- IntVec2{0, 1});
+								(
+									//_bs_r2(item).bl_corner()
+									//	- IntVec2{0, 1}
+									rp.rect.bl_corner()
+									//	+ IntVec2{0, 1}
+								);
 						}
 					}
 				}
-			}
+			//}
 		}
 	}
+	//for (size_t i=0; i<_dungeon_gen->size(); ++i) {
+	//	const auto& some_rp = _dungeon_gen->at(i);
+	//	if (some_rp.door_pt_set.size() > 0) {
+	//		printout("door pts ", i, " [");
+	//		for (const auto& door_pt: some_rp.door_pt_set) {
+	//			printout(door_pt, " ");
+	//		}
+	//		printout("]\n");
+	//	}
+	//}
 }
 //--------
 } // namespace sys
