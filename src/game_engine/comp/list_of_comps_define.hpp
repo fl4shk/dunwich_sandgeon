@@ -15,14 +15,14 @@
 // You should have received a copy of the GNU General Public License along
 // with Dunwich Sandgeon.  If not, see <https://www.gnu.org/licenses/>.
 
-#ifndef src_game_engine_comp_list_of_comp_defines_hpp
-#define src_game_engine_comp_list_of_comp_defines_hpp
+#ifndef src_game_engine_comp_list_of_comps_define_hpp
+#define src_game_engine_comp_list_of_comps_define_hpp
 
-// src/game_engine/comp/list_of_comp_defines.hpp
+// src/game_engine/comp/list_of_comps_define.hpp
 
 #include "../../misc_includes.hpp"
 
-#define LIST_OF_COMP \
+#define LIST_OF_COMPS \
 	comp::Drawable, \
 	comp::Position, \
 	comp::BaseStats, \
@@ -42,4 +42,4 @@
 	comp::StatusTravelSpeed, \
 	comp::StatusActionSpeed
 
-#endif		// src_game_engine_comp_list_of_comp_defines_hpp
+#endif		// src_game_engine_comp_list_of_comps_define_hpp

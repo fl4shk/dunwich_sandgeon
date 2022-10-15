@@ -127,8 +127,9 @@ public:		// constants
 		// "TSF" is short for "to shrink from"
 		GEN_EXTEND_AMOUNT_TSF
 			//= 5,
-			= 7,
+			//= 7,
 			//= 8,
+			= 10,
 		GEN_PARALLEL_PATH_MIN_DIST
 			//= 3;
 			= 4;
@@ -268,14 +269,15 @@ private:		// types
 			GmDungeonGen* s_self, ecs::Engine* s_ecs_engine,
 			DungeonGen* s_dungeon_gen
 		)
-			: _self(s_self), _dungeon_gen(s_dungeon_gen) {
+			: _self(s_self), _ecs_engine(s_ecs_engine),
+			_dungeon_gen(s_dungeon_gen) {
 		}
 		bool gen_single_rp();
 	public:		// functions
 		std::optional<RoomPath> _inner_gen_post_first();
 	private:		// functions
 		//--------
-		std::optional<RoomPath> _inner_gen_post_first_initial_rp();
+		std::optional<RoomPath> _gen_initial_rp();
 		//--------
 	public:		// functions
 		void _do_push_back(RoomPath&& to_push_rp) const;

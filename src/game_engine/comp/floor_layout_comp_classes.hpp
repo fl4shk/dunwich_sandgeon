@@ -29,7 +29,13 @@ namespace dunwich_sandgeon {
 namespace game_engine {
 namespace comp {
 //--------
-#define LIST_OF_BG_TILE(X) \
+#define LIST_OF_ALT_TERRAIN_BG_TILES(X) \
+	X(Pit) \
+	X(Water) \
+	X(Lava) \
+	X(Spikes) \
+
+#define LIST_OF_BG_TILES(X) \
 	X(Blank) \
 	X(Error) \
 	\
@@ -39,9 +45,7 @@ namespace comp {
 	X(RoomFloor) \
 	X(PathFloor) \
 	/* X(Floor) */ \
-	X(Pit) \
-	X(Water) \
-	X(Spikes) \
+	LIST_OF_ALT_TERRAIN_BG_TILES(X) \
 	\
 	X(UpStairs) \
 	X(DownStairs) \
@@ -49,7 +53,7 @@ namespace comp {
 enum class BgTile: u8 {
 	#define X(name) \
 		name ,
-	LIST_OF_BG_TILE(X)
+	LIST_OF_BG_TILES(X)
 	#undef X
 };
 
@@ -60,7 +64,7 @@ static constexpr inline std::string bg_tile_str_map_at(BgTile bg_tile) {
 			case BgTile:: name : \
 				return "game_engine::comp::BgTile::" #name ; \
 				break;
-		LIST_OF_BG_TILE(X)
+		LIST_OF_BG_TILES(X)
 		#undef X
 
 		default:
@@ -136,8 +140,8 @@ public:		// constants
 			//= 8,
 			//= 10,
 			//= 13,
-			//= 15,
-			= 20,
+			= 15,
+			//= 20,
 		MAX_NUM_ROOM_PATHS
 			//= 15;
 			= 30;
@@ -200,11 +204,11 @@ public:		// types
 			X(conn_index_set, std::nullopt) \
 			X(door_pt_set, std::nullopt) \
 
-		IntRect2 rect{
-			.pos=IntVec2(),
-			.size_2d{.x=PATH_THICKNESS, .y=PATH_MIN_LEN}
-		};
+		IntRect2 rect
+			{.pos=IntVec2(),
+			.size_2d{.x=PATH_THICKNESS, .y=PATH_MIN_LEN}};
 		//i32 gen_side = 0;
+		std::map<IntVec2, BgTile> alt_terrain_pt_map;
 
 		std::set<i32> conn_index_set;
 

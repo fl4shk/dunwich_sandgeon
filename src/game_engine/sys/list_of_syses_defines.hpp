@@ -15,17 +15,17 @@
 // You should have received a copy of the GNU General Public License along
 // with Dunwich Sandgeon.  If not, see <https://www.gnu.org/licenses/>.
 
-#ifndef src_game_engine_sys_list_of_sys_defines_hpp
-#define src_game_engine_sys_list_of_sys_defines_hpp
+#ifndef src_game_engine_sys_list_of_syses_defines_hpp
+#define src_game_engine_sys_list_of_syses_defines_hpp
 
-// src/game_engine/sys/list_of_sys_defines.hpp
+// src/game_engine/sys/list_of_syses_defines.hpp
 
 #include "../../misc_includes.hpp"
 
-#define LIST_OF_SYS(X) \
+#define LIST_OF_SYSES(X) \
 	X(GmTitleScreen) \
 	X(GmOptions) \
 	X(GmFileSelect) \
 	X(GmDungeonGen) \
 
-#endif		// src_game_engine_sys_list_of_sys_defines_hpp
+#endif		// src_game_engine_sys_list_of_syses_defines_hpp

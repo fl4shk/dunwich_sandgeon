@@ -83,13 +83,27 @@ class Engine final {
 public:		// constants
 	// These are basement floors, going from B1F down to B25F
 	static constexpr i32
-		LOWEST_FLOOR
-			= 25,
-			//= 5,
-		HIGHEST_FLOOR
-			= 1,
+		//LOWEST_FLOOR
+		//	= 25,
+		//	//= 5,
+		//HIGHEST_FLOOR
+		//	= 1,
 		//LOWEST_FLOOR = 5, HIGHEST_FLOOR = 1,
-		NUM_FLOORS = std::abs(HIGHEST_FLOOR - LOWEST_FLOOR) + 1;
+
+		LEVEL_1_FLOOR_MIN = 1, HIGHEST_FLOOR = LEVEL_1_FLOOR_MIN,
+		LEVEL_1_FLOOR_MAX = 5,
+		LEVEL_2_FLOOR_MIN = 6,
+		LEVEL_2_FLOOR_MAX = 10,
+		LEVEL_3_FLOOR_MIN = 11,
+		LEVEL_3_FLOOR_MAX = 15,
+		LEVEL_4_FLOOR_MIN = 16,
+		LEVEL_4_FLOOR_MAX = 20,
+		LEVEL_5_FLOOR_MIN = 21,
+		LEVEL_5_FLOOR_MAX = 25, LOWEST_FLOOR = LEVEL_5_FLOOR_MAX,
+
+		NUM_FLOORS = std::abs(HIGHEST_FLOOR - LOWEST_FLOOR) + 1,
+		NUM_FLOORS_PER_LEVEL
+			= std::abs(LEVEL_1_FLOOR_MAX - LEVEL_1_FLOOR_MIN) + 1;
 
 	static const std::string
 		DEFAULT_SAVE_FILE_NAME,
@@ -137,7 +151,6 @@ public:		// types
 		// I needed to have a shorter variable name, so I changed the name
 		// of this variable and related functions
 		std::unordered_map<IntVec3, ecs::EntIdSet> pfield_ent_id_map;
-
 	private:		// variables
 		u64 _base_rng_seed = 0;
 		// The RNG to use for tasks other than initial floor layout
@@ -434,6 +447,28 @@ public:		// functions
 	template<typename T=RngSeedT>
 	inline auto layout_rand(const T& lim_0, const T& lim_1) {
 		return rng_run<T>(layout_rng(), lim_0, lim_1);
+	}
+	template<typename T=RngSeedT>
+	inline auto layout_noise(
+		const T& lim_0, const T& lim_1, const IntVec2& pos
+	) {
+		auto temp_layout_rand = [this]() -> double {
+			// This assumes `float` has a mantissa of at least 20-bit,
+			// which it probably will be.
+			// This is a little conservative considering that IEEE 754
+			// floats have a larger mantissa than is used here.
+			return double(layout_rand<i32>
+				(0, (i32(1) << i32(20)) - i32(1)));
+		};
+		const double
+			raw_noise = SimplexNoise::noise
+				(float(double(pos.x) + temp_layout_rand(),
+				float(double(pos.y) + temp_layout_rand()))),
+			// (raw_noise + 1.0) is used because 
+			noise = (((raw_noise + double(1.0)) / double(2.0))
+				* std::abs(double(lim_0) - double(lim_1)))
+				+ math::min_va(double(lim_0), double(lim_1));
+		return T(noise);
 	}
 	//template<typename T=RngSeedT>
 	//inline auto layout_rand_scaled(const T& scale) {

@@ -94,9 +94,13 @@ void GmDungeonGen::tick(ecs::Engine* ecs_engine) {
 			//	engine->log("Debug: We're already done generating\n");
 			//}
 		}
+		//if (dungeon_gen->size() >= 2) {
+		//	clear_dungeon_gen(ecs_engine);
+		//}
 
 		//dungeon_gen->draw(bg_tile_map);
 		//bg_tile_map->draw();
+		engine->pfield_window.clear();
 		dungeon_gen->draw();
 		engine->screen_window.clear();
 
@@ -201,7 +205,7 @@ auto GmDungeonGen::GenInnards::_inner_gen_post_first()
 	//--------
 	//RoomPath _to_push_rp;
 
-	if (auto temp=_inner_gen_post_first_initial_rp(); temp) {
+	if (auto temp=_gen_initial_rp(); temp) {
 		_to_push_rp = std::move(*temp);
 	} else {
 		return std::nullopt;
@@ -550,7 +554,7 @@ auto GmDungeonGen::GenInnards::_inner_gen_post_first()
 	return _to_push_rp;
 	//--------
 };
-auto GmDungeonGen::GenInnards::_inner_gen_post_first_initial_rp()
+auto GmDungeonGen::GenInnards::_gen_initial_rp()
 -> std::optional<RoomPath> {
 	//--------
 	RoomPath to_push_rp;

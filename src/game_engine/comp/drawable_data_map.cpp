@@ -37,8 +37,6 @@ auto drawable_data_map()
 		{Window::BLANK_KIND_STR,
 			{.c=' ', .color_pair=FontColor::Black,
 			.gs_color_pair=FontColor::Black}},
-
-		// ' ', 32 (again)
 		{bg_tile_str_map_at(BgTile::Blank),
 			{.c=' ', .color_pair=FontColor::Black,
 			.gs_color_pair=FontColor::Black}},
@@ -128,6 +126,9 @@ auto drawable_data_map()
 		{bg_tile_str_map_at(BgTile::Water),
 			{.c='~', .color_pair=FontColor::Blue,
 			.gs_color_pair=FontColor::White}},
+		{bg_tile_str_map_at(BgTile::Lava),
+			{.c='~', .color_pair=FontColor::Red,
+			.gs_color_pair={FontColor::Black, FontColor::White}}},
 	};
 
 	return DRAWABLE_DATA_MAP;

@@ -17,7 +17,7 @@
 
 #include "engine_class.hpp"
 
-#include "comp/list_of_comp_defines.hpp"
+#include "comp/list_of_comps_define.hpp"
 
 #include "comp/general_comp_classes.hpp"
 #include "comp/player_comp_class.hpp"
@@ -26,7 +26,7 @@
 #include "comp/status_comp_classes.hpp"
 //#include "comp/ui_etc_comp_classes.hpp"
 
-#include "sys/list_of_sys_defines.hpp"
+#include "sys/list_of_syses_defines.hpp"
 
 #include "sys/gm_title_screen_class.hpp"
 #include "sys/gm_options_class.hpp"
@@ -207,13 +207,13 @@ Engine::Engine(i32 s_argc, char** s_argv, bool do_create_or_load)
 	//}
 
 	ecs_engine.init_comp_deserialize<
-		//EVAL(DEFER(MAP_INDIRECT)()(ID, COMMA, LIST_OF_COMP))
-		LIST_OF_COMP
+		//EVAL(DEFER(MAP_INDIRECT)()(ID, COMMA, LIST_OF_COMPS))
+		LIST_OF_COMPS
 	>();
 
 	//ecs_engine.init_sys_deserialize<
-	//	//EVAL(DEFER(MAP_INDIRECT)()(ID, COMMA, LIST_OF_SYS))
-	//	LIST_OF_SYS
+	//	//EVAL(DEFER(MAP_INDIRECT)()(ID, COMMA, LIST_OF_SYSES))
+	//	LIST_OF_SYSES
 	//>();
 
 	//yes_no_menu

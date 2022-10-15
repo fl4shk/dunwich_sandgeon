@@ -12,7 +12,8 @@ To build the game, you will need a C++ compiler that supports C++20.
 For now, this game needs SDL2 and the C++ version of PCG Random.
 
 This game also needs [this](https://github.com/SRombauts/SimplexNoise/)
-implementation of Simplex Noise.
+implementation of Simplex Noise, but that is included in
+`./submodules/SimplexNoise`
 
 When downloading the game, make sure you recursively grab the submodules of
 this git repo, as follows:
