@@ -156,10 +156,10 @@ public:		// constants
 			.diff_max=99
 			};
 	//--------
-	//static constexpr GenYesNo
-	//	GEN_YN_CONNECT
-	//		{.no_max=0,
-	//		.yes_max=99};
+	static constexpr GenYesNo
+		GEN_YN_CONNECT
+			{.no_max=65,
+			.yes_max=99};
 	//--------
 	static constexpr i32
 		// This is the number of tries to attempt room/path generation
@@ -287,15 +287,14 @@ private:		// types
 	private:		// functions
 		//--------
 		bool _shrink(
+			bool was_horiz_path, bool was_vert_path,
 			RoomPath& some_rp, //const std::optional<size_t>& index,
 			const std::function<bool(
 				const RoomPath&//, const std::optional<size_t>&
 			)>& extra_test_func
 		) const;
 		//--------
-		inline bool _rp_is_connected(
-			const RoomPath& some_rp
-		) const {
+		inline bool _rp_is_connected(const RoomPath& some_rp) const {
 			const RoomPath& conn_rp = _dungeon_gen->at(_conn_rp_index);
 			return (
 				(_gen_side == GEN_SIDE_L
