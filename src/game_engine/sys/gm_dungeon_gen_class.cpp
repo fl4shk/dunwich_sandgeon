@@ -62,7 +62,7 @@ void GmDungeonGen::_init(ecs::Engine* ecs_engine) {
 			func_name
 		);
 
-		printout("game_engine::sys::GmDungeonGen::_init(): ",
+		engine->log("game_engine::sys::GmDungeonGen::_init(): ",
 			*_dungeon_gen_id, "\n");
 	}
 }
@@ -83,15 +83,15 @@ void GmDungeonGen::tick(ecs::Engine* ecs_engine) {
 
 		if (engine->key_status.key_just_went_down(KeyKind::DownR)) {
 			//if (dungeon_gen->size() == 0) {
-			//	printout("Debug: starting dungeon generation.\n");
+			//	engine->log("Debug: starting dungeon generation.\n");
 			//}
-			GenInnards innards(this, dungeon_gen);
+			GenInnards innards(this, ecs_engine, dungeon_gen);
 			innards.gen_single_rp();
 			innards.finalize(
 				//true
 			);
 			//else {
-			//	printout("Debug: We're already done generating\n");
+			//	engine->log("Debug: We're already done generating\n");
 			//}
 		}
 
@@ -123,7 +123,7 @@ bool GmDungeonGen::GenInnards::gen_single_rp() {
 		for (;;) {
 			RoomPath to_push_rp;
 			//--------
-			//printout("testificate 2\n");
+			//engine->log("testificate 2\n");
 			//--------
 			to_push_rp.rect.pos.x = engine->layout_rand<i32>
 				(PFIELD_PHYS_RECT2.left_x(),
@@ -143,72 +143,55 @@ bool GmDungeonGen::GenInnards::gen_single_rp() {
 			}
 			//--------
 		}
-
-		//auto dbg_sconcat
-		//	= [](const std::string& name, i32 some_min, i32 some_max)
-		//-> std::string {
-		//	return sconcat("`", name, "`: ",
-		//		strjoin2(" ",
-		//			some_min, some_max, some_max - some_min + i32(1)
-		//		),
-		//		"\n"
-		//	);
-		//};
-		//printout("GmDungeonGen::gen_single_rp(): Debug: \n",
-		//	dbg_sconcat("GEN_TYPE", MIN_GEN_TYPE, MAX_GEN_TYPE), "\n",
-		//	dbg_sconcat("GEN_SIDE", MIN_GEN_SIDE, MAX_GEN_SIDE), "\n",
-		//	dbg_sconcat("GEN_NEXT", MIN_GEN_NEXT, MAX_GEN_NEXT), "\n"
-		//);
 	}
 	//else if (_dungeon_gen->size() < MAX_NUM_ROOM_PATHS)
 	else if (i32(_dungeon_gen->size()) < _self->_attempted_num_rp) {
-		RoomPath to_push_rp;
-		if (_dungeon_gen->size() < MIN_NUM_ROOM_PATHS) {
-			for (;;) {
-				if (auto opt_rp=_inner_gen_post_first(); opt_rp) {
-					//printout("`gen_single_rp()` initial gen: ",
-					//	any_intersect_find_first(*opt_rp, std::nullopt), ": ",
-					//	"{", opt_rp->rect.tl_corner(), " ",
-					//	opt_rp->rect.br_corner(), "}",
-					//	"\n");
-					_do_push_back(std::move(*opt_rp));
-					break;
-				}
-			}
-		} else if (!_self->_stop_gen_early) {
+		//RoomPath to_push_rp;
+		//if (_dungeon_gen->size() < MIN_NUM_ROOM_PATHS) {
+		//	for (;;) {
+		//		if (auto opt_rp=_inner_gen_post_first(); opt_rp) {
+		//			_do_push_back(std::move(*opt_rp));
+		//			break;
+		//		}
+		//	}
+		//} else if (!_self->_stop_gen_early) {
 			i32 tries = 0;
 			for (; tries<GEN_RP_LIM_TRIES; ++tries) {
+				_self->_stop_gen_early = true;
 				if (auto opt_rp=_inner_gen_post_first(); opt_rp) {
-					//printout("`gen_single_rp()` !_self->_stop_gen_early: ",
-					//	tries, ": ",
-					//	any_intersect_find_first(*opt_rp, std::nullopt), ": ",
-					//	"{", opt_rp->rect.tl_corner(), " ",
-					//	opt_rp->rect.br_corner(), "}",
-					//	"\n");
 					_do_push_back(std::move(*opt_rp));
+					_self->_stop_gen_early = false;
 					break;
 				}
 			}
-			// If we failed to find a room that fits in the playfield, we
-			// stop floor generation early, and don't try any more for this
-			// floor.  This is to prevent infinite loops in the dungeon
-			// generation.
-			_self->_stop_gen_early = tries >= GEN_RP_LIM_TRIES;
+			//_self->_stop_gen_early = tries >= GEN_RP_LIM_TRIES;
 			if (_self->_stop_gen_early) {
-				printout("stopping room generation early: ",
-					_dungeon_gen->size(), " ", _self->_attempted_num_rp,
-					"\n");
+				if (_dungeon_gen->size() < MIN_NUM_ROOM_PATHS) {
+					engine->log
+						("Debug: `game_engine::sys::gen_single_rp()`: ",
+						"Redoing generation\n");
+					_self->clear_dungeon_gen(_ecs_engine);
+				} else {
+					// If we failed to find a room that fits in the
+					// playfield, we stop floor generation early, and don't
+					// try any more for this floor.  This is to prevent
+					// infinite loops in the dungeon generation.
+					engine->log
+						("stopping room generation early: ",
+						_dungeon_gen->size(), " ",
+						_self->_attempted_num_rp, "\n");
+				}
 			}
 			//else {
 			//}
-		}
+		//}
 	}
 	const bool old_done_generating = _self->_done_generating;
 	_self->_done_generating
 		= _self->_stop_gen_early
 			|| i32(_dungeon_gen->size()) >= _self->_attempted_num_rp;
 	if (!old_done_generating && _self->_done_generating) {
-		printout("Just finished generating the dungeon.\n");
+		engine->log("Just finished generating the dungeon.\n");
 	}
 
 	return _self->_done_generating;
@@ -271,7 +254,7 @@ auto GmDungeonGen::GenInnards::_inner_gen_post_first()
 
 
 	//if (any_intersect_find_first(_to_push_rp, std::nullopt)) {
-	//	//printout("Debug: found early intersect!\n");
+	//	//engine->log("Debug: found early intersect!\n");
 	//	return std::nullopt;
 	//}
 	//if (any_path_sides_hit_wrongly_find_first(_to_push_rp, std::nullopt)) {
@@ -390,7 +373,7 @@ auto GmDungeonGen::GenInnards::_inner_gen_post_first()
 		//		std::string dbg_str = "";
 
 		//		auto show_debug_maybe = [&]() -> void {
-		//			printout("Debug: **MAYBE** doing extension: ",
+		//			engine->log("Debug: **MAYBE** doing extension: ",
 		//				dbg_str,
 		//				"{", to_edit_rp->rect.tl_corner(), " ",
 		//					to_edit_rp->rect.br_corner(), "} ",
@@ -404,12 +387,12 @@ auto GmDungeonGen::GenInnards::_inner_gen_post_first()
 		//			temp_rp = &(*temp_rect_pair.first);
 
 		//			if (any_intersect_find_first(*temp_rp, std::nullopt)) {
-		//				printout("first testificate 0 \n");
+		//				engine->log("first testificate 0 \n");
 		//				//return std::nullopt;
 		//				//end_loop();
 		//				//continue;
 		//			} else {
-		//				printout("first testificate 1\n");
+		//				engine->log("first testificate 1\n");
 		//				dbg_str = "_to_push_rp";
 		//				to_edit_rp = &_to_push_rp;
 		//				to_keep_rp = &item;
@@ -419,12 +402,12 @@ auto GmDungeonGen::GenInnards::_inner_gen_post_first()
 		//			temp_rp = &(*temp_rect_pair.second);
 
 		//			if (any_intersect_find_first(*temp_rp, item_index)) {
-		//				printout("second testificate 0\n");
+		//				engine->log("second testificate 0\n");
 		//				//return std::nullopt;
 		//				//end_loop();
 		//				//continue;
 		//			} else {
-		//				printout("second testificate 1\n");
+		//				engine->log("second testificate 1\n");
 		//				dbg_str = "item";
 		//				to_edit_rp = &item;
 		//				to_keep_rp = &_to_push_rp;
@@ -432,7 +415,7 @@ auto GmDungeonGen::GenInnards::_inner_gen_post_first()
 		//			}
 		//		}
 		//		//else {
-		//		//	printout("testificate\n");
+		//		//	engine->log("testificate\n");
 		//		//}
 		//		if (temp_rp && to_edit_rp && to_keep_rp
 		//			&& !(
@@ -452,7 +435,7 @@ auto GmDungeonGen::GenInnards::_inner_gen_post_first()
 		//			//		? std::optional<size_t>(item_index)
 		//			//		: std::nullopt))
 		//		) {
-		//			printout("Debug: doing extension: ",
+		//			engine->log("Debug: doing extension: ",
 		//				"dbg_str{\"", dbg_str, "\"} ",
 		//				"_to_push_rp{", _to_push_rp.rect.tl_corner(), " ",
 		//					_to_push_rp.rect.br_corner(), "} ",
@@ -467,7 +450,7 @@ auto GmDungeonGen::GenInnards::_inner_gen_post_first()
 		//		end_loop();
 		//	}
 		//	//if (i > MAX_GEN_SIDE) {
-		//	//	printout("testificate\n");
+		//	//	engine->log("testificate\n");
 		//	//	return std::nullopt;
 		//	//}
 		//}
@@ -562,7 +545,7 @@ auto GmDungeonGen::GenInnards::_inner_gen_post_first()
 	//conn_rp.conn_index_set.insert(_dungeon_gen->size());
 	//--------
 	//--------
-	//printout("`gen_type`: ", gen_type, "\n");
+	//engine->log("`gen_type`: ", gen_type, "\n");
 
 	return _to_push_rp;
 	//--------
@@ -645,45 +628,43 @@ auto GmDungeonGen::GenInnards::_inner_gen_post_first_initial_rp()
 		} else { // if (_gen_type == GEN_TYPE_ROOM)
 			index_stuff(GEN_NEXT_PATH_INDEX_NOW_ROOM);
 		}
+		//index_stuff(GEN_NEXT_PATH_INDEX);
 	} else { // if (prev_gen_type == GEN_TYPE_ROOM)
 		index_stuff(GEN_NEXT_ROOM_INDEX);
 	}
 	//--------
 	//const i32 _conn_rp_index = engine->layout_rand<i32>(0, 0);
-	//printout("test 1\n");
+	//engine->log("test 1\n");
 	const auto& conn_rp = _dungeon_gen->at(_conn_rp_index);
 
 	if (
 		//(conn_rp.is_path() && _gen_type == GEN_TYPE_PATH)
 		//|| (conn_rp.is_room() && _gen_type == GEN_TYPE_ROOM)
-		(conn_rp.is_path() && _gen_type == GEN_TYPE_PATH)
-		|| conn_rp.is_room()
+
+		//(conn_rp.is_path() && _gen_type == GEN_TYPE_PATH)
+		//|| conn_rp.is_room()
+		conn_rp.is_path()
 	) {
+		if (_gen_type == GEN_TYPE_PATH) {
+			_gen_side = engine->layout_rand<i32>
+				(MIN_GEN_SIDE, MAX_GEN_SIDE);
+		} else { // if (_gen_type == GEN_TYPE_ROOM)
+			if (conn_rp.is_horiz_path()) {
+				_gen_side
+					= engine->layout_rand<i32>(0, 1)
+					? GEN_SIDE_L
+					: GEN_SIDE_R;
+			} else { // if (conn_rp.is_vert_path())
+				_gen_side
+					= engine->layout_rand<i32>(0, 1)
+					? GEN_SIDE_T
+					: GEN_SIDE_B;
+			}
+		}
+	} else { // if (conn_rp.is_room())
 		_gen_side = engine->layout_rand<i32>
 			(MIN_GEN_SIDE, MAX_GEN_SIDE);
-	} else {
-		if (conn_rp.is_horiz_path()) {
-			_gen_side
-				= engine->layout_rand<i32>(0, 1)
-				? GEN_SIDE_L
-				: GEN_SIDE_R;
-		} else { // if (conn_rp.is_vert_path())
-			_gen_side
-				= engine->layout_rand<i32>(0, 1)
-				? GEN_SIDE_T
-				: GEN_SIDE_B;
-		}
-		//else if (conn_rp.is_room()) {
-		//	_gen_side = engine->layout_rand<i32>
-		//		(MIN_GEN_SIDE, MAX_GEN_SIDE);
-		//}
 	}
-	//if (inner_gen_tries > GEN_RP_LIM_TRIES) {
-	//	printout("debug: failed dungeon generation ",
-	//		"(inner_gen_tries too large): ",
-	//		"\n");
-	//	return std::nullopt;
-	//}
 	//--------
 	i32
 		thickness = 0,
@@ -711,10 +692,7 @@ auto GmDungeonGen::GenInnards::_inner_gen_post_first_initial_rp()
 		//length = engine->layout_rand<i32>
 		//	(ROOM_MIN_SIZE_2D.y, ROOM_MAX_SIZE_2D.y);
 
-		if (
-			_gen_side == GEN_SIDE_L
-			|| _gen_side == GEN_SIDE_R
-		) {
+		if (_gen_side == GEN_SIDE_L || _gen_side == GEN_SIDE_R) {
 			thickness = temp_vec2.y;
 			length = temp_vec2.x;
 		} else // if (
@@ -774,7 +752,7 @@ auto GmDungeonGen::GenInnards::_inner_gen_post_first_initial_rp()
 }
 void GmDungeonGen::GenInnards::_do_push_back(RoomPath&& to_push_rp) const {
 	#ifdef DEBUG
-	printout("Generated this `RoomPath`: ",
+	engine->log("Debug: Generated this `RoomPath`: ",
 		//to_push_rp.rect, "; ",
 		"to_push_rp.tl:", to_push_rp.rect.tl_corner(), " ",
 		"to_push_rp.br:", to_push_rp.rect.br_corner(), "; ",
@@ -862,7 +840,7 @@ auto GmDungeonGen::GenInnards::any_path_sides_hit_wrongly_find_first(
 	//	if (index && (*index == k)) {
 	//		continue;
 	//	} else if (_path_sides_hit_wrongly(to_check_rp, some_item)) {
-	//		//printout("any_path_sides_hit_wrongly_find_first(): ",
+	//		//engine->log("any_path_sides_hit_wrongly_find_first(): ",
 	//		//	"wrong hit found: ",
 	//		//	"to_check_rp{", to_check_rp.rect.tl_corner(), " ",
 	//		//		to_check_rp.rect.br_corner(), "} ",
@@ -999,11 +977,11 @@ void GmDungeonGen::GenInnards::finalize(
 	//for (size_t i=0; i<_dungeon_gen->size(); ++i) {
 	//	const auto& some_rp = _dungeon_gen->at(i);
 	//	if (some_rp.door_pt_set.size() > 0) {
-	//		printout("door pts ", i, " [");
+	//		engine->log("door pts ", i, " [");
 	//		for (const auto& door_pt: some_rp.door_pt_set) {
-	//			printout(door_pt, " ");
+	//			engine->log(door_pt, " ");
 	//		}
-	//		printout("]\n");
+	//		engine->log("]\n");
 	//	}
 	//}
 }

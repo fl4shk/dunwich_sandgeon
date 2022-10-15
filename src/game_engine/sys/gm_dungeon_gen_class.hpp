@@ -117,12 +117,17 @@ public:		// constants
 		MAX_GEN_SHRINK_NUM_ATTEMPTS_PATH = PATH_MAX_LEN,
 
 		MIN_GEN_SHRINK_NUM_ATTEMPTS_ROOM
-			= math::max_va(ROOM_MIN_SIZE_2D.x, ROOM_MIN_SIZE_2D.y),
+			= (math::max_va(ROOM_MIN_SIZE_2D.x, ROOM_MIN_SIZE_2D.y)
+				+ math::max_va(ROOM_MAX_SIZE_2D.x, ROOM_MAX_SIZE_2D.y))
+				/ 2,
 		MAX_GEN_SHRINK_NUM_ATTEMPTS_ROOM
 			= math::max_va(ROOM_MAX_SIZE_2D.x, ROOM_MAX_SIZE_2D.y),
 		//--------
 		// "TSF" is short for "to shrink from"
-		GEN_EXTEND_AMOUNT_TSF = 5,
+		GEN_EXTEND_AMOUNT_TSF
+			//= 5,
+			= 7,
+			//= 8,
 		GEN_PARALLEL_PATH_MIN_DIST
 			//= 3;
 			= 4;
@@ -134,36 +139,62 @@ public:		// constants
 		//GEN_NEXT_DIFFERENT_MIN = 3,
 		//GEN_NEXT_DIFFERENT_MAX = 9, MAX_GEN_NEXT = GEN_NEXT_DIFFERENT_MAX,
 		GEN_NEXT_ROOM_TYPE
-			{.same_max=0,
-			.diff_max=9},
+			{
+			//.same_max=0,
+			//.diff_max=9
+			.same_max=25,
+			//.same_max=45,
+			.diff_max=99
+			},
 		GEN_NEXT_ROOM_INDEX
-			{.same_max=3,
-			.diff_max=9},
+			{
+			.same_max=3,
+			.diff_max=9
+			},
 
 		GEN_NEXT_PATH_TYPE
-			{.same_max=0,
-			.diff_max=9},
+			{
+			.same_max=0,
+			//.same_max=2,
+			.diff_max=9
+			//.same_max=32,
+			//.same_max=85,
+			//.diff_max=99
+			},
+		//GEN_NEXT_PATH_INDEX
+		//	{.same_max=85,
+		//	.diff_max=99};
 		// generating a room, and previously generated a path
 		GEN_NEXT_PATH_INDEX_NOW_ROOM
 			{
-			//.same_max=87,
-			.same_max=93,
+			.same_max=87,
+			//.same_max=93,
 			.diff_max=99
+			//.same_max=3,
+			//.same_max=100,
+			//.diff_max=200
+			//.same_max=1999,
+			//.diff_max=2000
+			//.same_max=1999,
+			//.diff_max=2000
 			},
 		// generating a path, and previously generated a path
 		GEN_NEXT_PATH_INDEX_NOW_PATH
 			{
-			//.same_max=5,
-			//.diff_max=9
-			.same_max=45,
-			.diff_max=99
+			.same_max=5,
+			.diff_max=9
+			//.same_max=45,
+			//.same_max=75,
+			//.same_max=1999,
+			//.diff_max=2000
 			};
 	//--------
 	static constexpr GenYesNo
 		GEN_YN_CONNECT
 			{
 			//.no_max=65,
-			.no_max=34,
+			//.no_max=34,
+			.no_max=0,
 			.yes_max=99};
 	//--------
 	static constexpr i32
@@ -213,6 +244,8 @@ private:		// types
 	private:		// variables
 		GmDungeonGen
 			* _self = nullptr;
+		ecs::Engine
+			* _ecs_engine = nullptr;
 		DungeonGen
 			* _dungeon_gen = nullptr;
 		RoomPath _to_push_rp;
@@ -231,7 +264,8 @@ private:		// types
 		//	_check_i;
 	public:		// functions
 		inline GenInnards(
-			GmDungeonGen* s_self, DungeonGen* s_dungeon_gen
+			GmDungeonGen* s_self, ecs::Engine* s_ecs_engine,
+			DungeonGen* s_dungeon_gen
 		)
 			: _self(s_self), _dungeon_gen(s_dungeon_gen) {
 		}
@@ -386,18 +420,22 @@ private:		// types
 			return (
 				(
 					rp_0.is_horiz_path()
+					&& (rp_1.is_horiz_path() || rp_1.is_room())
 					&& (_ts_r2_hit(rp_0, rp_1)
 						|| _bs_r2_hit(rp_0, rp_1))
 				) || (
 					rp_0.is_vert_path()
+					&& (rp_1.is_vert_path() || rp_1.is_room())
 					&& (_ls_r2_hit(rp_0, rp_1)
 						|| _rs_r2_hit(rp_0, rp_1))
 				) || (
 					rp_1.is_horiz_path()
+					&& (rp_0.is_horiz_path() || rp_0.is_room())
 					&& (_ts_r2_hit(rp_1, rp_0)
 						|| _bs_r2_hit(rp_1, rp_0))
 				) || (
 					rp_1.is_vert_path()
+					&& (rp_0.is_vert_path() || rp_0.is_room())
 					&& (_ls_r2_hit(rp_1, rp_0)
 						|| _rs_r2_hit(rp_1, rp_0))
 				)

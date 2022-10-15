@@ -100,10 +100,10 @@ Engine::NonEcsSerData::NonEcsSerData(const binser::Value& bv) {
 		//str = sconcat(Rng(0));
 		binser::get_bv_memb(str, bv, "_rng", std::nullopt);
 
-		//printout("deserializing NonEcsSerData\n");
-		//printout(str, "\n");
+		//log("deserializing NonEcsSerData\n");
+		//log(str, "\n");
 		inv_sconcat(str, _rng);
-		//printout(_rng, "\n");
+		//log(_rng, "\n");
 	}
 }
 
@@ -172,7 +172,7 @@ Engine::Engine(i32 s_argc, char** s_argv, bool do_create_or_load)
 	//	//_non_ecs_ser_data_arr.push_back(NonEcsSerData());
 	//	//--------
 	//	//auto add_window = [](auto& vec_etc, Window&& to_push) -> void {
-	//	//	//printout("add_window() testificate: ",
+	//	//	//log("add_window() testificate: ",
 	//	//	//	to_push.engine() == nullptr, "\n");
 	//	//	vec_etc.push_back(std::move(to_push));
 	//	//	//vec_etc.back().init_set_border();
@@ -231,7 +231,7 @@ Engine::Engine(i32 s_argc, char** s_argv, bool do_create_or_load)
 
 	set_game_mode(GameMode::TitleScreen);
 
-	//printout("Engine::Engine()\n");
+	//log("Engine::Engine()\n");
 	//dbg_check_ecs_engine();
 	if (do_create_or_load) {
 		_create_or_load_save_file_etc();
@@ -263,10 +263,10 @@ Engine::operator binser::Value () const {
 void Engine::deserialize(const binser::Value& bv) {
 	//BINSER_MEMB_DESERIALIZE(ecs_engine);
 	//ecs_engine.deserialize(bv["ecs_engine"]);
-	//printout("Engine::deserialize() before: ",
+	//log("Engine::deserialize() before: ",
 	//	aux_window(0).engine() == nullptr, "\n");
 	MEMB_SER_LIST_ENGINE(BINSER_MEMB_DESERIALIZE);
-	//printout("Engine::deserialize() after: ",
+	//log("Engine::deserialize() after: ",
 	//	aux_window(0).engine() == nullptr, "\n");
 
 	for (ecs::FileNum file_num=0; file_num<NUM_FILES; ++file_num) {
@@ -277,7 +277,7 @@ void Engine::deserialize(const binser::Value& bv) {
 	}
 
 	#ifdef DEBUG
-	printout("Engine::deserialize()\n");
+	log("Engine::deserialize()\n");
 	//dbg_osprint_layout_rng_a2d(std::cout);
 	#endif		// DEBUG
 }
@@ -287,12 +287,12 @@ void Engine::deserialize(const binser::Value& bv) {
 //		= screen_window.with_border_ent_id_at(wb_pos);
 //
 //	if (id != ecs::ENT_NULL_ID) {
-//		printout("Engine::dbg_check_ecs_engine(): ",
+//		log("Engine::dbg_check_ecs_engine(): ",
 //			id, " ", ecs_engine.engine_comp_map().contains(id),
 //			"\n");
 //
 //		if (ecs_engine.engine_comp_map().contains(id)) {
-//			printout(ecs_engine.comp_map(id).contains(
+//			log(ecs_engine.comp_map(id).contains(
 //					game_engine::comp::Drawable::KIND_STR
 //				),
 //				"\n"
@@ -301,6 +301,10 @@ void Engine::deserialize(const binser::Value& bv) {
 //	}
 //}
 
+void Engine::_log_backend(const std::string& msg) {
+	// This is temporary
+	printout(msg);
+}
 void Engine::tick() {
 	if (!_did_init_window_clear) {
 		_did_init_window_clear = true;
@@ -375,11 +379,11 @@ void Engine::tick() {
 	}
 
 	{
-		//printout("Ticking the game engine: ", _tick_counter, "\n");
+		//log("Ticking the game engine: ", _tick_counter, "\n");
 		//++_tick_counter;
 
 		//if (game_mode == GameMode::AuxTitleScreen) {
-		//	printout("game_engine::Engine::tick(): ",
+		//	log("game_engine::Engine::tick(): ",
 		//		"Temporary title screen code\n");
 
 		//	yes_no_menu().tick(key_status);
@@ -395,7 +399,7 @@ void Engine::tick() {
 }
 //--------
 void Engine::_create_or_load_save_file_etc() {
-	printout("game_engine::Engine::_create_or_load_save_file_etc(): ",
+	log("game_engine::Engine::_create_or_load_save_file_etc(): ",
 		"testificate\n");
 
 	if (
@@ -432,7 +436,7 @@ void Engine::_create_or_load_save_file_etc() {
 					"\"", _save_file_name, "\".",
 					"\n");
 			}
-			//printout("Testificate: Calling `deserialize()`\n");
+			//log("Testificate: Calling `deserialize()`\n");
 		}
 	} else {
 		//err("game_engine::Engine::_create_or_load_save_file_etc(): ",
@@ -454,7 +458,7 @@ void Engine::_create_or_load_save_file_etc() {
 
 		_save_to_binser(true);
 	}
-	//printout("Testificate: ", ecs_engine.curr_file_num, "\n");
+	//log("Testificate: ", ecs_engine.curr_file_num, "\n");
 }
 
 //void Engine::_load_from_binser() {
@@ -464,7 +468,7 @@ void Engine::_create_or_load_save_file_etc() {
 //}
 void Engine::_save_to_binser(bool do_create_or_load) {
 	#ifdef DEBUG
-	printout("game_engine::Engine::_save_to_binser(): testificate\n");
+	log("game_engine::Engine::_save_to_binser(): testificate\n");
 	#endif		// DEBUG
 
 	//binser::Value root 
@@ -487,7 +491,7 @@ void Engine::_save_to_binser(bool do_create_or_load) {
 
 void Engine::save_and_quit() {
 	#ifdef DEBUG
-	printout("game_engine::Engine::save_and_quit(): testificate\n");
+	log("game_engine::Engine::save_and_quit(): testificate\n");
 	#endif		// DEBUG
 
 	_save_to_binser();
@@ -495,7 +499,7 @@ void Engine::save_and_quit() {
 }
 void Engine::save_and_return_to_title() {
 	#ifdef DEBUG
-	printout("game_engine::Engine::save_and_return_to_title(): ",
+	log("game_engine::Engine::save_and_return_to_title(): ",
 		"testificate\n");
 	#endif		// DEBUG
 
@@ -505,7 +509,7 @@ void Engine::save_and_return_to_title() {
 
 void Engine::copy_file() {
 	#ifdef DEBUG
-	printout("game_engine::Engine::copy_file(): testificate\n");
+	log("game_engine::Engine::copy_file(): testificate\n");
 	#endif		// DEBUG
 	ecs_engine.copy_file();
 	non_ecs_ser_data_fn(*copy_dst_file_num())
@@ -514,13 +518,13 @@ void Engine::copy_file() {
 		= layout_rng_arr_fn(*src_file_num());
 
 	#ifdef DEBUG
-	printout("Engine::copy_file()\n");
+	log("Engine::copy_file()\n");
 	//dbg_osprint_layout_rng_a2d(std::cout);
 	#endif		// DEBUG
 }
 void Engine::erase_file() {
 	#ifdef DEBUG
-	printout("game_engine::Engine::erase_file(): testificate\n");
+	log("game_engine::Engine::erase_file(): testificate\n");
 	#endif		// DEBUG
 	ecs_engine.erase_file();
 
@@ -534,11 +538,11 @@ void Engine::erase_file() {
 
 	//for (ecs::FileNum file_num=0; file_num<NUM_FILES; ++file_num) {
 	//	dbg_osprint_layout_rng_arr_fn(std::cout, file_num);
-	//	printout("\n");
+	//	log("\n");
 	//}
 
 	#ifdef DEBUG
-	printout("Engine::erase_file()\n");
+	log("Engine::erase_file()\n");
 	//dbg_osprint_layout_rng_a2d(std::cout);
 	#endif		// DEBUG
 }
@@ -591,9 +595,9 @@ void Engine::position_set_pos_callback(
 }
 
 GameMode& Engine::set_game_mode(GameMode n_game_mode) {
-	//printout("old _game_mode: ", i32(_game_mode), "\n");
+	//log("old _game_mode: ", i32(_game_mode), "\n");
 	_game_mode = n_game_mode;
-	//printout("new _game_mode: ", i32(_game_mode), "\n");
+	//log("new _game_mode: ", i32(_game_mode), "\n");
 
 	switch (game_mode()) {
 	//--------
@@ -616,10 +620,10 @@ GameMode& Engine::set_game_mode(GameMode n_game_mode) {
 }
 
 //void Engine::_yes_no_menu_act_yes(Engine* self) {
-//	printout("yes_no_menu: \"Yes\" button activated!\n");
+//	log("yes_no_menu: \"Yes\" button activated!\n");
 //}
 //void Engine::_yes_no_menu_act_no(Engine* self) {
-//	printout("yes_no_menu: \"No\" button activated!\n");
+//	log("yes_no_menu: \"No\" button activated!\n");
 //}
 
 //void Engine::_save() {

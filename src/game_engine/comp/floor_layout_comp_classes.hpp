@@ -135,12 +135,12 @@ public:		// constants
 			//= 5,
 			//= 8,
 			//= 10,
-			// hopefully this many won't ever cause the generation to fail
-			= 13,
+			//= 13,
 			//= 15,
+			= 20,
 		MAX_NUM_ROOM_PATHS
 			//= 15;
-			= 25;
+			= 30;
 
 		//MIN_NUM_PATHS = 1,
 		//MAX_NUM_PATHS = 64;
@@ -149,10 +149,15 @@ public:		// constants
 		PATH_THICKNESS = 1,
 		PATH_MIN_LEN
 			//= 2,
-			= 5,
+			= 3,
+			//= 5,
 		PATH_MAX_LEN
 			//= 32;
-			= 20;
+			//= 20;
+			//= 15;
+			= 12;
+			//= 10;
+			//= 8;
 
 	static constexpr IntVec2
 		ROOM_MIN_SIZE_2D{
@@ -160,8 +165,8 @@ public:		// constants
 			4, 4,
 		},
 		ROOM_MAX_SIZE_2D{
-			9, 9,
-			//10, 10,
+			//9, 9,
+			10, 10,
 			//15, 15,
 		};
 public:		// static functions

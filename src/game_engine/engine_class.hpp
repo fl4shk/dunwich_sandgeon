@@ -345,6 +345,14 @@ public:		// functions
 		printerr(objs...);
 		exit(1);
 	}
+private:		// functions
+	void _log_backend(const std::string& msg);
+public:		// functions
+	inline void log(
+		const liborangepower::concepts::HasStdOstmOpLshift auto&... args
+	) {
+		_log_backend(sconcat(args...));
+	}
 
 	//void dbg_check_ecs_engine(const IntVec2& wb_pos=IntVec2(0, 0));
 
