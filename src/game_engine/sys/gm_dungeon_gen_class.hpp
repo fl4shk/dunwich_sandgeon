@@ -122,8 +122,11 @@ public:		// constants
 			= math::max_va(ROOM_MAX_SIZE_2D.x, ROOM_MAX_SIZE_2D.y),
 		//--------
 		// "TSF" is short for "to shrink from"
-		GEN_EXTEND_AMOUNT_TSF = 5;
-		//--------
+		GEN_EXTEND_AMOUNT_TSF = 5,
+		GEN_PARALLEL_PATH_MIN_DIST
+			//= 3;
+			= 4;
+			//= 5;
 	//--------
 	static constexpr GenNext
 		//GEN_NEXT_SAME_MIN = 0, MIN_GEN_NEXT = GEN_NEXT_SAME_MIN,
@@ -158,7 +161,9 @@ public:		// constants
 	//--------
 	static constexpr GenYesNo
 		GEN_YN_CONNECT
-			{.no_max=65,
+			{
+			//.no_max=65,
+			.no_max=34,
 			.yes_max=99};
 	//--------
 	static constexpr i32
@@ -397,6 +402,43 @@ private:		// types
 						|| _rs_r2_hit(rp_1, rp_0))
 				)
 			);
+		}
+		static constexpr inline bool _parallel_paths_too_close(
+			const RoomPath& rp_0, const RoomPath& rp_1
+		) {
+			if (rp_0.is_horiz_path() && rp_1.is_horiz_path()) {
+				return (
+					rp_0.rect.build_in_grid_inflated_lim
+						(IntVec2{0, GEN_PARALLEL_PATH_MIN_DIST}, IntVec2(),
+						PFIELD_PHYS_NO_BORDER_RECT2).intersect(rp_1.rect)
+					|| rp_1.rect.build_in_grid_inflated_lim
+						(IntVec2{0, GEN_PARALLEL_PATH_MIN_DIST}, IntVec2(),
+						PFIELD_PHYS_NO_BORDER_RECT2).intersect(rp_0.rect)
+					|| rp_0.rect.build_in_grid_inflated_lim
+						(IntVec2(), IntVec2{0, GEN_PARALLEL_PATH_MIN_DIST},
+						PFIELD_PHYS_NO_BORDER_RECT2).intersect(rp_1.rect)
+					|| rp_1.rect.build_in_grid_inflated_lim
+						(IntVec2(), IntVec2{0, GEN_PARALLEL_PATH_MIN_DIST},
+						PFIELD_PHYS_NO_BORDER_RECT2).intersect(rp_0.rect)
+				);
+			} else if (rp_0.is_vert_path() && rp_1.is_vert_path()) {
+				return (
+					rp_0.rect.build_in_grid_inflated_lim
+						(IntVec2{GEN_PARALLEL_PATH_MIN_DIST, 0}, IntVec2(),
+						PFIELD_PHYS_NO_BORDER_RECT2).intersect(rp_1.rect)
+					|| rp_1.rect.build_in_grid_inflated_lim
+						(IntVec2{GEN_PARALLEL_PATH_MIN_DIST, 0}, IntVec2(),
+						PFIELD_PHYS_NO_BORDER_RECT2).intersect(rp_0.rect)
+					|| rp_0.rect.build_in_grid_inflated_lim
+						(IntVec2(), IntVec2{GEN_PARALLEL_PATH_MIN_DIST, 0},
+						PFIELD_PHYS_NO_BORDER_RECT2).intersect(rp_1.rect)
+					|| rp_1.rect.build_in_grid_inflated_lim
+						(IntVec2(), IntVec2{GEN_PARALLEL_PATH_MIN_DIST, 0},
+						PFIELD_PHYS_NO_BORDER_RECT2).intersect(rp_0.rect)
+				);
+			} else {
+				return false;
+			}
 		}
 		//--------
 	};

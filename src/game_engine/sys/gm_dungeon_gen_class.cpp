@@ -231,6 +231,7 @@ auto GmDungeonGen::GenInnards::_inner_gen_post_first()
 	//	was_vert_path = DungeonGen::r2_is_vert_path(ORIG_TO_PUSH_RECT);
 	//	//was_room = DungeonGen::r2_is_room(ORIG_TO_PUSH_RECT);
 	//--------
+	//--------
 	auto basic_shrink_extra_test_func = [this](
 		const RoomPath& some_rp
 		//, const std::optional<size_t>& index
@@ -245,7 +246,10 @@ auto GmDungeonGen::GenInnards::_inner_gen_post_first()
 					//	|| !_path_sides_hit_wrongly(some_rp, some_item));
 					return (some_item.rect.intersect(some_rp.rect)
 						//&& _some_sides_hit(some_rp, some_item)
-						|| _path_sides_hit_wrongly(some_rp, some_item));
+						|| _path_sides_hit_wrongly(some_rp, some_item)
+						// Reject pairs of horizontal/vertical paths that
+						// are too close
+						|| _parallel_paths_too_close(some_rp, some_item));
 				})
 			//&& !any_intersect_find_first(some_rp, std::nullopt)
 			//&& any_sides_intersect_find_first(some_rp, std::nullopt)
@@ -264,6 +268,7 @@ auto GmDungeonGen::GenInnards::_inner_gen_post_first()
 	)) {
 		return std::nullopt;
 	}
+
 
 	//if (any_intersect_find_first(_to_push_rp, std::nullopt)) {
 	//	//printout("Debug: found early intersect!\n");

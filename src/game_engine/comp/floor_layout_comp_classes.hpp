@@ -134,9 +134,10 @@ public:		// constants
 			//= 3,
 			//= 5,
 			//= 8,
-			= 10,
+			//= 10,
 			// hopefully this many won't ever cause the generation to fail
-			//= 13,
+			= 13,
+			//= 15,
 		MAX_NUM_ROOM_PATHS
 			//= 15;
 			= 25;
@@ -159,7 +160,8 @@ public:		// constants
 			4, 4,
 		},
 		ROOM_MAX_SIZE_2D{
-			10, 10,
+			9, 9,
+			//10, 10,
 			//15, 15,
 		};
 public:		// static functions
