@@ -31,7 +31,7 @@ std::string GmDungeonGen::kind_str() const {
 
 void GmDungeonGen::clear_dungeon_gen(ecs::Engine* ecs_engine) {
 	auto* dungeon_gen
-		= ecs_engine->casted_comp_at<comp::DungeonGen>(*_dungeon_gen_id);
+		= ecs_engine->casted_comp_at<DungeonGen>(*_dungeon_gen_id);
 	dungeon_gen->clear();
 }
 void GmDungeonGen::_init(ecs::Engine* ecs_engine) {
@@ -57,7 +57,7 @@ void GmDungeonGen::_init(ecs::Engine* ecs_engine) {
 		_dungeon_gen_id = ecs_engine->create_singleton_all(
 			ecs::make_comp_map_ks(
 				ecs::CompSptr(new ecs::NonSerializable()),
-				ecs::CompSptr(new comp::DungeonGen())
+				ecs::CompSptr(new DungeonGen())
 			),
 			func_name
 		);
@@ -77,7 +77,7 @@ void GmDungeonGen::tick(ecs::Engine* ecs_engine) {
 		//		*_bg_tile_map_id
 		//	);
 		auto* dungeon_gen
-			= ecs_engine->casted_comp_at<comp::DungeonGen>(
+			= ecs_engine->casted_comp_at<DungeonGen>(
 				*_dungeon_gen_id
 			);
 
@@ -107,7 +107,7 @@ void GmDungeonGen::tick(ecs::Engine* ecs_engine) {
 }
 
 //void GmDungeonGen::_connect_room_paths(comp::StaticBgTileMap* bg_tile_map,
-//	comp::DungeonGen* dungeon_gen) {
+//	DungeonGen* dungeon_gen) {
 //}
 bool GmDungeonGen::GenInnards::gen_single_rp() {
 	//--------
@@ -154,7 +154,7 @@ bool GmDungeonGen::GenInnards::gen_single_rp() {
 		//		"\n"
 		//	);
 		//};
-		//printout("GmDungeonGen::_gen_single_rp(): Debug: \n",
+		//printout("GmDungeonGen::gen_single_rp(): Debug: \n",
 		//	dbg_sconcat("GEN_TYPE", MIN_GEN_TYPE, MAX_GEN_TYPE), "\n",
 		//	dbg_sconcat("GEN_SIDE", MIN_GEN_SIDE, MAX_GEN_SIDE), "\n",
 		//	dbg_sconcat("GEN_NEXT", MIN_GEN_NEXT, MAX_GEN_NEXT), "\n"
@@ -167,7 +167,7 @@ bool GmDungeonGen::GenInnards::gen_single_rp() {
 			for (;;) {
 				if (auto opt_rp=_inner_gen_post_first(); opt_rp) {
 					//printout("`gen_single_rp()` initial gen: ",
-					//	any_intersect(*opt_rp, std::nullopt), ": ",
+					//	any_intersect_find_first(*opt_rp, std::nullopt), ": ",
 					//	"{", opt_rp->rect.tl_corner(), " ",
 					//	opt_rp->rect.br_corner(), "}",
 					//	"\n");
@@ -181,7 +181,7 @@ bool GmDungeonGen::GenInnards::gen_single_rp() {
 				if (auto opt_rp=_inner_gen_post_first(); opt_rp) {
 					//printout("`gen_single_rp()` !_self->_stop_gen_early: ",
 					//	tries, ": ",
-					//	any_intersect(*opt_rp, std::nullopt), ": ",
+					//	any_intersect_find_first(*opt_rp, std::nullopt), ": ",
 					//	"{", opt_rp->rect.tl_corner(), " ",
 					//	opt_rp->rect.br_corner(), "}",
 					//	"\n");
@@ -203,96 +203,102 @@ bool GmDungeonGen::GenInnards::gen_single_rp() {
 			//}
 		}
 	}
+	const bool old_done_generating = _self->_done_generating;
 	_self->_done_generating
 		= _self->_stop_gen_early
 			|| i32(_dungeon_gen->size()) >= _self->_attempted_num_rp;
+	if (!old_done_generating && _self->_done_generating) {
+		printout("Just finished generating the dungeon.\n");
+	}
 
 	return _self->_done_generating;
 }
 auto GmDungeonGen::GenInnards::_inner_gen_post_first()
 -> std::optional<RoomPath> {
 	//--------
-	RoomPath to_push_rp;
+	//RoomPath _to_push_rp;
 
 	if (auto temp=_inner_gen_post_first_initial_rp(); temp) {
-		to_push_rp = std::move(*temp);
+		_to_push_rp = std::move(*temp);
 	} else {
 		return std::nullopt;
 	}
 	//--------
+	//const IntRect2
+	//	ORIG_TO_PUSH_RECT = _to_push_rp.rect;
+	//const bool
+	//	was_horiz_path = DungeonGen::r2_is_horiz_path(ORIG_TO_PUSH_RECT),
+	//	was_vert_path = DungeonGen::r2_is_vert_path(ORIG_TO_PUSH_RECT);
+	//	//was_room = DungeonGen::r2_is_room(ORIG_TO_PUSH_RECT);
+	//--------
+	auto basic_shrink_extra_test_func = [this](
+		const RoomPath& some_rp
+		//, const std::optional<size_t>& index
+	) -> bool {
+		return (some_rp.fits_in_pfield_nb()
+			&& !_find_first_backend(
+				some_rp, std::nullopt,
+				[](const RoomPath& some_rp, const RoomPath& some_item)
+				-> bool {
+					//return !(some_item.rect.intersect(some_rp.rect)
+					//	|| _some_sides_hit(some_rp, some_item)
+					//	|| !_path_sides_hit_wrongly(some_rp, some_item));
+					return (some_item.rect.intersect(some_rp.rect)
+						//&& _some_sides_hit(some_rp, some_item)
+						|| _path_sides_hit_wrongly(some_rp, some_item));
+				})
+			//&& !any_intersect_find_first(some_rp, std::nullopt)
+			//&& any_sides_intersect_find_first(some_rp, std::nullopt)
+			//&& !any_path_sides_hit_wrongly_find_first
+			//	(some_rp, std::nullopt)
+			&& _rp_is_connected(some_rp));
+	};
 	// This is a simple algorithm that could be made faster and
 	// more complicated, but I figure any platform running this
 	// game will have fast enough hardware considering the maximum
 	// numbers of rooms/paths.
-	if (!to_push_rp.fits_in_pfield_nb()) {
+	if (!_shrink(
+		_to_push_rp, // std::nullopt,
+		basic_shrink_extra_test_func
+	)) {
 		return std::nullopt;
 	}
-	//printout("to_push_rp.fits_in_pfield_nb(): ", to_push_rp.rect, "\n");
 
-	//bool found_intersect = false;
-	//auto any_intersect = [this](
-	//	const RoomPath& to_check_rp,
-	//	const std::optional<size_t>& index
-	//) -> bool {
-	//	for (size_t k=0; k<_dungeon_gen->size(); ++k) {
-	//		const auto& some_item = _dungeon_gen->at(k);
-	//		if (index && (*index == k)) {
-	//			continue;
-	//		} else if (some_item.rect.intersect
-	//			(to_check_rp.rect)
-	//		) {
-	//			return true;
-	//		}
-	//	}
-	//	return false;
-	//};
-	//any_intersect();
-
-	//if (any_intersect(to_push_rp, std::nullopt)) {
+	//if (any_intersect_find_first(_to_push_rp, std::nullopt)) {
 	//	//printout("Debug: found early intersect!\n");
 	//	return std::nullopt;
 	//}
-	//if (any_path_sides_hit_wrongly(to_push_rp, std::nullopt)) {
+	//if (any_path_sides_hit_wrongly_find_first(_to_push_rp, std::nullopt)) {
 	//	return std::nullopt;
 	//}
-	for (const auto& item: *_dungeon_gen) {
-		if (
-			item.rect.intersect(to_push_rp.rect)
-			|| _path_sides_hit_wrongly(to_push_rp, item)
-		) {
-			return std::nullopt;
-		}
-	}
 
+	//const i32
+	//	START_ITEM_INDEX = engine->layout_rand<i32>
+	//		(0, _dungeon_gen->size() - 1);
+	// TODO: fix extension
 	//for (
 	//	size_t item_index=0;
 	//	item_index<_dungeon_gen->size();
 	//	++item_index
+	//	//size_t item_index=START_ITEM_INDEX;
+	//	//item_index 
+	//	//	!= (
+	//	//		START_ITEM_INDEX == 0
+	//	//		? _dungeon_gen->size()
+	//	//		: START_ITEM_INDEX - 1
+	//	//	);
+	//	//item_index = (item_index + 1) % _dungeon_gen->size()
 	//) {
 	////for (const auto& item: *_dungeon_gen)
 	//	auto& item = _dungeon_gen->at(item_index);
 
-	//	auto should_gen_connect = []() -> bool {
-	//		const i32
-	//			temp = engine->layout_rand<i32>
-	//				(GEN_YN_CONNECT.full_min(), GEN_YN_CONNECT.full_max());
-	//		return (temp >= GEN_YN_CONNECT.yes_min
-	//			&& temp <= GEN_YN_CONNECT.yes_max);
-	//	};
-	//	auto dbg_print_before = [this, &to_push_rp, &item]() -> void {
-	//		printout("before:\n",
-	//			"to_push_rp.tl:", to_push_rp.rect.tl_corner(), " ",
-	//			"to_push_rp.br:", to_push_rp.rect.br_corner(), "\n",
-	//			"item.tl:", item.rect.tl_corner(), " "
-	//			"item.br:", item.rect.br_corner(), "\n");
-	//	};
-	//	auto dbg_print_after = [this, &to_push_rp, &item]() -> void {
-	//		printout("after:\n",
-	//			"to_push_rp.tl:", to_push_rp.rect.tl_corner(), " ",
-	//			"to_push_rp.br:", to_push_rp.rect.br_corner(), "\n",
-	//			"item.tl:", item.rect.tl_corner(), " "
-	//			"item.br:", item.rect.br_corner(), "\n");
-	//	};
+	//	//auto should_gen_connect = []() -> bool {
+	//	//	const i32
+	//	//		temp = engine->layout_rand<i32>
+	//	//			(GEN_YN_CONNECT.full_min(), GEN_YN_CONNECT.full_max());
+	//	//	return (temp >= GEN_YN_CONNECT.yes_min()
+	//	//		&& temp <= GEN_YN_CONNECT.yes_max);
+	//	//};
 
 	//	using TempRpPair
 	//		= std::pair<std::optional<RoomPath>,
@@ -302,83 +308,62 @@ auto GmDungeonGen::GenInnards::_inner_gen_post_first()
 	//		(MAX_GEN_SIDE - MIN_GEN_SIDE + 1,
 	//		TempRpPair(std::nullopt, std::nullopt));
 	//	auto gen_temp_rp_pair_vec_elem = [&](
-	//		bool sides_did_hit, i32 some_side,
+	//		//bool hit_happened,
+	//		i32 some_side,
 	//		const std::pair<IntVec2, IntVec2>& rp_offset_pair,
-	//		const std::pair<IntVec2, IntVec2>& item_offset_pair,
-	//		const std::string& dbg_str, bool do_dbg_print
+	//		const std::pair<IntVec2, IntVec2>& item_offset_pair
+	//		//const std::string& dbg_str, bool do_dbg_print
 	//	) -> void {
-	//		//auto possible_to_extend_that_way = []
-	//		if (
-	//			//_ls_and_rs_hit(to_push_rp, item)
-	//			sides_did_hit
-	//			&& should_gen_connect()
-	//		) {
-	//			RoomPath temp_rp;
-	//			if (!engine->layout_rand<i32>(0, 1)) {
-	//				if (do_dbg_print) {
-	//					printout(dbg_str, " 0\n");
-	//					dbg_print_before();
-	//				}
-	//				temp_rp.rect
-	//					= to_push_rp.rect.build_in_grid_inflated_lim
+	//		//if (
+	//		//	hit_happened
+	//		//	//&& should_gen_connect()
+	//		//) {
+	//		//RoomPath temp_rp;
+	//		RoomPath temp_rp;
+	//		std::optional<size_t> opt_index(std::nullopt);
+
+	//		if (!engine->layout_rand<i32>(0, 1)) {
+	//			//auto& temp_rp_pair = temp_rp_pair_vec.at(some_side);
+	//			//temp_rp_pair.first = RoomPath();
+	//			//temp_rp = &(*temp_rp_pair.first);
+	//			temp_rp.rect
+	//				= _to_push_rp.rect.build_in_grid_inflated_lim
 	//					(rp_offset_pair.first,
 	//					rp_offset_pair.second,
 	//					PFIELD_PHYS_NO_BORDER_RECT2);
-	//				temp_rp_pair_vec.at(some_side).first
-	//					= std::move(temp_rp);
-	//				if (do_dbg_print) {
-	//					dbg_print_after();
-	//				}
-	//			} else {
-	//				if (do_dbg_print) {
-	//					printout(dbg_str, " 1\n");
-	//					dbg_print_before();
-	//				}
-	//				temp_rp.rect
-	//					= item.rect.build_in_grid_inflated_lim
-	//					(item_offset_pair.first,
-	//					item_offset_pair.second,
-	//					PFIELD_PHYS_NO_BORDER_RECT2);
-	//				temp_rp_pair_vec.at(some_side).second
-	//					= std::move(temp_rp);
-	//				if (do_dbg_print) {
-	//					dbg_print_after();
-	//				}
-	//			}
+	//		} else {
+	//			//auto& temp_rp_pair = temp_rp_pair_vec.at(some_side);
+	//			//temp_rp_pair.second = RoomPath();
+	//			//temp_rp = &(*temp_rp_pair.second);
+	//			temp_rp.rect
+	//				= item.rect.build_in_grid_inflated_lim
+	//				(item_offset_pair.first,
+	//				item_offset_pair.second,
+	//				PFIELD_PHYS_NO_BORDER_RECT2);
 	//		}
+	//		//_shrink(*temp_rp);
+	//		//}
 	//	};
 	//	gen_temp_rp_pair_vec_elem
-	//		(_ls_and_rs_hit(to_push_rp, item), GEN_SIDE_L,
-	//		std::pair(IntVec2{1, 0}, IntVec2()),
-	//		std::pair(IntVec2(), IntVec2{1, 0}),
-	//		"ls", false);
+	//		(//_ls_and_rs_hit(_to_push_rp, item),
+	//		GEN_SIDE_L,
+	//		std::pair(IntVec2{GEN_EXTEND_AMOUNT_TSF, 0}, IntVec2()),
+	//		std::pair(IntVec2(), IntVec2{GEN_EXTEND_AMOUNT_TSF, 0}));
 	//	gen_temp_rp_pair_vec_elem
-	//		(_ts_and_bs_hit(to_push_rp, item), GEN_SIDE_T,
-	//		std::pair(IntVec2{0, 1}, IntVec2()),
-	//		std::pair(IntVec2(), IntVec2{0, 1}),
-	//		"ts", false);
+	//		(//_ts_and_bs_hit(_to_push_rp, item),
+	//		GEN_SIDE_T,
+	//		std::pair(IntVec2{0, GEN_EXTEND_AMOUNT_TSF}, IntVec2()),
+	//		std::pair(IntVec2(), IntVec2{0, GEN_EXTEND_AMOUNT_TSF}));
 	//	gen_temp_rp_pair_vec_elem
-	//		(_ls_and_rs_hit(item, to_push_rp), GEN_SIDE_R,
-	//		std::pair(IntVec2(), IntVec2{1, 0}),
-	//		std::pair(IntVec2{1, 0}, IntVec2()),
-	//		"rs", false);
-	//	//if (_ts_and_bs_hit(item, to_push_rp)) {
-	//	//	printout("to_push_rp.bs intersects item.ts:\n",
-	//	//		"\t_rp{", to_push_rp.rect.tl_corner(), " ",
-	//	//			to_push_rp.rect.br_corner(), "} ",
-	//	//		"item{", item.rect.tl_corner(), " ",
-	//	//			item.rect.br_corner(), "}\n",
-	//	//		"\t_rp_bs{", _rp_bs_r2().tl_corner(), " ",
-	//	//			_rp_bs_r2().br_corner(), "} ",
-	//	//		"item_ts{", _ts_r2(item).tl_corner(), " ",
-	//	//			_ts_r2(item).br_corner(), "}",
-	//	//		"\n");
-	//	//}
+	//		(//_ls_and_rs_hit(item, _to_push_rp),
+	//		GEN_SIDE_R,
+	//		std::pair(IntVec2(), IntVec2{GEN_EXTEND_AMOUNT_TSF, 0}),
+	//		std::pair(IntVec2{GEN_EXTEND_AMOUNT_TSF, 0}, IntVec2()));
 	//	gen_temp_rp_pair_vec_elem
-	//		(_ts_and_bs_hit(item, to_push_rp), GEN_SIDE_B,
-	//		std::pair(IntVec2(), IntVec2{0, 1}),
-	//		std::pair(IntVec2{0, 1}, IntVec2()),
-	//		"bs", false);
+	//		(//_ts_and_bs_hit(item, _to_push_rp),
+	//		GEN_SIDE_B,
+	//		std::pair(IntVec2(), IntVec2{0, GEN_EXTEND_AMOUNT_TSF}),
+	//		std::pair(IntVec2{0, GEN_EXTEND_AMOUNT_TSF}, IntVec2()));
 	//	if (
 	//		const i32 check_first_extend_side=engine->layout_rand<i32>
 	//			(MIN_GEN_SIDE, MAX_GEN_SIDE);
@@ -391,7 +376,6 @@ auto GmDungeonGen::GenInnards::_inner_gen_post_first()
 	//			extend_side = check_first_extend_side;
 
 	//		auto end_loop = [&i, &extend_side]() -> void {
-	//			//++i;
 	//			--i;
 	//			++extend_side;
 	//			if (extend_side > MAX_GEN_SIDE) {
@@ -400,7 +384,7 @@ auto GmDungeonGen::GenInnards::_inner_gen_post_first()
 	//		};
 	//		//while (i <= MAX_GEN_SIDE)
 	//		while (i >= 0) {
-	//			auto& temp_rp_pair
+	//			auto& temp_rect_pair
 	//				= temp_rp_pair_vec.at(extend_side);
 	//			RoomPath
 	//				* temp_rp = nullptr,
@@ -408,32 +392,36 @@ auto GmDungeonGen::GenInnards::_inner_gen_post_first()
 	//				* to_keep_rp = nullptr;
 	//			std::string dbg_str = "";
 
-	//			if (temp_rp_pair.first) {
-	//				temp_rp = &(*temp_rp_pair.first);
+	//			auto show_debug_maybe = [&]() -> void {
+	//				printout("Debug: **MAYBE** doing extension: ",
+	//					dbg_str,
+	//					"{", to_edit_rp->rect.tl_corner(), " ",
+	//						to_edit_rp->rect.br_corner(), "} ",
+	//					"temp_rp",
+	//					"{", temp_rp->rect.tl_corner(), " ",
+	//						temp_rp->rect.br_corner(), "}",
+	//					"\n");
+	//			};
 
-	//				if (any_intersect(*temp_rp, std::nullopt)) {
+	//			if (temp_rect_pair.first) {
+	//				temp_rp = &(*temp_rect_pair.first);
+
+	//				if (any_intersect_find_first(*temp_rp, std::nullopt)) {
 	//					printout("first testificate 0 \n");
 	//					//return std::nullopt;
 	//					//end_loop();
 	//					//continue;
 	//				} else {
 	//					printout("first testificate 1\n");
-	//					dbg_str = "to_push_rp";
-	//					to_edit_rp = &to_push_rp;
+	//					dbg_str = "_to_push_rp";
+	//					to_edit_rp = &_to_push_rp;
 	//					to_keep_rp = &item;
-	//					//printout("Debug: **MAYBE** doing extension: ",
-	//					//	dbg_str,
-	//					//	"{", to_edit_rp->rect.tl_corner(), " ",
-	//					//		to_edit_rp->rect.br_corner(), "} ",
-	//					//	"temp_rp",
-	//					//	"{", temp_rp->rect.tl_corner(), " ",
-	//					//		temp_rp->rect.br_corner(), "}",
-	//					//	"\n");
+	//					show_debug_maybe();
 	//				}
-	//			} else if (temp_rp_pair.second) {
-	//				temp_rp = &(*temp_rp_pair.second);
+	//			} else if (temp_rect_pair.second) {
+	//				temp_rp = &(*temp_rect_pair.second);
 
-	//				if (any_intersect(*temp_rp, item_index)) {
+	//				if (any_intersect_find_first(*temp_rp, item_index)) {
 	//					printout("second testificate 0\n");
 	//					//return std::nullopt;
 	//					//end_loop();
@@ -442,7 +430,8 @@ auto GmDungeonGen::GenInnards::_inner_gen_post_first()
 	//					printout("second testificate 1\n");
 	//					dbg_str = "item";
 	//					to_edit_rp = &item;
-	//					to_keep_rp = &to_push_rp;
+	//					to_keep_rp = &_to_push_rp;
+	//					show_debug_maybe();
 	//				}
 	//			}
 	//			//else {
@@ -456,20 +445,20 @@ auto GmDungeonGen::GenInnards::_inner_gen_post_first()
 	//						&& !temp_rp->is_vert_path())
 	//				) //&& !_path_sides_hit_wrongly(*temp_rp, *to_edit_rp)
 	//				&& temp_rp->is_valid()
-	//				&& !any_path_sides_hit_wrongly(*temp_rp,
+	//				&& !any_path_sides_hit_wrongly_find_first(*temp_rp,
 	//					((dbg_str == "item")
 	//						? std::optional<size_t>(item_index)
 	//						: std::nullopt))
 	//				&& !_path_sides_hit_wrongly(*temp_rp, *to_keep_rp)
-	//				//&& !any_path_sides_hit_wrongly(*to_edit_rp,
+	//				//&& !any_path_sides_hit_wrongly_find_first(*to_edit_rp,
 	//				//	((dbg_str == "item")
 	//				//		? std::optional<size_t>(item_index)
 	//				//		: std::nullopt))
 	//			) {
 	//				printout("Debug: doing extension: ",
 	//					"dbg_str{\"", dbg_str, "\"} ",
-	//					"to_push_rp{", to_push_rp.rect.tl_corner(), " ",
-	//						to_push_rp.rect.br_corner(), "} ",
+	//					"_to_push_rp{", _to_push_rp.rect.tl_corner(), " ",
+	//						_to_push_rp.rect.br_corner(), "} ",
 	//					"item{", item.rect.tl_corner(), " ",
 	//						item.rect.br_corner(), "} ",
 	//					"temp_rp",
@@ -492,13 +481,13 @@ auto GmDungeonGen::GenInnards::_inner_gen_post_first()
 	//	//maybe_extend_b();
 	//}
 	//--------
-	//to_push_rp.conn_index_set.insert(conn_rp_index);
+	//_to_push_rp.conn_index_set.insert(conn_rp_index);
 	//conn_rp.conn_index_set.insert(_dungeon_gen->size());
 	//--------
 	//--------
 	//printout("`gen_type`: ", gen_type, "\n");
 
-	return to_push_rp;
+	return _to_push_rp;
 	//--------
 };
 auto GmDungeonGen::GenInnards::_inner_gen_post_first_initial_rp()
@@ -536,11 +525,11 @@ auto GmDungeonGen::GenInnards::_inner_gen_post_first_initial_rp()
 	if (
 		(
 			prev_gen_type == GEN_TYPE_PATH
-			&& _gen_next_type >= GEN_NEXT_PATH_TYPE.same_min
+			&& _gen_next_type >= GEN_NEXT_PATH_TYPE.same_min()
 			&& _gen_next_type <= GEN_NEXT_PATH_TYPE.same_max
 		) || (
 			prev_gen_type == GEN_TYPE_ROOM
-			&& _gen_next_type >= GEN_NEXT_ROOM_TYPE.same_min
+			&& _gen_next_type >= GEN_NEXT_ROOM_TYPE.same_min()
 			&& _gen_next_type <= GEN_NEXT_ROOM_TYPE.same_max
 		)
 	) {
@@ -551,47 +540,7 @@ auto GmDungeonGen::GenInnards::_inner_gen_post_first_initial_rp()
 				(MIN_GEN_TYPE, MAX_GEN_TYPE);
 		} while (_gen_type == prev_gen_type);
 	}
-	////--------
-	//_gen_next_conn_rp_index = (prev_gen_type == GEN_TYPE_PATH)
-	//	? engine->layout_rand<i32>
-	//		(GEN_NEXT_PATH_INDEX.full_min(),
-	//		GEN_NEXT_PATH_INDEX.full_max())
-	//	: engine->layout_rand<i32>
-	//		(GEN_NEXT_ROOM_INDEX.full_min(),
-	//		GEN_NEXT_ROOM_INDEX.full_max());
-
-	//// Which `RoomPath` are we connecting to?
-	////printout("test 0\n");
-	////i32 _conn_rp_index;
-	//if (
-	//	//_gen_next_conn_rp_index >= GEN_NEXT_SAME_MIN
-	//	//&& _gen_next_conn_rp_index <= GEN_NEXT_SAME_MAX
-	//	(
-	//		prev_gen_type == GEN_TYPE_PATH
-	//		&& _gen_next_conn_rp_index >= GEN_NEXT_PATH_INDEX.same_min
-	//		&& _gen_next_conn_rp_index <= GEN_NEXT_PATH_INDEX.same_max
-	//	) || (
-	//		prev_gen_type == GEN_TYPE_ROOM
-	//		&& _gen_next_conn_rp_index >= GEN_NEXT_ROOM_INDEX.same_min
-	//		&& _gen_next_conn_rp_index <= GEN_NEXT_ROOM_INDEX.same_max
-	//	)
-	//) {
-	//	_conn_rp_index = prev_rp_index;
-	//} else //if (
-	//	//_gen_next_conn_rp_index >= GEN_NEXT_DIFF_MIN
-	//	//&& _gen_next_conn_rp_index <= GEN_NEXT_DIFF_MAX
-	////)
-	//{
-	//	if (prev_rp_index == 0) {
-	//		_conn_rp_index = prev_rp_index;
-	//	} else { // if (prev_rp_index > 0)
-	//		// Force a different room from the last one to be
-	//		// picked in this case
-	//		_conn_rp_index
-	//			= engine->layout_rand<i32>
-	//				(0, prev_rp_index - 1);
-	//	}
-	//}
+	//--------
 	auto index_stuff = [&](const GenNext& some_gen_next_index) -> void {
 		
 		_gen_next_conn_rp_index
@@ -599,7 +548,7 @@ auto GmDungeonGen::GenInnards::_inner_gen_post_first_initial_rp()
 			(some_gen_next_index.full_min(),
 			some_gen_next_index.full_max());
 		if ( 
-			_gen_next_conn_rp_index >= some_gen_next_index.same_min
+			_gen_next_conn_rp_index >= some_gen_next_index.same_min()
 			&& _gen_next_conn_rp_index <= some_gen_next_index.same_max
 		) {
 			_conn_rp_index = prev_rp_index;
@@ -739,7 +688,7 @@ auto GmDungeonGen::GenInnards::_inner_gen_post_first_initial_rp()
 		break;
 	default:
 		throw std::runtime_error(sconcat
-			("game_engine::sys::GmDungeonGen::_gen_single_rp(): ",
+			("game_engine::sys::GmDungeonGen::gen_single_rp(): ",
 			"(1st) `switch (_gen_side)`: Eek! `", _gen_side,
 			"`"));
 		break;
@@ -763,38 +712,135 @@ void GmDungeonGen::GenInnards::_do_push_back(RoomPath&& to_push_rp) const {
 	//to_push_rp = RoomPath();
 }
 //--------
-bool GmDungeonGen::GenInnards::any_intersect(
+auto GmDungeonGen::GenInnards::any_intersect_find_all(
 	const RoomPath& to_check_rp, const std::optional<size_t>& index
-) const {
-	for (size_t k=0; k<_dungeon_gen->size(); ++k) {
-		const auto& some_item = _dungeon_gen->at(k);
-		if (index && (*index == k)) {
-			continue;
-		} else if (some_item.rect.intersect(to_check_rp.rect)) {
-			return true;
-		}
-	}
-	return false;
+) const -> std::vector<size_t> {
+	return _find_all_backend(to_check_rp, index,
+		[](const RoomPath& to_check_rp, const RoomPath& some_item)
+		-> bool {
+			return some_item.rect.intersect(to_check_rp.rect);
+		});
 }
-bool GmDungeonGen::GenInnards::any_path_sides_hit_wrongly(
+auto GmDungeonGen::GenInnards::any_intersect_find_first(
 	const RoomPath& to_check_rp, const std::optional<size_t>& index
-) const {
+) const -> RoomPath* {
+	//for (size_t k=0; k<_dungeon_gen->size(); ++k) {
+	//	auto& some_item = _dungeon_gen->at(k);
+	//	if (index && (*index == k)) {
+	//		continue;
+	//	} else if (some_item.rect.intersect(to_check_rp.rect)) {
+	//		return &some_item;
+	//	}
+	//}
+	//return nullptr;
+
+	return _find_first_backend(to_check_rp, index,
+		[](const RoomPath& to_check_rp, const RoomPath& some_item)
+		-> bool {
+			return some_item.rect.intersect(to_check_rp.rect);
+		});
+}
+//--------
+auto GmDungeonGen::GenInnards::any_sides_intersect_find_all(
+	const RoomPath& to_check_rp, const std::optional<size_t>& index
+) const -> std::vector<size_t> {
+	return _find_all_backend(to_check_rp, index,
+		[](const RoomPath& to_check_rp, const RoomPath& some_item)
+		-> bool {
+			return _some_sides_hit(to_check_rp, some_item);
+		});
+}
+auto GmDungeonGen::GenInnards::any_sides_intersect_find_first(
+	const RoomPath& to_check_rp, const std::optional<size_t>& index
+) const -> RoomPath* {
+	//for (size_t k=0; k<_dungeon_gen->size(); ++k) {
+	//	auto& some_item = _dungeon_gen->at(k);
+	//	if (index && (*index == k)) {
+	//		continue;
+	//	} else if (_some_sides_hit(to_check_rp, some_item)) {
+	//		return &some_item;
+	//	}
+	//}
+	//return nullptr;
+	return _find_first_backend(to_check_rp, index,
+		[](const RoomPath& to_check_rp, const RoomPath& some_item)
+		-> bool {
+			return _some_sides_hit(to_check_rp, some_item);
+		});
+}
+//--------
+auto GmDungeonGen::GenInnards::any_path_sides_hit_wrongly_find_all(
+	const RoomPath& to_check_rp, const std::optional<size_t>& index
+) const -> std::vector<size_t> {
+	return _find_all_backend(to_check_rp, index,
+		[](const RoomPath& to_check_rp, const RoomPath& some_item)
+		-> bool {
+			return _path_sides_hit_wrongly(to_check_rp, some_item);
+		});
+}
+auto GmDungeonGen::GenInnards::any_path_sides_hit_wrongly_find_first(
+	const RoomPath& to_check_rp, const std::optional<size_t>& index
+) const -> RoomPath* {
+	//for (size_t k=0; k<_dungeon_gen->size(); ++k) {
+	//	auto& some_item = _dungeon_gen->at(k);
+	//	if (index && (*index == k)) {
+	//		continue;
+	//	} else if (_path_sides_hit_wrongly(to_check_rp, some_item)) {
+	//		//printout("any_path_sides_hit_wrongly_find_first(): ",
+	//		//	"wrong hit found: ",
+	//		//	"to_check_rp{", to_check_rp.rect.tl_corner(), " ",
+	//		//		to_check_rp.rect.br_corner(), "} ",
+	//		//	"_dungeon_gen->at(", k, ")",
+	//		//		"{", some_item.rect.tl_corner(), " ",
+	//		//			some_item.rect.br_corner(), "}",
+	//		//		"\n");
+	//		//return true;
+	//		return &some_item;
+	//	}
+	//}
+	//return nullptr;
+	return _find_first_backend(to_check_rp, index,
+		[](const RoomPath& to_check_rp, const RoomPath& some_item)
+		-> bool {
+			return _path_sides_hit_wrongly(to_check_rp, some_item);
+		});
+}
+//--------
+auto GmDungeonGen::GenInnards::_find_all_backend(
+	const RoomPath& to_check_rp,
+	const std::optional<size_t>& index,
+	const std::function<bool(
+		const RoomPath&, const RoomPath&
+	)>& test_func
+) const -> std::vector<size_t> {
+	std::vector<size_t> ret;
+
 	for (size_t k=0; k<_dungeon_gen->size(); ++k) {
 		const auto& some_item = _dungeon_gen->at(k);
 		if (index && (*index == k)) {
 			continue;
-		} else if (_path_sides_hit_wrongly(to_check_rp, some_item)) {
-			//printout("any_path_sides_hit_wrongly(): wrong hit found: ",
-			//	"to_check_rp{", to_check_rp.rect.tl_corner(), " ",
-			//		to_check_rp.rect.br_corner(), "} ",
-			//	"_dungeon_gen->at(", k, ")",
-			//		"{", some_item.rect.tl_corner(), " ",
-			//			some_item.rect.br_corner(), "}",
-			//		"\n");
-			return true;
+		} else if (test_func(to_check_rp, some_item)) {
+			ret.push_back(k);
 		}
 	}
-	return false;
+	return ret;
+}
+auto GmDungeonGen::GenInnards::_find_first_backend(
+	const RoomPath& to_check_rp,
+	const std::optional<size_t>& index,
+	const std::function<bool(
+		const RoomPath&, const RoomPath&
+	)>& test_func
+) const -> RoomPath* {
+	for (size_t k=0; k<_dungeon_gen->size(); ++k) {
+		auto& some_item = _dungeon_gen->at(k);
+		if (index && (*index == k)) {
+			continue;
+		} else if (test_func(to_check_rp, some_item)) {
+			return &some_item;
+		} 
+	}
+	return nullptr;
 }
 void GmDungeonGen::GenInnards::finalize(
 	//bool do_clear
@@ -885,6 +931,145 @@ void GmDungeonGen::GenInnards::finalize(
 	//	}
 	//}
 }
+bool GmDungeonGen::GenInnards::_shrink(
+	RoomPath& some_rp, //const std::optional<size_t>& index,
+	const std::function<bool(
+		const RoomPath&//, const std::optional<size_t>&
+	)>& extra_test_func
+) const {
+	//--------
+	auto move_left_x = [&]() -> void {
+		const auto temp_rect = IntRect2::build_in_grid_lim
+			(some_rp.rect.tl_corner() + IntVec2{1, 0},
+			some_rp.rect.br_corner(),
+			PFIELD_PHYS_NO_BORDER_RECT2);
+		some_rp.rect = temp_rect;
+	};
+	auto move_top_y = [&]() -> void {
+		const auto temp_rect = IntRect2::build_in_grid_lim
+			(some_rp.rect.tl_corner() + IntVec2{0, 1},
+			some_rp.rect.br_corner(),
+			PFIELD_PHYS_NO_BORDER_RECT2);
+		some_rp.rect = temp_rect;
+	};
+	auto move_right_x = [&]() -> void {
+		const auto temp_rect = IntRect2::build_in_grid_lim
+			(some_rp.rect.tl_corner(),
+			some_rp.rect.br_corner() - IntVec2{1, 0},
+			PFIELD_PHYS_NO_BORDER_RECT2);
+		some_rp.rect = temp_rect;
+	};
+	auto move_bottom_y = [&]() -> void {
+		const auto temp_rect = IntRect2::build_in_grid_lim
+			(some_rp.rect.tl_corner(),
+			some_rp.rect.br_corner() - IntVec2{0, 1},
+			PFIELD_PHYS_NO_BORDER_RECT2);
+		some_rp.rect = temp_rect;
+	};
+	//--------
+	const bool
+		was_horiz_path = some_rp.is_horiz_path(),
+		was_vert_path = some_rp.is_vert_path();
+		//was_room = some_rp.is_room();
+	if (was_horiz_path) {
+		const i32
+			SHRINK_NUM_ATTEMPTS = engine->layout_rand<i32>
+				(MIN_GEN_SHRINK_NUM_ATTEMPTS_PATH,
+				MAX_GEN_SHRINK_NUM_ATTEMPTS_PATH);
+		for (i32 i=0; i<SHRINK_NUM_ATTEMPTS; ++i) {
+			//--------
+			if (engine->layout_rand<i32>(0, 1)) {
+				move_left_x();
+			} else {
+				move_right_x();
+			}
+			//--------
+			if (
+				some_rp.is_horiz_path()
+				&& extra_test_func(
+					some_rp//, index
+				)
+			) {
+				return true;
+			} else if (!some_rp.is_horiz_path()) {
+				return false;
+			}
+			//--------
+		}
+	} else if (was_vert_path) {
+		const i32
+			SHRINK_NUM_ATTEMPTS = engine->layout_rand<i32>
+				(MIN_GEN_SHRINK_NUM_ATTEMPTS_PATH,
+				MAX_GEN_SHRINK_NUM_ATTEMPTS_PATH);
+		for (i32 i=0; i<SHRINK_NUM_ATTEMPTS; ++i) {
+			//--------
+			if (engine->layout_rand<i32>(0, 1)) {
+				move_top_y();
+			} else {
+				move_bottom_y();
+			}
+			//--------
+			if (
+				some_rp.is_vert_path()
+				&& extra_test_func(
+					some_rp//, index
+				)
+			) {
+				return true;
+			} else if (!some_rp.is_vert_path()) {
+				return false;
+			}
+			//--------
+		}
+	} else { // if (was_room)
+		const i32
+			SHRINK_NUM_ATTEMPTS = engine->layout_rand<i32>
+				(MIN_GEN_SHRINK_NUM_ATTEMPTS_ROOM,
+				MAX_GEN_SHRINK_NUM_ATTEMPTS_ROOM);
+		for (i32 i=0; i<SHRINK_NUM_ATTEMPTS; ++i) {
+			//--------
+			const i32
+				shrink_side = engine->layout_rand<i32>
+					(MIN_GEN_SIDE, MAX_GEN_SIDE);
+			switch (shrink_side) {
+			//--------
+			case GEN_SIDE_L:
+				move_left_x();
+				break;
+			case GEN_SIDE_T:
+				move_top_y();
+				break;
+			case GEN_SIDE_R:
+				move_right_x();
+				break;
+			case GEN_SIDE_B:
+				move_bottom_y();
+				break;
+			default:
+				throw std::runtime_error(sconcat
+					("game_engine::sys::GmDungeonGen::GenInnards",
+					"::_shrink(): Eek! ",
+					"shrink_side{", shrink_side, "}"));
+				break;
+			//--------
+			}
+			//--------
+			if (
+				some_rp.is_room()
+				&& extra_test_func(
+					some_rp//, index
+				)
+			) {
+				return true;
+			} else if (!some_rp.is_room()) {
+				return false;
+			}
+			//--------
+		}
+	}
+	return false;
+	//return final_func();
+};
 //--------
 } // namespace sys
 } // namespace game_engine

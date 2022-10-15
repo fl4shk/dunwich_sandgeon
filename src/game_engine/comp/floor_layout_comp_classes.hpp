@@ -133,38 +133,59 @@ public:		// constants
 		MIN_NUM_ROOM_PATHS
 			//= 3,
 			//= 5,
-			// hopefully this many won't ever cause the generation to fail
 			//= 8,
-			//= 10,
-			= 13,
+			= 10,
+			// hopefully this many won't ever cause the generation to fail
+			//= 13,
 		MAX_NUM_ROOM_PATHS
 			//= 15;
 			= 25;
 
 		//MIN_NUM_PATHS = 1,
 		//MAX_NUM_PATHS = 64;
+
+	static constexpr i32
+		PATH_THICKNESS = 1,
+		PATH_MIN_LEN
+			//= 2,
+			= 5,
+		PATH_MAX_LEN
+			//= 32;
+			= 20;
+
+	static constexpr IntVec2
+		ROOM_MIN_SIZE_2D{
+			//3, 3
+			4, 4,
+		},
+		ROOM_MAX_SIZE_2D{
+			10, 10,
+			//15, 15,
+		};
+public:		// static functions
+	static constexpr inline bool r2_is_path(const IntRect2& r2) { 
+		return r2_is_horiz_path(r2) || r2_is_vert_path(r2);
+	}
+	static constexpr inline bool r2_is_horiz_path(const IntRect2& r2) {
+		return (r2.size_2d.x >= PATH_MIN_LEN
+			&& r2.size_2d.y == PATH_THICKNESS);
+	}
+	static constexpr inline bool r2_is_vert_path(const IntRect2& r2) {
+		return (r2.size_2d.x == PATH_THICKNESS
+			&& r2.size_2d.y >= PATH_MIN_LEN);
+	}
+	static constexpr inline bool r2_is_room(const IntRect2& r2) {
+		return (r2.size_2d.x >= ROOM_MIN_SIZE_2D.x
+			&& r2.size_2d.x <= ROOM_MAX_SIZE_2D.x
+			&& r2.size_2d.y >= ROOM_MIN_SIZE_2D.y
+			&& r2.size_2d.y <= ROOM_MAX_SIZE_2D.y);
+	}
+	static constexpr inline bool r2_is_valid(const IntRect2& r2) {
+		return r2_is_path(r2) || r2_is_room(r2);
+	}
 public:		// types
 	//--------
 	class RoomPath final {
-	public:		// constants
-		static constexpr i32
-			PATH_THICKNESS = 1,
-			PATH_MIN_LEN
-				//= 2,
-				= 5,
-			PATH_MAX_LEN
-				//= 32;
-				= 20;
-
-		static constexpr IntVec2
-			ROOM_MIN_SIZE_2D{
-				//3, 3
-				4, 4,
-			},
-			ROOM_MAX_SIZE_2D{
-				10, 10,
-				//15, 15,
-			};
 	public:		// variables
 		#define MEMB_LIST_COMP_DUNGEON_ROOM_PATH(X) \
 			X(rect, std::nullopt) \
@@ -203,26 +224,31 @@ public:		// types
 		constexpr inline bool is_path() const {
 			//return ((rect.size_2d.x == PATH_THICKNESS)
 			//	|| (rect.size_2d.y == PATH_THICKNESS));
-			return is_horiz_path() || is_vert_path();
+			//return is_horiz_path() || is_vert_path();
+			return r2_is_path(rect);
 		}
 		constexpr inline bool is_horiz_path() const {
-			return (rect.size_2d.x >= PATH_MIN_LEN
-				&& rect.size_2d.y == PATH_THICKNESS);
+			//return (rect.size_2d.x >= PATH_MIN_LEN
+			//	&& rect.size_2d.y == PATH_THICKNESS);
+			return r2_is_horiz_path(rect);
 		}
 		constexpr inline bool is_vert_path() const {
-			return (rect.size_2d.x == PATH_THICKNESS
-				&& rect.size_2d.y >= PATH_MIN_LEN);
+			//return (rect.size_2d.x == PATH_THICKNESS
+			//	&& rect.size_2d.y >= PATH_MIN_LEN);
+			return r2_is_vert_path(rect);
 		}
 
 		constexpr inline bool is_room() const {
-			return (rect.size_2d.x >= ROOM_MIN_SIZE_2D.x
-				&& rect.size_2d.x <= ROOM_MAX_SIZE_2D.x
-				&& rect.size_2d.y >= ROOM_MIN_SIZE_2D.y
-				&& rect.size_2d.y <= ROOM_MAX_SIZE_2D.y);
+			//return (rect.size_2d.x >= ROOM_MIN_SIZE_2D.x
+			//	&& rect.size_2d.x <= ROOM_MAX_SIZE_2D.x
+			//	&& rect.size_2d.y >= ROOM_MIN_SIZE_2D.y
+			//	&& rect.size_2d.y <= ROOM_MAX_SIZE_2D.y);
+			return r2_is_room(rect);
 		}
 
 		constexpr inline bool is_valid() const {
-			return is_path() || is_room();
+			//return is_path() || is_room();
+			return r2_is_valid(rect);
 		}
 		//--------
 	};

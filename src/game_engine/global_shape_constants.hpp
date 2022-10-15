@@ -100,25 +100,29 @@ constexpr inline bool r2_fits_in_pfield_nb(const IntRect2& rect) {
 	//return PFIELD_PHYS_RECT2.arg_inside<true>(rect);
 	return PFIELD_PHYS_NO_BORDER_RECT2.arg_inside<false>(rect);
 }
-constexpr inline IntRect2 r2_left_side_in_pfield_nb(
+constexpr inline IntRect2 r2_left_side_1ge_past_in_pfield_nb(
 	const IntRect2& rect
 ) {
-	return rect.left_side_in_grid_lim(PFIELD_PHYS_NO_BORDER_RECT2);
+	return rect.left_side_1ge_past_in_grid_lim
+		(PFIELD_PHYS_NO_BORDER_RECT2);
 }
-constexpr inline IntRect2 r2_top_side_in_pfield_nb(
+constexpr inline IntRect2 r2_top_side_1ge_past_in_pfield_nb(
 	const IntRect2& rect
 ) {
-	return rect.top_side_in_grid_lim(PFIELD_PHYS_NO_BORDER_RECT2);
+	return rect.top_side_1ge_past_in_grid_lim
+		(PFIELD_PHYS_NO_BORDER_RECT2);
 }
-constexpr inline IntRect2 r2_right_side_in_pfield_nb(
+constexpr inline IntRect2 r2_right_side_1ge_past_in_pfield_nb(
 	const IntRect2& rect
 ) {
-	return rect.right_side_in_grid_lim(PFIELD_PHYS_NO_BORDER_RECT2);
+	return rect.right_side_1ge_past_in_grid_lim
+		(PFIELD_PHYS_NO_BORDER_RECT2);
 }
-constexpr inline IntRect2 r2_bottom_side_in_pfield_nb(
+constexpr inline IntRect2 r2_bottom_side_1ge_past_in_pfield_nb(
 	const IntRect2& rect
 ) {
-	return rect.bottom_side_in_grid_lim(PFIELD_PHYS_NO_BORDER_RECT2);
+	return rect.bottom_side_1ge_past_in_grid_lim
+		(PFIELD_PHYS_NO_BORDER_RECT2);
 }
 
 //extern const IntVec2Ex

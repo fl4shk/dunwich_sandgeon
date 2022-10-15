@@ -37,18 +37,25 @@ public:		// types
 	//	i32 conn_index = 0;
 	//};
 	//--------
-	using RoomPath = comp::DungeonGen::RoomPath;
+	using DungeonGen = comp::DungeonGen;
+	using RoomPath = DungeonGen::RoomPath;
 	//--------
 	class GenNext final {
 	public:		// variables
 		i32
-			same_min,
+			//same_min,
 			same_max,
-			diff_min,
+			//diff_min,
 			diff_max;
 	public:		// functions
+		constexpr inline i32 same_min() const {
+			return i32(0);
+		}
+		constexpr inline i32 diff_min() const {
+			return same_max + i32(1);
+		}
 		constexpr inline i32 full_min() const {
-			return same_min;
+			return same_min();
 		}
 		constexpr inline i32 full_max() const {
 			return diff_max;
@@ -57,13 +64,19 @@ public:		// types
 	class GenYesNo final {
 	public:		// variables
 		i32
-			no_min,
+			//no_min,
 			no_max,
-			yes_min,
+			//yes_min,
 			yes_max;
 	public:		// functions
+		constexpr inline i32 no_min() const {
+			return i32(0);
+		}
+		constexpr inline i32 yes_min() const {
+			return no_max + i32(1);
+		}
 		constexpr inline i32 full_min() const {
-			return no_min;
+			return no_min();
 		}
 		constexpr inline i32 full_max() const {
 			return yes_max;
@@ -73,17 +86,17 @@ public:		// types
 public:		// constants
 	//--------
 	static constexpr i32
-		MIN_NUM_ROOM_PATHS = comp::DungeonGen::MIN_NUM_ROOM_PATHS,
-		MAX_NUM_ROOM_PATHS = comp::DungeonGen::MAX_NUM_ROOM_PATHS;
+		MIN_NUM_ROOM_PATHS = DungeonGen::MIN_NUM_ROOM_PATHS,
+		MAX_NUM_ROOM_PATHS = DungeonGen::MAX_NUM_ROOM_PATHS;
 	//--------
 	static constexpr i32
-		PATH_THICKNESS = RoomPath::PATH_THICKNESS,
-		PATH_MIN_LEN = RoomPath::PATH_MIN_LEN,
-		PATH_MAX_LEN = RoomPath::PATH_MAX_LEN;
+		PATH_THICKNESS = DungeonGen::PATH_THICKNESS,
+		PATH_MIN_LEN = DungeonGen::PATH_MIN_LEN,
+		PATH_MAX_LEN = DungeonGen::PATH_MAX_LEN;
 
 	static constexpr IntVec2
-		ROOM_MIN_SIZE_2D = RoomPath::ROOM_MIN_SIZE_2D,
-		ROOM_MAX_SIZE_2D = RoomPath::ROOM_MAX_SIZE_2D;
+		ROOM_MIN_SIZE_2D = DungeonGen::ROOM_MIN_SIZE_2D,
+		ROOM_MAX_SIZE_2D = DungeonGen::ROOM_MAX_SIZE_2D;
 	//--------
 	static constexpr i32
 		// Generation percentages and stuff. 
@@ -98,7 +111,19 @@ public:		// constants
 		GEN_SIDE_L = 0, MIN_GEN_SIDE = GEN_SIDE_L,
 		GEN_SIDE_T = 1,
 		GEN_SIDE_R = 2,
-		GEN_SIDE_B = 3, MAX_GEN_SIDE = GEN_SIDE_B;
+		GEN_SIDE_B = 3, MAX_GEN_SIDE = GEN_SIDE_B,
+		//--------
+		MIN_GEN_SHRINK_NUM_ATTEMPTS_PATH = PATH_MIN_LEN,
+		MAX_GEN_SHRINK_NUM_ATTEMPTS_PATH = PATH_MAX_LEN,
+
+		MIN_GEN_SHRINK_NUM_ATTEMPTS_ROOM
+			= math::max_va(ROOM_MIN_SIZE_2D.x, ROOM_MIN_SIZE_2D.y),
+		MAX_GEN_SHRINK_NUM_ATTEMPTS_ROOM
+			= math::max_va(ROOM_MAX_SIZE_2D.x, ROOM_MAX_SIZE_2D.y),
+		//--------
+		// "TSF" is short for "to shrink from"
+		GEN_EXTEND_AMOUNT_TSF = 5;
+		//--------
 	//--------
 	static constexpr GenNext
 		//GEN_NEXT_SAME_MIN = 0, MIN_GEN_NEXT = GEN_NEXT_SAME_MIN,
@@ -106,47 +131,43 @@ public:		// constants
 		//GEN_NEXT_DIFFERENT_MIN = 3,
 		//GEN_NEXT_DIFFERENT_MAX = 9, MAX_GEN_NEXT = GEN_NEXT_DIFFERENT_MAX,
 		GEN_NEXT_ROOM_TYPE
-			{.same_min=0,
-			.same_max=0,
-			.diff_min=1,
+			{.same_max=0,
 			.diff_max=9},
 		GEN_NEXT_ROOM_INDEX
-			{.same_min=0,
-			.same_max=3,
-			.diff_min=4,
+			{.same_max=3,
 			.diff_max=9},
 
 		GEN_NEXT_PATH_TYPE
-			{.same_min=0,
-			.same_max=0,
-			.diff_min=1,
+			{.same_max=0,
 			.diff_max=9},
 		// generating a room, and previously generated a path
 		GEN_NEXT_PATH_INDEX_NOW_ROOM
-			{.same_min=0,
-			.same_max=92,
-			.diff_min=93,
-			.diff_max=99},
+			{
+			//.same_max=87,
+			.same_max=93,
+			.diff_max=99
+			},
 		// generating a path, and previously generated a path
 		GEN_NEXT_PATH_INDEX_NOW_PATH
-			{.same_min=0,
-			.same_max=5,
-			.diff_min=6,
-			.diff_max=9};
+			{
+			//.same_max=5,
+			//.diff_max=9
+			.same_max=45,
+			.diff_max=99
+			};
 	//--------
 	//static constexpr GenYesNo
 	//	GEN_YN_CONNECT
-	//		{.no_min=0,
-	//		.no_max=0,
-	//		.yes_min=1,
-	//		.yes_max=9};
+	//		{.no_max=0,
+	//		.yes_max=99};
 	//--------
 	static constexpr i32
 		// This is the number of tries to attempt room/path generation
 		// after failing to generate a valid one.
 		GEN_RP_LIM_TRIES
 			//= 20;
-			= 50;
+			//= 50;
+			= 100;
 		//--------
 public:		// constants
 	static const std::string
@@ -179,7 +200,7 @@ public:		// functions
 	virtual void tick(ecs::Engine* ecs_engine);
 private:		// functions
 	//void _connect_room_paths(comp::StaticBgTileMap* bg_tile_map,
-	//	comp::DungeonGen* dungeon_gen);
+	//	DungeonGen* dungeon_gen);
 private:		// types
 	class GenInnards final {
 	public:		// types
@@ -187,8 +208,9 @@ private:		// types
 	private:		// variables
 		GmDungeonGen
 			* _self = nullptr;
-		comp::DungeonGen
+		DungeonGen
 			* _dungeon_gen = nullptr;
+		RoomPath _to_push_rp;
 		//RoomPath
 		//	* _rp = nullptr,
 		//	* _item = nullptr;
@@ -204,7 +226,7 @@ private:		// types
 		//	_check_i;
 	public:		// functions
 		inline GenInnards(
-			GmDungeonGen* s_self, comp::DungeonGen* s_dungeon_gen
+			GmDungeonGen* s_self, DungeonGen* s_dungeon_gen
 		)
 			: _self(s_self), _dungeon_gen(s_dungeon_gen) {
 		}
@@ -218,76 +240,143 @@ private:		// types
 	public:		// functions
 		void _do_push_back(RoomPath&& to_push_rp) const;
 	public:		// functions
-		bool any_intersect(
+		//--------
+		std::vector<size_t> any_intersect_find_all(
 			const RoomPath& to_check_rp, const std::optional<size_t>& index
 		) const;
-		bool any_path_sides_hit_wrongly(
+		RoomPath* any_intersect_find_first(
 			const RoomPath& to_check_rp, const std::optional<size_t>& index
 		) const;
+		//--------
+		std::vector<size_t> any_sides_intersect_find_all(
+			const RoomPath& to_check_rp, const std::optional<size_t>& index
+		) const;
+		RoomPath* any_sides_intersect_find_first(
+			const RoomPath& to_check_rp, const std::optional<size_t>& index
+		) const;
+		//--------
+		std::vector<size_t> any_path_sides_hit_wrongly_find_all(
+			const RoomPath& to_check_rp, const std::optional<size_t>& index
+		) const;
+		RoomPath* any_path_sides_hit_wrongly_find_first(
+			const RoomPath& to_check_rp, const std::optional<size_t>& index
+		) const;
+		//--------
+	private:		// functions
+		//--------
+		std::vector<size_t> _find_all_backend(
+			const RoomPath& to_check_rp,
+			const std::optional<size_t>& index,
+			const std::function<bool(
+				const RoomPath&, const RoomPath&
+			)>& test_func
+		) const;
+		RoomPath* _find_first_backend(
+			const RoomPath& to_check_rp,
+			const std::optional<size_t>& index,
+			const std::function<bool(
+				const RoomPath&, const RoomPath&
+			)>& test_func
+		) const;
+		//--------
+	public:		// functions
 		void finalize(
 			//bool do_clear
 		) const;
 		//void insert_doors(bool do_clear) const;
+	private:		// functions
+		//--------
+		bool _shrink(
+			RoomPath& some_rp, //const std::optional<size_t>& index,
+			const std::function<bool(
+				const RoomPath&//, const std::optional<size_t>&
+			)>& extra_test_func
+		) const;
+		//--------
+		inline bool _rp_is_connected(
+			const RoomPath& some_rp
+		) const {
+			const RoomPath& conn_rp = _dungeon_gen->at(_conn_rp_index);
+			return (
+				(_gen_side == GEN_SIDE_L
+					&& _ls_r2_hit(conn_rp, some_rp))
+				|| (_gen_side == GEN_SIDE_T
+					&& _ts_r2_hit(conn_rp, some_rp))
+				|| (_gen_side == GEN_SIDE_R
+					&& _rs_r2_hit(conn_rp, some_rp))
+				|| (_gen_side == GEN_SIDE_B
+					&& _bs_r2_hit(conn_rp, some_rp))
+			);
+		};
+		//--------
 	private:		// static functions
 		//--------
-		static inline IntRect2 _ls_r2(const RoomPath& some_rp) {
-			return r2_left_side_in_pfield_nb(some_rp.rect);
+		static constexpr inline IntRect2 _ls_r2(const RoomPath& some_rp) {
+			return r2_left_side_1ge_past_in_pfield_nb(some_rp.rect);
 		}
-		static inline IntRect2 _ts_r2(const RoomPath& some_rp) {
-			return r2_top_side_in_pfield_nb(some_rp.rect);
+		static constexpr inline IntRect2 _ts_r2(const RoomPath& some_rp) {
+			return r2_top_side_1ge_past_in_pfield_nb(some_rp.rect);
 		}
-		static inline IntRect2 _rs_r2(const RoomPath& some_rp) {
-			return r2_right_side_in_pfield_nb(some_rp.rect);
+		static constexpr inline IntRect2 _rs_r2(const RoomPath& some_rp) {
+			return r2_right_side_1ge_past_in_pfield_nb(some_rp.rect);
 		}
-		static inline IntRect2 _bs_r2(const RoomPath& some_rp) {
-			return r2_bottom_side_in_pfield_nb(some_rp.rect);
+		static constexpr inline IntRect2 _bs_r2(const RoomPath& some_rp) {
+			return r2_bottom_side_1ge_past_in_pfield_nb(some_rp.rect);
 		}
 		//--------
-		static inline bool _ls_r2_hit(
+		static constexpr inline bool _ls_r2_hit(
 			const RoomPath& rp_0, const RoomPath& rp_1
 		) {
 			return 
 				(//i32(_check_i) != _conn_rp_index
 				//_gen_side == GEN_SIDE_L
 				//&&
-				//r2_fits_in_pfield_nb(_ls_r2(rp_0))
-				r2_intersects_pfield_nb(_ls_r2(rp_0))
+				r2_fits_in_pfield_nb(_ls_r2(rp_0))
+				//r2_intersects_pfield_nb(_ls_r2(rp_0))
 				&& rp_1.rect.intersect(_ls_r2(rp_0)));
 		}
-		static inline bool _ts_r2_hit(
+		static constexpr inline bool _ts_r2_hit(
 			const RoomPath& rp_0, const RoomPath& rp_1
 		) {
-			return (//r2_fits_in_pfield_nb(_ts_r2(rp_0))
-				r2_intersects_pfield_nb(_ts_r2(rp_0))
+			return (r2_fits_in_pfield_nb(_ts_r2(rp_0))
+				//r2_intersects_pfield_nb(_ts_r2(rp_0))
 				&& rp_1.rect.intersect(_ts_r2(rp_0)));
 		}
-		static inline bool _rs_r2_hit(
+		static constexpr inline bool _rs_r2_hit(
 			const RoomPath& rp_0, const RoomPath& rp_1
 		) {
-			return (//r2_fits_in_pfield_nb(_rs_r2(rp_0))
-				r2_intersects_pfield_nb(_rs_r2(rp_0))
+			return (r2_fits_in_pfield_nb(_rs_r2(rp_0))
+				//r2_intersects_pfield_nb(_rs_r2(rp_0))
 				&& rp_1.rect.intersect(_rs_r2(rp_0)));
 		}
-		static inline bool _bs_r2_hit(
+		static constexpr inline bool _bs_r2_hit(
 			const RoomPath& rp_0, const RoomPath& rp_1
 		) {
-			return (//r2_fits_in_pfield_nb(_bs_r2(rp_0))
-				r2_intersects_pfield_nb(_bs_r2(rp_0))
+			return (r2_fits_in_pfield_nb(_bs_r2(rp_0))
+				//r2_intersects_pfield_nb(_bs_r2(rp_0))
 				&& rp_1.rect.intersect(_bs_r2(rp_0)));
 		}
 		//--------
-		static inline bool _ls_and_rs_hit(
+		static constexpr inline bool _ls_and_rs_hit(
 			const RoomPath& rp_ls, const RoomPath& rp_rs
 		) {
 			return _ls_r2(rp_ls).intersect(_rs_r2(rp_rs));
 		}
-		static inline bool _ts_and_bs_hit(
+		static constexpr inline bool _ts_and_bs_hit(
 			const RoomPath& rp_ts, const RoomPath& rp_bs
 		) {
 			return _ts_r2(rp_ts).intersect(_bs_r2(rp_bs));
 		}
 		//--------
-		static inline bool _path_sides_hit_wrongly(
+		static constexpr inline bool _some_sides_hit(
+			const RoomPath& rp_0, const RoomPath& rp_1
+		) {
+			return (_ls_r2_hit(rp_0, rp_1)
+				|| _ts_r2_hit(rp_0, rp_1)
+				|| _rs_r2_hit(rp_0, rp_1)
+				|| _bs_r2_hit(rp_0, rp_1));
+		}
+		static constexpr inline bool _path_sides_hit_wrongly(
 			const RoomPath& rp_0, const RoomPath& rp_1
 		) {
 			return (
@@ -310,152 +399,6 @@ private:		// types
 				)
 			);
 		}
-	private:		// functions
-		//--------
-		//inline RoomPath* _item() {
-		//	return &_dungeon_gen->at(_check_i);
-		//}
-		//--------
-		//inline IntRect2 _rp_ls_r2(const RoomPath& rp) const {
-		//	return _ls_r2(rp);
-		//}
-		//inline IntRect2 _rp_ts_r2(const RoomPath& rp) const {
-		//	return _ts_r2(rp);
-		//}
-		//inline IntRect2 _rp_rs_r2(const RoomPath& rp) const {
-		//	return _rs_r2(rp);
-		//}
-		//inline IntRect2 _rp_bs_r2(const RoomPath& rp) const {
-		//	return _bs_r2(rp);
-		//}
-		//inline IntRect2 _item_ls_r2(const RoomPath& item) const {
-		//	return _ls_r2(item);
-		//}
-		//inline IntRect2 _item_ts_r2(const RoomPath& item) const {
-		//	return _ts_r2(item);
-		//}
-		//inline IntRect2 _item_rs_r2(const RoomPath& item) const {
-		//	return _rs_r2(item);
-		//}
-		//inline IntRect2 _item_bs_r2(const RoomPath& item) const {
-		//	return _bs_r2(item);
-		//}
-
-		//inline IntRect2 _item_ls_r2() const {
-		//	return IntRect2::build_in_grid_lim
-		//		(item().rect.tl_corner() - IntVec2{1, 0},
-		//		item().rect.bl_corner() - IntVec2{1, 0},
-		//		PFIELD_PHYS_NO_BORDER_RECT2);
-		//}
-		//inline IntRect2 _item_ts_r2() const {
-		//	return IntRect2::build_in_grid_lim
-		//		(item().rect.tl_corner() - IntVec2{0, 1},
-		//		item().rect.tr_corner() - IntVec2{0, 1},
-		//		PFIELD_PHYS_NO_BORDER_RECT2);
-		//}
-		//inline IntRect2 _item_rs_r2() const {
-		//	return IntRect2::build_in_grid_lim
-		//		(item().rect.tr_corner() + IntVec2{1, 0},
-		//		item().rect.br_corner() + IntVec2{1, 0},
-		//		PFIELD_PHYS_NO_BORDER_RECT2);
-		//}
-		//inline IntRect2 _item_bs_r2() const {
-		//	return IntRect2::build_in_grid_lim
-		//		(item().rect.bl_corner() + IntVec2{0, 1},
-		//		item().rect.br_corner() + IntVec2{0, 1},
-		//				PFIELD_PHYS_NO_BORDER_RECT2);
-		//}
-		//--------
-		//inline bool _item_ls_r2_hit() const {
-		//	return (r2_fits_in_pfield_nb(_item_ls_r2())
-		//		&& rp.rect.intersect(_item_ls_r2()));
-		//}
-		//inline bool _item_ts_r2_hit() const {
-		//	return (r2_fits_in_pfield_nb(_item_ts_r2())
-		//		&& rp.rect.intersect(_item_ts_r2()));
-		//}
-		//inline bool _item_rs_r2_hit() const {
-		//	return (r2_fits_in_pfield_nb(_item_rs_r2())
-		//		&& rp.rect.intersect(_item_rs_r2()));
-		//}
-		//inline bool _item_bs_r2_hit() const {
-		//	return (r2_fits_in_pfield_nb(_item_bs_r2())
-		//		&& rp.rect.intersect(_item_bs_r2()));
-		//}
-		//inline bool _rp_ls_r2_hit(
-		//	const RoomPath& rp, const RoomPath& item
-		//) const {
-		//	return _ls_r2_hit(rp, item);
-		//}
-		//inline bool _rp_ts_r2_hit(
-		//	const RoomPath& rp, const RoomPath& item
-		//) const {
-		//	return _ts_r2_hit(rp, item);
-		//}
-		//inline bool _rp_rs_r2_hit(
-		//	const RoomPath& rp, const RoomPath& item
-		//) const {
-		//	return _rs_r2_hit(rp, item);
-		//}
-		//inline bool _rp_bs_r2_hit(
-		//	const RoomPath& rp, const RoomPath& item
-		//) const {
-		//	return _bs_r2_hit(rp, item);
-		//}
-
-		//inline bool _item_ls_r2_hit(
-		//	const RoomPath& rp, const RoomPath& item
-		//) const {
-		//	return _ls_r2_hit(item, rp);
-		//}
-		//inline bool _item_ts_r2_hit(
-		//	const RoomPath& rp, const RoomPath& item
-		//) const {
-		//	return _ts_r2_hit(item, rp);
-		//}
-		//inline bool _item_rs_r2_hit(
-		//	const RoomPath& rp, const RoomPath& item
-		//) const {
-		//	return _rs_r2_hit(item, rp);
-		//}
-		//inline bool _item_bs_r2_hit(
-		//	const RoomPath& rp, const RoomPath& item
-		//) const {
-		//	return _bs_r2_hit(item, rp);
-		//}
-		//--------
-		//inline bool _rp_ls_r2_and_item_rs_r2_hit() const {
-		//	return _rp_ls_r2().intersect(_item_rs_r2());
-		//}
-		//inline bool _rp_ts_r2_and_item_bs_r2_hit() const {
-		//	return _rp_ts_r2().intersect(_item_bs_r2());
-		//}
-		//inline bool _rp_rs_r2_and_item_ls_r2_hit() const {
-		//	return _rp_rs_r2().intersect(_item_ls_r2());
-		//}
-		//inline bool _rp_bs_r2_and_item_ts_r2_hit() const {
-		//	return _rp_bs_r2().intersect(_item_ts_r2());
-		//}
-		//inline bool _rp_ls_r2_and_item_rs_r2_hit(
-		//	const RoomPath& rp, const RoomPath& item
-		//) const {
-		//	return _ls_and_rs_hit(rp, item);
-		//}
-		//inline bool _rp_ts_r2_and_item_bs_r2_hit(
-		//	const RoomPath& rp, const RoomPath& item
-		//) const {
-		//	return _ts_and_bs_hit(rp, item);
-		//}
-		//inline bool _rp_rs_r2_and_item_ls_r2_hit(
-		//	const RoomPath& rp, const RoomPath& item
-		//) const {
-		//	return _ls_and_rs_hit(item, rp);
-		//}
-		//inline bool _rp_bs_r2_and_item_ts_r2_hit(
-		//	const RoomPath& rp, const RoomPath& item
-		//) const {
-		//	return _ts_and_bs_hit(item, rp);
-		//}
 		//--------
 	};
 	friend class GenInnards;
