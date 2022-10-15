@@ -115,7 +115,7 @@ static constexpr inline std::string bg_tile_str_map_at(BgTile bg_tile) {
 //			_data.data.size());
 //	}
 //
-//	void draw() const; 
+//	void draw() const;
 //	//--------
 //};
 //--------
@@ -170,7 +170,7 @@ public:		// constants
 			//15, 15,
 		};
 public:		// static functions
-	static constexpr inline bool r2_is_path(const IntRect2& r2) { 
+	static constexpr inline bool r2_is_path(const IntRect2& r2) {
 		return r2_is_horiz_path(r2) || r2_is_vert_path(r2);
 	}
 	static constexpr inline bool r2_is_horiz_path(const IntRect2& r2) {
