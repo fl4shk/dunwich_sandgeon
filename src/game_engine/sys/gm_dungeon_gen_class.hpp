@@ -113,7 +113,8 @@ public:		// constants
 		GEN_SIDE_R = 2,
 		GEN_SIDE_B = 3, MAX_GEN_SIDE = GEN_SIDE_B,
 		//--------
-		MIN_GEN_SHRINK_NUM_ATTEMPTS_PATH = PATH_MIN_LEN,
+		MIN_GEN_SHRINK_NUM_ATTEMPTS_PATH
+			= (PATH_MIN_LEN + PATH_MAX_LEN) / 2,
 		MAX_GEN_SHRINK_NUM_ATTEMPTS_PATH = PATH_MAX_LEN,
 
 		MIN_GEN_SHRINK_NUM_ATTEMPTS_ROOM
@@ -121,7 +122,7 @@ public:		// constants
 				+ math::max_va(ROOM_MAX_SIZE_2D.x, ROOM_MAX_SIZE_2D.y))
 				/ 2,
 		MAX_GEN_SHRINK_NUM_ATTEMPTS_ROOM
-			= math::max_va(ROOM_MAX_SIZE_2D.x, ROOM_MAX_SIZE_2D.y),
+			= math::max_va(ROOM_MAX_SIZE_2D.x, ROOM_MAX_SIZE_2D.y) * 2,
 		//--------
 		// "TSF" is short for "to shrink from"
 		GEN_EXTEND_AMOUNT_TSF
