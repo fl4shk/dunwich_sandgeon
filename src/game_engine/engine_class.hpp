@@ -448,27 +448,26 @@ public:		// functions
 	inline auto layout_rand(const T& lim_0, const T& lim_1) {
 		return rng_run<T>(layout_rng(), lim_0, lim_1);
 	}
+	inline double calc_layout_noise_add_amount() {
+		// This assumes `double` has a mantissa of at least 20-bit;
+		// it almost certainly will.
+		return double(layout_rand<i32>(0, (i32(1) << i32(20)) - i32(1)));
+	};
 	template<typename T=RngSeedT>
 	inline auto layout_noise(
-		const T& lim_0, const T& lim_1, const IntVec2& pos
+		const T& lim_0, const T& lim_1, const IntVec2& pos,
+		double add_amount
 	) {
-		auto temp_layout_rand = [this]() -> double {
-			// This assumes `float` has a mantissa of at least 20-bit,
-			// which it probably will be.
-			// This is a little conservative considering that IEEE 754
-			// floats have a larger mantissa than is used here.
-			return double(layout_rand<i32>
-				(0, (i32(1) << i32(20)) - i32(1)));
-		};
 		const double
-			raw_noise = SimplexNoise::noise
-				(float(double(pos.x) + temp_layout_rand(),
-				float(double(pos.y) + temp_layout_rand()))),
-			// (raw_noise + 1.0) is used because 
-			noise = (((raw_noise + double(1.0)) / double(2.0))
+			raw_noise = double(SimplexNoise::noise
+				(float(double(pos.x) + add_amount),
+				float(double(pos.y) + add_amount))),
+			// `SimplexNoise::noise()` returns a value in the range 
+			// [-1, 1], so we shift the range to [0, 1]
+			modded_noise = (((raw_noise + double(1.0)) / double(2.0))
 				* std::abs(double(lim_0) - double(lim_1)))
 				+ math::min_va(double(lim_0), double(lim_1));
-		return T(noise);
+		return T(modded_noise);
 	}
 	//template<typename T=RngSeedT>
 	//inline auto layout_rand_scaled(const T& scale) {
@@ -591,6 +590,32 @@ public:		// `_non_ecs_ser_data_arr` accessor functions
 	}
 	inline const i32& floor() const {
 		return floor_fn(USE_CURR_FILE_NUM);
+	}
+	//--------
+	inline i32 level_minus_1_fn(ecs::FileNum file_num) const {
+		if (floor_fn(file_num) >= LEVEL_1_FLOOR_MIN
+			&& floor_fn(file_num) <= LEVEL_1_FLOOR_MAX) {
+			return 0;
+		} else if (floor_fn(file_num) >= LEVEL_2_FLOOR_MIN
+			&& floor_fn(file_num) <= LEVEL_2_FLOOR_MAX) {
+			return 1;
+		} else if (floor_fn(file_num) >= LEVEL_3_FLOOR_MIN
+			&& floor_fn(file_num) <= LEVEL_3_FLOOR_MAX) {
+			return 2;
+		} else if (floor_fn(file_num) >= LEVEL_4_FLOOR_MIN
+			&& floor_fn(file_num) <= LEVEL_4_FLOOR_MAX) {
+			return 3;
+		} else if (floor_fn(file_num) >= LEVEL_5_FLOOR_MIN
+			&& floor_fn(file_num) <= LEVEL_5_FLOOR_MAX) {
+			return 4;
+		} else {
+			throw std::runtime_error(sconcat
+				("game_engine::Engine::level_minus_1_fn(): Eek! ",
+				floor_fn(file_num)));
+		}
+	}
+	inline i32 level_minus_1() const {
+		return level_minus_1_fn(USE_CURR_FILE_NUM);
 	}
 	//--------
 	inline ecs::EntIdSet& pfield_ent_id_set_fn(

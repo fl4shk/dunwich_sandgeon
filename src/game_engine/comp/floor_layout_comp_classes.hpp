@@ -57,8 +57,14 @@ enum class BgTile: u8 {
 	#undef X
 };
 
+constexpr inline bool bg_tile_is_unsafe(BgTile bg_tile) {
+	return (bg_tile == BgTile::Pit
+		|| bg_tile == BgTile::Lava
+		|| bg_tile == BgTile::Spikes);
+}
+
 //extern const std::unordered_map<BgTile, std::string>& bg_tile_str_map();
-static constexpr inline std::string bg_tile_str_map_at(BgTile bg_tile) {
+constexpr inline std::string bg_tile_str_map_at(BgTile bg_tile) {
 	switch (bg_tile) {
 		#define X(name) \
 			case BgTile:: name : \
@@ -200,15 +206,14 @@ public:		// types
 	public:		// variables
 		#define MEMB_LIST_COMP_DUNGEON_ROOM_PATH(X) \
 			X(rect, std::nullopt) \
-			/* X(gen_side, std::nullopt) */ \
+			X(alt_terrain_map, std::nullopt) \
 			X(conn_index_set, std::nullopt) \
 			X(door_pt_set, std::nullopt) \
 
 		IntRect2 rect
 			{.pos=IntVec2(),
 			.size_2d{.x=PATH_THICKNESS, .y=PATH_MIN_LEN}};
-		//i32 gen_side = 0;
-		std::map<IntVec2, BgTile> alt_terrain_pt_map;
+		std::map<IntVec2, BgTile> alt_terrain_map;
 
 		std::set<i32> conn_index_set;
 
@@ -222,6 +227,14 @@ public:		// types
 		//--------
 		inline auto operator <=> (const RoomPath& to_cmp) const = default;
 		//--------
+		constexpr inline bool pt_in_border(const IntVec2& pt) const {
+			return (
+				(pt.x == rect.left_x() - i32(1)
+				|| pt.x == rect.right_x() + i32(1))
+				&& (pt.y == rect.top_y() - i32(1)
+				|| pt.y == rect.bottom_y() + i32(1))
+			);
+		}
 		constexpr inline bool fits_in_pfield_nb() const {
 			//return (rect.pos.x >= 0
 			//	&& rect.pos.x <= PFIELD_SIZE_2D.x);
@@ -268,10 +281,12 @@ private:		// variables
 	#define MEMB_LIST_COMP_DUNGEON(X) \
 		X(_data, std::nullopt) \
 		/* X(_path_vec, std::nullopt) */ \
+		X(_layout_noise_add_amount, std::nullopt) \
 
 	//std::vector<RoomPath> _data;
 	binser::VectorEx<RoomPath> _data;
 	//binser::VectorEx<Path> _path_vec;
+	double _layout_noise_add_amount = 0.0d;
 public:		// functions
 	//--------
 	DungeonGen();
@@ -313,9 +328,10 @@ public:		// functions
 	inline size_t size() const {
 		return _data.data.size();
 	}
-	inline void clear() {
+	inline void clear(double n_layout_noise_add_amount) {
 		//_data.data.resize(0);
 		_data.data.clear();
+		_layout_noise_add_amount = n_layout_noise_add_amount;
 	}
 
 	//void draw(StaticBgTileMap* bg_tile_map);
@@ -340,6 +356,7 @@ public:		// functions
 	//--------
 	GEN_GETTER_BY_CON_REF(data);
 	//GEN_GETTER_BY_CON_REF(path_vec);
+	GEN_GETTER_BY_CON_REF(layout_noise_add_amount);
 	//--------
 };
 //--------

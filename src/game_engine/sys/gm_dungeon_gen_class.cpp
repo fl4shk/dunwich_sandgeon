@@ -28,11 +28,32 @@ const std::string
 std::string GmDungeonGen::kind_str() const {
 	return KIND_STR;
 }
+const std::vector<std::vector<GmDungeonGen::BgTile>>
+	GmDungeonGen::LEVEL_ALLOWED_ALT_TERRAIN_V2D({
+		// Level 1 (index 0)
+		{ALT_TERRAIN_NONE, BgTile::Water, BgTile::Spikes},
+
+		// Level 2 (index 1)
+		{ALT_TERRAIN_NONE,
+			BgTile::Water, BgTile::Spikes, BgTile::Pit},
+
+		// Level 3 (index 2)
+		{ALT_TERRAIN_NONE,
+			BgTile::Water, BgTile::Lava, BgTile::Spikes, BgTile::Pit},
+
+		// Level 4 (index 3)
+		{ALT_TERRAIN_NONE,
+			BgTile::Lava, BgTile::Spikes},
+
+		// Level 5 (index 4)
+		{ALT_TERRAIN_NONE,
+			BgTile::Lava, BgTile::Spikes},
+	});
 
 void GmDungeonGen::clear_dungeon_gen(ecs::Engine* ecs_engine) {
 	auto* dungeon_gen
 		= ecs_engine->casted_comp_at<DungeonGen>(*_dungeon_gen_id);
-	dungeon_gen->clear();
+	dungeon_gen->clear(engine->calc_layout_noise_add_amount());
 }
 void GmDungeonGen::_init(ecs::Engine* ecs_engine) {
 	_init_start();
@@ -65,6 +86,7 @@ void GmDungeonGen::_init(ecs::Engine* ecs_engine) {
 		engine->log("game_engine::sys::GmDungeonGen::_init(): ",
 			*_dungeon_gen_id, "\n");
 	}
+	clear_dungeon_gen(ecs_engine);
 }
 
 void GmDungeonGen::tick(ecs::Engine* ecs_engine) {
@@ -87,8 +109,11 @@ void GmDungeonGen::tick(ecs::Engine* ecs_engine) {
 			//}
 			GenInnards innards(this, ecs_engine, dungeon_gen);
 			innards.gen_single_rp();
-			innards.finalize(
+			innards.finalize_rp_rects(
 				//true
+			);
+			innards.insert_alt_terrain(
+				true
 			);
 			//else {
 			//	engine->log("Debug: We're already done generating\n");
@@ -900,7 +925,7 @@ auto GmDungeonGen::GenInnards::_find_first_backend(
 	}
 	return nullptr;
 }
-void GmDungeonGen::GenInnards::finalize(
+void GmDungeonGen::GenInnards::finalize_rp_rects(
 	//bool do_clear
 ) const {
 	//if (do_clear) {
@@ -1129,6 +1154,83 @@ bool GmDungeonGen::GenInnards::_shrink(
 	return false;
 	//return final_func();
 };
+//--------
+void GmDungeonGen::GenInnards::insert_alt_terrain(
+	bool do_clear
+) const {
+	const auto
+		& allowed_alt_terrain_vec = LEVEL_ALLOWED_ALT_TERRAIN_V2D
+			.at(engine->level_minus_1());
+
+	//for (auto& item: *_dungeon_gen)
+	for (
+		size_t item_index=0;
+		item_index<_dungeon_gen->size();
+		++item_index
+	) {
+		auto& item = _dungeon_gen->at(item_index);
+		if (do_clear) {
+			item.alt_terrain_map.clear();
+		}
+
+		//if (item.is_path()) {
+		//	continue;
+		//}
+		// Note that rooms are already generated with their borders
+		// inside of `engine.pfield_window`
+		IntVec2 pos;
+
+		for (
+			pos.y=item.rect.top_y() - i32(1);
+			pos.y<=item.rect.bottom_y() + i32(1);
+			++pos.y
+		) {
+			for (
+				pos.x=item.rect.left_x() - i32(1);
+				pos.x<=item.rect.right_x() + i32(1);
+				++pos.x
+			) {
+				const BgTile
+					bg_tile = allowed_alt_terrain_vec
+						.at(engine->layout_noise<i32>
+							(0, allowed_alt_terrain_vec.size() - 1, pos,
+							_dungeon_gen->layout_noise_add_amount()));
+				if (bg_tile == ALT_TERRAIN_NONE) {
+					continue;
+				}
+
+				if (item.is_path()) {
+					if (!bg_tile_is_unsafe(bg_tile)) {
+						item.alt_terrain_map[pos] = bg_tile;
+					}
+				} else { // if (item.is_room())
+					RoomPath* some_path_rp = nullptr;
+					for (const auto& conn_index: item.conn_index_set) {
+						// It's guaranteed at this point that there's
+						// either one or zero paths at `pos`, so we can
+						// stop the search at the first check
+						RoomPath& conn_rp = _dungeon_gen->at(conn_index);
+						if (conn_rp.is_path()) {
+							some_path_rp = &conn_rp;
+							break;
+						}
+					}
+					if (
+						!item.pt_in_border(pos) 
+						|| !some_path_rp
+						|| (
+							some_path_rp
+							&& !bg_tile_is_unsafe(bg_tile)
+						)
+					) {
+						item.alt_terrain_map[pos] = bg_tile;
+					}
+				}
+
+			}
+		}
+	}
+}
 //--------
 } // namespace sys
 } // namespace game_engine

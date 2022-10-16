@@ -37,15 +37,14 @@ public:		// types
 	//	i32 conn_index = 0;
 	//};
 	//--------
+	using BgTile = comp::BgTile;
 	using DungeonGen = comp::DungeonGen;
 	using RoomPath = DungeonGen::RoomPath;
 	//--------
 	class GenNext final {
 	public:		// variables
 		i32
-			//same_min,
 			same_max,
-			//diff_min,
 			diff_max;
 	public:		// functions
 		constexpr inline i32 same_min() const {
@@ -64,9 +63,7 @@ public:		// types
 	class GenYesNo final {
 	public:		// variables
 		i32
-			//no_min,
 			no_max,
-			//yes_min,
 			yes_max;
 	public:		// functions
 		constexpr inline i32 no_min() const {
@@ -84,6 +81,19 @@ public:		// types
 	};
 	//--------
 public:		// constants
+	static const std::string
+		KIND_STR;
+public:		// constants
+	//--------
+	static constexpr BgTile
+		ALT_TERRAIN_NONE = BgTile::Error;
+	static const std::vector<std::vector<BgTile>>
+		LEVEL_ALLOWED_ALT_TERRAIN_V2D;
+		//LEVEL_1_ALT_TERRAIN_VEC,
+		//LEVEL_2_ALT_TERRAIN_VEC,
+		//LEVEL_3_ALT_TERRAIN_VEC,
+		//LEVEL_4_ALT_TERRAIN_VEC,
+		//LEVEL_5_ALT_TERRAIN_VEC;
 	//--------
 	static constexpr i32
 		MIN_NUM_ROOM_PATHS = DungeonGen::MIN_NUM_ROOM_PATHS,
@@ -207,9 +217,6 @@ public:		// constants
 			//= 50;
 			= 100;
 		//--------
-public:		// constants
-	static const std::string
-		KIND_STR;
 private:		// variables
 	std::optional<ecs::EntId>
 		_bg_tile_map_id,
@@ -322,11 +329,13 @@ private:		// types
 		) const;
 		//--------
 	public:		// functions
-		void finalize(
+		//--------
+		void finalize_rp_rects(
 			//bool do_clear
 		) const;
 		//void insert_doors(bool do_clear) const;
 	private:		// functions
+		//--------
 		//--------
 		bool _shrink(
 			bool was_horiz_path, bool was_vert_path,
@@ -349,6 +358,12 @@ private:		// types
 					&& _bs_r2_hit(conn_rp, some_rp))
 			);
 		};
+		//--------
+	public:		// functions
+		//--------
+		void insert_alt_terrain(
+			bool do_clear
+		) const;
 		//--------
 	private:		// static functions
 		//--------
