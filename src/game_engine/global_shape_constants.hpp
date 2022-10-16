@@ -100,6 +100,67 @@ constexpr inline bool r2_fits_in_pfield_nb(const IntRect2& rect) {
 	//return PFIELD_PHYS_RECT2.arg_inside<true>(rect);
 	return PFIELD_PHYS_NO_BORDER_RECT2.arg_inside<false>(rect);
 }
+//constexpr inline bool r2_local_pos_in_border(
+//	const IntRect2& rect, const IntVec2& local_pos
+//) {
+//	//return (!
+//	//	(local_pos.x > 0
+//	//	&& local_pos.x < rect.size_2d.x + 1
+//	//	&& local_pos.y > 0
+//	//	&& local_pos.y < rect.size_2d.y + 1)
+//	//);
+//	if (local_pos.x == 0 || local_pos.x == rect.size_2d.x + 1) {
+//		return true;
+//	} else {
+//		return (local_pos.y == 0 || local_pos.y == rect.size_2d.y + 1);
+//	}
+//}
+//constexpr inline IntRect2 r2_shrink_to_internal_border(
+//	const IntRect2& rect
+//) {
+//	return rect.build_in_grid_inflated_lim
+//		(IntVec2{-1, -1}, IntVec2{-1, -1},
+//		PFIELD_PHYS_NO_BORDER_RECT2);
+//}
+//constexpr inline bool r2_local_pos_in_internal_border(
+//	const IntRect2& rect, const IntVec2& local_pos
+//) {
+//	//&& (!
+//	//	(local_pos.x > 1
+//	//	&& local_pos.x < rect.size_2d.x
+//	//	&& local_pos.y > 1
+//	//	&& local_pos.y < rect.size_2d.y)
+//	//);
+//	//return r2_local_pos_in_border
+//	//	(r2_shrink_to_internal_border(rect), local_pos);
+//
+//	if (local_pos.x == 1 || local_pos.x == rect.size_2d.x) {
+//		return true;
+//	} else {
+//		return (local_pos.y == 1 || local_pos.y == rect.size_2d.y);
+//	}
+//}
+constexpr inline bool r2_pos_in_internal_border(
+	const IntRect2& rect, const IntVec2& pos
+) {
+	return (
+		((pos.x == rect.left_x() || pos.x == rect.right_x())
+			&& pos.y >= rect.top_y() && pos.y <= rect.bottom_y())
+		|| ((pos.y == rect.top_y() || pos.y == rect.bottom_y())
+			&& pos.x >= rect.left_x() && pos.x <= rect.right_x())
+	);
+}
+constexpr inline bool r2_pos_in_border(
+	const IntRect2& rect, const IntVec2& pos
+) {
+	return (
+		((pos.x == rect.left_x() - 1 || pos.x == rect.right_x() + 1)
+			&& pos.y >= rect.top_y() - 1 && pos.y <= rect.bottom_y() + 1)
+		|| ((pos.y == rect.top_y() - 1 || pos.y == rect.bottom_y() + 1)
+			&& pos.x >= rect.left_x() - 1 && pos.x <= rect.right_x() + 1)
+	);
+}
+
 constexpr inline IntRect2 r2_left_side_1ge_past_in_pfield_nb(
 	const IntRect2& rect
 ) {

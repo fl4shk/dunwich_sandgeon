@@ -27,6 +27,7 @@
 #include "game_options_class.hpp"
 #include "comp/general_comp_classes.hpp"
 #include "global_shape_constants.hpp"
+#include "comp/floor_layout_comp_classes.hpp"
 
 namespace dunwich_sandgeon {
 namespace game_engine {
@@ -403,8 +404,9 @@ public:		// functions
 	inline LayoutRngArr& layout_rng_arr_fn(ecs::FileNum file_num) {
 		return _layout_rng_a2d.at(_sel_file_num(file_num));
 	}
-	inline const LayoutRngArr& layout_rng_arr_fn(ecs::FileNum file_num)
-		const {
+	inline const LayoutRngArr& layout_rng_arr_fn(
+		ecs::FileNum file_num
+	) const {
 		return _layout_rng_a2d.at(_sel_file_num(file_num));
 	}
 	inline LayoutRngArr& layout_rng_arr() {
@@ -459,15 +461,34 @@ public:		// functions
 		double add_amount
 	) {
 		const double
+			dist_lim = std::abs(double(lim_0) - double(lim_1) + 1.0),
+			min_lim = math::min_va(double(lim_0), double(lim_1)),
+			//raw_noise = double(SimplexNoise::noise
+			//	(float(double(pos.x) + (add_amount / dist_lim)),
+			//	float(double(pos.y) + (add_amount / dist_lim))));
 			raw_noise = double(SimplexNoise::noise
 				(float(double(pos.x) + add_amount),
-				float(double(pos.y) + add_amount))),
+				float(double(pos.y) + add_amount)));
+		//if (double(i64(raw_noise)) == raw_noise)
+		//if (double(i64(raw_noise)) != raw_noise) {
+		//	log("Debug: game_engine::Engine::layout_noise(): ",
+		//		raw_noise,
+		//		"\n");
+		//}
+
+		const double
 			// `SimplexNoise::noise()` returns a value in the range 
 			// [-1, 1], so we shift the range to [0, 1]
-			modded_noise = (((raw_noise + double(1.0)) / double(2.0))
-				* std::abs(double(lim_0) - double(lim_1)))
-				+ math::min_va(double(lim_0), double(lim_1));
-		return T(modded_noise);
+			modded_noise
+				= (((raw_noise + 1.0) / 2.0) * dist_lim)
+				+ min_lim;
+		//log("Debug: layout_noise(): ",
+		//	"rw{", raw_noise, "}; ",
+		//	"mn{", modded_noise, " ", T(std::round(modded_noise)), "}; ",
+		//	"dl{", dist_lim, "}; ",
+		//	"ml{", min_lim, "}",
+		//	"\n");
+		return T(std::round(modded_noise));
 	}
 	//template<typename T=RngSeedT>
 	//inline auto layout_rand_scaled(const T& scale) {

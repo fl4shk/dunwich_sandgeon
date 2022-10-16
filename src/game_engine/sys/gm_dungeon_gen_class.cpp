@@ -31,7 +31,8 @@ std::string GmDungeonGen::kind_str() const {
 const std::vector<std::vector<GmDungeonGen::BgTile>>
 	GmDungeonGen::LEVEL_ALLOWED_ALT_TERRAIN_V2D({
 		// Level 1 (index 0)
-		build_alt_terrain_vec(AtvPair(20, ALT_TERRAIN_NONE),
+		build_alt_terrain_vec(//AtvPair(20, ALT_TERRAIN_NONE),
+			AtvPair(5, ALT_TERRAIN_NONE),
 			AtvPair(5, BgTile::Water),
 			AtvPair(5, BgTile::Spikes),
 			AtvPair(4, BgTile::Lava)
@@ -107,19 +108,22 @@ void GmDungeonGen::tick(ecs::Engine* ecs_engine) {
 				*_dungeon_gen_id
 			);
 
-		if (engine->key_status.key_just_went_down(KeyKind::DownR)) {
+		//if (engine->key_status.key_just_went_down(KeyKind::DownR))
+		{
 			//if (dungeon_gen->size() == 0) {
 			//	engine->log("Debug: starting dungeon generation.\n");
 			//}
-			GenInnards innards(this, ecs_engine, dungeon_gen);
-			innards.gen_single_rp();
-			innards.finalize_rp_rects(
-				//true
-			);
-			if (_done_generating) {
-				innards.insert_alt_terrain(
-					true
+			while (!_done_generating) {
+				GenInnards innards(this, ecs_engine, dungeon_gen);
+				innards.gen_single_rp();
+				innards.finalize_rp_rects(
+					//true
 				);
+				if (_done_generating) {
+					innards.insert_alt_terrain(
+						true
+					);
+				}
 			}
 			//else {
 			//	engine->log("Debug: We're already done generating\n");
@@ -203,7 +207,7 @@ bool GmDungeonGen::GenInnards::gen_single_rp() {
 			if (_self->_stop_gen_early) {
 				if (_dungeon_gen->size() < MIN_NUM_ROOM_PATHS) {
 					engine->log
-						("Debug: `game_engine::sys::gen_single_rp()`: ",
+						("Debug: game_engine::sys::gen_single_rp(): ",
 						"Redoing generation\n");
 					_self->clear_dungeon_gen(_ecs_engine);
 				} else {
@@ -212,7 +216,8 @@ bool GmDungeonGen::GenInnards::gen_single_rp() {
 					// try any more for this floor.  This is to prevent
 					// infinite loops in the dungeon generation.
 					engine->log
-						("stopping room generation early: ",
+						("Debug: game_engine::sys::gen_single_rp(): ",
+						"stopping room generation early: ",
 						_dungeon_gen->size(), " ",
 						_self->_attempted_num_rp, "\n");
 				}
@@ -1189,23 +1194,25 @@ void GmDungeonGen::GenInnards::insert_alt_terrain(
 			local_pos;
 
 		for (
-			pos.y=item.rect.top_y() - i32(1),
-				local_pos.y=0;
+			pos.y=item.rect.top_y() - i32(1);
+				//local_pos.y=0;
 			pos.y<=item.rect.bottom_y() + i32(1);
-			++pos.y,
-				++local_pos.y
+			++pos.y
+				//++local_pos.y
 		) {
 			for (
-				pos.x=item.rect.left_x() - i32(1),
-					local_pos.x=0;
+				pos.x=item.rect.left_x() - i32(1);
+					//local_pos.x=0;
 				pos.x<=item.rect.right_x() + i32(1);
-				++pos.x, ++local_pos.x
+				++pos.x
+					//++local_pos.x
 			) {
+				const auto
+					bg_tile_index = engine->layout_noise<i32>
+						(0, allowed_alt_terrain_vec.size() - 1, pos,
+						_dungeon_gen->layout_noise_add_amount());
 				const BgTile
-					bg_tile = allowed_alt_terrain_vec
-						.at(engine->layout_noise<i32>
-							(0, allowed_alt_terrain_vec.size() - 1, pos,
-							_dungeon_gen->layout_noise_add_amount()));
+					bg_tile = allowed_alt_terrain_vec.at(bg_tile_index);
 				if (bg_tile == ALT_TERRAIN_NONE) {
 					continue;
 				}
@@ -1215,25 +1222,33 @@ void GmDungeonGen::GenInnards::insert_alt_terrain(
 						item.alt_terrain_map[pos] = bg_tile;
 					}
 				} else { // if (item.is_room())
-					RoomPath* some_path_rp = nullptr;
-					for (const auto& conn_index: item.conn_index_set) {
-						// It's guaranteed at this point that there's
-						// either one or zero paths at `pos`, so we can
-						// stop the search at the first check
-						RoomPath& conn_rp = _dungeon_gen->at(conn_index);
-						if (conn_rp.is_path()) {
-							some_path_rp = &conn_rp;
-							break;
-						}
-					}
+					//RoomPath* some_path_rp = nullptr;
+					//for (const auto& conn_index: item.conn_index_set) {
+					//	// It's guaranteed at this point that there's
+					//	// either one or zero paths at `pos`, so we can
+					//	// stop the search at the first check
+					//	RoomPath& conn_rp = _dungeon_gen->at(conn_index);
+					//	if (conn_rp.is_path()) {
+					//		some_path_rp = &conn_rp;
+					//		break;
+					//	}
+					//}
 					if (
 						//!item.local_pos_in_border(local_pos) 
-						//|| 
-						!some_path_rp
-						|| (
-							some_path_rp
-							&& !bg_tile_is_unsafe(bg_tile)
-						)
+						//|| !item.local_pos_in_internal_border(local_pos)
+						//(
+						//	!item.pos_in_border(pos)
+						//	&& !item.pos_in_internal_border(pos) 
+						//	&& bg_tile_is_unsafe(bg_tile)
+						//)
+						//|| !some_path_rp
+						//|| !some_path_rp->rect.intersect(pos)
+						//|| !bg_tile_is_unsafe(bg_tile)
+						(
+							bg_tile_is_unsafe(bg_tile)
+							&& !item.pos_in_border(pos)
+							&& !item.pos_in_internal_border(pos)
+						) || !bg_tile_is_unsafe(bg_tile)
 					) {
 						item.alt_terrain_map[pos] = bg_tile;
 					}

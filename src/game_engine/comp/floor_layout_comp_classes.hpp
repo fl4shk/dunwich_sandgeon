@@ -227,21 +227,37 @@ public:		// types
 		//--------
 		inline auto operator <=> (const RoomPath& to_cmp) const = default;
 		//--------
-		constexpr inline bool local_pos_in_border(
-			const IntVec2& local_pos
+		//constexpr inline bool local_pos_in_border(
+		//	const IntVec2& local_pos
+		//) const {
+		//	//return (
+		//	//	!(pt.x != (rect.left_x() - i32(1))
+		//	//	&& pt.x != (rect.right_x() + i32(1)))
+		//	//	&& pt.y != (rect.top_y() - i32(1))
+		//	//	&& pt.y != (rect.bottom_y() + i32(1))
+		//	//);
+		//	//return (!
+		//	//	((local_pos.x > 0)
+		//	//	&& (local_pos.x < rect.size_2d.x + 1)
+		//	//	&& (local_pos.y > 0)
+		//	//	&& (local_pos.y < rect.size_2d.y + 1))
+		//	//);
+		//	return r2_local_pos_in_border(rect, local_pos);
+		//}
+		//constexpr inline bool local_pos_in_internal_border(
+		//	const IntVec2& local_pos
+		//) const {
+		//	return r2_local_pos_in_internal_border(rect, local_pos);
+		//}
+		constexpr inline bool pos_in_border(
+			const IntVec2& pos
 		) const {
-			//return (
-			//	!(pt.x != (rect.left_x() - i32(1))
-			//	&& pt.x != (rect.right_x() + i32(1)))
-			//	&& pt.y != (rect.top_y() - i32(1))
-			//	&& pt.y != (rect.bottom_y() + i32(1))
-			//);
-			return (!
-				((local_pos.x > 0)
-				&& (local_pos.x < rect.size_2d.x + 1)
-				&& (local_pos.y > 0)
-				&& (local_pos.y < rect.size_2d.y + 1))
-			);
+			return r2_pos_in_border(rect, pos);
+		}
+		constexpr inline bool pos_in_internal_border(
+			const IntVec2& pos
+		) const {
+			return r2_pos_in_internal_border(rect, pos);
 		}
 		constexpr inline bool fits_in_pfield_nb() const {
 			//return (rect.pos.x >= 0
