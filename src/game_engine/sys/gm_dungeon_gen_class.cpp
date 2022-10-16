@@ -31,23 +31,27 @@ std::string GmDungeonGen::kind_str() const {
 const std::vector<std::vector<GmDungeonGen::BgTile>>
 	GmDungeonGen::LEVEL_ALLOWED_ALT_TERRAIN_V2D({
 		// Level 1 (index 0)
-		{ALT_TERRAIN_NONE, BgTile::Water, BgTile::Spikes},
+		build_alt_terrain_vec(AtvPair(20, ALT_TERRAIN_NONE),
+			AtvPair(5, BgTile::Water),
+			AtvPair(5, BgTile::Spikes),
+			AtvPair(4, BgTile::Lava)
+			),
 
 		// Level 2 (index 1)
-		{ALT_TERRAIN_NONE,
-			BgTile::Water, BgTile::Spikes, BgTile::Pit},
+		build_alt_terrain_vec(AtvPair(2, ALT_TERRAIN_NONE),
+			BgTile::Water, BgTile::Spikes, BgTile::Pit),
 
 		// Level 3 (index 2)
-		{ALT_TERRAIN_NONE,
-			BgTile::Water, BgTile::Lava, BgTile::Spikes, BgTile::Pit},
+		build_alt_terrain_vec(AtvPair(2, ALT_TERRAIN_NONE),
+			BgTile::Water, BgTile::Lava, BgTile::Spikes, BgTile::Pit),
 
 		// Level 4 (index 3)
-		{ALT_TERRAIN_NONE,
-			BgTile::Lava, BgTile::Spikes},
+		build_alt_terrain_vec(AtvPair(2, ALT_TERRAIN_NONE),
+			BgTile::Lava, BgTile::Spikes),
 
 		// Level 5 (index 4)
-		{ALT_TERRAIN_NONE,
-			BgTile::Lava, BgTile::Spikes},
+		build_alt_terrain_vec(AtvPair(2, ALT_TERRAIN_NONE),
+			BgTile::Lava, BgTile::Spikes),
 	});
 
 void GmDungeonGen::clear_dungeon_gen(ecs::Engine* ecs_engine) {
@@ -112,9 +116,11 @@ void GmDungeonGen::tick(ecs::Engine* ecs_engine) {
 			innards.finalize_rp_rects(
 				//true
 			);
-			innards.insert_alt_terrain(
-				true
-			);
+			if (_done_generating) {
+				innards.insert_alt_terrain(
+					true
+				);
+			}
 			//else {
 			//	engine->log("Debug: We're already done generating\n");
 			//}
@@ -1178,17 +1184,22 @@ void GmDungeonGen::GenInnards::insert_alt_terrain(
 		//}
 		// Note that rooms are already generated with their borders
 		// inside of `engine.pfield_window`
-		IntVec2 pos;
+		IntVec2
+			pos,
+			local_pos;
 
 		for (
-			pos.y=item.rect.top_y() - i32(1);
+			pos.y=item.rect.top_y() - i32(1),
+				local_pos.y=0;
 			pos.y<=item.rect.bottom_y() + i32(1);
-			++pos.y
+			++pos.y,
+				++local_pos.y
 		) {
 			for (
-				pos.x=item.rect.left_x() - i32(1);
+				pos.x=item.rect.left_x() - i32(1),
+					local_pos.x=0;
 				pos.x<=item.rect.right_x() + i32(1);
-				++pos.x
+				++pos.x, ++local_pos.x
 			) {
 				const BgTile
 					bg_tile = allowed_alt_terrain_vec
@@ -1216,8 +1227,9 @@ void GmDungeonGen::GenInnards::insert_alt_terrain(
 						}
 					}
 					if (
-						!item.pt_in_border(pos) 
-						|| !some_path_rp
+						//!item.local_pos_in_border(local_pos) 
+						//|| 
+						!some_path_rp
 						|| (
 							some_path_rp
 							&& !bg_tile_is_unsafe(bg_tile)

@@ -211,29 +211,21 @@ void DungeonGen::draw() {
 	{
 		const RoomPath& rp = at(i);
 		IntVec2
-			pos;
-			//local_pos;
+			pos,
+			local_pos;
 		// Note that rooms are already generated with their borders inside
 		// of `engine.pfield_window`
 		for (
-			//pos.y=math::max_va(rp.rect.top_y() - i32(1),
-			//	PFIELD_PHYS_RECT2.top_y()),
-			pos.y=rp.rect.top_y() - i32(1);
-				//local_pos.y=0;
-			//pos.y<=math::min_va(rp.rect.bottom_y() + i32(1),
-			//	PFIELD_PHYS_RECT2.bottom_y());
+			pos.y=rp.rect.top_y() - i32(1),
+				local_pos.y=0;
 			pos.y<=rp.rect.bottom_y() + i32(1);
-			++pos.y //, ++local_pos.y
+			++pos.y, ++local_pos.y
 		) {
 			for (
-				//pos.x=math::max_va(rp.rect.left_x() - i32(1),
-				//	PFIELD_PHYS_RECT2.left_x()),
-				pos.x=rp.rect.left_x() - i32(1);
-					//local_pos.x=0;
-				//pos.x<=math::min_va(rp.rect.right_x() + i32(1),
-				//	PFIELD_PHYS_RECT2.right_x());
+				pos.x=rp.rect.left_x() - i32(1),
+					local_pos.x=0;
 				pos.x<=rp.rect.right_x() + i32(1);
-				++pos.x //, ++local_pos.x
+				++pos.x, ++local_pos.x
 			) {
 				try {
 					BgTile bg_tile = BgTile::Error;
@@ -252,7 +244,8 @@ void DungeonGen::draw() {
 					//		&& (local_pos.y > 0)
 					//		&& (local_pos.y < rp.rect.size_2d.y + 1))
 					//	);
-					const bool in_border = rp.pt_in_border(pos);
+					const bool in_border
+						= rp.local_pos_in_border(local_pos);
 
 					if (in_border) {
 						// I'm doing this the slow/easy way for now.

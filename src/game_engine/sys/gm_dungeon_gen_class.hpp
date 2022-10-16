@@ -27,6 +27,11 @@ namespace dunwich_sandgeon {
 namespace game_engine {
 namespace sys {
 //--------
+using GmDungeonGenAtvPair = std::pair<size_t, comp::BgTile>;
+template<typename T>
+concept IsGmDungeonGenBuildAtvArg
+	= (std::same_as<T, comp::BgTile>
+	|| std::same_as<T, GmDungeonGenAtvPair>);
 // Game Mode: Dungeon Generation
 class GmDungeonGen final: public ecs::Sys {
 public:		// types
@@ -83,10 +88,34 @@ public:		// types
 public:		// constants
 	static const std::string
 		KIND_STR;
+public:		// types
+	using AtvPair = GmDungeonGenAtvPair;
+private:		// functions
+	static inline void _build_alt_terrain_vec_backend(
+		std::vector<BgTile>& ret, BgTile first_arg
+	) {
+		ret.push_back(first_arg);
+	}
+	static inline void _build_alt_terrain_vec_backend(
+		std::vector<BgTile>& ret, const AtvPair& first_arg
+	) {
+		for (size_t i=0; i<first_arg.first; ++i) {
+			ret.push_back(first_arg.second);
+		}
+	}
 public:		// constants
-	//--------
 	static constexpr BgTile
 		ALT_TERRAIN_NONE = BgTile::Error;
+
+	static inline std::vector<BgTile> build_alt_terrain_vec(
+		const IsGmDungeonGenBuildAtvArg auto&... args
+	) {
+		std::vector<BgTile> ret;
+
+		(_build_alt_terrain_vec_backend(ret, args), ...);
+
+		return ret;
+	}
 	static const std::vector<std::vector<BgTile>>
 		LEVEL_ALLOWED_ALT_TERRAIN_V2D;
 		//LEVEL_1_ALT_TERRAIN_VEC,
@@ -94,6 +123,8 @@ public:		// constants
 		//LEVEL_3_ALT_TERRAIN_VEC,
 		//LEVEL_4_ALT_TERRAIN_VEC,
 		//LEVEL_5_ALT_TERRAIN_VEC;
+	//--------
+public:		// constants
 	//--------
 	static constexpr i32
 		MIN_NUM_ROOM_PATHS = DungeonGen::MIN_NUM_ROOM_PATHS,
