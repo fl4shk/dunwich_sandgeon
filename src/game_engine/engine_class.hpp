@@ -450,46 +450,52 @@ public:		// functions
 	inline auto layout_rand(const T& lim_0, const T& lim_1) {
 		return rng_run<T>(layout_rng(), lim_0, lim_1);
 	}
-	inline double calc_layout_noise_add_amount() {
-		// This assumes `double` has a mantissa of at least 20-bit;
-		// it almost certainly will.
-		return double(layout_rand<i32>(0, (i32(1) << i32(20)) - i32(1)));
-	};
-	template<typename T=RngSeedT>
-	inline auto layout_noise(
-		const T& lim_0, const T& lim_1, const IntVec2& pos,
-		double add_amount
-	) {
-		const double
-			dist_lim = std::abs(double(lim_0) - double(lim_1) + 1.0),
-			min_lim = math::min_va(double(lim_0), double(lim_1)),
-			//raw_noise = double(SimplexNoise::noise
-			//	(float(double(pos.x) + (add_amount / dist_lim)),
-			//	float(double(pos.y) + (add_amount / dist_lim))));
-			raw_noise = double(SimplexNoise::noise
-				(float(double(pos.x) + add_amount),
-				float(double(pos.y) + add_amount)));
-		//if (double(i64(raw_noise)) == raw_noise)
-		//if (double(i64(raw_noise)) != raw_noise) {
-		//	log("Debug: game_engine::Engine::layout_noise(): ",
-		//		raw_noise,
-		//		"\n");
-		//}
+	//inline double calc_layout_noise_param_backend() {
+	//	// This assumes `double` has a mantissa of at least 20-bit;
+	//	// it almost certainly will.
+	//	return double(layout_rand<i32>(0, (i32(1) << i32(20)) - i32(1)));
+	//}
+	//inline double calc_layout_noise_pos_scale() {
+	//	return (1.0 / calc_layout_noise_param_backend()); 
+	//}
+	//inline double calc_layout_noise_pos_offset() {
+	//	return calc_layout_noise_param_backend();
+	//};
+	//template<typename T=RngSeedT>
+	//inline auto layout_noise(
+	//	const T& lim_0, const T& lim_1, const IntVec2& pos,
+	//	double pos_scale, double pos_offset
+	//) {
+	//	const double
+	//		dist_lim = std::abs(double(lim_0) - double(lim_1) + 1.0),
+	//		min_lim = math::min_va(double(lim_0), double(lim_1)),
+	//		//raw_noise = double(SimplexNoise::noise
+	//		//	(float(double(pos.x) + (add_amount / dist_lim)),
+	//		//	float(double(pos.y) + (add_amount / dist_lim))));
+	//		raw_noise = double(SimplexNoise::noise
+	//			(float((double(pos.x) * pos_scale) + pos_offset),
+	//			float((double(pos.y) * pos_scale) + pos_offset)));
+	//	//if (double(i64(raw_noise)) == raw_noise)
+	//	//if (double(i64(raw_noise)) != raw_noise) {
+	//	//	log("Debug: game_engine::Engine::layout_noise(): ",
+	//	//		raw_noise,
+	//	//		"\n");
+	//	//}
 
-		const double
-			// `SimplexNoise::noise()` returns a value in the range 
-			// [-1, 1], so we shift the range to [0, 1]
-			modded_noise
-				= (((raw_noise + 1.0) / 2.0) * dist_lim)
-				+ min_lim;
-		//log("Debug: layout_noise(): ",
-		//	"rw{", raw_noise, "}; ",
-		//	"mn{", modded_noise, " ", T(std::round(modded_noise)), "}; ",
-		//	"dl{", dist_lim, "}; ",
-		//	"ml{", min_lim, "}",
-		//	"\n");
-		return T(std::round(modded_noise));
-	}
+	//	const double
+	//		// `SimplexNoise::noise()` returns a value in the range 
+	//		// [-1, 1], so we shift the range to [0, 1]
+	//		modded_noise
+	//			= (((raw_noise + 1.0) / 2.0) * dist_lim)
+	//			+ min_lim;
+	//	//log("Debug: layout_noise(): ",
+	//	//	"rw{", raw_noise, "}; ",
+	//	//	"mn{", modded_noise, " ", T(std::round(modded_noise)), "}; ",
+	//	//	"dl{", dist_lim, "}; ",
+	//	//	"ml{", min_lim, "}",
+	//	//	"\n");
+	//	return T(std::round(modded_noise));
+	//}
 	//template<typename T=RngSeedT>
 	//inline auto layout_rand_scaled(const T& scale) {
 	//	return rng_run_scaled<T>(layout_rng(), scale);

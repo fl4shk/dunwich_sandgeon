@@ -164,25 +164,25 @@ constexpr inline bool r2_pos_in_border(
 constexpr inline IntRect2 r2_left_side_1ge_past_in_pfield_nb(
 	const IntRect2& rect
 ) {
-	return rect.left_side_1ge_past_in_grid_lim
+	return rect.left_side_1ge_past_lim
 		(PFIELD_PHYS_NO_BORDER_RECT2);
 }
 constexpr inline IntRect2 r2_top_side_1ge_past_in_pfield_nb(
 	const IntRect2& rect
 ) {
-	return rect.top_side_1ge_past_in_grid_lim
+	return rect.top_side_1ge_past_lim
 		(PFIELD_PHYS_NO_BORDER_RECT2);
 }
 constexpr inline IntRect2 r2_right_side_1ge_past_in_pfield_nb(
 	const IntRect2& rect
 ) {
-	return rect.right_side_1ge_past_in_grid_lim
+	return rect.right_side_1ge_past_lim
 		(PFIELD_PHYS_NO_BORDER_RECT2);
 }
 constexpr inline IntRect2 r2_bottom_side_1ge_past_in_pfield_nb(
 	const IntRect2& rect
 ) {
-	return rect.bottom_side_1ge_past_in_grid_lim
+	return rect.bottom_side_1ge_past_lim
 		(PFIELD_PHYS_NO_BORDER_RECT2);
 }
 

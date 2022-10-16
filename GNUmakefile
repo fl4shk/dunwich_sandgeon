@@ -15,7 +15,6 @@ SHARED_SRC_DIRS:=src \
 	src/liborangepower_src/json_stuff \
 	src/liborangepower_src/game_stuff \
 	src/liborangepower_src/gfx \
-	src/SimplexNoise_src \
 
 CXX_DIRS:=$(SHARED_SRC_DIRS)
 # End of source directories

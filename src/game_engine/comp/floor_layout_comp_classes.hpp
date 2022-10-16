@@ -305,12 +305,15 @@ private:		// variables
 	#define MEMB_LIST_COMP_DUNGEON(X) \
 		X(_data, std::nullopt) \
 		/* X(_path_vec, std::nullopt) */ \
-		X(_layout_noise_add_amount, std::nullopt) \
+		/* X(_layout_noise_pos_scale, std::nullopt) */ \
+		/* X(_layout_noise_pos_offset, std::nullopt) */ \
 
 	//std::vector<RoomPath> _data;
 	binser::VectorEx<RoomPath> _data;
 	//binser::VectorEx<Path> _path_vec;
-	double _layout_noise_add_amount = 0.0d;
+	double
+		_layout_noise_pos_scale = 0.0d,
+		_layout_noise_pos_offset = 0.0d;
 public:		// functions
 	//--------
 	DungeonGen();
@@ -352,10 +355,14 @@ public:		// functions
 	inline size_t size() const {
 		return _data.data.size();
 	}
-	inline void clear(double n_layout_noise_add_amount) {
+	inline void clear(
+		//double n_layout_noise_pos_scale,
+		//double n_layout_noise_pos_offset
+	) {
 		//_data.data.resize(0);
 		_data.data.clear();
-		_layout_noise_add_amount = n_layout_noise_add_amount;
+		//_layout_noise_pos_scale = n_layout_noise_pos_scale;
+		//_layout_noise_pos_offset = n_layout_noise_pos_offset;
 	}
 
 	//void draw(StaticBgTileMap* bg_tile_map);
@@ -380,7 +387,8 @@ public:		// functions
 	//--------
 	GEN_GETTER_BY_CON_REF(data);
 	//GEN_GETTER_BY_CON_REF(path_vec);
-	GEN_GETTER_BY_CON_REF(layout_noise_add_amount);
+	//GEN_GETTER_BY_CON_REF(layout_noise_pos_scale);
+	//GEN_GETTER_BY_CON_REF(layout_noise_pos_offset);
 	//--------
 };
 //--------

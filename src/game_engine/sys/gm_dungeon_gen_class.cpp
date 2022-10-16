@@ -31,34 +31,47 @@ std::string GmDungeonGen::kind_str() const {
 const std::vector<std::vector<GmDungeonGen::BgTile>>
 	GmDungeonGen::LEVEL_ALLOWED_ALT_TERRAIN_V2D({
 		// Level 1 (index 0)
-		build_alt_terrain_vec(//AtvPair(20, ALT_TERRAIN_NONE),
+		build_alt_terrain_vec
+			(//AtvPair(20, ALT_TERRAIN_NONE),
 			AtvPair(5, ALT_TERRAIN_NONE),
-			AtvPair(5, BgTile::Water),
-			AtvPair(5, BgTile::Spikes),
-			AtvPair(4, BgTile::Lava)
+			AtvPair(1, BgTile::Water),
+			AtvPair(1, BgTile::Spikes)
+			//AtvPair(3, BgTile::Lava)
 			),
 
 		// Level 2 (index 1)
-		build_alt_terrain_vec(AtvPair(2, ALT_TERRAIN_NONE),
-			BgTile::Water, BgTile::Spikes, BgTile::Pit),
+		build_alt_terrain_vec
+			(AtvPair(6, ALT_TERRAIN_NONE),
+			BgTile::Water,
+			BgTile::Spikes,
+			BgTile::Pit),
 
 		// Level 3 (index 2)
-		build_alt_terrain_vec(AtvPair(2, ALT_TERRAIN_NONE),
-			BgTile::Water, BgTile::Lava, BgTile::Spikes, BgTile::Pit),
+		build_alt_terrain_vec
+			(AtvPair(5, ALT_TERRAIN_NONE),
+			BgTile::Water,
+			BgTile::Lava,
+			BgTile::Spikes,
+			BgTile::Pit),
 
 		// Level 4 (index 3)
-		build_alt_terrain_vec(AtvPair(2, ALT_TERRAIN_NONE),
-			BgTile::Lava, BgTile::Spikes),
+		build_alt_terrain_vec
+			(AtvPair(5, ALT_TERRAIN_NONE),
+			BgTile::Lava,
+			BgTile::Spikes),
 
 		// Level 5 (index 4)
-		build_alt_terrain_vec(AtvPair(2, ALT_TERRAIN_NONE),
-			BgTile::Lava, BgTile::Spikes),
+		build_alt_terrain_vec
+			(AtvPair(5, ALT_TERRAIN_NONE),
+			BgTile::Lava,
+			BgTile::Spikes),
 	});
 
 void GmDungeonGen::clear_dungeon_gen(ecs::Engine* ecs_engine) {
 	auto* dungeon_gen
 		= ecs_engine->casted_comp_at<DungeonGen>(*_dungeon_gen_id);
-	dungeon_gen->clear(engine->calc_layout_noise_add_amount());
+	dungeon_gen->clear();
+	//dungeon_gen->clear(engine->calc_layout_noise_add_amount());
 }
 void GmDungeonGen::_init(ecs::Engine* ecs_engine) {
 	_init_start();
@@ -104,9 +117,8 @@ void GmDungeonGen::tick(ecs::Engine* ecs_engine) {
 		//		*_bg_tile_map_id
 		//	);
 		auto* dungeon_gen
-			= ecs_engine->casted_comp_at<DungeonGen>(
-				*_dungeon_gen_id
-			);
+			= ecs_engine->casted_comp_at<DungeonGen>
+				(*_dungeon_gen_id);
 
 		//if (engine->key_status.key_just_went_down(KeyKind::DownR))
 		{
@@ -1174,89 +1186,74 @@ void GmDungeonGen::GenInnards::insert_alt_terrain(
 			.at(engine->level_minus_1());
 
 	//for (auto& item: *_dungeon_gen)
-	for (
-		size_t item_index=0;
-		item_index<_dungeon_gen->size();
-		++item_index
-	) {
-		auto& item = _dungeon_gen->at(item_index);
-		if (do_clear) {
-			item.alt_terrain_map.clear();
-		}
+	//for (
+	//	size_t item_index=0;
+	//	item_index<_dungeon_gen->size();
+	//	++item_index
+	//) {
+	//	auto& item = _dungeon_gen->at(item_index);
+	//	if (do_clear) {
+	//		item.alt_terrain_map.clear();
+	//	}
 
-		//if (item.is_path()) {
-		//	continue;
-		//}
-		// Note that rooms are already generated with their borders
-		// inside of `engine.pfield_window`
-		IntVec2
-			pos,
-			local_pos;
+	//	//if (item.is_path()) {
+	//	//	continue;
+	//	//}
 
-		for (
-			pos.y=item.rect.top_y() - i32(1);
-				//local_pos.y=0;
-			pos.y<=item.rect.bottom_y() + i32(1);
-			++pos.y
-				//++local_pos.y
-		) {
-			for (
-				pos.x=item.rect.left_x() - i32(1);
-					//local_pos.x=0;
-				pos.x<=item.rect.right_x() + i32(1);
-				++pos.x
-					//++local_pos.x
-			) {
-				const auto
-					bg_tile_index = engine->layout_noise<i32>
-						(0, allowed_alt_terrain_vec.size() - 1, pos,
-						_dungeon_gen->layout_noise_add_amount());
-				const BgTile
-					bg_tile = allowed_alt_terrain_vec.at(bg_tile_index);
-				if (bg_tile == ALT_TERRAIN_NONE) {
-					continue;
-				}
+	//	// Note that `RoomPath`s are already generated with their borders
+	//	IntVec2
+	//		pos;
+	//	for (
+	//		pos.y=item.rect.top_y() - i32(1);
+	//		pos.y<=item.rect.bottom_y() + i32(1);
+	//		++pos.y
+	//	) {
+	//		for (
+	//			pos.x=item.rect.left_x() - i32(1);
+	//			pos.x<=item.rect.right_x() + i32(1);
+	//			++pos.x
+	//		) {
+	//			//const auto
+	//			//	bg_tile_index = engine->layout_noise<i32>
+	//			//		(0, allowed_alt_terrain_vec.size() - 1, pos,
+	//			//		_dungeon_gen->layout_noise_add_amount());
 
-				if (item.is_path()) {
-					if (!bg_tile_is_unsafe(bg_tile)) {
-						item.alt_terrain_map[pos] = bg_tile;
-					}
-				} else { // if (item.is_room())
-					//RoomPath* some_path_rp = nullptr;
-					//for (const auto& conn_index: item.conn_index_set) {
-					//	// It's guaranteed at this point that there's
-					//	// either one or zero paths at `pos`, so we can
-					//	// stop the search at the first check
-					//	RoomPath& conn_rp = _dungeon_gen->at(conn_index);
-					//	if (conn_rp.is_path()) {
-					//		some_path_rp = &conn_rp;
-					//		break;
-					//	}
-					//}
-					if (
-						//!item.local_pos_in_border(local_pos) 
-						//|| !item.local_pos_in_internal_border(local_pos)
-						//(
-						//	!item.pos_in_border(pos)
-						//	&& !item.pos_in_internal_border(pos) 
-						//	&& bg_tile_is_unsafe(bg_tile)
-						//)
-						//|| !some_path_rp
-						//|| !some_path_rp->rect.intersect(pos)
-						//|| !bg_tile_is_unsafe(bg_tile)
-						(
-							bg_tile_is_unsafe(bg_tile)
-							&& !item.pos_in_border(pos)
-							&& !item.pos_in_internal_border(pos)
-						) || !bg_tile_is_unsafe(bg_tile)
-					) {
-						item.alt_terrain_map[pos] = bg_tile;
-					}
-				}
+	//			const auto
+	//				bg_tile_index =
+	//			const BgTile
+	//				bg_tile = allowed_alt_terrain_vec.at(bg_tile_index);
+	//			if (bg_tile == ALT_TERRAIN_NONE) {
+	//				continue;
+	//			}
 
-			}
-		}
-	}
+	//			if (item.is_path()) {
+	//				if (!bg_tile_is_unsafe(bg_tile)) {
+	//					item.alt_terrain_map[pos] = bg_tile;
+	//				}
+	//			} else { // if (item.is_room())
+	//				//RoomPath* some_path_rp = nullptr;
+	//				//for (const auto& conn_index: item.conn_index_set) {
+	//				//	// It's guaranteed at this point that there's
+	//				//	// either one or zero paths at `pos`, so we can
+	//				//	// stop the search at the first check
+	//				//	RoomPath& conn_rp = _dungeon_gen->at(conn_index);
+	//				//	if (conn_rp.is_path()) {
+	//				//		some_path_rp = &conn_rp;
+	//				//		break;
+	//				//	}
+	//				//}
+	//				if (
+	//					! bg_tile_is_unsafe(bg_tile)
+	//					|| (!item.pos_in_border(pos)
+	//						&& !item.pos_in_internal_border(pos))
+	//				) {
+	//					item.alt_terrain_map[pos] = bg_tile;
+	//				}
+	//			}
+
+	//		}
+	//	}
+	//}
 }
 //--------
 } // namespace sys

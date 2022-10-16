@@ -1,6 +1,3 @@
 [submodule "submodules/liborangepower"]
 	path = submodules/liborangepower
 	url = https://github.com/fl4shk/liborangepower.git
-[submodule "submodules/SimplexNoise"]
-	path = submodules/SimplexNoise
-	url = https://github.com/SRombauts/SimplexNoise.git
