@@ -15,22 +15,37 @@
 // You should have received a copy of the GNU General Public License along
 // with Dunwich Sandgeon.  If not, see <https://www.gnu.org/licenses/>.
 
-#ifndef src_game_engine_comp_drawable_data_map_hpp
-#define src_game_engine_comp_drawable_data_map_hpp
+#ifndef src_game_engine_w_bbox_base_classes_hpp
+#define src_game_engine_w_bbox_base_classes_hpp
 
-// src/game_engine/comp/drawable_data_map.hpp
+// src/game_engine/w_bbox_base_classes.hpp
 
-#include "../../misc_includes.hpp"
-#include "general_comp_classes.hpp"
+#include "../misc_includes.hpp"
+#include "../misc_types.hpp"
 
 namespace dunwich_sandgeon {
 namespace game_engine {
-namespace comp {
 //--------
-const std::unordered_map<std::string, Drawable::Data>& drawable_data_map();
+class WIntBboxBase {
+public:		// functions
+	inline WIntBboxBase() = default;
+	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(WIntBboxBase);
+	virtual ~WIntBboxBase() = default;
+
+	virtual inline const IntRect2& bbox() const = 0;
+	virtual inline IntRect2& bbox() = 0;
+};
+class WDblBboxBase {
+public:		// functions
+	inline WDblBboxBase() = default;
+	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(WDblBboxBase);
+	virtual ~WDblBboxBase() = default;
+
+	virtual inline const DblRect2& bbox() const = 0;
+	virtual inline DblRect2& bbox() = 0;
+};
 //--------
-} // namespace comp
 } // namespace game_engine
 } // namespace dunwich_sandgeon
 
-#endif		// src_game_engine_comp_drawable_data_map_hpp
+#endif		// src_game_engine_w_bbox_base_classes_hpp

@@ -32,6 +32,7 @@
 #include "liborangepower_src/math/vec2_classes.hpp"
 #include "liborangepower_src/math/vec3_classes.hpp"
 #include "liborangepower_src/math/shape_2d_classes.hpp"
+#include "liborangepower_src/math/coll_grid_2d_classes.hpp"
 #include "liborangepower_src/containers/prev_curr_pair_classes.hpp"
 #include "liborangepower_src/json_stuff/json_stuff.hpp"
 #include "liborangepower_src/binser/serialize_defines.hpp"

@@ -128,7 +128,7 @@ void GmDungeonGen::tick(ecs::Engine* ecs_engine) {
 			while (!_done_generating) {
 				GenInnards innards(this, ecs_engine, dungeon_gen);
 				innards.gen_single_rp();
-				innards.finalize_rp_rects(
+				innards.finalize(
 					//true
 				);
 				if (_done_generating) {
@@ -358,7 +358,7 @@ auto GmDungeonGen::GenInnards::_inner_gen_post_first()
 		//				= _to_push_rp.rect.build_in_grid_inflated_lim
 		//					(rp_offset_pair.first,
 		//					rp_offset_pair.second,
-		//					PFIELD_PHYS_NO_BORDER_RECT2);
+		//					PFIELD_PHYS_NO_BRDR_RECT2);
 		//		//} else {
 		//		//	//auto& temp_rp_pair = temp_rp_pair_vec.at(some_side);
 		//		//	//temp_rp_pair.second = RoomPath();
@@ -367,7 +367,7 @@ auto GmDungeonGen::GenInnards::_inner_gen_post_first()
 		//		//		= item.rect.build_in_grid_inflated_lim
 		//		//		(item_offset_pair.first,
 		//		//		item_offset_pair.second,
-		//		//		PFIELD_PHYS_NO_BORDER_RECT2);
+		//		//		PFIELD_PHYS_NO_BRDR_RECT2);
 		//		//}
 		//		//_shrink(*temp_rp);
 		//	}
@@ -537,7 +537,7 @@ auto GmDungeonGen::GenInnards::_inner_gen_post_first()
 		) -> void {
 			RoomPath temp_rp;
 			temp_rp.rect = _to_push_rp.rect.build_in_grid_inflated_lim
-				(tl_ext, br_ext, PFIELD_PHYS_NO_BORDER_RECT2);
+				(tl_ext, br_ext, PFIELD_PHYS_NO_BRDR_RECT2);
 			if (_shrink(
 				was_horiz_path, was_vert_path,
 				temp_rp, basic_shrink_extra_test_func
@@ -593,8 +593,8 @@ auto GmDungeonGen::GenInnards::_inner_gen_post_first()
 		}
 	}
 	//--------
-	//_to_push_rp.conn_index_set.insert(conn_rp_index);
-	//conn_rp.conn_index_set.insert(_dungeon_gen->size());
+	//_to_push_rp.conn_index_uset.insert(conn_rp_index);
+	//conn_rp.conn_index_uset.insert(_dungeon_gen->size());
 	//--------
 	//--------
 	//engine->log("`gen_type`: ", gen_type, "\n");
@@ -829,7 +829,7 @@ auto GmDungeonGen::GenInnards::any_intersect_find_all(
 }
 auto GmDungeonGen::GenInnards::any_intersect_find_first(
 	const RoomPath& to_check_rp, const std::optional<size_t>& index
-) const -> RoomPath* {
+) const -> std::optional<size_t> {
 	//for (size_t k=0; k<_dungeon_gen->size(); ++k) {
 	//	auto& some_item = _dungeon_gen->at(k);
 	//	if (index && (*index == k)) {
@@ -858,7 +858,7 @@ auto GmDungeonGen::GenInnards::any_sides_intersect_find_all(
 }
 auto GmDungeonGen::GenInnards::any_sides_intersect_find_first(
 	const RoomPath& to_check_rp, const std::optional<size_t>& index
-) const -> RoomPath* {
+) const -> std::optional<size_t> {
 	//for (size_t k=0; k<_dungeon_gen->size(); ++k) {
 	//	auto& some_item = _dungeon_gen->at(k);
 	//	if (index && (*index == k)) {
@@ -886,7 +886,7 @@ auto GmDungeonGen::GenInnards::any_path_sides_hit_wrongly_find_all(
 }
 auto GmDungeonGen::GenInnards::any_path_sides_hit_wrongly_find_first(
 	const RoomPath& to_check_rp, const std::optional<size_t>& index
-) const -> RoomPath* {
+) const -> std::optional<size_t> {
 	//for (size_t k=0; k<_dungeon_gen->size(); ++k) {
 	//	auto& some_item = _dungeon_gen->at(k);
 	//	if (index && (*index == k)) {
@@ -937,100 +937,108 @@ auto GmDungeonGen::GenInnards::_find_first_backend(
 	const std::function<bool(
 		const RoomPath&, const RoomPath&
 	)>& test_func
-) const -> RoomPath* {
+) const -> std::optional<size_t> {
 	for (size_t k=0; k<_dungeon_gen->size(); ++k) {
-		auto& some_item = _dungeon_gen->at(k);
+		const auto& some_item = _dungeon_gen->at(k);
 		if (index && (*index == k)) {
 			continue;
 		} else if (test_func(to_check_rp, some_item)) {
-			return &some_item;
+			return k;
 		}
 	}
-	return nullptr;
+	return std::nullopt;
 }
-void GmDungeonGen::GenInnards::finalize_rp_rects(
+void GmDungeonGen::GenInnards::finalize(
 	//bool do_clear
 ) const {
 	//if (do_clear) {
 	//	//for (i=0; i<_dungeon_gen->size(); ++i)
 	//	for (auto& some_rp: *_dungeon_gen) {
 	//		//auto& some_rp = _dungeon_gen->at(i);
-	//		//_dungeon_gen->at(i).door_pt_set.clear();
-	//		some_rp.conn_index_set.clear();
-	//		some_rp.door_pt_set.clear();
+	//		//_dungeon_gen->at(i).door_pt_uset.clear();
+	//		some_rp.conn_index_uset.clear();
+	//		some_rp.door_pt_uset.clear();
 	//	}
 	//}
+	//for (
+	//	size_t item_index=0;
+	//	item_index<_dungeon_gen->size();
+	//	++item_index
+	//) {
 	for (
-		size_t item_index=0;
-		item_index<_dungeon_gen->size();
-		++item_index
+		size_t rp_index=0;
+		rp_index<_dungeon_gen->size();
+		++rp_index
 	) {
-		for (
-			size_t rp_index=0;
-			rp_index<_dungeon_gen->size();
-			++rp_index
-		) {
-			if (item_index == rp_index) {
-				continue;
-			}
-			auto
-				& rp = _dungeon_gen->at(rp_index),
-				& item = _dungeon_gen->at(item_index);
+		//if (item_index == rp_index) {
+		//	continue;
+		//}
+		auto
+			& rp = _dungeon_gen->_raw_at(rp_index);
+			//& item = _dungeon_gen->_raw_at(item_index);
+		//auto& rp_xdata = _dungeon_gen->xdata_at(rp_index);
+		//--------
+		const auto& raw_item_uset = _dungeon_gen->cg_find_others(rp_index);
+		//if (!item.rect.intersect(rp.rect))
+		//{
+		for (auto* raw_item: raw_item_uset) {
+			RoomPath* item = static_cast<RoomPath*>(raw_item);
+			//auto& item_xdata = item->xdata;
+			const size_t item_index
+				= _dungeon_gen->rp_to_index_umap().at(item);
 			//--------
-			//if (!item.rect.intersect(rp.rect))
-			//{
-				//--------
-				// set `conn_index_set`
-				// We only need to check intersection with one of the two
-				// `RoomPath`'s sides
-				if (_ls_r2_hit(rp, item) || _ts_r2_hit(rp, item)
-					|| _rs_r2_hit(rp, item) || _bs_r2_hit(rp, item)) {
-					rp.conn_index_set.insert(item_index);
-					item.conn_index_set.insert(rp_index);
-				}
-				//--------
-				// insert doors
-				if (rp.is_room() && item.is_path()) {
-					if (item.is_horiz_path()) {
-						if (_ls_r2_hit(item, rp)) {
-							item.door_pt_set.insert(item.rect.tl_corner());
-						}
-						if (_rs_r2_hit(item, rp)) {
-							item.door_pt_set.insert(item.rect.tr_corner());
-						}
-					} else { // if (item.is_vert_path())
-						if (_ts_r2_hit(item, rp)) {
-							item.door_pt_set.insert(item.rect.tl_corner());
-						}
-						if (_bs_r2_hit(item, rp)) {
-							item.door_pt_set.insert(item.rect.bl_corner());
-						}
+			// set `conn_index_uset`
+			// We only need to check intersection with one of the two
+			// `RoomPath`'s sides
+			if (_ls_r2_hit(rp, *item) || _ts_r2_hit(rp, *item)
+				|| _rs_r2_hit(rp, *item) || _bs_r2_hit(rp, *item)) {
+				rp.conn_index_uset.insert(item_index);
+				item->conn_index_uset.insert(rp_index);
+			}
+			//--------
+			// insert doors
+			if (rp.is_room() && item->is_path()) {
+				if (item->is_horiz_path()) {
+					if (_ls_r2_hit(*item, rp)) {
+						item->door_pt_uset.insert(item->rect.tl_corner());
 					}
-				} else if (rp.is_path() && item.is_room()) {
-					if (rp.is_horiz_path()) {
-						if (_ls_r2_hit(rp, item)) {
-							rp.door_pt_set.insert(rp.rect.tl_corner());
-						}
-						if (_rs_r2_hit(rp, item)) {
-							rp.door_pt_set.insert(rp.rect.tr_corner());
-						}
-					} else { // if (rp.is_vert_path())
-						if (_ts_r2_hit(rp, item)) {
-							rp.door_pt_set.insert(rp.rect.tl_corner());
-						}
-						if (_bs_r2_hit(rp, item)) {
-							rp.door_pt_set.insert(rp.rect.bl_corner());
-						}
+					if (_rs_r2_hit(*item, rp)) {
+						item->door_pt_uset.insert(item->rect.tr_corner());
+					}
+				} else { // if (item->is_vert_path())
+					if (_ts_r2_hit(*item, rp)) {
+						item->door_pt_uset.insert(item->rect.tl_corner());
+					}
+					if (_bs_r2_hit(*item, rp)) {
+						item->door_pt_uset.insert(item->rect.bl_corner());
 					}
 				}
-			//}
+			} else if (rp.is_path() && item->is_room()) {
+				if (rp.is_horiz_path()) {
+					if (_ls_r2_hit(rp, *item)) {
+						rp.door_pt_uset.insert(rp.rect.tl_corner());
+					}
+					if (_rs_r2_hit(rp, *item)) {
+						rp.door_pt_uset.insert(rp.rect.tr_corner());
+					}
+				} else { // if (rp.is_vert_path())
+					if (_ts_r2_hit(rp, *item)) {
+						rp.door_pt_uset.insert(rp.rect.tl_corner());
+					}
+					if (_bs_r2_hit(rp, *item)) {
+						rp.door_pt_uset.insert(rp.rect.bl_corner());
+					}
+				}
+			}
 		}
+		//}
 	}
+	//}
 	//for (size_t i=0; i<_dungeon_gen->size(); ++i) {
 	//	const auto& some_rp = _dungeon_gen->at(i);
-	//	if (some_rp.door_pt_set.size() > 0) {
+	//	if (some_rp.door_pt_uset.size() > 0) {
 	//		engine->log("door pts ", i, " [");
-	//		for (const auto& door_pt: some_rp.door_pt_set) {
+	//		for (const auto& door_pt: some_rp.door_pt_uset) {
 	//			engine->log(door_pt, " ");
 	//		}
 	//		engine->log("]\n");
@@ -1049,28 +1057,28 @@ bool GmDungeonGen::GenInnards::_shrink(
 		const auto temp_rect = IntRect2::build_in_grid_lim
 			(some_rp.rect.tl_corner() + IntVec2{1, 0},
 			some_rp.rect.br_corner(),
-			PFIELD_PHYS_NO_BORDER_RECT2);
+			PFIELD_PHYS_NO_BRDR_RECT2);
 		some_rp.rect = temp_rect;
 	};
 	auto move_top_y = [&]() -> void {
 		const auto temp_rect = IntRect2::build_in_grid_lim
 			(some_rp.rect.tl_corner() + IntVec2{0, 1},
 			some_rp.rect.br_corner(),
-			PFIELD_PHYS_NO_BORDER_RECT2);
+			PFIELD_PHYS_NO_BRDR_RECT2);
 		some_rp.rect = temp_rect;
 	};
 	auto move_right_x = [&]() -> void {
 		const auto temp_rect = IntRect2::build_in_grid_lim
 			(some_rp.rect.tl_corner(),
 			some_rp.rect.br_corner() - IntVec2{1, 0},
-			PFIELD_PHYS_NO_BORDER_RECT2);
+			PFIELD_PHYS_NO_BRDR_RECT2);
 		some_rp.rect = temp_rect;
 	};
 	auto move_bottom_y = [&]() -> void {
 		const auto temp_rect = IntRect2::build_in_grid_lim
 			(some_rp.rect.tl_corner(),
 			some_rp.rect.br_corner() - IntVec2{0, 1},
-			PFIELD_PHYS_NO_BORDER_RECT2);
+			PFIELD_PHYS_NO_BRDR_RECT2);
 		some_rp.rect = temp_rect;
 	};
 	//--------
@@ -1193,7 +1201,7 @@ void GmDungeonGen::GenInnards::insert_alt_terrain(
 	//) {
 	//	auto& item = _dungeon_gen->at(item_index);
 	//	if (do_clear) {
-	//		item.alt_terrain_map.clear();
+	//		item.alt_terrain_umap.clear();
 	//	}
 
 	//	//if (item.is_path()) {
@@ -1228,11 +1236,11 @@ void GmDungeonGen::GenInnards::insert_alt_terrain(
 
 	//			if (item.is_path()) {
 	//				if (!bg_tile_is_unsafe(bg_tile)) {
-	//					item.alt_terrain_map[pos] = bg_tile;
+	//					item.alt_terrain_umap[pos] = bg_tile;
 	//				}
 	//			} else { // if (item.is_room())
 	//				//RoomPath* some_path_rp = nullptr;
-	//				//for (const auto& conn_index: item.conn_index_set) {
+	//				//for (const auto& conn_index: item.conn_index_uset) {
 	//				//	// It's guaranteed at this point that there's
 	//				//	// either one or zero paths at `pos`, so we can
 	//				//	// stop the search at the first check
@@ -1247,7 +1255,7 @@ void GmDungeonGen::GenInnards::insert_alt_terrain(
 	//					|| (!item.pos_in_border(pos)
 	//						&& !item.pos_in_internal_border(pos))
 	//				) {
-	//					item.alt_terrain_map[pos] = bg_tile;
+	//					item.alt_terrain_umap[pos] = bg_tile;
 	//				}
 	//			}
 

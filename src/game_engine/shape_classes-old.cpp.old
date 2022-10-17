@@ -16,7 +16,7 @@
 // with Dunwich Sandgeon.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "shape_classes.hpp"
-#include "global_shape_constants.hpp"
+#include "global_shape_constants_etc.hpp"
 
 namespace dunwich_sandgeon
 {
@@ -55,7 +55,7 @@ const Rect& Rect::pfield()
 		PFIELD
 		= {
 			.pos=PFIELD_WINDOW_POS + DblVec2(1, 1),
-			.size_2d=W_BORDER_PFIELD_WINDOW_SIZE_2D - DblVec2(2, 2)
+			.size_2d=W_BRDR_PFIELD_WINDOW_SIZE_2D - DblVec2(2, 2)
 		};
 
 	return PFIELD;

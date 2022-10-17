@@ -324,21 +324,21 @@ private:		// types
 		std::vector<size_t> any_intersect_find_all(
 			const RoomPath& to_check_rp, const std::optional<size_t>& index
 		) const;
-		RoomPath* any_intersect_find_first(
+		std::optional<size_t> any_intersect_find_first(
 			const RoomPath& to_check_rp, const std::optional<size_t>& index
 		) const;
 		//--------
 		std::vector<size_t> any_sides_intersect_find_all(
 			const RoomPath& to_check_rp, const std::optional<size_t>& index
 		) const;
-		RoomPath* any_sides_intersect_find_first(
+		std::optional<size_t> any_sides_intersect_find_first(
 			const RoomPath& to_check_rp, const std::optional<size_t>& index
 		) const;
 		//--------
 		std::vector<size_t> any_path_sides_hit_wrongly_find_all(
 			const RoomPath& to_check_rp, const std::optional<size_t>& index
 		) const;
-		RoomPath* any_path_sides_hit_wrongly_find_first(
+		std::optional<size_t> any_path_sides_hit_wrongly_find_first(
 			const RoomPath& to_check_rp, const std::optional<size_t>& index
 		) const;
 		//--------
@@ -351,7 +351,7 @@ private:		// types
 				const RoomPath&, const RoomPath&
 			)>& test_func
 		) const;
-		RoomPath* _find_first_backend(
+		std::optional<size_t> _find_first_backend(
 			const RoomPath& to_check_rp,
 			const std::optional<size_t>& index,
 			const std::function<bool(
@@ -361,7 +361,7 @@ private:		// types
 		//--------
 	public:		// functions
 		//--------
-		void finalize_rp_rects(
+		void finalize(
 			//bool do_clear
 		) const;
 		//void insert_doors(bool do_clear) const;
@@ -497,31 +497,31 @@ private:		// types
 				return (
 					rp_0.rect.build_in_grid_inflated_lim
 						(IntVec2{0, GEN_PARALLEL_PATH_MIN_DIST}, IntVec2(),
-						PFIELD_PHYS_NO_BORDER_RECT2).intersect(rp_1.rect)
+						PFIELD_PHYS_NO_BRDR_RECT2).intersect(rp_1.rect)
 					|| rp_1.rect.build_in_grid_inflated_lim
 						(IntVec2{0, GEN_PARALLEL_PATH_MIN_DIST}, IntVec2(),
-						PFIELD_PHYS_NO_BORDER_RECT2).intersect(rp_0.rect)
+						PFIELD_PHYS_NO_BRDR_RECT2).intersect(rp_0.rect)
 					|| rp_0.rect.build_in_grid_inflated_lim
 						(IntVec2(), IntVec2{0, GEN_PARALLEL_PATH_MIN_DIST},
-						PFIELD_PHYS_NO_BORDER_RECT2).intersect(rp_1.rect)
+						PFIELD_PHYS_NO_BRDR_RECT2).intersect(rp_1.rect)
 					|| rp_1.rect.build_in_grid_inflated_lim
 						(IntVec2(), IntVec2{0, GEN_PARALLEL_PATH_MIN_DIST},
-						PFIELD_PHYS_NO_BORDER_RECT2).intersect(rp_0.rect)
+						PFIELD_PHYS_NO_BRDR_RECT2).intersect(rp_0.rect)
 				);
 			} else if (rp_0.is_vert_path() && rp_1.is_vert_path()) {
 				return (
 					rp_0.rect.build_in_grid_inflated_lim
 						(IntVec2{GEN_PARALLEL_PATH_MIN_DIST, 0}, IntVec2(),
-						PFIELD_PHYS_NO_BORDER_RECT2).intersect(rp_1.rect)
+						PFIELD_PHYS_NO_BRDR_RECT2).intersect(rp_1.rect)
 					|| rp_1.rect.build_in_grid_inflated_lim
 						(IntVec2{GEN_PARALLEL_PATH_MIN_DIST, 0}, IntVec2(),
-						PFIELD_PHYS_NO_BORDER_RECT2).intersect(rp_0.rect)
+						PFIELD_PHYS_NO_BRDR_RECT2).intersect(rp_0.rect)
 					|| rp_0.rect.build_in_grid_inflated_lim
 						(IntVec2(), IntVec2{GEN_PARALLEL_PATH_MIN_DIST, 0},
-						PFIELD_PHYS_NO_BORDER_RECT2).intersect(rp_1.rect)
+						PFIELD_PHYS_NO_BRDR_RECT2).intersect(rp_1.rect)
 					|| rp_1.rect.build_in_grid_inflated_lim
 						(IntVec2(), IntVec2{GEN_PARALLEL_PATH_MIN_DIST, 0},
-						PFIELD_PHYS_NO_BORDER_RECT2).intersect(rp_0.rect)
+						PFIELD_PHYS_NO_BRDR_RECT2).intersect(rp_0.rect)
 				);
 			} else {
 				return false;

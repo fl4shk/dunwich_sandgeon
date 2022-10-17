@@ -26,7 +26,7 @@
 #include "menu_etc_classes.hpp"
 #include "game_options_class.hpp"
 #include "comp/general_comp_classes.hpp"
-#include "global_shape_constants.hpp"
+#include "global_shape_constants_etc.hpp"
 #include "comp/floor_layout_comp_classes.hpp"
 
 namespace dunwich_sandgeon {

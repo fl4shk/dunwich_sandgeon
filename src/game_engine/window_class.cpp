@@ -18,7 +18,7 @@
 #include "window_class.hpp"
 #include "engine_class.hpp"
 #include "menu_etc_classes.hpp"
-#include "comp/drawable_data_map.hpp"
+#include "comp/drawable_data_umap.hpp"
 
 //#include <queue>
 
@@ -35,16 +35,16 @@ const std::string
 	Window::BLANK_KIND_STR("game_engine::Window::Blank");
 //--------
 const comp::Drawable::Data& Window::BORDER_CORNER_DRAWABLE_DATA() {
-	return comp::drawable_data_map().at(BORDER_CORNER_KIND_STR);
+	return comp::drawable_data_umap().at(BORDER_CORNER_KIND_STR);
 }
 const comp::Drawable::Data& Window::BORDER_HORIZ_DRAWABLE_DATA() {
-	return comp::drawable_data_map().at(BORDER_HORIZ_KIND_STR);
+	return comp::drawable_data_umap().at(BORDER_HORIZ_KIND_STR);
 }
 const comp::Drawable::Data& Window::BORDER_VERT_DRAWABLE_DATA() {
-	return comp::drawable_data_map().at(BORDER_VERT_KIND_STR);
+	return comp::drawable_data_umap().at(BORDER_VERT_KIND_STR);
 }
 const comp::Drawable::Data& Window::BLANK_DRAWABLE_DATA() {
-	return comp::drawable_data_map().at(BLANK_KIND_STR);
+	return comp::drawable_data_umap().at(BLANK_KIND_STR);
 }
 
 //Window::Window() {}

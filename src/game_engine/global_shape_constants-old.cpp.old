@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License along
 // with Dunwich Sandgeon.  If not, see <https://www.gnu.org/licenses/>.
 
-#include "global_shape_constants.hpp"
+#include "global_shape_constants_etc.hpp"
 #include "menu_etc_classes.hpp"
 
 namespace dunwich_sandgeon
@@ -24,17 +24,17 @@ namespace game_engine
 {
 //--------
 //const IntVec2
-//	W_BORDER_SCREEN_SIZE_2D{.x=82, .y=62},
+//	W_BRDR_SCREEN_SIZE_2D{.x=82, .y=62},
 //
 //	SCREEN_SIZE_2D
-//		(W_BORDER_SCREEN_SIZE_2D - IntVec2{2, 2});
+//		(W_BRDR_SCREEN_SIZE_2D - IntVec2{2, 2});
 //--------
 //const IntVec2 
 //	PFIELD_WINDOW_POS{.x=0, .y=0},
 //
 //	PFIELD_WINDOW_END_POS
-//		{.x=W_BORDER_SCREEN_SIZE_2D.x - 1 - 20,
-//		.y=W_BORDER_SCREEN_SIZE_2D.y - 1 - 10};
+//		{.x=W_BRDR_SCREEN_SIZE_2D.x - 1 - 20,
+//		.y=W_BRDR_SCREEN_SIZE_2D.y - 1 - 10};
 ////const IntVec2Ex
 ////	PFIELD_WINDOW_EX_RANGE
 ////	= {
@@ -44,7 +44,7 @@ namespace game_engine
 ////	};
 
 //const IntVec2
-//	W_BORDER_PFIELD_WINDOW_SIZE_2D
+//	W_BRDR_PFIELD_WINDOW_SIZE_2D
 //		{.x=PFIELD_WINDOW_END_POS.x - PFIELD_WINDOW_POS.x + 1,
 //		.y=PFIELD_WINDOW_END_POS.y - PFIELD_WINDOW_POS.y + 1};
 
@@ -55,15 +55,15 @@ namespace game_engine
 //
 //	LOG_WINDOW_END_POS
 //		{.x=PFIELD_WINDOW_END_POS.x,
-//		.y=W_BORDER_SCREEN_SIZE_2D.y - 1},
+//		.y=W_BRDR_SCREEN_SIZE_2D.y - 1},
 //
 //	HUD_WINDOW_POS
 //		{.x=PFIELD_WINDOW_END_POS.x,
 //		.y=PFIELD_WINDOW_POS.y},
 //
 //	HUD_WINDOW_END_POS
-//		{.x=W_BORDER_SCREEN_SIZE_2D.x - 1,
-//		.y=W_BORDER_SCREEN_SIZE_2D.y - 1},
+//		{.x=W_BRDR_SCREEN_SIZE_2D.x - 1,
+//		.y=W_BRDR_SCREEN_SIZE_2D.y - 1},
 //
 //	POPUP_WINDOW_POS
 //		{.x=13,
@@ -71,11 +71,11 @@ namespace game_engine
 //
 //	POPUP_WINDOW_END_POS
 //		{.x=HUD_WINDOW_POS.x - 1,
-//		.y=W_BORDER_SCREEN_SIZE_2D.y - 15},
+//		.y=W_BRDR_SCREEN_SIZE_2D.y - 15},
 //
 //	YES_NO_WINDOW_POS
 //		{.x=2,
-//		.y=W_BORDER_SCREEN_SIZE_2D.y / 2},
+//		.y=W_BRDR_SCREEN_SIZE_2D.y / 2},
 //
 //	YES_NO_WINDOW_END_POS
 //		{.x=YES_NO_WINDOW_POS.x + 3
@@ -86,7 +86,7 @@ namespace game_engine
 //
 //	TEXT_YES_NO_WINDOW_POS
 //		{.x=2,
-//		.y=W_BORDER_SCREEN_SIZE_2D.y / 2},
+//		.y=W_BRDR_SCREEN_SIZE_2D.y / 2},
 //
 //	TEXT_YES_NO_WINDOW_END_POS
 //		{.x=TEXT_YES_NO_WINDOW_POS.x + 30 + 1 + 2,

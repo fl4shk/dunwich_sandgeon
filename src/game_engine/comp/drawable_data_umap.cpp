@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License along
 // with Dunwich Sandgeon.  If not, see <https://www.gnu.org/licenses/>.
 
-#include "drawable_data_map.hpp"
+#include "drawable_data_umap.hpp"
 #include "../window_class.hpp"
 #include "player_comp_class.hpp"
 //#include "block_comp_classes.hpp"
@@ -26,10 +26,10 @@ namespace game_engine {
 namespace comp {
 //--------
 static constexpr FgBgColorPair
-	WINDOW_BORDER_COLOR_PAIR = FontColor::Green,
-	GS_WINDOW_BORDER_COLOR_PAIR = FontColor::White;
+	WINDOW_BRDR_COLOR_PAIR = FontColor::Green,
+	GS_WINDOW_BRDR_COLOR_PAIR = FontColor::White;
 
-auto drawable_data_map()
+auto drawable_data_umap()
 -> const std::unordered_map<std::string, Drawable::Data>& {
 	static std::unordered_map<std::string, Drawable::Data>
 		DRAWABLE_DATA_MAP = {
@@ -50,8 +50,8 @@ auto drawable_data_map()
 
 		// '+', 43
 		{Window::BORDER_CORNER_KIND_STR,
-			{.c='+', .color_pair=WINDOW_BORDER_COLOR_PAIR,
-			.gs_color_pair=GS_WINDOW_BORDER_COLOR_PAIR}},
+			{.c='+', .color_pair=WINDOW_BRDR_COLOR_PAIR,
+			.gs_color_pair=GS_WINDOW_BRDR_COLOR_PAIR}},
 		{bg_tile_str_map_at(BgTile::Door),
 			{.c='+', .color_pair=FontColor::Gray,
 			.gs_color_pair=FontColor::Gray}},
@@ -67,8 +67,8 @@ auto drawable_data_map()
 
 		// '-', 45
 		{Window::BORDER_HORIZ_KIND_STR,
-			{.c='-', .color_pair=WINDOW_BORDER_COLOR_PAIR,
-			.gs_color_pair=GS_WINDOW_BORDER_COLOR_PAIR}},
+			{.c='-', .color_pair=WINDOW_BRDR_COLOR_PAIR,
+			.gs_color_pair=GS_WINDOW_BRDR_COLOR_PAIR}},
 
 		// '.', 46
 		//{bg_tile_str_map_at(BgTile::Floor),
@@ -119,8 +119,8 @@ auto drawable_data_map()
 
 		// '|', 124
 		{Window::BORDER_VERT_KIND_STR,
-			{.c='|', .color_pair=WINDOW_BORDER_COLOR_PAIR,
-			.gs_color_pair=GS_WINDOW_BORDER_COLOR_PAIR}},
+			{.c='|', .color_pair=WINDOW_BRDR_COLOR_PAIR,
+			.gs_color_pair=GS_WINDOW_BRDR_COLOR_PAIR}},
 
 		// '~', 126
 		{bg_tile_str_map_at(BgTile::Water),

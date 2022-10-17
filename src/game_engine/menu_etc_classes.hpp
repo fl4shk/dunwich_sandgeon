@@ -22,7 +22,7 @@
 
 #include "../misc_includes.hpp"
 #include "font_color_enum.hpp"
-#include "global_shape_constants.hpp"
+#include "global_shape_constants_etc.hpp"
 #include "comp/general_comp_classes.hpp"
 
 namespace dunwich_sandgeon {

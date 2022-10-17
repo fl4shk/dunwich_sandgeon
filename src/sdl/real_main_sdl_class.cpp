@@ -16,7 +16,7 @@
 // with Dunwich Sandgeon.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "real_main_sdl_class.hpp"
-#include "../game_engine/global_shape_constants.hpp"
+#include "../game_engine/global_shape_constants_etc.hpp"
 
 namespace dunwich_sandgeon {
 namespace io {
@@ -298,9 +298,9 @@ Uint32 RealMainSdl::_global_timer_callback(Uint32 interval, void* self) {
 
 //void RealMainSdl::_update_logical_size_2d(bool use_default_scale)
 void RealMainSdl::_update_logical_size_2d() {
-	//_logical_size_2d.x = game_engine::W_BORDER_SCREEN_SIZE_2D.x
+	//_logical_size_2d.x = game_engine::W_BRDR_SCREEN_SIZE_2D.x
 	//	* TextHandlerSdl::TILE_SIZE_2D.x * zoom();
-	//_logical_size_2d.y = game_engine::W_BORDER_SCREEN_SIZE_2D.y
+	//_logical_size_2d.y = game_engine::W_BRDR_SCREEN_SIZE_2D.y
 	//	* TextHandlerSdl::TILE_SIZE_2D.y * zoom();
 
 	//const float TEMP_SCALE
@@ -309,21 +309,21 @@ void RealMainSdl::_update_logical_size_2d() {
 	//	= (!use_default_scale) ? _scale : SCALE_DEFAULT_VAL;
 
 	//_logical_size_2d.x
-	//	= (game_engine::W_BORDER_SCREEN_SIZE_2D.x + 2)
+	//	= (game_engine::W_BRDR_SCREEN_SIZE_2D.x + 2)
 	//	* TextHandlerSdl::TILE_SIZE_2D.x * TEMP_SCALE;
 	//_logical_size_2d.y
-	//	= (game_engine::W_BORDER_SCREEN_SIZE_2D.y + 2)
+	//	= (game_engine::W_BRDR_SCREEN_SIZE_2D.y + 2)
 	//	* TextHandlerSdl::TILE_SIZE_2D.y * TEMP_SCALE;
 
 	//_logical_size_2d.x
-	//	= (game_engine::W_BORDER_SCREEN_SIZE_2D.x + 2)
+	//	= (game_engine::W_BRDR_SCREEN_SIZE_2D.x + 2)
 	//	* TextHandlerSdl::TILE_SIZE_2D.x;
 	//_logical_size_2d.y
-	//	= (game_engine::W_BORDER_SCREEN_SIZE_2D.y + 2)
+	//	= (game_engine::W_BRDR_SCREEN_SIZE_2D.y + 2)
 	//	* TextHandlerSdl::TILE_SIZE_2D.y;
-	_logical_size_2d.x = game_engine::W_BORDER_SCREEN_SIZE_2D.x
+	_logical_size_2d.x = game_engine::W_BRDR_SCREEN_SIZE_2D.x
 		* TextHandlerSdl::TILE_SIZE_2D.x;
-	_logical_size_2d.y = game_engine::W_BORDER_SCREEN_SIZE_2D.y
+	_logical_size_2d.y = game_engine::W_BRDR_SCREEN_SIZE_2D.y
 		* TextHandlerSdl::TILE_SIZE_2D.y;
 }
 //void RealMainSdl::_update_renderer_scale_etc(bool use_default_scale) {
