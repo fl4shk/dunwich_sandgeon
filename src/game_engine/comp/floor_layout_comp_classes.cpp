@@ -129,11 +129,11 @@ void DungeonGen::push_back(RoomPath&& to_push) {
 		(_rp_data.back().get(), _rp_data.size() - size_t(1)));
 	_coll_grid.insert(_rp_data.back().get());
 }
-CollGridT::DataElPtrUsetT DungeonGen::cg_find_others(RoomPath& rp) const {
-	return _coll_grid.find_others(&rp);
+CollGridT::DataElPtrUsetT DungeonGen::cg_neighbors(RoomPath& rp) const {
+	return _coll_grid.neighbors(&rp);
 }
-CollGridT::DataElPtrUsetT DungeonGen::cg_find_others(size_t index) const {
-	return _coll_grid.find_others(_rp_data.at(index).get());
+CollGridT::DataElPtrUsetT DungeonGen::cg_neighbors(size_t index) const {
+	return _coll_grid.neighbors(_rp_data.at(index).get());
 }
 //void DungeonGen::draw(StaticBgTileMap* bg_tile_map)
 void DungeonGen::draw() {

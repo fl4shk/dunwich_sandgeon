@@ -128,10 +128,10 @@ void GmDungeonGen::tick(ecs::Engine* ecs_engine) {
 			while (!_done_generating) {
 				GenInnards innards(this, ecs_engine, dungeon_gen);
 				innards.gen_single_rp();
-				innards.finalize(
-					//true
-				);
 				if (_done_generating) {
+					innards.finalize(
+						//true
+					);
 					innards.insert_alt_terrain(
 						true
 					);
@@ -268,13 +268,13 @@ auto GmDungeonGen::GenInnards::_inner_gen_post_first()
 	//--------
 	//--------
 	auto basic_shrink_extra_test_func = [this](
-		const RoomPath& some_rp
+		RoomPath& some_rp
 		//, const std::optional<size_t>& index
 	) -> bool {
-		return (some_rp.fits_in_pfield_nb()
-			&& !_find_first_backend(
+		const auto& found
+			= _find_first_backend(
 				some_rp, std::nullopt,
-				[](const RoomPath& some_rp, const RoomPath& some_item)
+				[](RoomPath& some_rp, const RoomPath& some_item)
 				-> bool {
 					//return !(some_item.rect.intersect(some_rp.rect)
 					//	|| _some_sides_hit(some_rp, some_item)
@@ -285,7 +285,15 @@ auto GmDungeonGen::GenInnards::_inner_gen_post_first()
 						// Reject pairs of horizontal/vertical paths that
 						// are too close
 						|| _parallel_paths_too_close(some_rp, some_item));
-				})
+				});
+		//if (found) {
+		//	//printout("found{", *found, "}\n");
+		//	printout("found\n");
+		//} else {
+		//	printout("!found\n");
+		//}
+		return (some_rp.fits_in_pfield_nb()
+			&& !found
 			//&& !any_intersect_find_first(some_rp, std::nullopt)
 			//&& any_sides_intersect_find_first(some_rp, std::nullopt)
 			//&& !any_path_sides_hit_wrongly_find_first
@@ -819,8 +827,8 @@ void GmDungeonGen::GenInnards::_do_push_back(RoomPath&& to_push_rp) const {
 }
 //--------
 auto GmDungeonGen::GenInnards::any_intersect_find_all(
-	const RoomPath& to_check_rp, const std::optional<size_t>& index
-) const -> std::vector<size_t> {
+	RoomPath& to_check_rp, const std::optional<size_t>& index
+) -> std::vector<size_t> {
 	return _find_all_backend(to_check_rp, index,
 		[](const RoomPath& to_check_rp, const RoomPath& some_item)
 		-> bool {
@@ -828,8 +836,8 @@ auto GmDungeonGen::GenInnards::any_intersect_find_all(
 		});
 }
 auto GmDungeonGen::GenInnards::any_intersect_find_first(
-	const RoomPath& to_check_rp, const std::optional<size_t>& index
-) const -> std::optional<size_t> {
+	RoomPath& to_check_rp, const std::optional<size_t>& index
+) -> std::optional<size_t> {
 	//for (size_t k=0; k<_dungeon_gen->size(); ++k) {
 	//	auto& some_item = _dungeon_gen->at(k);
 	//	if (index && (*index == k)) {
@@ -848,8 +856,8 @@ auto GmDungeonGen::GenInnards::any_intersect_find_first(
 }
 //--------
 auto GmDungeonGen::GenInnards::any_sides_intersect_find_all(
-	const RoomPath& to_check_rp, const std::optional<size_t>& index
-) const -> std::vector<size_t> {
+	RoomPath& to_check_rp, const std::optional<size_t>& index
+) -> std::vector<size_t> {
 	return _find_all_backend(to_check_rp, index,
 		[](const RoomPath& to_check_rp, const RoomPath& some_item)
 		-> bool {
@@ -857,8 +865,8 @@ auto GmDungeonGen::GenInnards::any_sides_intersect_find_all(
 		});
 }
 auto GmDungeonGen::GenInnards::any_sides_intersect_find_first(
-	const RoomPath& to_check_rp, const std::optional<size_t>& index
-) const -> std::optional<size_t> {
+	RoomPath& to_check_rp, const std::optional<size_t>& index
+) -> std::optional<size_t> {
 	//for (size_t k=0; k<_dungeon_gen->size(); ++k) {
 	//	auto& some_item = _dungeon_gen->at(k);
 	//	if (index && (*index == k)) {
@@ -876,8 +884,8 @@ auto GmDungeonGen::GenInnards::any_sides_intersect_find_first(
 }
 //--------
 auto GmDungeonGen::GenInnards::any_path_sides_hit_wrongly_find_all(
-	const RoomPath& to_check_rp, const std::optional<size_t>& index
-) const -> std::vector<size_t> {
+	RoomPath& to_check_rp, const std::optional<size_t>& index
+) -> std::vector<size_t> {
 	return _find_all_backend(to_check_rp, index,
 		[](const RoomPath& to_check_rp, const RoomPath& some_item)
 		-> bool {
@@ -885,8 +893,8 @@ auto GmDungeonGen::GenInnards::any_path_sides_hit_wrongly_find_all(
 		});
 }
 auto GmDungeonGen::GenInnards::any_path_sides_hit_wrongly_find_first(
-	const RoomPath& to_check_rp, const std::optional<size_t>& index
-) const -> std::optional<size_t> {
+	RoomPath& to_check_rp, const std::optional<size_t>& index
+) -> std::optional<size_t> {
 	//for (size_t k=0; k<_dungeon_gen->size(); ++k) {
 	//	auto& some_item = _dungeon_gen->at(k);
 	//	if (index && (*index == k)) {
@@ -913,40 +921,63 @@ auto GmDungeonGen::GenInnards::any_path_sides_hit_wrongly_find_first(
 }
 //--------
 auto GmDungeonGen::GenInnards::_find_all_backend(
-	const RoomPath& to_check_rp,
+	RoomPath& to_check_rp,
 	const std::optional<size_t>& index,
 	const std::function<bool(
-		const RoomPath&, const RoomPath&
+		RoomPath&, const RoomPath&
 	)>& test_func
-) const -> std::vector<size_t> {
+) -> std::vector<size_t> {
 	std::vector<size_t> ret;
 
-	for (size_t k=0; k<_dungeon_gen->size(); ++k) {
-		const auto& some_item = _dungeon_gen->at(k);
+	//const auto& raw_some_item_set
+	//	= _dungeon_gen->cg_find_others(to_check_rp);
+	for (size_t k=0; k<_dungeon_gen->size(); ++k)
+	//for (auto* raw_some_item: raw_some_item_set)
+	{
+		//const auto& some_item = _dungeon_gen->at(k);
+		//RoomPath* some_item = static_cast<RoomPath*>(raw_some_item);
+		//const size_t k = _dungeon_gen->rp_to_index_map().at(some_item);
+		RoomPath* some_item = &_dungeon_gen->_raw_at(k);
 		if (index && (*index == k)) {
 			continue;
-		} else if (test_func(to_check_rp, some_item)) {
+		} else if (test_func(to_check_rp, *some_item)) {
 			ret.push_back(k);
 		}
 	}
 	return ret;
 }
 auto GmDungeonGen::GenInnards::_find_first_backend(
-	const RoomPath& to_check_rp,
+	RoomPath& to_check_rp,
 	const std::optional<size_t>& index,
 	const std::function<bool(
-		const RoomPath&, const RoomPath&
+		RoomPath&, const RoomPath&
 	)>& test_func
-) const -> std::optional<size_t> {
-	for (size_t k=0; k<_dungeon_gen->size(); ++k) {
-		const auto& some_item = _dungeon_gen->at(k);
+) -> std::optional<size_t> {
+	//--------
+	//_dungeon_gen->_coll_grid.clear();
+	//for (size_t k=0; k<_dungeon_gen->size(); ++k) {
+	//	_dungeon_gen->_coll_grid.insert(&_dungeon_gen->_raw_at(k));
+	//}
+	//--------
+	//const auto& raw_some_item_uset
+	//	= _dungeon_gen->cg_find_others(to_check_rp);
+	//const auto& raw_some_item_uset
+	//	= _dungeon_gen->_coll_grid.find_others(&to_check_rp);
+	for (size_t k=0; k<_dungeon_gen->size(); ++k) 
+	//for (auto* raw_some_item: raw_some_item_uset)
+	{
+		//const auto& some_item = _dungeon_gen->at(k);
+		RoomPath* some_item = &_dungeon_gen->_raw_at(k);
+		//RoomPath* some_item = static_cast<RoomPath*>(raw_some_item);
+		//const size_t k = _dungeon_gen->rp_to_index_umap().at(some_item);
 		if (index && (*index == k)) {
 			continue;
-		} else if (test_func(to_check_rp, some_item)) {
+		} else if (test_func(to_check_rp, *some_item)) {
 			return k;
 		}
 	}
 	return std::nullopt;
+	//--------
 }
 void GmDungeonGen::GenInnards::finalize(
 	//bool do_clear
@@ -960,11 +991,6 @@ void GmDungeonGen::GenInnards::finalize(
 	//		some_rp.door_pt_uset.clear();
 	//	}
 	//}
-	//for (
-	//	size_t item_index=0;
-	//	item_index<_dungeon_gen->size();
-	//	++item_index
-	//) {
 	for (
 		size_t rp_index=0;
 		rp_index<_dungeon_gen->size();
@@ -978,9 +1004,7 @@ void GmDungeonGen::GenInnards::finalize(
 			//& item = _dungeon_gen->_raw_at(item_index);
 		//auto& rp_xdata = _dungeon_gen->xdata_at(rp_index);
 		//--------
-		const auto& raw_item_uset = _dungeon_gen->cg_find_others(rp_index);
-		//if (!item.rect.intersect(rp.rect))
-		//{
+		const auto& raw_item_uset = _dungeon_gen->cg_neighbors(rp_index);
 		for (auto* raw_item: raw_item_uset) {
 			RoomPath* item = static_cast<RoomPath*>(raw_item);
 			//auto& item_xdata = item->xdata;
@@ -1031,9 +1055,7 @@ void GmDungeonGen::GenInnards::finalize(
 				}
 			}
 		}
-		//}
 	}
-	//}
 	//for (size_t i=0; i<_dungeon_gen->size(); ++i) {
 	//	const auto& some_rp = _dungeon_gen->at(i);
 	//	if (some_rp.door_pt_uset.size() > 0) {
@@ -1049,9 +1071,9 @@ bool GmDungeonGen::GenInnards::_shrink(
 	bool was_horiz_path, bool was_vert_path,
 	RoomPath& some_rp, //const std::optional<size_t>& index,
 	const std::function<bool(
-		const RoomPath&//, const std::optional<size_t>&
+		RoomPath&//, const std::optional<size_t>&
 	)>& extra_test_func
-) const {
+) {
 	//--------
 	auto move_left_x = [&]() -> void {
 		const auto temp_rect = IntRect2::build_in_grid_lim

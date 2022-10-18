@@ -322,42 +322,42 @@ private:		// types
 	public:		// functions
 		//--------
 		std::vector<size_t> any_intersect_find_all(
-			const RoomPath& to_check_rp, const std::optional<size_t>& index
-		) const;
+			RoomPath& to_check_rp, const std::optional<size_t>& index
+		);
 		std::optional<size_t> any_intersect_find_first(
-			const RoomPath& to_check_rp, const std::optional<size_t>& index
-		) const;
+			RoomPath& to_check_rp, const std::optional<size_t>& index
+		);
 		//--------
 		std::vector<size_t> any_sides_intersect_find_all(
-			const RoomPath& to_check_rp, const std::optional<size_t>& index
-		) const;
+			RoomPath& to_check_rp, const std::optional<size_t>& index
+		);
 		std::optional<size_t> any_sides_intersect_find_first(
-			const RoomPath& to_check_rp, const std::optional<size_t>& index
-		) const;
+			RoomPath& to_check_rp, const std::optional<size_t>& index
+		);
 		//--------
 		std::vector<size_t> any_path_sides_hit_wrongly_find_all(
-			const RoomPath& to_check_rp, const std::optional<size_t>& index
-		) const;
+			RoomPath& to_check_rp, const std::optional<size_t>& index
+		);
 		std::optional<size_t> any_path_sides_hit_wrongly_find_first(
-			const RoomPath& to_check_rp, const std::optional<size_t>& index
-		) const;
+			RoomPath& to_check_rp, const std::optional<size_t>& index
+		);
 		//--------
 	private:		// functions
 		//--------
 		std::vector<size_t> _find_all_backend(
-			const RoomPath& to_check_rp,
+			RoomPath& to_check_rp,
 			const std::optional<size_t>& index,
 			const std::function<bool(
-				const RoomPath&, const RoomPath&
+				RoomPath&, const RoomPath&
 			)>& test_func
-		) const;
+		);
 		std::optional<size_t> _find_first_backend(
-			const RoomPath& to_check_rp,
+			RoomPath& to_check_rp,
 			const std::optional<size_t>& index,
 			const std::function<bool(
-				const RoomPath&, const RoomPath&
+				RoomPath&, const RoomPath&
 			)>& test_func
-		) const;
+		);
 		//--------
 	public:		// functions
 		//--------
@@ -372,9 +372,9 @@ private:		// types
 			bool was_horiz_path, bool was_vert_path,
 			RoomPath& some_rp, //const std::optional<size_t>& index,
 			const std::function<bool(
-				const RoomPath&//, const std::optional<size_t>&
+				RoomPath&//, const std::optional<size_t>&
 			)>& extra_test_func
-		) const;
+		);
 		//--------
 		inline bool _rp_is_connected(const RoomPath& some_rp) const {
 			const RoomPath& conn_rp = _dungeon_gen->at(_conn_rp_index);

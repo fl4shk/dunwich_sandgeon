@@ -318,6 +318,10 @@ private:		// functions
 		return *_rp_data.at(index);
 	}
 public:		// functions
+	//inline RoomPath& at(size_t index) {
+	//	//return _rp_data.data.at(index);
+	//	return *_rp_data.at(index);
+	//}
 	inline const RoomPath& at(size_t index) const {
 		//return _rp_data.data.at(index);
 		return *_rp_data.at(index);
@@ -329,6 +333,11 @@ public:		// functions
 	//	return _rp_data.at(index)->xdata;
 	//}
 	void push_back(RoomPath&& to_push);
+	//void pop_back() {
+	//	_rp_to_index_umap.erase(_rp_data.back().get());
+	//	_coll_grid.erase(_rp_data.back().get());
+	//	_rp_data.pop_back();
+	//}
 	inline size_t size() const {
 		//return _rp_data.data.size();
 		return _rp_data.size();
@@ -345,8 +354,8 @@ public:		// functions
 		//_layout_noise_pos_scale = n_layout_noise_pos_scale;
 		//_layout_noise_pos_offset = n_layout_noise_pos_offset;
 	}
-	CollGridT::DataElPtrUsetT cg_find_others(RoomPath& rp) const;
-	CollGridT::DataElPtrUsetT cg_find_others(size_t index) const;
+	CollGridT::DataElPtrUsetT cg_neighbors(RoomPath& rp) const;
+	CollGridT::DataElPtrUsetT cg_neighbors(size_t index) const;
 
 	//void draw(StaticBgTileMap* bg_tile_map);
 	void draw();
