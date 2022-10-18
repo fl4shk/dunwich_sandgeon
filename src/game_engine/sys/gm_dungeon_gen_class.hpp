@@ -361,7 +361,7 @@ private:		// types
 		//--------
 	public:		// functions
 		//--------
-		void finalize(
+		void finalize_basic(
 			//bool do_clear
 		) const;
 		//void insert_doors(bool do_clear) const;

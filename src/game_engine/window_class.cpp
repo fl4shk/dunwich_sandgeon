@@ -48,8 +48,10 @@ const comp::Drawable::Data& Window::BLANK_DRAWABLE_DATA() {
 }
 
 //Window::Window() {}
-//Window::Window(const IntVec2& s_some_pos, const IntVec2& s_some_size_2d,
-//	bool with_border)
+//Window::Window(
+//	const IntVec2& s_some_pos, const IntVec2& s_some_size_2d,
+//	bool with_border
+//)
 //	: _pos(s_some_pos
 //		- (!with_border ? IntVec2(1, 1) : IntVec2(0, 0))),
 //	_drawable_data_v2d(
@@ -71,8 +73,10 @@ const comp::Drawable::Data& Window::BLANK_DRAWABLE_DATA() {
 //	//init_set_border();
 //	//_ent_id_v2d = _cleared_ent_id_v2d;
 //}
-//Window::Window(const IntVec2& s_some_pos, const IntVec2& s_some_end_pos,
-//	bool with_border)
+//Window::Window(
+//	const IntVec2& s_some_pos, const IntVec2& s_some_end_pos,
+//	bool with_border
+//)
 //	: _pos(s_some_pos
 //		- (!with_border ? IntVec2(1, 1) : IntVec2(0, 0))),
 //	_drawable_data_v2d(
@@ -96,24 +100,23 @@ const comp::Drawable::Data& Window::BLANK_DRAWABLE_DATA() {
 //	//init_set_border();
 //	//_ent_id_v2d = _cleared_ent_id_v2d;
 //}
-Window::Window(const IntVec2& s_some_pos,
-	const IntVec2& s_some_size_2d_or_end_pos, bool use_end_pos,
-	bool with_border)
+Window::Window(
+	const IntVec2& s_some_pos, const IntVec2& s_some_size_2d_or_end_pos,
+	bool use_end_pos, bool with_border
+)
 	: _pos(s_some_pos
 		- (!with_border ? IntVec2(1, 1) : IntVec2(0, 0))),
-	_drawable_data_v2d(
-		s_some_size_2d_or_end_pos.y
+	_drawable_data_v2d
+		(s_some_size_2d_or_end_pos.y
 			+ (use_end_pos ? (-s_some_pos.y + 1) : 0)
 			+ (!with_border ? 2 : 0),
 		std::vector<DrawData>(
 			s_some_size_2d_or_end_pos.x
 				+ (use_end_pos ? (-s_some_pos.x + 1) : 0)
 				+ (!with_border ? 2 : 0)
-		)
-	) {
+		)) {
 }
-Window::~Window() {
-}
+Window::~Window() {}
 
 //Window::operator binser::Value () const {
 //	binser::Value ret;
@@ -297,8 +300,7 @@ void Window::draw(const MsgLog& msg_log) {
 //	}
 //}
 //--------
-//LayeredWindow::LayeredWindow() {
-//}
+//LayeredWindow::LayeredWindow() {}
 //LayeredWindow::LayeredWindow(const IntVec2& s_pos,
 //	const IntVec2& s_size_2d,
 //	const std::map<std::string, i32>& s_layer_prio_map)

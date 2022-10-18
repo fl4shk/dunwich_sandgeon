@@ -170,12 +170,21 @@ void DungeonGen::draw() {
 					if (in_border) {
 						// I'm doing this the slow/easy way for now.
 						bool did_intersect = false;
-						for (size_t j=0; j<i; ++j)
-						{
-							if (at(j).rect.intersect(pos)) {
-								did_intersect = true;
+						//for (size_t j=0; j<i; ++j)
+						//{
+						//	if (at(j).rect.intersect(pos)) {
+						//		did_intersect = true;
+						//	}
+						//}
+						if (const auto& item_uset=cg_neighbors(i); true) {
+							for (const auto& item: item_uset) {
+								if (item->bbox().intersect(pos)) {
+									did_intersect = true;
+									break;
+								}
 							}
 						}
+
 						if (!did_intersect) {
 							bg_tile = BgTile::Wall;
 							do_draw();

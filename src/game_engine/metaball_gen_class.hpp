@@ -15,10 +15,10 @@
 // You should have received a copy of the GNU General Public License along
 // with Dunwich Sandgeon.  If not, see <https://www.gnu.org/licenses/>.
 
-#ifndef src_game_engine_w_bbox_base_classes_hpp
-#define src_game_engine_w_bbox_base_classes_hpp
+#ifndef src_game_engine_metaball_gen_class_hpp
+#define src_game_engine_metaball_gen_class_hpp
 
-// src/game_engine/w_bbox_base_classes.hpp
+// src/game_engine/metaball_gen_class.hpp
 
 #include "../misc_includes.hpp"
 #include "../misc_types.hpp"
@@ -26,26 +26,26 @@
 namespace dunwich_sandgeon {
 namespace game_engine {
 //--------
-class WIntBboxBase {
+class MetaballGen final {
+public:		// types
+	class Ball final {
+	public:		// variables
+		IntVec2 pos;
+		FltVec2 size_2d;
+	};
+	using GenDynarr = std::vector<float>;
+	using GenDyna2d = std::vector<GenDynarr>;
+private:		// variables
+	IntVec2 _size_2d;
+	std::vector<Ball> _ball_vec;
 public:		// functions
-	inline WIntBboxBase() = default;
-	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(WIntBboxBase);
-	virtual ~WIntBboxBase() = default;
-
-	virtual inline const IntRect2& bbox() const = 0;
-	virtual inline IntRect2& bbox() = 0;
-};
-class WFltBboxBase {
-public:		// functions
-	inline WFltBboxBase() = default;
-	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(WFltBboxBase);
-	virtual ~WFltBboxBase() = default;
-
-	virtual inline const FltRect2& bbox() const = 0;
-	virtual inline FltRect2& bbox() = 0;
+	MetaballGen(const IntVec2& s_size_2d);
+	MetaballGen& add(const IntVec2& pos, float range);
+	MetaballGen& add(const IntVec2& pos, const FltVec2& range);
+	GenDyna2d gen();
 };
 //--------
 } // namespace game_engine
 } // namespace dunwich_sandgeon
 
-#endif		// src_game_engine_w_bbox_base_classes_hpp
+#endif		// src_game_engine_metaball_gen_class_hpp

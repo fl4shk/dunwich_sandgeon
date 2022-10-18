@@ -286,6 +286,7 @@ private:		// variables
 	//	_layout_noise_pos_scale = 0.0d,
 	//	_layout_noise_pos_offset = 0.0d;
 public:		// variables
+	bool show_metaballs = false;
 public:		// functions
 	//--------
 	DungeonGen();

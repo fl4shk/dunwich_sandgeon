@@ -16,6 +16,7 @@
 // with Dunwich Sandgeon.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "gm_dungeon_gen_class.hpp"
+#include "../metaball_gen_class.hpp"
 #include "../engine_class.hpp"
 
 namespace dunwich_sandgeon {
@@ -129,7 +130,7 @@ void GmDungeonGen::tick(ecs::Engine* ecs_engine) {
 				GenInnards innards(this, ecs_engine, dungeon_gen);
 				innards.gen_single_rp();
 				if (_done_generating) {
-					innards.finalize(
+					innards.finalize_basic(
 						//true
 					);
 					innards.insert_alt_terrain(
@@ -979,7 +980,7 @@ auto GmDungeonGen::GenInnards::_find_first_backend(
 	return std::nullopt;
 	//--------
 }
-void GmDungeonGen::GenInnards::finalize(
+void GmDungeonGen::GenInnards::finalize_basic(
 	//bool do_clear
 ) const {
 	//if (do_clear) {

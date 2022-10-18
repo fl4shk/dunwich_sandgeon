@@ -28,9 +28,9 @@
 namespace dunwich_sandgeon {
 namespace game_engine {
 //--------
-static constexpr double
-	CDIFF = 0.1;
-static constexpr DblVec2
+static constexpr float
+	CDIFF = 0.1f;
+static constexpr FltVec2
 	CDIFF_V2{.x=CDIFF, .y=CDIFF};
 //--------
 // This constant has values in the amount of tilemap entries

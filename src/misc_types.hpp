@@ -45,21 +45,21 @@ using IntRect2Ex = binser::Rect2Ex<i32>;
 ////using SizeVec2 = binser::Vec2Ex<u32>;
 //using SizeVec2Ex = binser::Vec2Ex<u32>;
 //
-//using DblVec2 = math::Vec2<double>;
-//using DblVec2Ex = binser::Vec2Ex<double>;
-using DblVec2 = math::Vec2<double>;
-using DblVec3 = math::Vec3<double>;
+//using FltVec2 = math::Vec2<float>;
+//using FltVec2Ex = binser::Vec2Ex<float>;
+using FltVec2 = math::Vec2<float>;
+using FltVec3 = math::Vec3<float>;
 
-using DblVec2Ex = binser::Vec2Ex<double>;
-using DblVec3Ex = binser::Vec3Ex<double>;
+using FltVec2Ex = binser::Vec2Ex<float>;
+using FltVec3Ex = binser::Vec3Ex<float>;
 
-using DblHit2 = math::Hit2<double>;
-using DblSweep2 = math::Sweep2<double>;
-using DblLineSeg2 = math::LineSeg2<double>;
-using DblRect2 = math::Rect2<double>;
+using FltHit2 = math::Hit2<float>;
+using FltSweep2 = math::Sweep2<float>;
+using FltLineSeg2 = math::LineSeg2<float>;
+using FltRect2 = math::Rect2<float>;
 
-using DblLineSeg2Ex = binser::LineSeg2Ex<double>;
-using DblRect2Ex = binser::Rect2Ex<double>;
+using FltLineSeg2Ex = binser::LineSeg2Ex<float>;
+using FltRect2Ex = binser::Rect2Ex<float>;
 
 //template<typename FirstT, typename OtherT>
 //inline void set_vec2(Vec2<FirstT>& self, const Vec2<OtherT>& other) {
