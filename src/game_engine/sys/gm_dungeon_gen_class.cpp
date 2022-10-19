@@ -18,6 +18,7 @@
 #include "gm_dungeon_gen_class.hpp"
 #include "../metaball_gen_class.hpp"
 #include "../engine_class.hpp"
+#include "../comp/drawable_data_umap.hpp"
 
 namespace dunwich_sandgeon {
 namespace game_engine {
@@ -75,11 +76,16 @@ const std::vector<std::vector<GmDungeonGen::BgTile>>
 			BgTile::Spikes),
 	});
 
-void GmDungeonGen::clear_dungeon_gen(ecs::Engine* ecs_engine) {
+void GmDungeonGen::clear(ecs::Engine* ecs_engine) {
 	auto* dungeon_gen
 		= ecs_engine->casted_comp_at<DungeonGen>(*_dungeon_gen_id);
 	dungeon_gen->clear();
 	//dungeon_gen->clear(engine->calc_layout_noise_add_amount());
+	//_stop_gen_early = false;
+	_attempted_num_rp = engine->layout_rand<i32>
+		(i32(MIN_NUM_ROOM_PATHS), i32(MAX_NUM_ROOM_PATHS));
+	_stop_gen_early = false;
+	_done_generating = false;
 }
 void GmDungeonGen::_init(ecs::Engine* ecs_engine) {
 	_init_start();
@@ -112,7 +118,7 @@ void GmDungeonGen::_init(ecs::Engine* ecs_engine) {
 		engine->log("game_engine::sys::GmDungeonGen::_init(): ",
 			*_dungeon_gen_id, "\n");
 	}
-	clear_dungeon_gen(ecs_engine);
+	clear(ecs_engine);
 }
 
 void GmDungeonGen::tick(ecs::Engine* ecs_engine) {
@@ -150,7 +156,7 @@ void GmDungeonGen::tick(ecs::Engine* ecs_engine) {
 			//}
 		}
 		//if (dungeon_gen->size() >= 2) {
-		//	clear_dungeon_gen(ecs_engine);
+		//	clear(ecs_engine);
 		//}
 
 		//dungeon_gen->draw(bg_tile_map);
@@ -171,37 +177,42 @@ void GmDungeonGen::tick(ecs::Engine* ecs_engine) {
 bool GmDungeonGen::GenInnards::gen_single_rp() {
 	//--------
 	if (_dungeon_gen->size() == 0) {
-		_self->_attempted_num_rp = engine->layout_rand<i32>
-			(i32(MIN_NUM_ROOM_PATHS), i32(MAX_NUM_ROOM_PATHS));
-		_self->_stop_gen_early = false;
-		_self->_done_generating = false;
+		//_self->_attempted_num_rp = engine->layout_rand<i32>
+		//	(i32(MIN_NUM_ROOM_PATHS), i32(MAX_NUM_ROOM_PATHS));
+		//_self->_stop_gen_early = false;
+		//_self->_done_generating = false;
+		_self->clear(_ecs_engine);
 
 		// We always generate a room in this case.
 		//for (i32 tries=0; tries<GEN_RP_LIM_TRIES; ++tries)
 		// Force there to be at least one room
-		for (;;) {
+		//for (;;) {
 			RoomPath to_push_rp;
 			//--------
 			//engine->log("testificate 2\n");
 			//--------
-			to_push_rp.rect.pos.x = engine->layout_rand<i32>
-				(PFIELD_PHYS_RECT2.left_x(),
-				PFIELD_PHYS_RECT2.right_x() - ROOM_MIN_SIZE_2D.x - 1);
-			to_push_rp.rect.pos.y = engine->layout_rand<i32>
-				(PFIELD_PHYS_RECT2.top_y(),
-				PFIELD_PHYS_RECT2.bottom_y() - ROOM_MIN_SIZE_2D.y - 1);
+			//to_push_rp.rect.pos.x = engine->layout_rand<i32>
+			//	(PFIELD_PHYS_RECT2.left_x(),
+			//	PFIELD_PHYS_RECT2.right_x() - ROOM_MIN_SIZE_2D.x - 1);
+			//to_push_rp.rect.pos.y = engine->layout_rand<i32>
+			//	(PFIELD_PHYS_RECT2.top_y(),
+			//	PFIELD_PHYS_RECT2.bottom_y() - ROOM_MIN_SIZE_2D.y - 1);
 
-			to_push_rp.rect.size_2d.x = engine->layout_rand<i32>
-				(ROOM_MIN_SIZE_2D.x, ROOM_MAX_SIZE_2D.x);
-			to_push_rp.rect.size_2d.y = engine->layout_rand<i32>
-				(ROOM_MIN_SIZE_2D.y, ROOM_MAX_SIZE_2D.y);
+			//to_push_rp.rect.size_2d.x = engine->layout_rand<i32>
+			//	(ROOM_MIN_SIZE_2D.x, ROOM_MAX_SIZE_2D.x);
+			//to_push_rp.rect.size_2d.y = engine->layout_rand<i32>
+			//	(ROOM_MIN_SIZE_2D.y, ROOM_MAX_SIZE_2D.y);
+			to_push_rp.rect = engine->layout_rand_r2_in_pfnb
+				(ROOM_MIN_SIZE_2D, ROOM_MAX_SIZE_2D);
 			//--------
-			if (to_push_rp.fits_in_pfield_nb()) {
-				_do_push_back(std::move(to_push_rp));
-				break;
-			}
+			//if (to_push_rp.fits_in_pfnb()) {
+			//	_do_push_back(std::move(to_push_rp));
+			//	break;
+			//}
+			_do_push_back(std::move(to_push_rp));
+			//break;
 			//--------
-		}
+		//}
 	}
 	//else if (_dungeon_gen->size() < MAX_NUM_ROOM_PATHS)
 	else if (i32(_dungeon_gen->size()) < _self->_attempted_num_rp) {
@@ -229,7 +240,7 @@ bool GmDungeonGen::GenInnards::gen_single_rp() {
 					engine->log
 						("Debug: game_engine::sys::gen_single_rp(): ",
 						"Redoing generation\n");
-					_self->clear_dungeon_gen(_ecs_engine);
+					_self->clear(_ecs_engine);
 				} else {
 					// If we failed to find a room that fits in the
 					// playfield, we stop floor generation early, and don't
@@ -300,7 +311,7 @@ auto GmDungeonGen::GenInnards::_inner_gen_post_first()
 		//} else {
 		//	engine->log("!found\n");
 		//}
-		return (some_rp.fits_in_pfield_nb()
+		return (some_rp.fits_in_pfnb()
 			&& !found
 			//&& !any_intersect_find_first(some_rp, std::nullopt)
 			//&& any_sides_intersect_find_first(some_rp, std::nullopt)
@@ -750,10 +761,11 @@ auto GmDungeonGen::GenInnards::_gen_initial_rp()
 	} else { // if (_gen_type == GEN_TYPE_ROOM)
 		const IntVec2 temp_vec2
 		//temp_size_2d =
-			{.x=engine->layout_rand<i32>
-				(ROOM_MIN_SIZE_2D.x, ROOM_MAX_SIZE_2D.x),
-			.y=engine->layout_rand<i32>
-				(ROOM_MIN_SIZE_2D.y, ROOM_MAX_SIZE_2D.y)};
+			//{.x=engine->layout_rand<i32>
+			//	(ROOM_MIN_SIZE_2D.x, ROOM_MAX_SIZE_2D.x),
+			//.y=engine->layout_rand<i32>
+			//	(ROOM_MIN_SIZE_2D.y, ROOM_MAX_SIZE_2D.y)};
+			= engine->layout_rand_pt(ROOM_MIN_SIZE_2D, ROOM_MAX_SIZE_2D);
 		//thickness = engine->layout_rand<i32>
 		//	(ROOM_MIN_SIZE_2D.x, ROOM_MAX_SIZE_2D.x);
 		//length = engine->layout_rand<i32>
@@ -1231,73 +1243,68 @@ bool GmDungeonGen::GenInnards::_shrink(
 void GmDungeonGen::GenInnards::insert_alt_terrain(
 	bool do_clear
 ) const {
-	//const auto
-	//	& allowed_alt_terrain_vec = LEVEL_ALLOWED_ALT_TERRAIN_V2D
-	//		.at(engine->level_minus_1());
+	const auto
+		& allowed_alt_terrain_vec = LEVEL_ALLOWED_ALT_TERRAIN_V2D
+			.at(engine->level_minus_1());
 
-	//const IntRect2
-	//	floor_r2
-	//		= PFIELD_PHYS_RECT2,
-	//		//= r2_build_in_pfield({1, 1}, {9, 4}),
-	//	water_mballs_bounds_r2
-	//		= PFIELD_PHYS_NO_BRDR_RECT2;
+	const IntRect2
+		floor_r2
+			= PFIELD_PHYS_RECT2,
+			//= r2_build_in_pfield({1, 1}, {9, 4}),
+		lake_mballs_bounds_r2
+			//= PFIELD_PHYS_NO_BRDR_RECT2;
+			= engine->layout_rand_r2_in_pfnb
+				(GEN_BIOME_MBALL_GEN_MIN_SIZE_2D,
+				GEN_BIOME_MBALL_GEN_MAX_SIZE_2D);
+	printout(lake_mballs_bounds_r2, "\n");
 
-	//MetaballGen
-	//	water_mballs(floor_r2.size_2d);
+	MetaballGen
+		//lake_mballs(floor_r2.size_2d);
+		lake_mballs(lake_mballs_bounds_r2.size_2d);
 
-	////for (
-	////	size_t item_index=0;
-	////	item_index<_dungeon_gen->size();
-	////	++item_index
-	////) {
-	////	const auto& item = _dungeon_gen->_raw_at(item_index);
-	////	//if (
-	////	//	(item.is_path()
-	////	//		&& (gen_biome_mbins_type == GEN_BIOME_MBINS_TYPE_PATH
-	////	//			|| gen_biome_mbins_type == GEN_BIOME_MBINS_TYPE_BOTH))
-	////	//	|| (item.is_room()
-	////	//		&& (gen_biome_mbins_type == GEN_BIOME_MBINS_TYPE_ROOM
-	////	//			|| gen_biome_mbins_type == GEN_BIOME_MBINS_TYPE_BOTH))
-	////	//) {
-	////	//if (item.is_room()) {
-	////		water_mballs.add(item.rect.cntr_pos(),
-	////			FltVec2(item.rect.size_2d));
-	////	//}
-	////	//}
-	////}
-	//if (std::vector<IntRect2> water_r2_vec; true) {
-	//	const i32
-	//		NUM_WATER_R2S = engine->layout_rand<i32>
-	//			(GEN_BIOME_MBALL_MIN_AMOUNT, GEN_BIOME_MBALL_MAX_AMOUNT);
-	//	while (i32(water_r2_vec.size()) < NUM_WATER_R2S) {
-	//		const IntVec2
-	//			temp_pos
-	//				(float(engine->layout_rand<i32>
-	//					(water_mballs_bounds_r2.left_x(),
-	//					water_mballs_bounds_r2.right_x()
-	//						- GEN_BIOME_MBALL_MIN_SIZE_2D.x)),
-	//				float(engine->layout_rand<i32>
-	//					(water_mballs_bounds_r2.top_y(),
-	//					water_mballs_bounds_r2.bottom_y()
-	//						- GEN_BIOME_MBALL_MIN_SIZE_2D.y))),
-	//			temp_size_2d
-	//				(float(engine->layout_rand<i32>
-	//					(GEN_BIOME_MBALL_MIN_SIZE_2D.x,
-	//					GEN_BIOME_MBALL_MAX_SIZE_2D.x)),
-	//				float(engine->layout_rand<i32>
-	//					(GEN_BIOME_MBALL_MIN_SIZE_2D.y,
-	//					GEN_BIOME_MBALL_MAX_SIZE_2D.y)));
-	//		const IntRect2
-	//			to_push{.pos=temp_pos, .size_2d=temp_size_2d};
-	//		if (r2_fits_in_pfield_nb(IntRect2(to_push))) {
-	//			water_r2_vec.push_back(to_push);
-	//		}
-	//	}
-	//	for (const auto& water_r2: water_r2_vec) {
-	//		water_mballs.add
-	//			(water_r2.cntr_pos(), FltVec2(water_r2.size_2d));
-	//	}
+	//for (
+	//	size_t item_index=0;
+	//	item_index<_dungeon_gen->size();
+	//	++item_index
+	//) {
+	//	const auto& item = _dungeon_gen->_raw_at(item_index);
+	//	//if (
+	//	//	(item.is_path()
+	//	//		&& (gen_biome_mbins_type == GEN_BIOME_MBINS_TYPE_PATH
+	//	//			|| gen_biome_mbins_type == GEN_BIOME_MBINS_TYPE_BOTH))
+	//	//	|| (item.is_room()
+	//	//		&& (gen_biome_mbins_type == GEN_BIOME_MBINS_TYPE_ROOM
+	//	//			|| gen_biome_mbins_type == GEN_BIOME_MBINS_TYPE_BOTH))
+	//	//) {
+	//	//if (item.is_room()) {
+	//		lake_mballs.add(item.rect.cntr_pos(),
+	//			FltVec2(item.rect.size_2d));
+	//	//}
+	//	//}
 	//}
+	if (std::vector<IntRect2> lake_r2_vec; true) {
+		const i32
+			num_lake_r2s = engine->layout_rand<i32>
+				(GEN_BIOME_MBALL_MIN_AMOUNT, GEN_BIOME_MBALL_MAX_AMOUNT);
+		while (i32(lake_r2_vec.size()) < num_lake_r2s) {
+			const IntRect2
+				//to_push = engine->layout_rand_r2_in_pfnb
+				//	(GEN_BIOME_MBALL_MIN_SIZE_2D,
+				//	GEN_BIOME_MBALL_MAX_SIZE_2D);
+				to_push = engine->layout_rand_r2
+					(lake_mballs_bounds_r2,
+					GEN_BIOME_MBALL_MIN_SIZE_2D,
+					GEN_BIOME_MBALL_MAX_SIZE_2D);
+			//if (r2_fits_in_pfnb(IntRect2(to_push)))
+			{
+				lake_r2_vec.push_back(to_push);
+			}
+		}
+		for (const auto& lake_r2: lake_r2_vec) {
+			lake_mballs.add
+				(lake_r2.cntr_pos(), FltVec2(lake_r2.size_2d));
+		}
+	}
 
 	//const float
 	//	//BIOME_THRESH_0 = engine->layout_rand<i32>
@@ -1308,20 +1315,35 @@ void GmDungeonGen::GenInnards::insert_alt_terrain(
 	//	//	(MIN_GEN_BIOME_THRESH_1 * GEN_BIOME_THRESH_MM_SCALE,
 	//	//	MAX_GEN_BIOME_THRESH_1 * GEN_BIOME_THRESH_MM_SCALE)
 	//	//	/ GEN_BIOME_THRESH_MM_SCALE;
-	//	BIOME_THRESH_0 = 0.050f,
-	//	BIOME_THRESH_1 = 0.15f;
+	//	//BIOME_THRESH_0
+	//	//	//= 0.050f,
+	//	//	= 0.0f,
+	//	//BIOME_THRESH_1
+	//	BIOME_THRESH
+	//		//= 0.15f;
+	//		= 0.1f;
+	//		//= 10;
+	//		//= 5;
+	const float
+		biome_thresh = float(engine->layout_rand<i32>
+			(MIN_GEN_BIOME_THRESH_0 * GEN_BIOME_THRESH_MM_SCALE,
+			MAX_GEN_BIOME_THRESH_0 * GEN_BIOME_THRESH_MM_SCALE))
+			/ GEN_BIOME_THRESH_MM_SCALE;
 
-	//const auto& water_gen
-	//	//= water_mballs.gen(0.10f, 0.3f);
-	//	//= water_mballs.gen(0.01f, 0.3f);
-	//	//= water_mballs.gen(0.00f, 0.5f);
-	//	= water_mballs.gen(BIOME_THRESH_0, BIOME_THRESH_1);
+	const auto& lake_gen
+		//= lake_mballs.gen(0.10f, 0.3f);
+		//= lake_mballs.gen(0.01f, 0.3f);
+		//= lake_mballs.gen(0.00f, 0.5f);
+		//= lake_mballs.gen(BIOME_THRESH_0, BIOME_THRESH_1);
+		//= lake_mballs.gen(BIOME_THRESH);
+		//= lake_mballs.gen();
+		= lake_mballs.gen(biome_thresh);
 	//engine->log("Debug: Generated metaballs\n");
-	//for (size_t j=0; j<water_gen.size(); ++j) {
-	//	const auto& row = water_gen.at(j);
+	//for (size_t j=0; j<lake_gen.size(); ++j) {
+	//	const auto& row = lake_gen.at(j);
 	//	engine->log(j, ": ");
 	//	for (size_t i=0; i<row.size(); ++i) {
-	//		//engine->log)))))))))))))))))))))))(i, "{", row.at(i), "}");
+	//		//engine->log(i, "{", row.at(i), "}");
 	//		engine->log(row.at(i));
 	//		if (i + size_t(1) < row.size()) {
 	//			engine->log(" ");
@@ -1329,74 +1351,137 @@ void GmDungeonGen::GenInnards::insert_alt_terrain(
 	//	}
 	//	engine->log("\n");
 	//}
+	std::vector<std::vector<BgTile>> lake_bg_tiles
+		(lake_gen.size(),
+			std::vector<BgTile>
+				(lake_gen.front().size(), ALT_TERRAIN_NONE));
+	for (size_t j=0; j<lake_gen.size(); ++j) {
+		const auto& row = lake_gen.at(j);
+		for (size_t i=0; i<row.size(); ++i) {
+			const auto& item = row.at(i);
+			auto& lake_bg_tile = lake_bg_tiles.at(j).at(i);
+			if (
+				//item < 0.5f
+				!item 
+			) {
+				lake_bg_tile = BgTile::Water;
+			}
+			//else if (
+			//	item < 0.075f
+			//	//item < 0.065f
+			//) {
+			//	lake_bg_tile = BgTile::Water;
+			//}
+		}
+	}
 
-	//////for (auto& item: *_dungeon_gen)
-	//for (
-	//	size_t item_index=0;
-	//	item_index<_dungeon_gen->size();
-	//	++item_index
-	//) {
-	//	auto& item = _dungeon_gen->_raw_at(item_index);
-	//	//if (do_clear) {
-	//	//	item.alt_terrain_umap.clear();
-	//	//}
+	engine->log("Debug: generated lake `BgTile`s\n");
+	for (size_t j=0; j<lake_bg_tiles.size(); ++j) {
+		auto& row = lake_bg_tiles.at(j);
+		engine->log(j, ": ");
+		for (size_t i=0; i<row.size(); ++i) {
+			const auto& bg_tile = row.at(i);
+			if (bg_tile == ALT_TERRAIN_NONE) {
+				engine->log(char(comp::drawable_data_umap().at
+					(bg_tile_str_map_at(BgTile::RoomFloor)).c));
+			} else { // if (bg_tile != ALT_TERRAIN_NONE)
+				const auto& draw_data
+					= comp::drawable_data_umap().at
+						(bg_tile_str_map_at(bg_tile));
+				engine->log(char(draw_data.c));
+			}
+		}
+		//if (j + size_t(1) < lake_bg_tiles.size()) {
+			engine->log("\n");
+		//}
+	}
 
-	//	//if (item.is_path()) {
-	//	//	continue;
-	//	//}
+	////for (auto& item: *_dungeon_gen)
+	for (
+		size_t item_index=0;
+		item_index<_dungeon_gen->size();
+		++item_index
+	) {
+		auto& item = _dungeon_gen->_raw_at(item_index);
+		//if (do_clear) {
+		//	item.alt_terrain_umap.clear();
+		//}
 
-	//	// Note that `RoomPath`s are already generated with their borders
-	//	IntVec2
-	//		pos;
-	//	for (
-	//		pos.y=item.rect.top_y() - i32(1);
-	//		pos.y<=item.rect.bottom_y() + i32(1);
-	//		++pos.y
-	//	) {
-	//		for (
-	//			pos.x=item.rect.left_x() - i32(1);
-	//			pos.x<=item.rect.right_x() + i32(1);
-	//			++pos.x
-	//		) {
-	//			//const auto
-	//			//	//bg_tile_index = engine->layout_noise<i32>
-	//			//	//	(0, allowed_alt_terrain_vec.size() - 1, pos,
-	//			//	//	_dungeon_gen->layout_noise_add_amount());
-	//			//	bg_tile_index = engine->mball_out
-	//			//		(0, allowed_alt_terrain_vec.size() - 1,
-	//			//		mball_dyna2d, pos);
+		//if (item.is_path()) {
+		//	continue;
+		//}
 
-	//			//const auto
-	//			//	bg_tile_index =
-	//			const BgTile
-	//				bg_tile
-	//					//= allowed_alt_terrain_vec.at(bg_tile_index);
-	//					//= BgTile::Water;
-	//					= water_gen.at(pos.y).at(pos.x)
-	//					//? BgTile::Spikes
-	//					? BgTile::Water
-	//					: ALT_TERRAIN_NONE;
-	//			if (bg_tile == ALT_TERRAIN_NONE) {
-	//				continue;
-	//			}
+		// Note that `RoomPath`s are already generated with their borders
+		IntVec2
+			pos;
+		for (
+			pos.y=item.rect.top_y() - i32(1);
+			pos.y<=item.rect.bottom_y() + i32(1);
+			++pos.y
+		) {
+			for (
+				pos.x=item.rect.left_x() - i32(1);
+				pos.x<=item.rect.right_x() + i32(1);
+				++pos.x
+			) {
+				//const auto
+				//	//bg_tile_index = engine->layout_noise<i32>
+				//	//	(0, allowed_alt_terrain_vec.size() - 1, pos,
+				//	//	_dungeon_gen->layout_noise_add_amount());
+				//	bg_tile_index = engine->mball_out
+				//		(0, allowed_alt_terrain_vec.size() - 1,
+				//		mball_dyna2d, pos);
 
-	//			if (item.is_path()) {
-	//				if (!bg_tile_is_unsafe(bg_tile)) {
-	//					item.alt_terrain_umap[pos] = bg_tile;
-	//				}
-	//			} else { // if (item.is_room())
-	//				if (
-	//					! bg_tile_is_unsafe(bg_tile)
-	//					|| (!item.pos_in_border(pos)
-	//						&& !item.pos_in_internal_border(pos))
-	//				) {
-	//					item.alt_terrain_umap[pos] = bg_tile;
-	//				}
-	//			}
+				//const auto
+				//	bg_tile_index =
+				//const BgTile
+				//	bg_tile
+				//		//= allowed_alt_terrain_vec.at(bg_tile_index);
+				//		//= BgTile::Water;
+				//		= lake_gen.at(pos.y).at(pos.x) 
+				//		//? BgTile::Spikes
+				//		? BgTile::Water
+				//		: ALT_TERRAIN_NONE;
+				//const auto& lake = lake_gen.at(pos.y).at(pos.x);
+				//BgTile bg_tile;
+				//if (lake <= 0.1f) {
+				//	bg_tile = BgTile::Spikes;
+				//} else if (lake <= 0.11f) {
+				//	bg_tile = BgTile::Water;
+				//} else {
+				//	bg_tile = ALT_TERRAIN_NONE;
+				//}
+				if (!lake_mballs_bounds_r2.intersect(pos)) {
+					continue;
+				}
 
-	//		}
-	//	}
-	//}
+				const IntVec2
+					temp_pos = pos - lake_mballs_bounds_r2.pos;
+
+				const BgTile
+					bg_tile = lake_bg_tiles.at(temp_pos.y).at(temp_pos.x);
+
+				if (bg_tile == ALT_TERRAIN_NONE) {
+					continue;
+				}
+
+				if (item.is_path()) {
+					if (!bg_tile_is_unsafe(bg_tile)) {
+						item.alt_terrain_umap[pos] = bg_tile;
+					}
+				} else { // if (item.is_room())
+					if (
+						! bg_tile_is_unsafe(bg_tile)
+						|| (!item.pos_in_border(pos)
+							&& !item.pos_in_internal_border(pos))
+					) {
+						item.alt_terrain_umap[pos] = bg_tile;
+					}
+				}
+
+			}
+		}
+	}
 }
 //--------
 } // namespace sys

@@ -105,10 +105,15 @@ using CollGridT
 	= math::CollGridCsz2d<i32, WIntBboxBase, CGC2D_GRID_ELEM_SIZE_2D,
 		CGC2D_NUM_GRID_ELEMS_2D>;
 //--------
-constexpr inline bool r2_intersects_pfield_nb(const IntRect2& rect) {
+constexpr inline bool r2_intersects_pfnb(const IntRect2& rect) {
 	return PFIELD_PHYS_NO_BRDR_RECT2.intersect(rect);
 }
-constexpr inline bool r2_fits_in_pfield_nb(const IntRect2& rect) {
+constexpr inline bool r2_fits_in_other(
+	const IntRect2& rect, const IntRect2& inside_rect
+) {
+	return inside_rect.arg_inside<false>(rect);
+}
+constexpr inline bool r2_fits_in_pfnb(const IntRect2& rect) {
 	//return (rect.pos.x >= 0
 	//	&& rect.pos.x <= PFIELD_SIZE_2D.x);
 	//return PFIELD_PHYS_RECT2.arg_inside(rect, false,
@@ -116,7 +121,8 @@ constexpr inline bool r2_fits_in_pfield_nb(const IntRect2& rect) {
 	//return PFIELD_PHYS_RECT2.arg_inside(rect, CDIFF_V2);
 	//return PFIELD_PHYS_RECT2.arg_inside(rect);
 	//return PFIELD_PHYS_RECT2.arg_inside<true>(rect);
-	return PFIELD_PHYS_NO_BRDR_RECT2.arg_inside<false>(rect);
+	//return PFIELD_PHYS_NO_BRDR_RECT2.arg_inside<false>(rect);
+	return r2_fits_in_other(rect, PFIELD_PHYS_NO_BRDR_RECT2);
 }
 //--------
 //constexpr inline bool r2_local_pos_in_border(
@@ -165,7 +171,7 @@ constexpr inline IntRect2 r2_build_in_pfield(
 	return IntRect2::build_in_grid_lim
 		(tl_corner, br_corner, PFIELD_PHYS_RECT2);
 }
-constexpr inline IntRect2 r2_build_in_pfield_nb(
+constexpr inline IntRect2 r2_build_in_pfnb(
 	const IntVec2& tl_corner, const IntVec2& br_corner
 ) {
 	return IntRect2::build_in_grid_lim
@@ -192,29 +198,25 @@ constexpr inline bool r2_pos_in_border(
 	);
 }
 
-constexpr inline IntRect2 r2_left_side_1ge_past_in_pfield_nb(
+constexpr inline IntRect2 r2_left_side_1ge_past_in_pfnb(
 	const IntRect2& rect
 ) {
-	return rect.left_side_1ge_past_lim
-		(PFIELD_PHYS_NO_BRDR_RECT2);
+	return rect.left_side_1ge_past_lim(PFIELD_PHYS_NO_BRDR_RECT2);
 }
-constexpr inline IntRect2 r2_top_side_1ge_past_in_pfield_nb(
+constexpr inline IntRect2 r2_top_side_1ge_past_in_pfnb(
 	const IntRect2& rect
 ) {
-	return rect.top_side_1ge_past_lim
-		(PFIELD_PHYS_NO_BRDR_RECT2);
+	return rect.top_side_1ge_past_lim(PFIELD_PHYS_NO_BRDR_RECT2);
 }
-constexpr inline IntRect2 r2_right_side_1ge_past_in_pfield_nb(
+constexpr inline IntRect2 r2_right_side_1ge_past_in_pfnb(
 	const IntRect2& rect
 ) {
-	return rect.right_side_1ge_past_lim
-		(PFIELD_PHYS_NO_BRDR_RECT2);
+	return rect.right_side_1ge_past_lim(PFIELD_PHYS_NO_BRDR_RECT2);
 }
-constexpr inline IntRect2 r2_bottom_side_1ge_past_in_pfield_nb(
+constexpr inline IntRect2 r2_bottom_side_1ge_past_in_pfnb(
 	const IntRect2& rect
 ) {
-	return rect.bottom_side_1ge_past_lim
-		(PFIELD_PHYS_NO_BRDR_RECT2);
+	return rect.bottom_side_1ge_past_lim(PFIELD_PHYS_NO_BRDR_RECT2);
 }
 //--------
 static constexpr IntVec2

@@ -34,22 +34,29 @@ public:		// types
 	//	IntVec2 pos;
 	//	FltVec2 size_2d;
 	//};
-	using GenDynarr
-		//= std::vector<float>;
-		= std::vector<bool>;
-	using GenDyna2d = std::vector<GenDynarr>;
 private:		// variables
 	IntVec2 _size_2d = PFIELD_PHYS_SIZE_2D;
+	//IntRect2 _bounds = PFIELD_PHYS_RECT2;
 	std::vector<FltRect2> _ball_vec;
 public:		// functions
 	MetaballGen() = default;
 	MetaballGen(const IntVec2& s_size_2d);
+	//MetaballGen(const IntRect2& s_bounds);
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(MetaballGen);
 	~MetaballGen() = default;
 
 	MetaballGen& add(const IntVec2& pos, float range);
 	MetaballGen& add(const IntVec2& pos, const FltVec2& range);
-	GenDyna2d gen(float thresh_0, float thresh_1);
+	
+	float gen_single(const IntVec2& pos) const;
+	bool gen_single(
+		const IntVec2& pos, float thresh_0, float thresh_1=0.0f
+	) const;
+	FltDyna2d gen() const;
+	BoolDyna2d gen(float thresh_0, float thresh_1=0.0f) const;
+
+	GEN_GETTER_BY_CON_REF(size_2d);
+	//GEN_GETTER_BY_CON_REF(bounds);
 	GEN_GETTER_BY_CON_REF(ball_vec);
 };
 //--------

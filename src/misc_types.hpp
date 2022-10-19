@@ -61,6 +61,11 @@ using FltRect2 = math::Rect2<float>;
 using FltLineSeg2Ex = binser::LineSeg2Ex<float>;
 using FltRect2Ex = binser::Rect2Ex<float>;
 
+using FltDynarr = std::vector<float>;
+using FltDyna2d = std::vector<FltDynarr>;
+using BoolDynarr = std::vector<bool>;
+using BoolDyna2d = std::vector<BoolDynarr>;
+
 //template<typename FirstT, typename OtherT>
 //inline void set_vec2(Vec2<FirstT>& self, const Vec2<OtherT>& other) {
 //	self.x = other.x;

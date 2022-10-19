@@ -109,11 +109,11 @@ public:		// constants
 			//= 8,
 			//= 10,
 			//= 13,
-			= 15,
-			//= 20,
+			//= 15,
+			= 20,
 		MAX_NUM_ROOM_PATHS
 			//= 15;
-			= 30;
+			= 42;
 
 		//MIN_NUM_PATHS = 1,
 		//MAX_NUM_PATHS = 64;
@@ -123,6 +123,7 @@ public:		// constants
 		PATH_MIN_LEN
 			//= 2,
 			= 3,
+			//= 4,
 			//= 5,
 		PATH_MAX_LEN
 			//= 32;
@@ -239,7 +240,7 @@ public:		// types
 		) const {
 			return r2_pos_in_internal_border(rect, pos);
 		}
-		constexpr inline bool fits_in_pfield_nb() const {
+		constexpr inline bool fits_in_pfnb() const {
 			//return (rect.pos.x >= 0
 			//	&& rect.pos.x <= PFIELD_SIZE_2D.x);
 			//return PFIELD_PHYS_RECT2.arg_inside(rect, false,
@@ -247,7 +248,7 @@ public:		// types
 			//return PFIELD_PHYS_RECT2.arg_inside(rect, CDIFF_V2);
 			//return PFIELD_PHYS_RECT2.arg_inside(rect);
 			//return PFIELD_PHYS_RECT2.arg_inside<true>(rect);
-			return r2_fits_in_pfield_nb(rect);
+			return r2_fits_in_pfnb(rect);
 		}
 		constexpr inline bool is_path() const {
 			return r2_is_path(rect);
@@ -279,8 +280,8 @@ private:		// variables
 
 
 	std::vector<RoomPathSptr> _rp_data;
-	std::unordered_map<RoomPath*, size_t> _rp_to_index_umap;
-	CollGridT _coll_grid;
+	//std::unordered_map<RoomPath*, size_t> _rp_to_index_umap;
+	//CollGridT _coll_grid;
 	//binser::VectorEx<RoomPath> _rp_data;
 	//double
 	//	_layout_noise_pos_scale = 0.0d,
@@ -348,19 +349,19 @@ public:		// functions
 		//_rp_data.data.resize(0);
 		//_rp_data.data.clear();
 		_rp_data.clear();
-		_rp_to_index_umap.clear();
-		_coll_grid.clear();
+		//_rp_to_index_umap.clear();
+		//_coll_grid.clear();
 		//_layout_noise_pos_scale = n_layout_noise_pos_scale;
 		//_layout_noise_pos_offset = n_layout_noise_pos_offset;
 	}
-	CollGridT::DataElPtrUsetT cg_neighbors(RoomPath& rp) const;
-	CollGridT::DataElPtrUsetT cg_neighbors(size_t index) const;
+	//CollGridT::DataElPtrUsetT cg_neighbors(RoomPath& rp) const;
+	//CollGridT::DataElPtrUsetT cg_neighbors(size_t index) const;
 
 	void draw();
 	//--------
 	GEN_GETTER_BY_CON_REF(rp_data);
-	GEN_GETTER_BY_CON_REF(rp_to_index_umap);
-	GEN_GETTER_BY_CON_REF(coll_grid);
+	//GEN_GETTER_BY_CON_REF(rp_to_index_umap);
+	//GEN_GETTER_BY_CON_REF(coll_grid);
 	//GEN_GETTER_BY_CON_REF(path_vec);
 	//GEN_GETTER_BY_CON_REF(layout_noise_pos_scale);
 	//GEN_GETTER_BY_CON_REF(layout_noise_pos_offset);

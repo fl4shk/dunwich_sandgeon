@@ -451,6 +451,52 @@ public:		// functions
 	inline auto layout_rand(const T& lim_0, const T& lim_1) {
 		return rng_run<T>(layout_rng(), lim_0, lim_1);
 	}
+
+	inline IntVec2 layout_rand_pt(const IntVec2& min, const IntVec2& max) {
+		return
+			{.x=layout_rand<i32>(min.x, max.x),
+			.y=layout_rand<i32>(min.y, max.y)};
+	}
+	inline IntVec2 layout_rand_pt(
+		const IntRect2& inside_r2
+	) {
+		return
+			{.x=layout_rand<i32>(inside_r2.left_x(), inside_r2.right_x()),
+			.y=layout_rand<i32>(inside_r2.top_y(), inside_r2.bottom_y())};
+	};
+	inline IntVec2 layout_rand_pt_in_pfnb() {
+		return layout_rand_pt(PFIELD_PHYS_NO_BRDR_RECT2);
+	}
+
+	inline IntRect2 layout_rand_r2(
+		const IntRect2& inside_r2, const IntVec2& min_size,
+		const IntVec2& max_size
+	) {
+		IntRect2 ret;
+
+		do {
+			ret = {
+				.pos
+				{.x=layout_rand<i32>
+					(inside_r2.left_x(),
+					inside_r2.right_x() - min_size.x),
+				.y=layout_rand<i32>
+					(inside_r2.top_y(),
+					inside_r2.bottom_y() - min_size.y)},
+			.size_2d
+				{.x=layout_rand<i32>(min_size.x, max_size.x),
+				.y=layout_rand<i32>(min_size.y, max_size.y)}
+			};
+		} while (!r2_fits_in_other(ret, inside_r2));
+
+		return ret;
+	}
+	inline IntRect2 layout_rand_r2_in_pfnb(
+		const IntVec2& min_size, const IntVec2& max_size
+	) {
+		return layout_rand_r2
+			(PFIELD_PHYS_NO_BRDR_RECT2, min_size, max_size);
+	};
 	//template<std::floating_point T>
 	//inline auto flt_layout_rand(const T& lim_0, const T& lim_1,
 	//	const T& scale) {

@@ -125,16 +125,16 @@ void DungeonGen::push_back(RoomPath&& to_push) {
 	}
 	//_rp_data.data.push_back(std::move(to_push));
 	_rp_data.push_back(RoomPathSptr(new RoomPath(std::move(to_push))));
-	_rp_to_index_umap.insert(std::pair
-		(_rp_data.back().get(), _rp_data.size() - size_t(1)));
-	_coll_grid.insert(_rp_data.back().get());
+	//_rp_to_index_umap.insert(std::pair
+	//	(_rp_data.back().get(), _rp_data.size() - size_t(1)));
+	//_coll_grid.insert(_rp_data.back().get());
 }
-CollGridT::DataElPtrUsetT DungeonGen::cg_neighbors(RoomPath& rp) const {
-	return _coll_grid.neighbors(&rp);
-}
-CollGridT::DataElPtrUsetT DungeonGen::cg_neighbors(size_t index) const {
-	return _coll_grid.neighbors(_rp_data.at(index).get());
-}
+//CollGridT::DataElPtrUsetT DungeonGen::cg_neighbors(RoomPath& rp) const {
+//	return _coll_grid.neighbors(&rp);
+//}
+//CollGridT::DataElPtrUsetT DungeonGen::cg_neighbors(size_t index) const {
+//	return _coll_grid.neighbors(_rp_data.at(index).get());
+//}
 void DungeonGen::draw() {
 	//bg_tile_map->at({0, 0}) = BgTile::Floor;
 	for (size_t i=0; i<size(); ++i) 
@@ -192,14 +192,14 @@ void DungeonGen::draw() {
 						}
 					} else { // if (!in_border)
 						if (!rp.door_pt_uset.contains(pos)) {
-							//if (rp.alt_terrain_umap.contains(pos)) {
-							//	bg_tile = rp.alt_terrain_umap.at(pos);
-							//} else {
+							if (rp.alt_terrain_umap.contains(pos)) {
+								bg_tile = rp.alt_terrain_umap.at(pos);
+							} else {
 								bg_tile
 									= rp.is_path()
 									? BgTile::PathFloor
 									: BgTile::RoomFloor;
-							//}
+							}
 						} else {
 							bg_tile = BgTile::Door;
 						}
@@ -212,7 +212,7 @@ void DungeonGen::draw() {
 						"rp.rect",rp.rect, ", pos", pos, ", ",
 						"rs{", rp.rect.right_x(), "}, ",
 						"bs{", rp.rect.bottom_y(), "}, ",
-						"fp{", rp.fits_in_pfield_nb(), "}"
+						"fp{", rp.fits_in_pfnb(), "}"
 						
 					));
 				}

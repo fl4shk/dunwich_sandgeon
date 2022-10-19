@@ -177,15 +177,29 @@ public:		// constants
 			//= 5;
 		//--------
 	//--------
-	//static constexpr float
-	//	MIN_GEN_BIOME_THRESH_0 = 0.005f,
-	//	MAX_GEN_BIOME_THRESH_0
-	//		= 0.035f,
-	//	MIN_GEN_BIOME_THRESH_1
-	//		= 0.2f,
-	//		//= 0.3f,
-	//	MAX_GEN_BIOME_THRESH_1 = 0.5f,
-	//	GEN_BIOME_THRESH_MM_SCALE = 1000;
+	static constexpr float
+		//MIN_GEN_BIOME_THRESH_0
+		//	= 0.0f,
+		//	//= 0.005f,
+		//MAX_GEN_BIOME_THRESH_0
+		//	= 0.0075f,
+		//MIN_GEN_BIOME_THRESH_1
+		//	//= 0.05f,
+		//	= 0.075f,
+		//	//= 0.3f,
+		//MAX_GEN_BIOME_THRESH_1
+		//	//= 0.5f,
+		//	//= 0.25f,
+		//	= 0.15f,
+		MIN_GEN_BIOME_THRESH_0
+			//= 0.3f,
+			= 0.5f,
+			//= 2.0f,
+		MAX_GEN_BIOME_THRESH_0
+			//= 4.0f,
+			//= 6.0f,
+			= 8.0f,
+		GEN_BIOME_THRESH_MM_SCALE = 1000.0f;
 	//static constexpr i32
 	//	GEN_BIOME_MBINS_TYPE_PATH = 0,
 	//		MIN_GEN_BIOME_MBINS_TYPE = GEN_BIOME_MBINS_TYPE_PATH,
@@ -193,11 +207,26 @@ public:		// constants
 	//	GEN_BIOME_MBINS_TYPE_BOTH = 2,
 	//		MAX_GEN_BIOME_MBINS_TYPE = GEN_BIOME_MBINS_TYPE_BOTH;
 	static constexpr i32
-		GEN_BIOME_MBALL_MIN_AMOUNT = 3,
-		GEN_BIOME_MBALL_MAX_AMOUNT = 7;
+		GEN_BIOME_MBALL_MIN_AMOUNT = 2,
+		GEN_BIOME_MBALL_MAX_AMOUNT
+			//= 4;
+			= 7;
+			//= 20;
 	static constexpr IntVec2
-		GEN_BIOME_MBALL_MIN_SIZE_2D = {3, 3},
-		GEN_BIOME_MBALL_MAX_SIZE_2D = {10, 10};
+		GEN_BIOME_MBALL_MIN_SIZE_2D
+			= {3, 3},
+		GEN_BIOME_MBALL_MAX_SIZE_2D
+			//= {3, 3},
+			//= {5, 5},
+			= {8, 8},
+		GEN_BIOME_MBALL_GEN_MIN_SIZE_2D
+			//= {15, 15},
+			//= {25, 25},
+			= {35, 35},
+		GEN_BIOME_MBALL_GEN_MAX_SIZE_2D
+			= PFIELD_PHYS_NO_BRDR_RECT2.size_2d;
+			//- GEN_BIOME_MBALL_GEN_MIN_SIZE_2D;
+			//- GEN_BIOME_MBALL_MIN_SIZE_2D;
 	//--------
 	static constexpr GenNext
 		//GEN_NEXT_SAME_MIN = 0, MIN_GEN_NEXT = GEN_NEXT_SAME_MIN,
@@ -292,7 +321,7 @@ public:		// functions
 
 	virtual std::string kind_str() const;
 
-	void clear_dungeon_gen(ecs::Engine* ecs_engine);
+	void clear(ecs::Engine* ecs_engine);
 private:		// functions
 	virtual void _init(ecs::Engine* ecs_engine);
 public:		// functions
@@ -422,16 +451,16 @@ private:		// types
 	private:		// static functions
 		//--------
 		static constexpr inline IntRect2 _ls_r2(const RoomPath& some_rp) {
-			return r2_left_side_1ge_past_in_pfield_nb(some_rp.rect);
+			return r2_left_side_1ge_past_in_pfnb(some_rp.rect);
 		}
 		static constexpr inline IntRect2 _ts_r2(const RoomPath& some_rp) {
-			return r2_top_side_1ge_past_in_pfield_nb(some_rp.rect);
+			return r2_top_side_1ge_past_in_pfnb(some_rp.rect);
 		}
 		static constexpr inline IntRect2 _rs_r2(const RoomPath& some_rp) {
-			return r2_right_side_1ge_past_in_pfield_nb(some_rp.rect);
+			return r2_right_side_1ge_past_in_pfnb(some_rp.rect);
 		}
 		static constexpr inline IntRect2 _bs_r2(const RoomPath& some_rp) {
-			return r2_bottom_side_1ge_past_in_pfield_nb(some_rp.rect);
+			return r2_bottom_side_1ge_past_in_pfnb(some_rp.rect);
 		}
 		//--------
 		static constexpr inline bool _ls_r2_hit(
@@ -441,28 +470,28 @@ private:		// types
 				(//i32(_check_i) != _conn_rp_index
 				//_gen_side == GEN_SIDE_L
 				//&&
-				r2_fits_in_pfield_nb(_ls_r2(rp_0))
+				r2_fits_in_pfnb(_ls_r2(rp_0))
 				//r2_intersects_pfield_nb(_ls_r2(rp_0))
 				&& rp_1.rect.intersect(_ls_r2(rp_0)));
 		}
 		static constexpr inline bool _ts_r2_hit(
 			const RoomPath& rp_0, const RoomPath& rp_1
 		) {
-			return (r2_fits_in_pfield_nb(_ts_r2(rp_0))
+			return (r2_fits_in_pfnb(_ts_r2(rp_0))
 				//r2_intersects_pfield_nb(_ts_r2(rp_0))
 				&& rp_1.rect.intersect(_ts_r2(rp_0)));
 		}
 		static constexpr inline bool _rs_r2_hit(
 			const RoomPath& rp_0, const RoomPath& rp_1
 		) {
-			return (r2_fits_in_pfield_nb(_rs_r2(rp_0))
+			return (r2_fits_in_pfnb(_rs_r2(rp_0))
 				//r2_intersects_pfield_nb(_rs_r2(rp_0))
 				&& rp_1.rect.intersect(_rs_r2(rp_0)));
 		}
 		static constexpr inline bool _bs_r2_hit(
 			const RoomPath& rp_0, const RoomPath& rp_1
 		) {
-			return (r2_fits_in_pfield_nb(_bs_r2(rp_0))
+			return (r2_fits_in_pfnb(_bs_r2(rp_0))
 				//r2_intersects_pfield_nb(_bs_r2(rp_0))
 				&& rp_1.rect.intersect(_bs_r2(rp_0)));
 		}
