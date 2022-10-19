@@ -135,7 +135,6 @@ CollGridT::DataElPtrUsetT DungeonGen::cg_neighbors(RoomPath& rp) const {
 CollGridT::DataElPtrUsetT DungeonGen::cg_neighbors(size_t index) const {
 	return _coll_grid.neighbors(_rp_data.at(index).get());
 }
-//void DungeonGen::draw(StaticBgTileMap* bg_tile_map)
 void DungeonGen::draw() {
 	//bg_tile_map->at({0, 0}) = BgTile::Floor;
 	for (size_t i=0; i<size(); ++i) 
@@ -170,20 +169,22 @@ void DungeonGen::draw() {
 					if (in_border) {
 						// I'm doing this the slow/easy way for now.
 						bool did_intersect = false;
-						//for (size_t j=0; j<i; ++j)
-						//{
-						//	if (at(j).rect.intersect(pos)) {
-						//		did_intersect = true;
-						//	}
-						//}
-						if (const auto& item_uset=cg_neighbors(i); true) {
-							for (const auto& item: item_uset) {
-								if (item->bbox().intersect(pos)) {
-									did_intersect = true;
-									break;
-								}
+						for (size_t j=0; j<i; ++j) {
+							if (at(j).rect.intersect(pos)) {
+								did_intersect = true;
+								//break;
 							}
 						}
+						//if (const auto& item_uset=cg_neighbors(i); true) {
+						//	for (const auto& item: item_uset) {
+						//		const auto j = _rp_to_index_umap
+						//			.at(static_cast<RoomPath*>(item));
+						//		if (item->bbox().intersect(pos) && j < i) {
+						//			did_intersect = true;
+						//			break;
+						//		}
+						//	}
+						//}
 
 						if (!did_intersect) {
 							bg_tile = BgTile::Wall;
@@ -191,14 +192,14 @@ void DungeonGen::draw() {
 						}
 					} else { // if (!in_border)
 						if (!rp.door_pt_uset.contains(pos)) {
-							if (rp.alt_terrain_umap.contains(pos)) {
-								bg_tile = rp.alt_terrain_umap.at(pos);
-							} else {
+							//if (rp.alt_terrain_umap.contains(pos)) {
+							//	bg_tile = rp.alt_terrain_umap.at(pos);
+							//} else {
 								bg_tile
 									= rp.is_path()
 									? BgTile::PathFloor
 									: BgTile::RoomFloor;
-							}
+							//}
 						} else {
 							bg_tile = BgTile::Door;
 						}

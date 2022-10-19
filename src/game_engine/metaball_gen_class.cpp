@@ -24,18 +24,14 @@ MetaballGen::MetaballGen(const IntVec2& s_size_2d)
 	: _size_2d(s_size_2d) {
 }
 MetaballGen& MetaballGen::add(const IntVec2& pos, float range) {
-	_ball_vec.push_back({.pos=pos, .size_2d{.x=range, .y=range}});
+	_ball_vec.push_back({.pos=FltVec2(pos), .size_2d{.x=range, .y=range}});
 	return *this;
 }
 MetaballGen& MetaballGen::add(const IntVec2& pos, const FltVec2& range) {
-	_ball_vec.push_back({.pos=pos, .size_2d=range});
+	_ball_vec.push_back({.pos=FltVec2(pos), .size_2d=range});
 	return *this;
 }
-//MetaballGen& add(const Ball& to_push) {
-//	_ball_vec.push_back(to_push);
-//	return *this;
-//}
-auto MetaballGen::gen() -> GenDyna2d {
+auto MetaballGen::gen(float thresh_0, float thresh_1) -> GenDyna2d {
 	//result.resize(size, 0);
 	//for(auto p : Rect2i({0, 0}, size)) {
 	//	float value = 0.0;
@@ -48,19 +44,44 @@ auto MetaballGen::gen() -> GenDyna2d {
 	//	result(p) = value;
 	//}
 
-	GenDyna2d ret(_size_2d.y, std::vector<float>(_size_2d.x, 0.0f));
+	//printout("MetaballGen::gen(): ", _size_2d, "\n");
+	//GenDyna2d ret(_size_2d.y, GenDynarr(_size_2d.x, 0.0f));
+	GenDyna2d ret(_size_2d.y, GenDynarr(_size_2d.x, 0));
+	//printout("{", ret.size(), " ", ret.front().size(), "}\n");
 
-	IntVec2 pos;
-	for (pos.y=0; pos.y<_size_2d.y - i32(1); ++pos.y) {
-		for (pos.x=0; pos.x<_size_2d.x - i32(1); ++pos.x) {
+	FltVec2 pos;
+	for (pos.y=0; pos.y<_size_2d.y; ++pos.y) {
+		for (pos.x=0; pos.x<_size_2d.x; ++pos.x) {
 			float val = 0.0f;
 			for (const auto& ball: _ball_vec) {
-				auto diff = FltVec2(ball.pos - pos);
+				//auto diff = ball.pos - pos;
+				auto diff = ball.cntr_pos() - (pos - (_size_2d / 2));
+				//auto diff = ball.cntr_pos() - pos;
+				// Try modifying the below two changes to `diff`
+				//diff.x = diff.x / ball.size_2d.x * ball.size_2d.y;
 				diff.y = diff.y / ball.size_2d.y * ball.size_2d.x;
-				const auto dist2 = (diff.x * diff.x) + (diff.y * diff.y);
+				const auto
+					dist2 = (diff.x * diff.x) + (diff.y * diff.y);
+					//dist2 = std::sqrt((diff.x * diff.x)
+					//	+ (diff.y * diff.y));
 				val += (ball.size_2d.x * ball.size_2d.x) / dist2;
+
+				//const FltVec2 temp_diff = FltVec2(ball.pos);
+				//FltVec2 diff = temp_diff;
+				//diff.y = (diff.y / ball.size_2d.x) * ball.size_2d.x;
+				//float dist2 = (diff.x * diff.x) + (diff.y * diff.y);
+				//const auto
+				//	to_add = (ball.size_2d.x + ball.size_2d.y) / dist2;
+				//val += to_add;
 			}
-			ret.at(pos.y).at(pos.x) = val;
+			//if (std::isnormal(val) && val <= threshold) {
+			//	printout("MetaballGen::gen(): val: ", val, "\n");
+			//}
+			ret.at(pos.y).at(pos.x)
+				//= val;
+				//= val <= 10.0f;
+				= val >= math::min_va(thresh_0, thresh_1)
+				&& val <= math::max_va(thresh_0, thresh_1);
 		}
 	}
 

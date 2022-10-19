@@ -175,6 +175,29 @@ public:		// constants
 			//= 3;
 			= 4;
 			//= 5;
+		//--------
+	//--------
+	//static constexpr float
+	//	MIN_GEN_BIOME_THRESH_0 = 0.005f,
+	//	MAX_GEN_BIOME_THRESH_0
+	//		= 0.035f,
+	//	MIN_GEN_BIOME_THRESH_1
+	//		= 0.2f,
+	//		//= 0.3f,
+	//	MAX_GEN_BIOME_THRESH_1 = 0.5f,
+	//	GEN_BIOME_THRESH_MM_SCALE = 1000;
+	//static constexpr i32
+	//	GEN_BIOME_MBINS_TYPE_PATH = 0,
+	//		MIN_GEN_BIOME_MBINS_TYPE = GEN_BIOME_MBINS_TYPE_PATH,
+	//	GEN_BIOME_MBINS_TYPE_ROOM = 1,
+	//	GEN_BIOME_MBINS_TYPE_BOTH = 2,
+	//		MAX_GEN_BIOME_MBINS_TYPE = GEN_BIOME_MBINS_TYPE_BOTH;
+	static constexpr i32
+		GEN_BIOME_MBALL_MIN_AMOUNT = 3,
+		GEN_BIOME_MBALL_MAX_AMOUNT = 7;
+	static constexpr IntVec2
+		GEN_BIOME_MBALL_MIN_SIZE_2D = {3, 3},
+		GEN_BIOME_MBALL_MAX_SIZE_2D = {10, 10};
 	//--------
 	static constexpr GenNext
 		//GEN_NEXT_SAME_MIN = 0, MIN_GEN_NEXT = GEN_NEXT_SAME_MIN,

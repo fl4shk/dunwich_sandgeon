@@ -159,6 +159,18 @@ constexpr inline bool r2_fits_in_pfield_nb(const IntRect2& rect) {
 //		return (local_pos.y == 1 || local_pos.y == rect.size_2d.y);
 //	}
 //}
+constexpr inline IntRect2 r2_build_in_pfield(
+	const IntVec2& tl_corner, const IntVec2& br_corner
+) {
+	return IntRect2::build_in_grid_lim
+		(tl_corner, br_corner, PFIELD_PHYS_RECT2);
+}
+constexpr inline IntRect2 r2_build_in_pfield_nb(
+	const IntVec2& tl_corner, const IntVec2& br_corner
+) {
+	return IntRect2::build_in_grid_lim
+		(tl_corner, br_corner, PFIELD_PHYS_NO_BRDR_RECT2);
+}
 constexpr inline bool r2_pos_in_internal_border(
 	const IntRect2& rect, const IntVec2& pos
 ) {

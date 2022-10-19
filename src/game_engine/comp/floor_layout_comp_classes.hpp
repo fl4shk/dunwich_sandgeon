@@ -285,8 +285,6 @@ private:		// variables
 	//double
 	//	_layout_noise_pos_scale = 0.0d,
 	//	_layout_noise_pos_offset = 0.0d;
-public:		// variables
-	bool show_metaballs = false;
 public:		// functions
 	//--------
 	DungeonGen();
@@ -358,7 +356,6 @@ public:		// functions
 	CollGridT::DataElPtrUsetT cg_neighbors(RoomPath& rp) const;
 	CollGridT::DataElPtrUsetT cg_neighbors(size_t index) const;
 
-	//void draw(StaticBgTileMap* bg_tile_map);
 	void draw();
 	//--------
 	GEN_GETTER_BY_CON_REF(rp_data);

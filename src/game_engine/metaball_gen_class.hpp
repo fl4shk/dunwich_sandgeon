@@ -22,27 +22,35 @@
 
 #include "../misc_includes.hpp"
 #include "../misc_types.hpp"
+#include "global_shape_constants_etc.hpp"
 
 namespace dunwich_sandgeon {
 namespace game_engine {
 //--------
 class MetaballGen final {
 public:		// types
-	class Ball final {
-	public:		// variables
-		IntVec2 pos;
-		FltVec2 size_2d;
-	};
-	using GenDynarr = std::vector<float>;
+	//class Ball final {
+	//public:		// variables
+	//	IntVec2 pos;
+	//	FltVec2 size_2d;
+	//};
+	using GenDynarr
+		//= std::vector<float>;
+		= std::vector<bool>;
 	using GenDyna2d = std::vector<GenDynarr>;
 private:		// variables
-	IntVec2 _size_2d;
-	std::vector<Ball> _ball_vec;
+	IntVec2 _size_2d = PFIELD_PHYS_SIZE_2D;
+	std::vector<FltRect2> _ball_vec;
 public:		// functions
+	MetaballGen() = default;
 	MetaballGen(const IntVec2& s_size_2d);
+	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(MetaballGen);
+	~MetaballGen() = default;
+
 	MetaballGen& add(const IntVec2& pos, float range);
 	MetaballGen& add(const IntVec2& pos, const FltVec2& range);
-	GenDyna2d gen();
+	GenDyna2d gen(float thresh_0, float thresh_1);
+	GEN_GETTER_BY_CON_REF(ball_vec);
 };
 //--------
 } // namespace game_engine

@@ -28,6 +28,7 @@
 #include "comp/general_comp_classes.hpp"
 #include "global_shape_constants_etc.hpp"
 #include "comp/floor_layout_comp_classes.hpp"
+//#include "metaball_gen_class.hpp"
 
 namespace dunwich_sandgeon {
 namespace game_engine {
@@ -450,39 +451,42 @@ public:		// functions
 	inline auto layout_rand(const T& lim_0, const T& lim_1) {
 		return rng_run<T>(layout_rng(), lim_0, lim_1);
 	}
-	//inline double calc_layout_noise_param_backend() {
-	//	// This assumes `double` has a mantissa of at least 20-bit;
-	//	// it almost certainly will.
-	//	return double(layout_rand<i32>(0, (i32(1) << i32(20)) - i32(1)));
+	//template<std::floating_point T>
+	//inline auto flt_layout_rand(const T& lim_0, const T& lim_1,
+	//	const T& scale) {
 	//}
-	//inline double calc_layout_noise_pos_scale() {
+	//inline float calc_layout_noise_param_backend() {
+	//	// This assumes `float` has a mantissa of at least 20-bit;
+	//	// it almost certainly will.
+	//	return float(layout_rand<i32>(0, (i32(1) << i32(20)) - i32(1)));
+	//}
+	//inline float calc_layout_noise_pos_scale() {
 	//	return (1.0 / calc_layout_noise_param_backend()); 
 	//}
-	//inline double calc_layout_noise_pos_offset() {
+	//inline float calc_layout_noise_pos_offset() {
 	//	return calc_layout_noise_param_backend();
 	//};
 	//template<typename T=RngSeedT>
 	//inline auto layout_noise(
 	//	const T& lim_0, const T& lim_1, const IntVec2& pos,
-	//	double pos_scale, double pos_offset
+	//	float pos_scale, float pos_offset
 	//) {
-	//	const double
-	//		dist_lim = std::abs(double(lim_0) - double(lim_1) + 1.0),
-	//		min_lim = math::min_va(double(lim_0), double(lim_1)),
-	//		//raw_noise = double(SimplexNoise::noise
-	//		//	(float(double(pos.x) + (add_amount / dist_lim)),
-	//		//	float(double(pos.y) + (add_amount / dist_lim))));
-	//		raw_noise = double(SimplexNoise::noise
-	//			(float((double(pos.x) * pos_scale) + pos_offset),
-	//			float((double(pos.y) * pos_scale) + pos_offset)));
-	//	//if (double(i64(raw_noise)) == raw_noise)
-	//	//if (double(i64(raw_noise)) != raw_noise) {
+	//	const float
+	//		dist_lim = std::abs(float(lim_0) - float(lim_1) + 1.0),
+	//		min_lim = math::min_va(float(lim_0), float(lim_1)),
+	//		//raw_noise = float(SimplexNoise::noise
+	//		//	(float(float(pos.x) + (add_amount / dist_lim)),
+	//		//	float(float(pos.y) + (add_amount / dist_lim))));
+	//		raw_noise = float(SimplexNoise::noise
+	//			(float((float(pos.x) * pos_scale) + pos_offset),
+	//			float((float(pos.y) * pos_scale) + pos_offset)));
+	//	//if (float(i64(raw_noise)) == raw_noise)
+	//	//if (float(i64(raw_noise)) != raw_noise) {
 	//	//	log("Debug: game_engine::Engine::layout_noise(): ",
 	//	//		raw_noise,
 	//	//		"\n");
 	//	//}
-
-	//	const double
+	//	const float
 	//		// `SimplexNoise::noise()` returns a value in the range 
 	//		// [-1, 1], so we shift the range to [0, 1]
 	//		modded_noise
@@ -495,6 +499,19 @@ public:		// functions
 	//	//	"ml{", min_lim, "}",
 	//	//	"\n");
 	//	return T(std::round(modded_noise));
+	//}
+	//static inline i32 mball_out(
+	//	i32 lim_0, i32 lim_1, const MetaballGen::GenDyna2d& dyna2d,
+	//	const IntVec2& pos
+	//) {
+	//	const float
+	//		dist_lim = std::abs(float(lim_0) - float(lim_1) + 1.0f),
+	//		min_lim = math::min_va(float(lim_0), float(lim_1)),
+	//		raw_mball_out = dyna2d.at(pos.y).at(pos.x),
+	//		modded_mball_out
+	//			= (raw_mball_out * dist_lim) + min_lim;
+	//	return math::clamp(i32(std::round(modded_mball_out)),
+	//		lim_0, lim_1);
 	//}
 	//template<typename T=RngSeedT>
 	//inline auto layout_rand_scaled(const T& scale) {
