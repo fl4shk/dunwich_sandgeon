@@ -37,11 +37,10 @@ class GmDungeonGen;
 //--------
 namespace comp {
 //--------
-#define LIST_OF_ALT_TERRAIN_BG_TILES(X) \
-	X(Pit) \
+#define LIST_OF_BIOME_TERRAIN_BG_TILES(X) \
 	X(Water) \
 	X(Lava) \
-	X(Spikes) \
+	X(Pit) \
 
 #define LIST_OF_BG_TILES(X) \
 	X(Blank) \
@@ -52,8 +51,9 @@ namespace comp {
 	\
 	X(RoomFloor) \
 	X(PathFloor) \
+	X(Spikes) \
 	/* X(Floor) */ \
-	LIST_OF_ALT_TERRAIN_BG_TILES(X) \
+	LIST_OF_BIOME_TERRAIN_BG_TILES(X) \
 	\
 	X(UpStairs) \
 	X(DownStairs) \
@@ -110,7 +110,8 @@ public:		// constants
 			//= 10,
 			//= 13,
 			//= 15,
-			= 20,
+			//= 20,
+			= 25,
 		MAX_NUM_ROOM_PATHS
 			//= 15;
 			= 42;
@@ -140,7 +141,8 @@ public:		// constants
 		},
 		ROOM_MAX_SIZE_2D{
 			//9, 9,
-			10, 10,
+			//10, 10,
+			12, 12,
 			//15, 15,
 		};
 public:		// static functions
@@ -182,7 +184,7 @@ public:		// types
 		//class Xdata final {
 		//public:		// variables
 			i32 gen_side = 0;
-			std::unordered_map<IntVec2, BgTile> alt_terrain_umap;
+			std::unordered_map<IntVec2, BgTile> biome_terrain_umap;
 
 			std::unordered_set<i32> conn_index_uset;
 
@@ -211,12 +213,12 @@ public:		// types
 			return rect;
 		}
 		//--------
-		//inline std::unordered_map<IntVec2, BgTile>& alt_terrain_umap() {
-		//	return xdata.alt_terrain_umap;
+		//inline std::unordered_map<IntVec2, BgTile>& biome_terrain_umap() {
+		//	return xdata.biome_terrain_umap;
 		//}
 		//inline const std::unordered_map<IntVec2, BgTile>&
-		//alt_terrain_umap() const {
-		//	return xdata.alt_terrain_umap;
+		//biome_terrain_umap() const {
+		//	return xdata.biome_terrain_umap;
 		//}
 		//inline std::unordered_set<i32>& conn_index_uset() {
 		//	return xdata.conn_index_uset;
@@ -296,6 +298,8 @@ public:		// functions
 
 	virtual std::string kind_str() const;
 	virtual operator binser::Value () const;
+	//--------
+	BgTile bg_tile_at(const IntVec2& pos, size_t i) const;
 	//--------
 	inline auto begin() {
 		//return _rp_data.data.begin();

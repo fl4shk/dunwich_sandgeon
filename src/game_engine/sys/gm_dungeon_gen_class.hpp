@@ -170,7 +170,8 @@ public:		// constants
 			//= 5,
 			//= 7,
 			//= 8,
-			= 10,
+			//= 10,
+			= 15,
 		GEN_PARALLEL_PATH_MIN_DIST
 			//= 3;
 			= 4;
@@ -193,12 +194,13 @@ public:		// constants
 		//	= 0.15f,
 		MIN_GEN_BIOME_THRESH_0
 			//= 0.3f,
-			= 0.5f,
+			//= 0.5f,
+			= 1.0f,
 			//= 2.0f,
 		MAX_GEN_BIOME_THRESH_0
 			//= 4.0f,
-			//= 6.0f,
-			= 8.0f,
+			= 6.0f,
+			//= 8.0f,
 		GEN_BIOME_THRESH_MM_SCALE = 1000.0f;
 	//static constexpr i32
 	//	GEN_BIOME_MBINS_TYPE_PATH = 0,
@@ -207,21 +209,28 @@ public:		// constants
 	//	GEN_BIOME_MBINS_TYPE_BOTH = 2,
 	//		MAX_GEN_BIOME_MBINS_TYPE = GEN_BIOME_MBINS_TYPE_BOTH;
 	static constexpr i32
-		GEN_BIOME_MBALL_MIN_AMOUNT = 2,
+		GEN_BIOME_MBALL_MIN_AMOUNT
+			//= 2,
+			= 4,
 		GEN_BIOME_MBALL_MAX_AMOUNT
 			//= 4;
-			= 7;
+			//= 5;
+			//= 7;
+			//= 10;
+			= 12;
+			//= 13;
 			//= 20;
 	static constexpr IntVec2
 		GEN_BIOME_MBALL_MIN_SIZE_2D
-			//= {3, 3},
+			= {3, 3},
 			//= {5, 5},
-			= {6, 6},
+			//= {6, 6},
 			//= {7, 7},
 		GEN_BIOME_MBALL_MAX_SIZE_2D
 			//= {3, 3},
 			//= {5, 5},
-			= {8, 8},
+			= {6, 6},
+			//= {8, 8},
 			//= {10, 10},
 			//= {15, 15},
 		GEN_BIOME_MBALL_GEN_MIN_SIZE_2D
@@ -454,8 +463,8 @@ private:		// types
 		//--------
 	public:		// functions
 		//--------
-		void insert_alt_terrain(
-			bool do_clear
+		void insert_biome_terrain(
+			//bool do_clear
 		) const;
 		//--------
 	private:		// static functions

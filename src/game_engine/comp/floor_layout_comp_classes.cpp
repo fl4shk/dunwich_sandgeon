@@ -92,7 +92,6 @@ const std::string
 //
 //	return ret;
 //}
-
 DungeonGen::DungeonGen() {}
 DungeonGen::DungeonGen(const binser::Value& bv) {
 	//_rp_data.checked_size = MAX_NUM_ROOM_PATHS;
@@ -113,7 +112,68 @@ DungeonGen::operator binser::Value () const {
 
 	return ret;
 }
+//--------
+BgTile DungeonGen::bg_tile_at(const IntVec2& pos, size_t i) const {
+	BgTile bg_tile = BgTile::Blank;
 
+	const RoomPath& rp = at(i);
+	const bool in_border
+		= rp.pos_in_border(pos);
+
+	if (in_border) {
+		// I'm doing this the slow/easy way for now.
+		bool did_intersect = false;
+		for (size_t j=0; j<i; ++j) {
+			if (at(j).rect.intersect(pos)) {
+				did_intersect = true;
+				//break;
+			}
+		}
+		//if (const auto& item_uset=cg_neighbors(i); true) {
+		//	for (const auto& item: item_uset) {
+		//		const auto j = _rp_to_index_umap
+		//			.at(static_cast<RoomPath*>(item));
+		//		if (item->bbox().intersect(pos) && j < i) {
+		//			did_intersect = true;
+		//			break;
+		//		}
+		//	}
+		//}
+
+		if (!did_intersect) {
+			bg_tile = BgTile::Wall;
+			//do_draw();
+		}
+	} else { // if (!in_border)
+		//if (!rp.door_pt_uset.contains(pos)) {
+		//	if (rp.biome_terrain_umap.contains(pos)) {
+		//		bg_tile = rp.biome_terrain_umap.at(pos);
+		//	} else {
+		//		bg_tile
+		//			= rp.is_path()
+		//			? BgTile::PathFloor
+		//			: BgTile::RoomFloor;
+		//	}
+		//} else {
+		//	bg_tile = BgTile::Door;
+		//}
+			if (rp.biome_terrain_umap.contains(pos)) {
+				bg_tile = rp.biome_terrain_umap.at(pos);
+			} else {
+				if (!rp.door_pt_uset.contains(pos)) {
+					bg_tile
+						= rp.is_path()
+						? BgTile::PathFloor
+						: BgTile::RoomFloor;
+				} else {
+					bg_tile = BgTile::Door;
+				}
+			}
+		//do_draw();
+	}
+	return bg_tile;
+}
+//--------
 void DungeonGen::push_back(RoomPath&& to_push) {
 	if (size() + size_t(1) > MAX_NUM_ROOM_PATHS) {
 		throw std::length_error(sconcat
@@ -156,67 +216,10 @@ void DungeonGen::draw() {
 				++pos.x
 			) {
 				try {
-					BgTile bg_tile = BgTile::Error;
-
-					auto do_draw = [&pos, &bg_tile]() -> void {
-						engine->pfield_window.drawable_data_at(pos)
-							= drawable_data_umap().at
-								(bg_tile_str_map_at(bg_tile));
-					};
-					const bool in_border
-						= rp.pos_in_border(pos);
-
-					if (in_border) {
-						// I'm doing this the slow/easy way for now.
-						bool did_intersect = false;
-						for (size_t j=0; j<i; ++j) {
-							if (at(j).rect.intersect(pos)) {
-								did_intersect = true;
-								//break;
-							}
-						}
-						//if (const auto& item_uset=cg_neighbors(i); true) {
-						//	for (const auto& item: item_uset) {
-						//		const auto j = _rp_to_index_umap
-						//			.at(static_cast<RoomPath*>(item));
-						//		if (item->bbox().intersect(pos) && j < i) {
-						//			did_intersect = true;
-						//			break;
-						//		}
-						//	}
-						//}
-
-						if (!did_intersect) {
-							bg_tile = BgTile::Wall;
-							do_draw();
-						}
-					} else { // if (!in_border)
-						//if (!rp.door_pt_uset.contains(pos)) {
-						//	if (rp.alt_terrain_umap.contains(pos)) {
-						//		bg_tile = rp.alt_terrain_umap.at(pos);
-						//	} else {
-						//		bg_tile
-						//			= rp.is_path()
-						//			? BgTile::PathFloor
-						//			: BgTile::RoomFloor;
-						//	}
-						//} else {
-						//	bg_tile = BgTile::Door;
-						//}
-							if (rp.alt_terrain_umap.contains(pos)) {
-								bg_tile = rp.alt_terrain_umap.at(pos);
-							} else {
-								if (!rp.door_pt_uset.contains(pos)) {
-									bg_tile
-										= rp.is_path()
-										? BgTile::PathFloor
-										: BgTile::RoomFloor;
-								} else {
-									bg_tile = BgTile::Door;
-								}
-							}
-						do_draw();
-					}
+					const auto bg_tile = bg_tile_at(pos, i);
+					engine->pfield_window.drawable_data_at(pos)
+						= drawable_data_umap().at
+							(bg_tile_str_map_at(bg_tile));
 				} catch (const std::exception& e) {
 					printerr("game_engine::comp::DungeonGen::draw(): "
 						"Exception thrown: ", e.what(), "\n");

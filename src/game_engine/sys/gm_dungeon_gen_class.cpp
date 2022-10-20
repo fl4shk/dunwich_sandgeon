@@ -146,8 +146,8 @@ void GmDungeonGen::tick(ecs::Engine* ecs_engine) {
 					innards.finalize_basic(
 						//true
 					);
-					innards.insert_alt_terrain(
-						true
+					innards.insert_biome_terrain(
+						//true
 					);
 				}
 			}
@@ -175,6 +175,8 @@ void GmDungeonGen::tick(ecs::Engine* ecs_engine) {
 //	DungeonGen* dungeon_gen) {
 //}
 bool GmDungeonGen::GenInnards::gen_single_rp() {
+	//--------
+	const bool old_done_generating = _self->_done_generating;
 	//--------
 	if (_dungeon_gen->size() == 0) {
 		//_self->_attempted_num_rp = engine->layout_rand<i32>
@@ -257,7 +259,6 @@ bool GmDungeonGen::GenInnards::gen_single_rp() {
 			//}
 		//}
 	}
-	const bool old_done_generating = _self->_done_generating;
 	_self->_done_generating
 		= _self->_stop_gen_early
 			|| i32(_dungeon_gen->size()) >= _self->_attempted_num_rp;
@@ -317,7 +318,8 @@ auto GmDungeonGen::GenInnards::_inner_gen_post_first()
 			//&& any_sides_intersect_find_first(some_rp, std::nullopt)
 			//&& !any_path_sides_hit_wrongly_find_first
 			//	(some_rp, std::nullopt)
-			&& _rp_is_connected(some_rp));
+			&& _rp_is_connected(some_rp)
+			);
 	};
 	// This is a simple algorithm that could be made faster and
 	// more complicated, but I figure any platform running this
@@ -1055,7 +1057,7 @@ void GmDungeonGen::GenInnards::finalize_basic(
 			auto maybe_insert_door = [](
 				RoomPath& some_rp, const IntVec2& some_corner
 			) -> void {
-				if (!some_rp.alt_terrain_umap.contains(some_corner)) {
+				if (!some_rp.biome_terrain_umap.contains(some_corner)) {
 					some_rp.door_pt_uset.insert(some_corner);
 				}
 			};
@@ -1127,28 +1129,28 @@ bool GmDungeonGen::GenInnards::_shrink(
 	)>& extra_test_func
 ) {
 	//--------
-	auto move_left_x = [&]() -> void {
+	auto shrink_left_x = [&]() -> void {
 		const auto temp_rect = IntRect2::build_in_grid_lim
 			(some_rp.rect.tl_corner() + IntVec2{1, 0},
 			some_rp.rect.br_corner(),
 			PFIELD_PHYS_NO_BRDR_RECT2);
 		some_rp.rect = temp_rect;
 	};
-	auto move_top_y = [&]() -> void {
+	auto shrink_top_y = [&]() -> void {
 		const auto temp_rect = IntRect2::build_in_grid_lim
 			(some_rp.rect.tl_corner() + IntVec2{0, 1},
 			some_rp.rect.br_corner(),
 			PFIELD_PHYS_NO_BRDR_RECT2);
 		some_rp.rect = temp_rect;
 	};
-	auto move_right_x = [&]() -> void {
+	auto shrink_right_x = [&]() -> void {
 		const auto temp_rect = IntRect2::build_in_grid_lim
 			(some_rp.rect.tl_corner(),
 			some_rp.rect.br_corner() - IntVec2{1, 0},
 			PFIELD_PHYS_NO_BRDR_RECT2);
 		some_rp.rect = temp_rect;
 	};
-	auto move_bottom_y = [&]() -> void {
+	auto shrink_bottom_y = [&]() -> void {
 		const auto temp_rect = IntRect2::build_in_grid_lim
 			(some_rp.rect.tl_corner(),
 			some_rp.rect.br_corner() - IntVec2{0, 1},
@@ -1171,16 +1173,16 @@ bool GmDungeonGen::GenInnards::_shrink(
 			switch (some_rp.gen_side) {
 			//--------
 			case GEN_SIDE_L:
-				move_left_x();
+				shrink_left_x();
 				break;
 			case GEN_SIDE_R:
-				move_right_x();
+				shrink_right_x();
 				break;
 			default:
 				//if (engine->layout_rand<i32>(0, 1)) {
-				//	move_left_x();
+				//	shrink_left_x();
 				//} else {
-				//	move_right_x();
+				//	shrink_right_x();
 				//}
 				break;
 			//--------
@@ -1208,16 +1210,16 @@ bool GmDungeonGen::GenInnards::_shrink(
 			switch (some_rp.gen_side) {
 			//--------
 			case GEN_SIDE_T:
-				move_top_y();
+				shrink_top_y();
 				break;
 			case GEN_SIDE_B:
-				move_bottom_y();
+				shrink_bottom_y();
 				break;
 			default:
 				//if (engine->layout_rand<i32>(0, 1)) {
-				//	move_top_y();
+				//	shrink_top_y();
 				//} else {
-				//	move_bottom_y();
+				//	shrink_bottom_y();
 				//}
 				break;
 			//--------
@@ -1243,6 +1245,7 @@ bool GmDungeonGen::GenInnards::_shrink(
 		for (i32 i=0; i<SHRINK_NUM_ATTEMPTS; ++i) {
 			//--------
 			const i32 gen_side = some_rp.gen_side;
+			//const i32 shrink_side = gen_side;
 			i32 shrink_side;
 
 			do {
@@ -1258,16 +1261,16 @@ bool GmDungeonGen::GenInnards::_shrink(
 			switch (shrink_side) {
 			//--------
 			case GEN_SIDE_L:
-				move_left_x();
+				shrink_left_x();
 				break;
 			case GEN_SIDE_T:
-				move_top_y();
+				shrink_top_y();
 				break;
 			case GEN_SIDE_R:
-				move_right_x();
+				shrink_right_x();
 				break;
 			case GEN_SIDE_B:
-				move_bottom_y();
+				shrink_bottom_y();
 				break;
 			default:
 				throw std::runtime_error(sconcat
@@ -1295,8 +1298,8 @@ bool GmDungeonGen::GenInnards::_shrink(
 	//return final_func();
 };
 //--------
-void GmDungeonGen::GenInnards::insert_alt_terrain(
-	bool do_clear
+void GmDungeonGen::GenInnards::insert_biome_terrain(
+	//bool do_clear
 ) const {
 	const auto
 		& allowed_alt_terrain_vec = LEVEL_ALLOWED_ALT_TERRAIN_V2D
@@ -1459,7 +1462,7 @@ void GmDungeonGen::GenInnards::insert_alt_terrain(
 	) {
 		auto& item = _dungeon_gen->_raw_at(item_index);
 		//if (do_clear) {
-		//	item.alt_terrain_umap.clear();
+		//	item.biome_terrain_umap.clear();
 		//}
 
 		//if (item.is_path()) {
@@ -1522,7 +1525,7 @@ void GmDungeonGen::GenInnards::insert_alt_terrain(
 
 				if (item.is_path()) {
 					if (!bg_tile_is_unsafe(bg_tile)) {
-						item.alt_terrain_umap[pos] = bg_tile;
+						item.biome_terrain_umap[pos] = bg_tile;
 					}
 				} else { // if (item.is_room())
 					if (
@@ -1530,7 +1533,7 @@ void GmDungeonGen::GenInnards::insert_alt_terrain(
 						|| (!item.pos_in_border(pos)
 							&& !item.pos_in_internal_border(pos))
 					) {
-						item.alt_terrain_umap[pos] = bg_tile;
+						item.biome_terrain_umap[pos] = bg_tile;
 					}
 				}
 
