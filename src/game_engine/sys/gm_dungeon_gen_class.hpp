@@ -229,8 +229,8 @@ public:		// constants
 		GEN_BIOME_MBALL_MAX_SIZE_2D
 			//= {3, 3},
 			//= {5, 5},
-			= {6, 6},
-			//= {8, 8},
+			//= {6, 6},
+			= {8, 8},
 			//= {10, 10},
 			//= {15, 15},
 		GEN_BIOME_MBALL_GEN_MIN_SIZE_2D

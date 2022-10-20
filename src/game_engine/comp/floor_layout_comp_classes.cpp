@@ -117,16 +117,19 @@ BgTile DungeonGen::bg_tile_at(const IntVec2& pos, size_t i) const {
 	BgTile bg_tile = BgTile::Blank;
 
 	const RoomPath& rp = at(i);
-	const bool in_border
-		= rp.pos_in_border(pos);
+	const bool in_border = rp.pos_in_border(pos);
 
 	if (in_border) {
 		// I'm doing this the slow/easy way for now.
 		bool did_intersect = false;
-		for (size_t j=0; j<i; ++j) {
-			if (at(j).rect.intersect(pos)) {
-				did_intersect = true;
-				//break;
+		//for (size_t j=0; j<i; ++j)
+		for (size_t j=0; j<size(); ++j)
+		{
+			if (j != i) {
+				if (at(j).rect.intersect(pos)) {
+					did_intersect = true;
+					break;
+				}
 			}
 		}
 		//if (const auto& item_uset=cg_neighbors(i); true) {
@@ -217,9 +220,11 @@ void DungeonGen::draw() {
 			) {
 				try {
 					const auto bg_tile = bg_tile_at(pos, i);
-					engine->pfield_window.drawable_data_at(pos)
-						= drawable_data_umap().at
-							(bg_tile_str_map_at(bg_tile));
+					if (bg_tile != BgTile::Blank) {
+						engine->pfield_window.drawable_data_at(pos)
+							= drawable_data_umap().at
+								(bg_tile_str_map_at(bg_tile));
+					}
 				} catch (const std::exception& e) {
 					printerr("game_engine::comp::DungeonGen::draw(): "
 						"Exception thrown: ", e.what(), "\n");

@@ -835,16 +835,16 @@ auto GmDungeonGen::GenInnards::_gen_initial_rp()
 	return to_push_rp;
 }
 void GmDungeonGen::GenInnards::_do_push_back(RoomPath&& to_push_rp) const {
-	#ifdef DEBUG
-	engine->log("Debug: Generated this `RoomPath`: ",
-		//to_push_rp.rect, "; ",
-		"to_push_rp.tl:", to_push_rp.rect.tl_corner(), " ",
-		"to_push_rp.br:", to_push_rp.rect.br_corner(), "; ",
-		to_push_rp.is_horiz_path(), " ",
-		to_push_rp.is_vert_path(), " ",
-		to_push_rp.is_room(),
-		"\n");
-	#endif		// DEBUG
+	//#ifdef DEBUG
+	//engine->log("Debug: Generated this `RoomPath`: ",
+	//	//to_push_rp.rect, "; ",
+	//	"to_push_rp.tl:", to_push_rp.rect.tl_corner(), " ",
+	//	"to_push_rp.br:", to_push_rp.rect.br_corner(), "; ",
+	//	to_push_rp.is_horiz_path(), " ",
+	//	to_push_rp.is_vert_path(), " ",
+	//	to_push_rp.is_room(),
+	//	"\n");
+	//#endif		// DEBUG
 
 	_dungeon_gen->push_back(std::move(to_push_rp));
 	//to_push_rp = RoomPath();
