@@ -214,17 +214,27 @@ public:		// constants
 			//= 20;
 	static constexpr IntVec2
 		GEN_BIOME_MBALL_MIN_SIZE_2D
-			= {3, 3},
+			//= {3, 3},
+			//= {5, 5},
+			= {6, 6},
+			//= {7, 7},
 		GEN_BIOME_MBALL_MAX_SIZE_2D
 			//= {3, 3},
 			//= {5, 5},
 			= {8, 8},
+			//= {10, 10},
+			//= {15, 15},
 		GEN_BIOME_MBALL_GEN_MIN_SIZE_2D
 			//= {15, 15},
 			//= {25, 25},
-			= {35, 35},
+			//= {30, 30},
+			//= {35, 35},
+			= PFIELD_PHYS_NO_BRDR_RECT2.size_2d,
+			/// 7,
 		GEN_BIOME_MBALL_GEN_MAX_SIZE_2D
 			= PFIELD_PHYS_NO_BRDR_RECT2.size_2d;
+			//- IntVec2{5, 5};
+			//- (PFIELD_PHYS_NO_BRDR_RECT2.size_2d / 7);
 			//- GEN_BIOME_MBALL_GEN_MIN_SIZE_2D;
 			//- GEN_BIOME_MBALL_MIN_SIZE_2D;
 	//--------
@@ -347,7 +357,7 @@ private:		// types
 		//	//* _conn_rp = nullptr;
 
 		i32
-			_gen_side = 0,
+			//_gen_side = 0,
 			_gen_next_type = 0,
 			_gen_next_conn_rp_index = 0,
 			_gen_type = 0,
@@ -431,13 +441,13 @@ private:		// types
 		inline bool _rp_is_connected(const RoomPath& some_rp) const {
 			const RoomPath& conn_rp = _dungeon_gen->at(_conn_rp_index);
 			return (
-				(_gen_side == GEN_SIDE_L
+				(some_rp.gen_side == GEN_SIDE_L
 					&& _ls_r2_hit(conn_rp, some_rp))
-				|| (_gen_side == GEN_SIDE_T
+				|| (some_rp.gen_side == GEN_SIDE_T
 					&& _ts_r2_hit(conn_rp, some_rp))
-				|| (_gen_side == GEN_SIDE_R
+				|| (some_rp.gen_side == GEN_SIDE_R
 					&& _rs_r2_hit(conn_rp, some_rp))
-				|| (_gen_side == GEN_SIDE_B
+				|| (some_rp.gen_side == GEN_SIDE_B
 					&& _bs_r2_hit(conn_rp, some_rp))
 			);
 		};
@@ -468,7 +478,7 @@ private:		// types
 		) {
 			return 
 				(//i32(_check_i) != _conn_rp_index
-				//_gen_side == GEN_SIDE_L
+				//rp_0.gen_side == GEN_SIDE_L
 				//&&
 				r2_fits_in_pfnb(_ls_r2(rp_0))
 				//r2_intersects_pfield_nb(_ls_r2(rp_0))

@@ -452,20 +452,22 @@ public:		// functions
 		return rng_run<T>(layout_rng(), lim_0, lim_1);
 	}
 
-	inline IntVec2 layout_rand_pt(const IntVec2& min, const IntVec2& max) {
+	inline IntVec2 layout_rand_vec2(
+		const IntVec2& min, const IntVec2& max
+	) {
 		return
 			{.x=layout_rand<i32>(min.x, max.x),
 			.y=layout_rand<i32>(min.y, max.y)};
 	}
-	inline IntVec2 layout_rand_pt(
+	inline IntVec2 layout_rand_vec2(
 		const IntRect2& inside_r2
 	) {
 		return
 			{.x=layout_rand<i32>(inside_r2.left_x(), inside_r2.right_x()),
 			.y=layout_rand<i32>(inside_r2.top_y(), inside_r2.bottom_y())};
 	};
-	inline IntVec2 layout_rand_pt_in_pfnb() {
-		return layout_rand_pt(PFIELD_PHYS_NO_BRDR_RECT2);
+	inline IntVec2 layout_rand_vec2_in_pfnb() {
+		return layout_rand_vec2(PFIELD_PHYS_NO_BRDR_RECT2);
 	}
 
 	inline IntRect2 layout_rand_r2(

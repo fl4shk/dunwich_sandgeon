@@ -641,14 +641,14 @@ auto GmDungeonGen::GenInnards::_gen_initial_rp()
 		prev_gen_type
 			= prev_rp.is_path() ? GEN_TYPE_PATH : GEN_TYPE_ROOM;
 
-	_gen_side = 0;
+	to_push_rp.gen_side = 0;
 	_gen_next_type = 0;
 	_gen_next_conn_rp_index = 0;
 	_gen_type = 0;
 	_conn_rp_index = 0;
 
 	//_gen_type = GEN_TYPE_ROOM,
-	//_gen_side = engine->layout_rand<i32>
+	//to_push_rp.gen_side = engine->layout_rand<i32>
 	//	(MIN_GEN_SIDE, MAX_GEN_SIDE),
 
 	_gen_next_type = (prev_gen_type == GEN_TYPE_PATH)
@@ -724,23 +724,23 @@ auto GmDungeonGen::GenInnards::_gen_initial_rp()
 		conn_rp.is_path()
 	) {
 		if (_gen_type == GEN_TYPE_PATH) {
-			_gen_side = engine->layout_rand<i32>
+			to_push_rp.gen_side = engine->layout_rand<i32>
 				(MIN_GEN_SIDE, MAX_GEN_SIDE);
 		} else { // if (_gen_type == GEN_TYPE_ROOM)
 			if (conn_rp.is_horiz_path()) {
-				_gen_side
+				to_push_rp.gen_side
 					= engine->layout_rand<i32>(0, 1)
 					? GEN_SIDE_L
 					: GEN_SIDE_R;
 			} else { // if (conn_rp.is_vert_path())
-				_gen_side
+				to_push_rp.gen_side
 					= engine->layout_rand<i32>(0, 1)
 					? GEN_SIDE_T
 					: GEN_SIDE_B;
 			}
 		}
 	} else { // if (conn_rp.is_room())
-		_gen_side = engine->layout_rand<i32>
+		to_push_rp.gen_side = engine->layout_rand<i32>
 			(MIN_GEN_SIDE, MAX_GEN_SIDE);
 	}
 	//--------
@@ -765,17 +765,19 @@ auto GmDungeonGen::GenInnards::_gen_initial_rp()
 			//	(ROOM_MIN_SIZE_2D.x, ROOM_MAX_SIZE_2D.x),
 			//.y=engine->layout_rand<i32>
 			//	(ROOM_MIN_SIZE_2D.y, ROOM_MAX_SIZE_2D.y)};
-			= engine->layout_rand_pt(ROOM_MIN_SIZE_2D, ROOM_MAX_SIZE_2D);
+			= engine->layout_rand_vec2(ROOM_MIN_SIZE_2D, ROOM_MAX_SIZE_2D);
 		//thickness = engine->layout_rand<i32>
 		//	(ROOM_MIN_SIZE_2D.x, ROOM_MAX_SIZE_2D.x);
 		//length = engine->layout_rand<i32>
 		//	(ROOM_MIN_SIZE_2D.y, ROOM_MAX_SIZE_2D.y);
 
-		if (_gen_side == GEN_SIDE_L || _gen_side == GEN_SIDE_R) {
+		if (to_push_rp.gen_side == GEN_SIDE_L
+			|| to_push_rp.gen_side == GEN_SIDE_R) {
 			thickness = temp_vec2.y;
 			length = temp_vec2.x;
 		} else // if (
-			//_gen_side == GEN_SIDE_T || _gen_side == GEN_SIDE_B
+			//to_push_rp.gen_side == GEN_SIDE_T
+			//|| to_push_rp.gen_side == GEN_SIDE_B
 		//)
 		{
 			//thickness = engine->layout_rand<i32>
@@ -791,7 +793,7 @@ auto GmDungeonGen::GenInnards::_gen_initial_rp()
 		conn_rp_rx = conn_rp.rect.right_x(),
 		conn_rp_by = conn_rp.rect.bottom_y();
 
-	switch (_gen_side) {
+	switch (to_push_rp.gen_side) {
 	//--------
 	case GEN_SIDE_L:
 		to_push_rp.rect.pos = IntVec2
@@ -822,7 +824,8 @@ auto GmDungeonGen::GenInnards::_gen_initial_rp()
 	default:
 		throw std::runtime_error(sconcat
 			("game_engine::sys::GmDungeonGen::gen_single_rp(): ",
-			"(1st) `switch (_gen_side)`: Eek! `", _gen_side,
+			"(1st) `switch (to_push_rp.gen_side)`: Eek! `",
+			to_push_rp.gen_side,
 			"`"));
 		break;
 	//--------
@@ -1049,40 +1052,57 @@ void GmDungeonGen::GenInnards::finalize_basic(
 			}
 			//--------
 			// insert doors
+			auto maybe_insert_door = [](
+				RoomPath& some_rp, const IntVec2& some_corner
+			) -> void {
+				if (!some_rp.alt_terrain_umap.contains(some_corner)) {
+					some_rp.door_pt_uset.insert(some_corner);
+				}
+			};
 			if (rp.is_room() && item->is_path()) {
 				if (item->is_horiz_path()) {
-					if (_ls_r2_hit(*item, rp)) {
-						item->door_pt_uset.insert
-							(item->rect.tl_corner());
+					if (
+						_ls_r2_hit(*item, rp)
+					) {
+						//item->door_pt_uset.insert
+						//	(item->rect.tl_corner());
+						maybe_insert_door(*item, item->rect.tl_corner());
 					}
 					if (_rs_r2_hit(*item, rp)) {
-						item->door_pt_uset.insert
-							(item->rect.tr_corner());
+						//item->door_pt_uset.insert
+						//	(item->rect.tr_corner());
+						maybe_insert_door(*item, item->rect.tr_corner());
 					}
 				} else { // if (item->is_vert_path())
 					if (_ts_r2_hit(*item, rp)) {
-						item->door_pt_uset.insert
-							(item->rect.tl_corner());
+						//item->door_pt_uset.insert
+						//	(item->rect.tl_corner());
+						maybe_insert_door(*item, item->rect.tl_corner());
 					}
 					if (_bs_r2_hit(*item, rp)) {
-						item->door_pt_uset.insert
-							(item->rect.bl_corner());
+						//item->door_pt_uset.insert
+						//	(item->rect.bl_corner());
+						maybe_insert_door(*item, item->rect.bl_corner());
 					}
 				}
 			} else if (rp.is_path() && item->is_room()) {
 				if (rp.is_horiz_path()) {
 					if (_ls_r2_hit(rp, *item)) {
-						rp.door_pt_uset.insert(rp.rect.tl_corner());
+						//rp.door_pt_uset.insert(rp.rect.tl_corner());
+						maybe_insert_door(rp, rp.rect.tl_corner());
 					}
 					if (_rs_r2_hit(rp, *item)) {
-						rp.door_pt_uset.insert(rp.rect.tr_corner());
+						//rp.door_pt_uset.insert(rp.rect.tr_corner());
+						maybe_insert_door(rp, rp.rect.tr_corner());
 					}
 				} else { // if (rp.is_vert_path())
 					if (_ts_r2_hit(rp, *item)) {
-						rp.door_pt_uset.insert(rp.rect.tl_corner());
+						//rp.door_pt_uset.insert(rp.rect.tl_corner());
+						maybe_insert_door(rp, rp.rect.tl_corner());
 					}
 					if (_bs_r2_hit(rp, *item)) {
-						rp.door_pt_uset.insert(rp.rect.bl_corner());
+						//rp.door_pt_uset.insert(rp.rect.bl_corner());
+						maybe_insert_door(rp, rp.rect.bl_corner());
 					}
 				}
 			}
@@ -1136,6 +1156,7 @@ bool GmDungeonGen::GenInnards::_shrink(
 		some_rp.rect = temp_rect;
 	};
 	//--------
+	//const RoomPath& conn_rp = _dungeon_gen->at(_conn_rp_index);
 	//const bool
 	//	was_horiz_path = some_rp.is_horiz_path(),
 	//	was_vert_path = some_rp.is_vert_path();
@@ -1147,10 +1168,22 @@ bool GmDungeonGen::GenInnards::_shrink(
 				MAX_GEN_SHRINK_NUM_ATTEMPTS_PATH);
 		for (i32 i=0; i<SHRINK_NUM_ATTEMPTS; ++i) {
 			//--------
-			if (engine->layout_rand<i32>(0, 1)) {
+			switch (some_rp.gen_side) {
+			//--------
+			case GEN_SIDE_L:
 				move_left_x();
-			} else {
+				break;
+			case GEN_SIDE_R:
 				move_right_x();
+				break;
+			default:
+				//if (engine->layout_rand<i32>(0, 1)) {
+				//	move_left_x();
+				//} else {
+				//	move_right_x();
+				//}
+				break;
+			//--------
 			}
 			//--------
 			if (
@@ -1172,10 +1205,22 @@ bool GmDungeonGen::GenInnards::_shrink(
 				MAX_GEN_SHRINK_NUM_ATTEMPTS_PATH);
 		for (i32 i=0; i<SHRINK_NUM_ATTEMPTS; ++i) {
 			//--------
-			if (engine->layout_rand<i32>(0, 1)) {
+			switch (some_rp.gen_side) {
+			//--------
+			case GEN_SIDE_T:
 				move_top_y();
-			} else {
+				break;
+			case GEN_SIDE_B:
 				move_bottom_y();
+				break;
+			default:
+				//if (engine->layout_rand<i32>(0, 1)) {
+				//	move_top_y();
+				//} else {
+				//	move_bottom_y();
+				//}
+				break;
+			//--------
 			}
 			//--------
 			if (
@@ -1197,9 +1242,19 @@ bool GmDungeonGen::GenInnards::_shrink(
 				MAX_GEN_SHRINK_NUM_ATTEMPTS_ROOM);
 		for (i32 i=0; i<SHRINK_NUM_ATTEMPTS; ++i) {
 			//--------
-			const i32
+			const i32 gen_side = some_rp.gen_side;
+			i32 shrink_side;
+
+			do {
 				shrink_side = engine->layout_rand<i32>
 					(MIN_GEN_SIDE, MAX_GEN_SIDE);
+			} while (
+				(gen_side == GEN_SIDE_L && shrink_side == GEN_SIDE_R)
+				|| (gen_side == GEN_SIDE_T && shrink_side == GEN_SIDE_B)
+				|| (gen_side == GEN_SIDE_R && shrink_side == GEN_SIDE_L)
+				|| (gen_side == GEN_SIDE_B && shrink_side == GEN_SIDE_T)
+			);
+
 			switch (shrink_side) {
 			//--------
 			case GEN_SIDE_L:

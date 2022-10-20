@@ -181,6 +181,7 @@ public:		// types
 
 		//class Xdata final {
 		//public:		// variables
+			i32 gen_side = 0;
 			std::unordered_map<IntVec2, BgTile> alt_terrain_umap;
 
 			std::unordered_set<i32> conn_index_uset;

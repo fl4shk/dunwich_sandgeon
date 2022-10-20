@@ -191,18 +191,30 @@ void DungeonGen::draw() {
 							do_draw();
 						}
 					} else { // if (!in_border)
-						if (!rp.door_pt_uset.contains(pos)) {
+						//if (!rp.door_pt_uset.contains(pos)) {
+						//	if (rp.alt_terrain_umap.contains(pos)) {
+						//		bg_tile = rp.alt_terrain_umap.at(pos);
+						//	} else {
+						//		bg_tile
+						//			= rp.is_path()
+						//			? BgTile::PathFloor
+						//			: BgTile::RoomFloor;
+						//	}
+						//} else {
+						//	bg_tile = BgTile::Door;
+						//}
 							if (rp.alt_terrain_umap.contains(pos)) {
 								bg_tile = rp.alt_terrain_umap.at(pos);
 							} else {
-								bg_tile
-									= rp.is_path()
-									? BgTile::PathFloor
-									: BgTile::RoomFloor;
+								if (!rp.door_pt_uset.contains(pos)) {
+									bg_tile
+										= rp.is_path()
+										? BgTile::PathFloor
+										: BgTile::RoomFloor;
+								} else {
+									bg_tile = BgTile::Door;
+								}
 							}
-						} else {
-							bg_tile = BgTile::Door;
-						}
 						do_draw();
 					}
 				} catch (const std::exception& e) {
