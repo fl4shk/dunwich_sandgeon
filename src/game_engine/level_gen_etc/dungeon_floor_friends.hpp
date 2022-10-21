@@ -15,4 +15,4 @@
 // You should have received a copy of the GNU General Public License along
 // with Dunwich Sandgeon.  If not, see <https://www.gnu.org/licenses/>.
 
-friend class dunwich_sandgeon::game_engine::sys::GmDungeonGen;
+friend class dunwich_sandgeon::game_engine::level_gen_etc::DungeonGen;

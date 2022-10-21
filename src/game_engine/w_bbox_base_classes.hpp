@@ -26,24 +26,36 @@
 namespace dunwich_sandgeon {
 namespace game_engine {
 //--------
-class WIntBboxBase {
+template<typename T>
+class WBboxBase {
 public:		// functions
-	inline WIntBboxBase() = default;
-	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(WIntBboxBase);
-	virtual ~WIntBboxBase() = default;
+	inline WBboxBase() = default;
+	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(WBboxBase);
+	virtual ~WBboxBase() = default;
 
-	virtual inline const IntRect2& bbox() const = 0;
-	virtual inline IntRect2& bbox() = 0;
+	virtual inline const math::Rect2<T>& bbox() const = 0;
+	//virtual inline math::Rect2<T>& bbox() = 0;
 };
-class WFltBboxBase {
-public:		// functions
-	inline WFltBboxBase() = default;
-	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(WFltBboxBase);
-	virtual ~WFltBboxBase() = default;
-
-	virtual inline const FltRect2& bbox() const = 0;
-	virtual inline FltRect2& bbox() = 0;
-};
+using WIntBboxBase = WBboxBase<i32>;
+using WFltBboxBase = WBboxBase<float>;
+//class WIntBboxBase {
+//public:		// functions
+//	inline WIntBboxBase() = default;
+//	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(WIntBboxBase);
+//	virtual ~WIntBboxBase() = default;
+//
+//	virtual inline const IntRect2& bbox() const = 0;
+//	virtual inline IntRect2& bbox() = 0;
+//};
+//class WFltBboxBase {
+//public:		// functions
+//	inline WFltBboxBase() = default;
+//	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(WFltBboxBase);
+//	virtual ~WFltBboxBase() = default;
+//
+//	virtual inline const FltRect2& bbox() const = 0;
+//	virtual inline FltRect2& bbox() = 0;
+//};
 //--------
 } // namespace game_engine
 } // namespace dunwich_sandgeon

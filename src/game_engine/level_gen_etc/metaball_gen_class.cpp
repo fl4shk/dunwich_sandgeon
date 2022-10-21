@@ -16,10 +16,11 @@
 // with Dunwich Sandgeon.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "metaball_gen_class.hpp"
-#include "engine_class.hpp"
+#include "../engine_class.hpp"
 
 namespace dunwich_sandgeon {
 namespace game_engine {
+namespace level_gen_etc {
 //--------
 MetaballGen::MetaballGen(const IntVec2& s_size_2d) 
 	: _size_2d(s_size_2d) {
@@ -32,11 +33,11 @@ MetaballGen::MetaballGen(const IntVec2& s_size_2d)
 //}
 //--------
 MetaballGen& MetaballGen::add(const IntVec2& pos, float range) {
-	_ball_vec.push_back({.pos=FltVec2(pos), .size_2d{.x=range, .y=range}});
+	_ball_vec.push_back({.pos=pos, .size_2d{.x=range, .y=range}});
 	return *this;
 }
 MetaballGen& MetaballGen::add(const IntVec2& pos, const FltVec2& range) {
-	_ball_vec.push_back({.pos=FltVec2(pos), .size_2d=range});
+	_ball_vec.push_back({.pos=pos, .size_2d=range});
 	return *this;
 }
 //--------
@@ -52,7 +53,7 @@ float MetaballGen::gen_single(const IntVec2& pos) const {
 		//auto diff = ball.cntr_pos()
 		//	- (FltVec2(pos) - (FltVec2(_size_2d) / 2));
 		//auto diff = (ball.pos - pos) - (FltVec2(_size_2d) / 2);
-		auto diff = ball.pos - pos;
+		auto diff = FltVec2(ball.pos) - FltVec2(pos);
 		//auto diff = ball.cntr_pos() - pos;
 		// Try modifying the below two changes to `diff`
 		//diff.x = diff.x / ball.size_2d.x * ball.size_2d.y;
@@ -133,5 +134,6 @@ BoolDyna2d MetaballGen::gen(float thresh_0, float thresh_1) const {
 	return ret;
 }
 //--------
+} // namespace level_gen_etc
 } // namespace game_engine
 } // namespace dunwich_sandgeon

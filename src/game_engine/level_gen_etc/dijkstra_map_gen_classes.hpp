@@ -15,10 +15,10 @@
 // You should have received a copy of the GNU General Public License along
 // with Dunwich Sandgeon.  If not, see <https://www.gnu.org/licenses/>.
 
-#ifndef src_game_engine_metaball_gen_class_hpp
-#define src_game_engine_metaball_gen_class_hpp
+#ifndef src_game_engine_dijkstra_map_classes_hpp
+#define src_game_engine_dijkstra_map_classes_hpp
 
-// src/game_engine/metaball_gen_class.hpp
+// src/game_engine/dijkstra_map_classes.hpp
 
 #include "../misc_includes.hpp"
 #include "../misc_types.hpp"
@@ -26,41 +26,35 @@
 
 namespace dunwich_sandgeon {
 namespace game_engine {
+namespace level_gen_etc {
 //--------
-class MetaballGen final {
+// See the below links for more information:
+// http://www.roguebasin.com/index.php/The_Incredible_Power_of_Dijkstra_Maps
+// http://www.roguebasin.com/index.php/Dijkstra_Maps_Visualized
+class DijkstraMap final {
 public:		// types
-	//class Ball final {
-	//public:		// variables
-	//	IntVec2 pos;
-	//	FltVec2 size_2d;
-	//};
+	using Data = std::vector<std::vector<float>>;
+	class Goal final {
+	public:		// variables
+		IntVec2 pos;
+		float val;
+	};
 private:		// variables
-	IntVec2 _size_2d = PFIELD_PHYS_SIZE_2D;
-	//IntRect2 _bounds = PFIELD_PHYS_RECT2;
-	std::vector<FltRect2> _ball_vec;
+	Data _data;
+};
+class DijkstraMapGen final {
+public:		// types
+	//using Goal = std::pair<IntVec2, float>;
+	//using DmapV2d = std::vector<std::vector<float>>;
+private:		// variables
+	IntVec2 size_2d;
+	std::vector<DmapElem> _goal_vec;
 public:		// functions
-	MetaballGen() = default;
-	MetaballGen(const IntVec2& s_size_2d);
-	//MetaballGen(const IntRect2& s_bounds);
-	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(MetaballGen);
-	~MetaballGen() = default;
-
-	MetaballGen& add(const IntVec2& pos, float range);
-	MetaballGen& add(const IntVec2& pos, const FltVec2& range);
-	
-	float gen_single(const IntVec2& pos) const;
-	bool gen_single(
-		const IntVec2& pos, float thresh_0, float thresh_1=0.0f
-	) const;
-	FltDyna2d gen() const;
-	BoolDyna2d gen(float thresh_0, float thresh_1=0.0f) const;
-
-	GEN_GETTER_BY_CON_REF(size_2d);
-	//GEN_GETTER_BY_CON_REF(bounds);
-	GEN_GETTER_BY_CON_REF(ball_vec);
+	constexpr inline
 };
 //--------
+} // namespace level_gen_etc
 } // namespace game_engine
 } // namespace dunwich_sandgeon
 
-#endif		// src_game_engine_metaball_gen_class_hpp
+#endif		// src_game_engine_dijkstra_map_classes_hpp

@@ -15,27 +15,22 @@
 // You should have received a copy of the GNU General Public License along
 // with Dunwich Sandgeon.  If not, see <https://www.gnu.org/licenses/>.
 
-#ifndef src_game_engine_comp_floor_layout_comp_classes_hpp
-#define src_game_engine_comp_floor_layout_comp_classes_hpp
+#ifndef src_game_engine_dungeon_gen_floor_layout_classes_hpp
+#define src_game_engine_dungeon_gen_floor_layout_classes_hpp
 
-// src/game_engine/comp/floor_layout_comp_classes.hpp
+// src/game_engine/level_gen_etc/floor_layout_classes.hpp
 
 #include "../../misc_includes.hpp"
 //#include "../shape_classes.hpp"
 #include "../w_bbox_base_classes.hpp"
 #include "../global_shape_constants_etc.hpp"
-#include "general_comp_classes.hpp"
+//#include "../comp/general_comp_classes.hpp"
 
 namespace dunwich_sandgeon {
 namespace game_engine {
+namespace level_gen_etc {
 //--------
-namespace sys {
-//--------
-class GmDungeonGen;
-//--------
-} // namespace sys
-//--------
-namespace comp {
+class DungeonGen;
 //--------
 #define LIST_OF_BIOME_TERRAIN_BG_TILES(X) \
 	X(Water) \
@@ -76,27 +71,56 @@ constexpr inline std::string bg_tile_str_map_at(BgTile bg_tile) {
 	switch (bg_tile) {
 		#define X(name) \
 			case BgTile:: name : \
-				return "game_engine::comp::BgTile::" #name ; \
+				return "game_engine::level_gen_etc::BgTile::" #name ; \
 				break;
 		LIST_OF_BG_TILES(X)
 		#undef X
 
 		default:
 			throw std::invalid_argument(sconcat(
-				"game_engine::comp::bg_tile_str_map_at(): Error: "
+				"game_engine::level_gen_etc::bg_tile_str_map_at(): Error: "
 				"Invalid `bg_tile`: ", i32(bg_tile)
 			));
 			return "";
 			break;
 	}
 }
+
+using SizeAndBgTile = std::pair<size_t, BgTile>;
+
+template<typename T>
+concept IsBuildBgTileVecArg
+	= (std::same_as<T, level_gen_etc::BgTile>
+	|| std::same_as<T, SizeAndBgTile>);
+
+constexpr inline void _build_bg_tile_vec_backend(
+	std::vector<BgTile>& ret, BgTile first_arg
+) {
+	ret.push_back(first_arg);
+}
+constexpr inline void _build_bg_tile_vec_backend(
+	std::vector<BgTile>& ret, const SizeAndBgTile& first_arg
+) {
+	for (size_t i=0; i<first_arg.first; ++i) {
+		ret.push_back(first_arg.second);
+	}
+}
+constexpr inline std::vector<BgTile> build_bg_tile_vec(
+	const IsBuildBgTileVecArg auto&... args
+) {
+	std::vector<BgTile> ret;
+
+	(_build_bg_tile_vec_backend(ret, args), ...);
+
+	return ret;
+}
 //--------
 // The dungeon while it's either being generated has finished generating.
 // As I don't think I'll be including breakable walls, in this game, this
 // `ecs::Comp` can be referenced even after the dungeon has fully been
 // generated for the purposes of, for example, monster AI.
-class DungeonGen final: public ecs::Comp {
-	#include "dungeon_gen_friends.hpp"
+class DungeonFloor final {
+	#include "dungeon_floor_friends.hpp"
 public:		// constants
 	static const std::string
 		KIND_STR;
@@ -135,16 +159,14 @@ public:		// constants
 			//= 8;
 
 	static constexpr IntVec2
-		ROOM_MIN_SIZE_2D{
-			//3, 3
-			4, 4,
-		},
-		ROOM_MAX_SIZE_2D{
-			//9, 9,
-			//10, 10,
-			12, 12,
-			//15, 15,
-		};
+		ROOM_MIN_SIZE_2D
+			//= {3, 3},
+			= {4, 4},
+		ROOM_MAX_SIZE_2D
+			//= {9, 9};
+			//= {10, 10};
+			= {12, 12};
+			//= {15, 15};
 public:		// static functions
 	static constexpr inline bool r2_is_path(const IntRect2& r2) {
 		return r2_is_horiz_path(r2) || r2_is_vert_path(r2);
@@ -169,7 +191,7 @@ public:		// static functions
 public:		// types
 	//--------
 	class RoomPath final: public WIntBboxBase {
-		#include "dungeon_gen_friends.hpp"
+		#include "dungeon_floor_friends.hpp"
 	public:		// variables
 		#define MEMB_LIST_COMP_DUNGEON_ROOM_PATH(X) \
 			/* X(rect, std::nullopt) */ \
@@ -180,6 +202,7 @@ public:		// types
 		IntRect2 rect
 			{.pos=IntVec2(),
 			.size_2d{.x=PATH_THICKNESS, .y=PATH_MIN_LEN}};
+		i32 id = -1;
 
 		//class Xdata final {
 		//public:		// variables
@@ -206,9 +229,9 @@ public:		// types
 		//--------
 		inline auto operator <=> (const RoomPath& to_cmp) const = default;
 		//--------
-		virtual inline IntRect2& bbox() {
-			return rect;
-		}
+		//virtual inline IntRect2& bbox() {
+		//	return rect;
+		//}
 		virtual inline const IntRect2& bbox() const {
 			return rect;
 		}
@@ -291,13 +314,13 @@ private:		// variables
 	//	_layout_noise_pos_offset = 0.0d;
 public:		// functions
 	//--------
-	DungeonGen();
-	DungeonGen(const binser::Value& bv);
-	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(DungeonGen);
-	virtual ~DungeonGen() = default;
+	DungeonFloor();
+	//DungeonFloor(const binser::Value& bv);
+	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(DungeonFloor);
+	~DungeonFloor() = default;
 
-	virtual std::string kind_str() const;
-	virtual operator binser::Value () const;
+	//virtual std::string kind_str() const;
+	//virtual operator binser::Value () const;
 	//--------
 	BgTile bg_tile_at(const IntVec2& pos, size_t i) const;
 	//--------
@@ -362,7 +385,7 @@ public:		// functions
 	//CollGridT::DataElPtrUsetT cg_neighbors(RoomPath& rp) const;
 	//CollGridT::DataElPtrUsetT cg_neighbors(size_t index) const;
 
-	void draw();
+	void draw() const;
 	//--------
 	GEN_GETTER_BY_CON_REF(rp_data);
 	//GEN_GETTER_BY_CON_REF(rp_to_index_umap);
@@ -373,8 +396,8 @@ public:		// functions
 	//--------
 };
 //--------
-} // namespace comp
+} // namespace level_gen_etc
 } // namespace game_engine
 } // namespace dunwich_sandgeon
 
-#endif		// src_game_engine_comp_floor_layout_comp_classes_hpp
+#endif		// src_game_engine_dungeon_gen_floor_layout_classes_hpp

@@ -15,14 +15,14 @@
 // You should have received a copy of the GNU General Public License along
 // with Dunwich Sandgeon.  If not, see <https://www.gnu.org/licenses/>.
 
-#include "drawable_data_umap.hpp"
-#include "floor_layout_comp_classes.hpp"
+#include "../comp/drawable_data_umap.hpp"
+#include "floor_layout_classes.hpp"
 #include "../engine_class.hpp"
 #include "../global_shape_constants_etc.hpp"
 
 namespace dunwich_sandgeon {
 namespace game_engine {
-namespace comp {
+namespace level_gen_etc {
 //--------
 //const std::unordered_map<BgTile, std::string>& bg_tile_str_map() {
 //	//--------
@@ -49,9 +49,9 @@ namespace comp {
 //--------
 //--------
 const std::string
-	DungeonGen::KIND_STR("DungeonGen");
+	DungeonFloor::KIND_STR("DungeonFloor");
 
-//auto DungeonGen::RoomPath::from_bv(const binser::Value& bv) -> RoomPath {
+//auto DungeonFloor::RoomPath::from_bv(const binser::Value& bv) -> RoomPath {
 //	RoomPath ret;
 //
 //	MEMB_LIST_COMP_DUNGEON_ROOM_PATH(BINSER_MEMB_FROM_BV_DESERIALIZE);
@@ -67,13 +67,13 @@ const std::string
 //		//		data, " ", min, " ", max
 //		//));
 //		throw std::invalid_argument(sconcat(
-//			"game_engine::comp::DungeonGen::RoomPath::from_bv(): ",
+//			"game_engine::level_gen_etc::DungeonFloor::RoomPath::from_bv(): ",
 //			"`ret.rect` does not fit in the playfield: ", ret.rect
 //		));
 //	}
 //	if (!ret.is_path() && !ret.is_room()) {
 //		throw std::invalid_argument(sconcat(
-//			"game_engine::comp::DungeonGen::RoomPath::from_bv(): ",
+//			"game_engine::level_gen_etc::DungeonFloor::RoomPath::from_bv(): ",
 //			"`ret.rect` is the wrong shape to be a path or a room: ",
 //			ret.rect
 //		));
@@ -81,7 +81,7 @@ const std::string
 //
 //	return ret;
 //}
-//DungeonGen::RoomPath::operator binser::Value () const {
+//DungeonFloor::RoomPath::operator binser::Value () const {
 //	binser::Value ret;
 //
 //	//MEMB_EX_MM_LIST_COMP_DUNGEON_ROOM_PATH(BINSER_MEMB_SERIALIZE);
@@ -92,28 +92,28 @@ const std::string
 //
 //	return ret;
 //}
-DungeonGen::DungeonGen() {}
-DungeonGen::DungeonGen(const binser::Value& bv) {
-	//_rp_data.checked_size = MAX_NUM_ROOM_PATHS;
-	//_rp_data.cs_is_max = true;
-	////_rp_data.min_size = 0;
-	//_rp_data.min_size = MIN_NUM_ROOM_PATHS;
+DungeonFloor::DungeonFloor() {}
+//DungeonFloor::DungeonFloor(const binser::Value& bv) {
+//	//_rp_data.checked_size = MAX_NUM_ROOM_PATHS;
+//	//_rp_data.cs_is_max = true;
+//	////_rp_data.min_size = 0;
+//	//_rp_data.min_size = MIN_NUM_ROOM_PATHS;
+//
+//	MEMB_LIST_COMP_DUNGEON(BINSER_MEMB_DESERIALIZE);
+//}
 
-	MEMB_LIST_COMP_DUNGEON(BINSER_MEMB_DESERIALIZE);
-}
-
-std::string DungeonGen::kind_str() const {
-	return KIND_STR;
-}
-DungeonGen::operator binser::Value () const {
-	binser::Value ret;
-
-	MEMB_LIST_COMP_DUNGEON(BINSER_MEMB_SERIALIZE);
-
-	return ret;
-}
+//std::string DungeonFloor::kind_str() const {
+//	return KIND_STR;
+//}
+//DungeonFloor::operator binser::Value () const {
+//	binser::Value ret;
+//
+//	MEMB_LIST_COMP_DUNGEON(BINSER_MEMB_SERIALIZE);
+//
+//	return ret;
+//}
 //--------
-BgTile DungeonGen::bg_tile_at(const IntVec2& pos, size_t i) const {
+BgTile DungeonFloor::bg_tile_at(const IntVec2& pos, size_t i) const {
 	BgTile bg_tile = BgTile::Blank;
 
 	const RoomPath& rp = at(i);
@@ -122,8 +122,8 @@ BgTile DungeonGen::bg_tile_at(const IntVec2& pos, size_t i) const {
 	if (in_border) {
 		// I'm doing this the slow/easy way for now.
 		bool did_intersect = false;
-		//for (size_t j=0; j<i; ++j)
-		for (size_t j=0; j<size(); ++j)
+		for (size_t j=0; j<i; ++j)
+		//for (size_t j=0; j<size(); ++j)
 		{
 			if (j != i) {
 				if (at(j).rect.intersect(pos)) {
@@ -177,28 +177,29 @@ BgTile DungeonGen::bg_tile_at(const IntVec2& pos, size_t i) const {
 	return bg_tile;
 }
 //--------
-void DungeonGen::push_back(RoomPath&& to_push) {
+void DungeonFloor::push_back(RoomPath&& to_push) {
 	if (size() + size_t(1) > MAX_NUM_ROOM_PATHS) {
 		throw std::length_error(sconcat
-			("game_engine::comp::DungeonGen::push_back(): ",
+			("game_engine::level_gen_etc::DungeonFloor::push_back(): ",
 			"`_rp_data.data` cannot increase in size: ",
 			//_rp_data.data.size(),
 			_rp_data.size(),
 			" ", MAX_NUM_ROOM_PATHS));
 	}
+	to_push.id = i32(size());
 	//_rp_data.data.push_back(std::move(to_push));
 	_rp_data.push_back(RoomPathSptr(new RoomPath(std::move(to_push))));
 	//_rp_to_index_umap.insert(std::pair
 	//	(_rp_data.back().get(), _rp_data.size() - size_t(1)));
 	//_coll_grid.insert(_rp_data.back().get());
 }
-//CollGridT::DataElPtrUsetT DungeonGen::cg_neighbors(RoomPath& rp) const {
+//CollGridT::DataElPtrUsetT DungeonFloor::cg_neighbors(RoomPath& rp) const {
 //	return _coll_grid.neighbors(&rp);
 //}
-//CollGridT::DataElPtrUsetT DungeonGen::cg_neighbors(size_t index) const {
+//CollGridT::DataElPtrUsetT DungeonFloor::cg_neighbors(size_t index) const {
 //	return _coll_grid.neighbors(_rp_data.at(index).get());
 //}
-void DungeonGen::draw() {
+void DungeonFloor::draw() const {
 	//bg_tile_map->at({0, 0}) = BgTile::Floor;
 	for (size_t i=0; i<size(); ++i) 
 	//for (size_t i=1; i<size(); ++i)
@@ -222,11 +223,12 @@ void DungeonGen::draw() {
 					const auto bg_tile = bg_tile_at(pos, i);
 					if (bg_tile != BgTile::Blank) {
 						engine->pfield_window.drawable_data_at(pos)
-							= drawable_data_umap().at
+							= comp::drawable_data_umap().at
 								(bg_tile_str_map_at(bg_tile));
 					}
 				} catch (const std::exception& e) {
-					printerr("game_engine::comp::DungeonGen::draw(): "
+					printerr("game_engine::level_gen_etc::DungeonFloor",
+						"::draw(): "
 						"Exception thrown: ", e.what(), "\n");
 					throw std::out_of_range(sconcat(
 						"rp.rect",rp.rect, ", pos", pos, ", ",
@@ -241,6 +243,6 @@ void DungeonGen::draw() {
 	}
 }
 //--------
-} // namespace comp
+} // namespace level_gen_etc
 } // namespace game_engine
 } // namespace dunwich_sandgeon
