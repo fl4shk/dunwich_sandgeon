@@ -310,8 +310,8 @@ private:		// variables
 
 
 	std::vector<RoomPathSptr> _rp_data;
-	//std::unordered_map<RoomPath*, size_t> _rp_to_index_umap;
-	//CollGridT _coll_grid;
+	std::unordered_map<RoomPath*, size_t> _rp_to_index_umap;
+	CollGridT _coll_grid;
 	//binser::VectorEx<RoomPath> _rp_data;
 	//double
 	//	_layout_noise_pos_scale = 0.0d,
@@ -326,7 +326,8 @@ public:		// functions
 	//virtual std::string kind_str() const;
 	//virtual operator binser::Value () const;
 	//--------
-	BgTile bg_tile_at(const IntVec2& pos, size_t i) const;
+	std::optional<BgTile> bg_tile_at(const IntVec2& pos, size_t i) const;
+	std::optional<BgTile> phys_bg_tile_at(const IntVec2& pos) const;
 	//--------
 	inline auto begin() {
 		//return _rp_data.data.begin();
@@ -381,20 +382,21 @@ public:		// functions
 		//_rp_data.data.resize(0);
 		//_rp_data.data.clear();
 		_rp_data.clear();
-		//_rp_to_index_umap.clear();
-		//_coll_grid.clear();
+		_rp_to_index_umap.clear();
+		_coll_grid.clear();
 		//_layout_noise_pos_scale = n_layout_noise_pos_scale;
 		//_layout_noise_pos_offset = n_layout_noise_pos_offset;
 	}
 	bool erase_maybe(size_t index);
-	//CollGridT::DataElPtrUsetT cg_neighbors(RoomPath& rp) const;
-	//CollGridT::DataElPtrUsetT cg_neighbors(size_t index) const;
+	CollGridT::DataElPtrUsetT cg_neighbors(RoomPath& rp) const;
+	CollGridT::DataElPtrUsetT cg_neighbors(size_t index) const;
+	CollGridT::DataElPtrUsetT cg_neighbors(const IntVec2& pos) const;
 
 	void draw() const;
 	//--------
 	GEN_GETTER_BY_CON_REF(rp_data);
-	//GEN_GETTER_BY_CON_REF(rp_to_index_umap);
-	//GEN_GETTER_BY_CON_REF(coll_grid);
+	GEN_GETTER_BY_CON_REF(rp_to_index_umap);
+	GEN_GETTER_BY_CON_REF(coll_grid);
 	//GEN_GETTER_BY_CON_REF(path_vec);
 	//GEN_GETTER_BY_CON_REF(layout_noise_pos_scale);
 	//GEN_GETTER_BY_CON_REF(layout_noise_pos_offset);

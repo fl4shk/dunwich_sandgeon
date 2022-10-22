@@ -22,6 +22,7 @@ namespace dunwich_sandgeon {
 namespace game_engine {
 namespace level_gen_etc {
 //--------
+MetaballGen::MetaballGen() {}
 MetaballGen::MetaballGen(const IntVec2& s_size_2d) 
 	: _size_2d(s_size_2d) {
 }
@@ -31,6 +32,7 @@ MetaballGen::MetaballGen(const IntVec2& s_size_2d)
 //MetaballGen::MetaballGen(const IntRect2& s_bounds)
 //	: _bounds(s_bounds) {
 //}
+MetaballGen::~MetaballGen() {}
 //--------
 MetaballGen& MetaballGen::add(const IntVec2& pos, float range) {
 	_ball_vec.push_back({.pos=pos, .size_2d{.x=range, .y=range}});

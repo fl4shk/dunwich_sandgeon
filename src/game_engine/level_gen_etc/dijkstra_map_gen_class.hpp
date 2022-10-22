@@ -15,14 +15,15 @@
 // You should have received a copy of the GNU General Public License along
 // with Dunwich Sandgeon.  If not, see <https://www.gnu.org/licenses/>.
 
-#ifndef src_game_engine_dijkstra_map_classes_hpp
-#define src_game_engine_dijkstra_map_classes_hpp
+#ifndef src_game_engine_dijkstra_map_gen_class_hpp
+#define src_game_engine_dijkstra_map_gen_class_hpp
 
-// src/game_engine/dijkstra_map_classes.hpp
+// src/game_engine/dijkstra_map_gen_class.hpp
 
-#include "../misc_includes.hpp"
-#include "../misc_types.hpp"
-#include "global_shape_constants_etc.hpp"
+#include "../../misc_includes.hpp"
+#include "../../misc_types.hpp"
+#include "../global_shape_constants_etc.hpp"
+#include "floor_layout_class.hpp"
 
 namespace dunwich_sandgeon {
 namespace game_engine {
@@ -31,30 +32,51 @@ namespace level_gen_etc {
 // See the below links for more information:
 // http://www.roguebasin.com/index.php/The_Incredible_Power_of_Dijkstra_Maps
 // http://www.roguebasin.com/index.php/Dijkstra_Maps_Visualized
-class DijkstraMap final {
-public:		// types
-	using Data = std::vector<std::vector<float>>;
-	class Goal final {
-	public:		// variables
-		IntVec2 pos;
-		float val;
-	};
-private:		// variables
-	Data _data;
-};
+//class DijkstraMap final {
+//public:		// types
+//	using Data = std::vector<std::vector<float>>;
+//	class Goal final {
+//	public:		// variables
+//		IntVec2 pos;
+//		float val;
+//	};
+//private:		// variables
+//	Data _data;
+//public:		// functions
+//	DijkstraMap 
+//};
 class DijkstraMapGen final {
 public:		// types
 	//using Goal = std::pair<IntVec2, float>;
 	//using DmapV2d = std::vector<std::vector<float>>;
+	using Dmap = std::unordered_map<IntVec2, float>;
+
+	//class Goal final {
+	//public:		// variables
+	//	IntVec2 pos;
+	//	float val;
+	//};
+public:		// constants
+	static constexpr float
+		FLIP_SCALE = 1.2f;
 private:		// variables
-	IntVec2 size_2d;
-	std::vector<DmapElem> _goal_vec;
+	std::unordered_map<IntVec2, float> _goal_umap;
 public:		// functions
-	constexpr inline
+	DijkstraMapGen();
+	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(DijkstraMapGen);
+	~DijkstraMapGen();
+
+	// add a `Goal`
+	DijkstraMapGen& add(const IntVec2& pos, float val);
+
+	Dmap gen_basic(const FloorLayout& floor_layout) const;
+	Dmap gen_flipped(const FloorLayout& floor_layout) const;
+
+	GEN_GETTER_BY_CON_REF(goal_umap);
 };
 //--------
 } // namespace level_gen_etc
 } // namespace game_engine
 } // namespace dunwich_sandgeon
 
-#endif		// src_game_engine_dijkstra_map_classes_hpp
+#endif		// src_game_engine_dijkstra_map_gen_class_hpp

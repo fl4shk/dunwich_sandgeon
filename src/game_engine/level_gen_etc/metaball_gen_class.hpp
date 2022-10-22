@@ -40,11 +40,11 @@ private:		// variables
 	//IntRect2 _bounds = PFIELD_PHYS_RECT2;
 	std::vector<Ball> _ball_vec;
 public:		// functions
-	MetaballGen() = default;
+	MetaballGen();
 	MetaballGen(const IntVec2& s_size_2d);
 	//MetaballGen(const IntRect2& s_bounds);
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(MetaballGen);
-	~MetaballGen() = default;
+	~MetaballGen();
 
 	MetaballGen& add(const IntVec2& pos, float range);
 	MetaballGen& add(const IntVec2& pos, const FltVec2& range);

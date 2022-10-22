@@ -113,8 +113,11 @@ FloorLayout::FloorLayout() {}
 //	return ret;
 //}
 //--------
-BgTile FloorLayout::bg_tile_at(const IntVec2& pos, size_t i) const {
-	BgTile bg_tile = BgTile::Blank;
+std::optional<BgTile> FloorLayout::bg_tile_at(
+	const IntVec2& pos, size_t i
+) const {
+	//BgTile bg_tile = BgTile::Blank;
+	//std::optional<BgTile> ret = std::nullopt;
 
 	const RoomPath& rp = at(i);
 	const bool in_border = rp.pos_in_border(pos);
@@ -144,8 +147,10 @@ BgTile FloorLayout::bg_tile_at(const IntVec2& pos, size_t i) const {
 		//}
 
 		if (!did_intersect) {
-			bg_tile = BgTile::Wall;
+			return BgTile::Wall;
 			//do_draw();
+		} else {
+			return std::nullopt;
 		}
 	} else { // if (!in_border)
 		//if (!rp.door_pt_uset.contains(pos)) {
@@ -160,21 +165,34 @@ BgTile FloorLayout::bg_tile_at(const IntVec2& pos, size_t i) const {
 		//} else {
 		//	bg_tile = BgTile::Door;
 		//}
+		return phys_bg_tile_at(pos);
+		//do_draw();
+	}
+	//return bg_tile;
+}
+std::optional<BgTile> FloorLayout::phys_bg_tile_at(const IntVec2& pos)
+const {
+	const auto& neighbors = cg_neighbors(pos);
+
+	for (auto& neighbor: neighbors) {
+		if (neighbor->bbox().intersect(pos)) {
+			RoomPath& rp = *static_cast<RoomPath*>(neighbor);
+
 			if (rp.biome_terrain_umap.contains(pos)) {
-				bg_tile = rp.biome_terrain_umap.at(pos);
+				return rp.biome_terrain_umap.at(pos);
 			} else {
 				if (!rp.door_pt_uset.contains(pos)) {
-					bg_tile
-						= rp.is_path()
+					return
+						rp.is_path()
 						? BgTile::PathFloor
 						: BgTile::RoomFloor;
 				} else {
-					bg_tile = BgTile::Door;
+					return BgTile::Door;
 				}
 			}
-		//do_draw();
+		}
 	}
-	return bg_tile;
+	return std::nullopt;
 }
 //--------
 void FloorLayout::push_back(RoomPath&& to_push) {
@@ -189,9 +207,9 @@ void FloorLayout::push_back(RoomPath&& to_push) {
 	to_push.id = i32(size());
 	//_rp_data.data.push_back(std::move(to_push));
 	_rp_data.push_back(RoomPathSptr(new RoomPath(std::move(to_push))));
-	//_rp_to_index_umap.insert(std::pair
-	//	(_rp_data.back().get(), _rp_data.size() - size_t(1)));
-	//_coll_grid.insert(_rp_data.back().get());
+	_rp_to_index_umap.insert(std::pair
+		(_rp_data.back().get(), _rp_data.size() - size_t(1)));
+	_coll_grid.insert(_rp_data.back().get());
 }
 bool FloorLayout::erase_maybe(size_t index) {
 	if (size() > MIN_NUM_ROOM_PATHS) {
@@ -208,6 +226,10 @@ bool FloorLayout::erase_maybe(size_t index) {
 		//	//}
 		//	item.id = i32(i - 1);
 		//}
+		// We have to erase from `_rp_to_index_umap` and `_coll_grid`
+		// before we erase from `_rp_data`.
+		_rp_to_index_umap.erase(_rp_data.at(index).get());
+		_coll_grid.erase(_rp_data.at(index).get(), std::nullopt);
 		_rp_data.erase(_rp_data.begin() + index);
 		for (size_t i=0; i<size(); ++i) {
 			auto& item = _raw_at(i);
@@ -229,12 +251,19 @@ bool FloorLayout::erase_maybe(size_t index) {
 	}
 	return false;
 }
-//CollGridT::DataElPtrUsetT FloorLayout::cg_neighbors(RoomPath& rp) const {
-//	return _coll_grid.neighbors(&rp);
-//}
-//CollGridT::DataElPtrUsetT FloorLayout::cg_neighbors(size_t index) const {
-//	return _coll_grid.neighbors(_rp_data.at(index).get());
-//}
+CollGridT::DataElPtrUsetT FloorLayout::cg_neighbors(RoomPath& rp) const {
+	return _coll_grid.neighbors(&rp);
+}
+CollGridT::DataElPtrUsetT FloorLayout::cg_neighbors(size_t index) const {
+	return _coll_grid.neighbors(_rp_data.at(index).get());
+}
+CollGridT::DataElPtrUsetT FloorLayout::cg_neighbors(const IntVec2& pos)
+const {
+	RoomPath temp_rp; //= {.rect{pos=pos, .size_2d={1, 1}}};
+	temp_rp.rect.pos = pos;
+	temp_rp.rect.size_2d = {1, 1};
+	return _coll_grid.neighbors(&temp_rp);
+}
 void FloorLayout::draw() const {
 	//bg_tile_map->at({0, 0}) = BgTile::Floor;
 	for (size_t i=0; i<size(); ++i) 
@@ -256,11 +285,12 @@ void FloorLayout::draw() const {
 				++pos.x
 			) {
 				try {
-					const auto bg_tile = bg_tile_at(pos, i);
-					if (bg_tile != BgTile::Blank) {
+					const auto& bg_tile = bg_tile_at(pos, i);
+					//if (bg_tile != BgTile::Blank)
+					if (bg_tile) {
 						engine->pfield_window.drawable_data_at(pos)
 							= comp::drawable_data_umap().at
-								(bg_tile_str_map_at(bg_tile));
+								(bg_tile_str_map_at(*bg_tile));
 					}
 				} catch (const std::exception& e) {
 					printerr("game_engine::level_gen_etc::FloorLayout",

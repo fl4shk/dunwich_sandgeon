@@ -17,7 +17,7 @@
 
 #include "dungeon_gen_class.hpp"
 #include "metaball_gen_class.hpp"
-//#include "dijkstra_map_classes.hpp"
+//#include "dijkstra_map_class.hpp"
 #include "../engine_class.hpp"
 #include "../comp/drawable_data_umap.hpp"
 
@@ -1171,11 +1171,11 @@ void DungeonGen::GenInnards::_remove_dead_end_paths() const {
 					GEN_YN_RM_DE_PATHS_DO_RM.rng_val_is_yes
 						(GEN_YN_RM_DE_PATHS_DO_RM.gen())
 				) {
-					engine->log("_remove_dead_end_paths(): ",
-						"going to remove: ",
-						"item{", item.rect.tl_corner(), " ",
-							item.rect.br_corner(), "} ",
-						i32(item_index), "\n");
+					//engine->log("_remove_dead_end_paths(): ",
+					//	"going to remove: ",
+					//	"item{", item.rect.tl_corner(), " ",
+					//		item.rect.br_corner(), "} ",
+					//	i32(item_index), "\n");
 					if (item.conn_index_uset.size() == 0) {
 						throw std::runtime_error(sconcat
 							("game_engine::level_gen_etc::DungeonGen",
