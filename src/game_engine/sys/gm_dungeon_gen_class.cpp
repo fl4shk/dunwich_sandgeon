@@ -53,7 +53,7 @@ void GmDungeonGen::_init(ecs::Engine* ecs_engine) {
 	//	_dungeon_gen_id = ecs_engine->create_singleton_all(
 	//		ecs::make_comp_map_ks(
 	//			ecs::CompSptr(new ecs::NonSerializable()),
-	//			ecs::CompSptr(new DungeonFloor())
+	//			ecs::CompSptr(new FloorLayout())
 	//		),
 	//		func_name
 	//	);
@@ -74,22 +74,22 @@ void GmDungeonGen::tick(ecs::Engine* ecs_engine) {
 		//	= ecs_engine->casted_comp_at<comp::StaticBgTileMap>(
 		//		*_bg_tile_map_id
 		//	);
-		//auto* dungeon_floor
-		//	= ecs_engine->casted_comp_at<DungeonFloor>
+		//auto* floor_layout
+		//	= ecs_engine->casted_comp_at<FloorLayout>
 		//		(*_dungeon_gen_id);
 
 		//if (engine->key_status.key_just_went_down(KeyKind::DownR))
 		{
 			engine->dungeon_gen.gen_curr_floor();
 		}
-		//if (dungeon_floor->size() >= 2) {
+		//if (floor_layout->size() >= 2) {
 		//	clear(ecs_engine);
 		//}
 
-		//dungeon_floor->draw(bg_tile_map);
+		//floor_layout->draw(bg_tile_map);
 		//bg_tile_map->draw();
 		engine->pfield_window.clear();
-		engine->dungeon_gen.dungeon_floor().draw();
+		engine->dungeon_gen.floor_layout().draw();
 		engine->screen_window.clear();
 
 		engine->screen_window.draw(engine->pfield_window);

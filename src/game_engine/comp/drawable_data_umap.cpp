@@ -19,7 +19,7 @@
 #include "../window_class.hpp"
 #include "player_comp_class.hpp"
 //#include "block_comp_classes.hpp"
-#include "../level_gen_etc/floor_layout_classes.hpp"
+#include "../level_gen_etc/floor_layout_class.hpp"
 
 namespace dunwich_sandgeon {
 namespace game_engine {

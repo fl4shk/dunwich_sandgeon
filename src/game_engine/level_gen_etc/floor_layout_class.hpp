@@ -15,10 +15,10 @@
 // You should have received a copy of the GNU General Public License along
 // with Dunwich Sandgeon.  If not, see <https://www.gnu.org/licenses/>.
 
-#ifndef src_game_engine_dungeon_gen_floor_layout_classes_hpp
-#define src_game_engine_dungeon_gen_floor_layout_classes_hpp
+#ifndef src_game_engine_dungeon_gen_floor_layout_class_hpp
+#define src_game_engine_dungeon_gen_floor_layout_class_hpp
 
-// src/game_engine/level_gen_etc/floor_layout_classes.hpp
+// src/game_engine/level_gen_etc/floor_layout_class.hpp
 
 #include "../../misc_includes.hpp"
 //#include "../shape_classes.hpp"
@@ -119,7 +119,7 @@ constexpr inline std::vector<BgTile> build_bg_tile_vec(
 // As I don't think I'll be including breakable walls, in this game, this
 // `ecs::Comp` can be referenced even after the dungeon has fully been
 // generated for the purposes of, for example, monster AI.
-class DungeonFloor final {
+class FloorLayout final {
 	#include "dungeon_floor_friends.hpp"
 public:		// constants
 	static const std::string
@@ -137,8 +137,12 @@ public:		// constants
 			//= 20,
 			= 25,
 		MAX_NUM_ROOM_PATHS
+			//= 3;
+			//= 5;
+			//= 8;
 			//= 15;
-			= 42;
+			//= 42;
+			= 64;
 
 		//MIN_NUM_PATHS = 1,
 		//MAX_NUM_PATHS = 64;
@@ -314,10 +318,10 @@ private:		// variables
 	//	_layout_noise_pos_offset = 0.0d;
 public:		// functions
 	//--------
-	DungeonFloor();
-	//DungeonFloor(const binser::Value& bv);
-	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(DungeonFloor);
-	~DungeonFloor() = default;
+	FloorLayout();
+	//FloorLayout(const binser::Value& bv);
+	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(FloorLayout);
+	~FloorLayout() = default;
 
 	//virtual std::string kind_str() const;
 	//virtual operator binser::Value () const;
@@ -382,6 +386,7 @@ public:		// functions
 		//_layout_noise_pos_scale = n_layout_noise_pos_scale;
 		//_layout_noise_pos_offset = n_layout_noise_pos_offset;
 	}
+	bool erase_maybe(size_t index);
 	//CollGridT::DataElPtrUsetT cg_neighbors(RoomPath& rp) const;
 	//CollGridT::DataElPtrUsetT cg_neighbors(size_t index) const;
 
@@ -400,4 +405,4 @@ public:		// functions
 } // namespace game_engine
 } // namespace dunwich_sandgeon
 
-#endif		// src_game_engine_dungeon_gen_floor_layout_classes_hpp
+#endif		// src_game_engine_dungeon_gen_floor_layout_class_hpp

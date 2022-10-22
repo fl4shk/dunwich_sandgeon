@@ -27,7 +27,7 @@
 #include "game_options_class.hpp"
 #include "comp/general_comp_classes.hpp"
 #include "global_shape_constants_etc.hpp"
-#include "level_gen_etc/floor_layout_classes.hpp"
+#include "level_gen_etc/floor_layout_class.hpp"
 #include "level_gen_etc/dungeon_gen_class.hpp"
 //#include "metaball_gen_class.hpp"
 
@@ -273,7 +273,7 @@ private:		// serialized variables
 public:		// non-serialized variables
 	EngineKeyStatus key_status;
 	level_gen_etc::DungeonGen dungeon_gen;
-	//level_gen_etc::DungeonFloor dungeon_floor;
+	//level_gen_etc::FloorLayout floor_layout;
 
 	////InputKind initial_input_kind = InputKind::None,
 	////	final_input_kind = InputKind::None;

@@ -21,7 +21,7 @@
 // src/game_engine/level_gen_etc/dungeon_gen_class.hpp
 
 #include "../../misc_includes.hpp"
-#include "floor_layout_classes.hpp"
+#include "floor_layout_class.hpp"
 
 namespace dunwich_sandgeon {
 namespace game_engine {
@@ -44,8 +44,8 @@ public:		// types
 	//--------
 	//using BgTile = comp::BgTile;
 	//using SizeAndBgTile = comp::SizeAndBgTile;
-	//using DungeonFloor = comp::DungeonFloor;
-	using RoomPath = DungeonFloor::RoomPath;
+	//using FloorLayout = comp::FloorLayout;
+	using RoomPath = FloorLayout::RoomPath;
 	//--------
 	class GenNext final {
 	public:		// variables
@@ -64,6 +64,13 @@ public:		// types
 		}
 		constexpr inline i32 full_max() const {
 			return diff_max;
+		}
+		i32 gen() const;
+		constexpr inline bool rng_val_is_same(i32 rng_val) const {
+			return (rng_val >= same_min() && rng_val <= same_max);
+		}
+		constexpr inline bool rng_val_is_diff(i32 rng_val) const {
+			return (rng_val >= diff_min() && rng_val <= diff_max);
 		}
 	};
 	class GenYesNo final {
@@ -84,6 +91,13 @@ public:		// types
 		constexpr inline i32 full_max() const {
 			return yes_max;
 		}
+		i32 gen() const;
+		constexpr inline bool rng_val_is_no(i32 rng_val) const {
+			return (rng_val >= no_min() && rng_val <= no_max);
+		}
+		constexpr inline bool rng_val_is_yes(i32 rng_val) const {
+			return (rng_val >= yes_min() && rng_val <= yes_max);
+		}
 	};
 	//--------
 public:		// constants
@@ -100,17 +114,17 @@ public:		// constants
 public:		// constants
 	//--------
 	static constexpr i32
-		MIN_NUM_ROOM_PATHS = DungeonFloor::MIN_NUM_ROOM_PATHS,
-		MAX_NUM_ROOM_PATHS = DungeonFloor::MAX_NUM_ROOM_PATHS;
+		MIN_NUM_ROOM_PATHS = FloorLayout::MIN_NUM_ROOM_PATHS,
+		MAX_NUM_ROOM_PATHS = FloorLayout::MAX_NUM_ROOM_PATHS;
 	//--------
 	static constexpr i32
-		PATH_THICKNESS = DungeonFloor::PATH_THICKNESS,
-		PATH_MIN_LEN = DungeonFloor::PATH_MIN_LEN,
-		PATH_MAX_LEN = DungeonFloor::PATH_MAX_LEN;
+		PATH_THICKNESS = FloorLayout::PATH_THICKNESS,
+		PATH_MIN_LEN = FloorLayout::PATH_MIN_LEN,
+		PATH_MAX_LEN = FloorLayout::PATH_MAX_LEN;
 
 	static constexpr IntVec2
-		ROOM_MIN_SIZE_2D = DungeonFloor::ROOM_MIN_SIZE_2D,
-		ROOM_MAX_SIZE_2D = DungeonFloor::ROOM_MAX_SIZE_2D;
+		ROOM_MIN_SIZE_2D = FloorLayout::ROOM_MIN_SIZE_2D,
+		ROOM_MAX_SIZE_2D = FloorLayout::ROOM_MAX_SIZE_2D;
 	//--------
 	static constexpr i32
 		// Generation percentages and stuff. 
@@ -168,9 +182,10 @@ public:		// constants
 		MIN_GEN_BIOME_THRESH_0
 			//= 0.3f,
 			//= 0.5f,
-			= 0.75f,
+			//= 0.75f,
 			//= 1.0f,
-			//= 2.0f,
+			= 2.0f,
+			//= 4.0f,
 		MAX_GEN_BIOME_THRESH_0
 			//= 4.0f,
 			= 6.0f,
@@ -191,9 +206,9 @@ public:		// constants
 			//= 4;
 			//= 5;
 			//= 7;
-			= 8;
+			//= 8;
 			//= 10;
-			//= 12;
+			= 12;
 			//= 13;
 			//= 20;
 	static constexpr IntVec2
@@ -205,9 +220,9 @@ public:		// constants
 			//= {7, 7},
 		GEN_BIOME_MBALL_MAX_SIZE_2D
 			//= {3, 3},
-			= {5, 5},
+			//= {5, 5},
 			//= {6, 6},
-			//= {7, 7},
+			= {7, 7},
 			//= {8, 8},
 			//= {10, 10},
 			//= {15, 15},
@@ -291,8 +306,26 @@ public:		// constants
 			{
 			//.no_max=65,
 			//.no_max=34,
+			//.no_max=0,
+			.no_max=35,
+			.yes_max=99
+			//.yes_max=999
+			},
+
+		GEN_YN_RM_DE_PATHS_DO_RM
+			{
+			//.no_max=29,
+			//.no_max=19,
 			.no_max=0,
-			.yes_max=99};
+			.yes_max=99,
+			},
+		GEN_YN_RM_DE_PATHS_FINISH_IF
+			{
+			//.no_max=29,
+			//.no_max=19,
+			.no_max=98,
+			.yes_max=99
+			};
 	//--------
 	static constexpr i32
 		// This is the number of tries to attempt room/path generation
@@ -301,14 +334,14 @@ public:		// constants
 			//= 20;
 			//= 50;
 			= 100;
-		//--------
+	//--------
 private:		// variables
 	i32
 		_attempted_num_rp = 0;
 	bool
 		_stop_gen_early = false,
 		_done_generating = false;
-	DungeonFloor _dungeon_floor;
+	FloorLayout _floor_layout;
 public:		// functions
 	DungeonGen() = default;
 	//inline DungeonGen(const binser::Value& bv)
@@ -321,10 +354,10 @@ public:		// functions
 		//ecs::Engine* ecs_engine
 	);
 	void gen_curr_floor();
-	GEN_GETTER_BY_CON_REF(dungeon_floor);
+	GEN_GETTER_BY_CON_REF(floor_layout);
 private:		// functions
 	//void _connect_room_paths(comp::StaticBgTileMap* bg_tile_map,
-	//	DungeonFloor* dungeon_floor);
+	//	FloorLayout* floor_layout);
 private:		// types
 	class GenInnards final {
 	public:		// types
@@ -334,9 +367,9 @@ private:		// types
 			* _self = nullptr;
 		//ecs::Engine
 		//	* _ecs_engine = nullptr;
-		//DungeonFloor
-		//	* _dungeon_floor = nullptr;
-		RoomPath _to_push_rp;
+		//FloorLayout
+		//	* _floor_layout = nullptr;
+		RoomPath _temp_to_push_rp;
 		//RoomPath
 		//	* _rp = nullptr,
 		//	* _item = nullptr;
@@ -354,12 +387,12 @@ private:		// types
 		inline GenInnards(
 			DungeonGen* s_self
 			//ecs::Engine* s_ecs_engine,
-			//DungeonFloor* s_dungeon_floor
+			//FloorLayout* s_dungeon_floor
 		)
 			: _self(s_self)
 			//_ecs_engine(s_ecs_engine),
-			//_dungeon_floor(s_dungeon_floor)
-			//_dungeon_floor(&_self->dungeon_floor)
+			//_floor_layout(s_dungeon_floor)
+			//_floor_layout(&_self->floor_layout)
 		{
 		}
 		bool gen_single_rp();
@@ -367,10 +400,49 @@ private:		// types
 		std::optional<RoomPath> _inner_gen_post_first();
 	private:		// functions
 		//--------
+		void _do_push_back(RoomPath&& to_push_rp) const;
+		//--------
 		std::optional<RoomPath> _gen_initial_rp();
 		//--------
-	public:		// functions
-		void _do_push_back(RoomPath&& to_push_rp) const;
+		//i32 _choose_shrink_or_extend_side(
+		//	bool was_horiz_path, bool was_vert_path,
+		//	//const RoomPath& some_rp
+		//	//const std::optional<size_t>& index
+		//);
+		bool _shrink(
+			bool was_horiz_path, bool was_vert_path,
+			RoomPath& some_rp, //const std::optional<size_t>& index,
+			const std::function<bool(
+				RoomPath&//, const std::optional<size_t>&
+			)>& extra_test_func
+		);
+		bool _basic_shrink_extra_test_func(
+			RoomPath& some_rp
+			//, const std::optional<size_t>& index
+		);
+		void _connect(
+			//bool was_horiz_path, bool was_vert_path,
+			//RoomPath& some_rp, //const std::optional<size_t>& index,
+			//const std::function<bool(
+			//	RoomPath&//, const std::optional<size_t>&
+			//)>& shrink_extra_test_func
+		);
+		//--------
+		inline bool _rp_is_connected(const RoomPath& some_rp) const {
+			const RoomPath& conn_rp
+				= _self->_floor_layout.at(_conn_rp_index);
+			return (
+				(some_rp.gen_side == GEN_SIDE_L
+					&& _ls_r2_hit(conn_rp, some_rp))
+				|| (some_rp.gen_side == GEN_SIDE_T
+					&& _ts_r2_hit(conn_rp, some_rp))
+				|| (some_rp.gen_side == GEN_SIDE_R
+					&& _rs_r2_hit(conn_rp, some_rp))
+				|| (some_rp.gen_side == GEN_SIDE_B
+					&& _bs_r2_hit(conn_rp, some_rp))
+			);
+		};
+		//--------
 	public:		// functions
 		//--------
 		std::vector<size_t> any_intersect_find_all(
@@ -413,39 +485,14 @@ private:		// types
 		//--------
 	public:		// functions
 		//--------
-		void finalize_basic(
+		void finalize(
 			//bool do_clear
 		) const;
 		//void insert_doors(bool do_clear) const;
 	private:		// functions
 		//--------
-		//--------
-		bool _shrink(
-			bool was_horiz_path, bool was_vert_path,
-			RoomPath& some_rp, //const std::optional<size_t>& index,
-			const std::function<bool(
-				RoomPath&//, const std::optional<size_t>&
-			)>& extra_test_func
-		);
-		//--------
-		inline bool _rp_is_connected(const RoomPath& some_rp) const {
-			const RoomPath& conn_rp
-				= _self->_dungeon_floor.at(_conn_rp_index);
-			return (
-				(some_rp.gen_side == GEN_SIDE_L
-					&& _ls_r2_hit(conn_rp, some_rp))
-				|| (some_rp.gen_side == GEN_SIDE_T
-					&& _ts_r2_hit(conn_rp, some_rp))
-				|| (some_rp.gen_side == GEN_SIDE_R
-					&& _rs_r2_hit(conn_rp, some_rp))
-				|| (some_rp.gen_side == GEN_SIDE_B
-					&& _bs_r2_hit(conn_rp, some_rp))
-			);
-		};
-		//--------
-	public:		// functions
-		//--------
-		void insert_biome_terrain(
+		void _remove_dead_end_paths() const;
+		void _insert_biome_terrain(
 			//bool do_clear
 		) const;
 		//--------

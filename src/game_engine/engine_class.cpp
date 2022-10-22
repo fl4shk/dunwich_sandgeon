@@ -22,7 +22,7 @@
 #include "comp/general_comp_classes.hpp"
 #include "comp/player_comp_class.hpp"
 //#include "comp/block_comp_classes.hpp"
-#include "level_gen_etc/floor_layout_classes.hpp"
+#include "level_gen_etc/floor_layout_class.hpp"
 #include "comp/status_comp_classes.hpp"
 //#include "comp/ui_etc_comp_classes.hpp"
 
