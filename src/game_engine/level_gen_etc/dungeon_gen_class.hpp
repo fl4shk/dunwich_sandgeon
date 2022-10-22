@@ -316,16 +316,16 @@ public:		// constants
 			{
 			//.no_max=29,
 			//.no_max=19,
-			.no_max=0,
+			.no_max=4,
 			.yes_max=99,
-			},
-		GEN_YN_RM_DE_PATHS_FINISH_IF
-			{
-			//.no_max=29,
-			//.no_max=19,
-			.no_max=98,
-			.yes_max=99
 			};
+		//GEN_YN_RM_DE_PATHS_FINISH_IF
+		//	{
+		//	//.no_max=29,
+		//	//.no_max=19,
+		//	.no_max=94,
+		//	.yes_max=99
+		//	};
 	//--------
 	static constexpr i32
 		// This is the number of tries to attempt room/path generation

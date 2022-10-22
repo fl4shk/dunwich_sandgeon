@@ -1166,27 +1166,30 @@ void DungeonGen::GenInnards::_remove_dead_end_paths() const {
 			did_rm = false;
 			erase_maybe_ret = true;
 			auto& item = _self->_floor_layout._raw_at(item_index);
-			if (
-				item.is_path() && item.conn_index_uset.size() <= 1
-				&& GEN_YN_RM_DE_PATHS_DO_RM.rng_val_is_yes
-					(GEN_YN_RM_DE_PATHS_DO_RM.gen())
-			) {
-				engine->log("_remove_dead_end_paths(): going to remove: ",
-					"item{", item.rect.tl_corner(), " ",
-						item.rect.br_corner(), "} ",
-					i32(item_index), "\n");
-				if (item.conn_index_uset.size() == 0) {
-					throw std::runtime_error(sconcat
-						("game_engine::level_gen_etc::DungeonGen",
-						"::GenInnards::_remove_dead_end_paths(): ",
-						"Eek! ", item_index, "; ",
-						item.rect.tl_corner(), " ",
-						item.rect.br_corner()));
-				} else {
-					did_rm = true;
-					erase_maybe_ret
-						= !_self->_floor_layout.erase_maybe(item_index);
-					break;
+			if (item.is_path() && item.conn_index_uset.size() <= 1) {
+				if (
+					GEN_YN_RM_DE_PATHS_DO_RM.rng_val_is_yes
+						(GEN_YN_RM_DE_PATHS_DO_RM.gen())
+				) {
+					engine->log("_remove_dead_end_paths(): ",
+						"going to remove: ",
+						"item{", item.rect.tl_corner(), " ",
+							item.rect.br_corner(), "} ",
+						i32(item_index), "\n");
+					if (item.conn_index_uset.size() == 0) {
+						throw std::runtime_error(sconcat
+							("game_engine::level_gen_etc::DungeonGen",
+							"::GenInnards::_remove_dead_end_paths(): ",
+							"Eek! ", item_index, "; ",
+							item.rect.tl_corner(), " ",
+							item.rect.br_corner()));
+					} else {
+						did_rm = true;
+						erase_maybe_ret
+							= !_self->_floor_layout.erase_maybe
+								(item_index);
+						break;
+					}
 				}
 			}
 		}
