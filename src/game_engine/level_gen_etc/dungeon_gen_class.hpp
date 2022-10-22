@@ -307,7 +307,8 @@ public:		// constants
 			//.no_max=65,
 			//.no_max=34,
 			//.no_max=0,
-			.no_max=35,
+			.no_max=14,
+			//.no_max=35,
 			.yes_max=99
 			//.yes_max=999
 			},
