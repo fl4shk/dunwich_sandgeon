@@ -46,6 +46,20 @@ namespace level_gen_etc {
 //	//--------
 //}
 //--------
+const BgTileUset
+	BASIC_NO_PASS_BG_TILE_USET = {
+		BgTile::Blank,
+		BgTile::Error,
+		BgTile::Wall,
+		BgTile::Spikes,
+		BgTile::Pit,
+		BgTile::Lava,
+	},
+	BASIC_UNSAFE_BG_TILE_USET = {
+		BgTile::Spikes,
+		BgTile::Pit,
+		BgTile::Lava,
+	};
 //--------
 //--------
 const std::string
@@ -172,6 +186,9 @@ std::optional<BgTile> FloorLayout::bg_tile_at(
 }
 std::optional<BgTile> FloorLayout::phys_bg_tile_at(const IntVec2& pos)
 const {
+	//if (!PFIELD_PHYS_RECT2.arg_inside(pos)) {
+	//	return std::nullopt;
+	//}
 	const auto& neighbors = cg_neighbors(pos);
 
 	for (auto& neighbor: neighbors) {

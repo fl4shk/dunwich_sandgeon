@@ -17,7 +17,8 @@
 
 #include "dungeon_gen_class.hpp"
 #include "metaball_gen_class.hpp"
-//#include "dijkstra_map_class.hpp"
+#include "dijkstra_map_gen_class.hpp"
+#include "bfs_funcs.hpp"
 #include "../engine_class.hpp"
 #include "../comp/drawable_data_umap.hpp"
 
@@ -38,8 +39,9 @@ const std::vector<std::vector<BgTile>>
 		build_bg_tile_vec
 			(//SizeAndBgTile(20, BIOME_TERRAIN_NONE),
 			//SizeAndBgTile(5, BIOME_TERRAIN_NONE),
-			SizeAndBgTile(1, BIOME_TERRAIN_NONE),
-			BgTile::Water,
+			//SizeAndBgTile(1, BIOME_TERRAIN_NONE),
+			//SizeAndBgTile(2, BgTile::Water),
+			SizeAndBgTile(2, BgTile::Water),
 			BgTile::Spikes
 			//SizeAndBgTile(3, BgTile::Lava)
 			),
@@ -48,34 +50,34 @@ const std::vector<std::vector<BgTile>>
 		build_bg_tile_vec
 			(
 			//SizeAndBgTile(6, BIOME_TERRAIN_NONE),
-			SizeAndBgTile(2, BIOME_TERRAIN_NONE),
-			BgTile::Water,
-			BgTile::Spikes,
+			//SizeAndBgTile(2, BIOME_TERRAIN_NONE),
+			SizeAndBgTile(3, BgTile::Water),
+			SizeAndBgTile(2, BgTile::Spikes),
 			BgTile::Pit),
 
 		// Level 3 (index 2)
 		build_bg_tile_vec
 			(
 			//SizeAndBgTile(5, BIOME_TERRAIN_NONE),
-			SizeAndBgTile(3, BIOME_TERRAIN_NONE),
-			BgTile::Water,
+			//SizeAndBgTile(3, BIOME_TERRAIN_NONE),
+			SizeAndBgTile(2, BgTile::Water),
 			//BgTile::Lava,
-			BgTile::Spikes,
+			SizeAndBgTile(2, BgTile::Spikes),
 			BgTile::Pit),
 
 		// Level 4 (index 3)
 		build_bg_tile_vec
 			(
-			SizeAndBgTile(1, BIOME_TERRAIN_NONE),
+			//SizeAndBgTile(1, BIOME_TERRAIN_NONE),
 			BgTile::Lava,
-			BgTile::Spikes,
+			SizeAndBgTile(2, BgTile::Spikes),
 			BgTile::Pit
 			),
 
 		// Level 5 (index 4)
 		build_bg_tile_vec
 			(
-			SizeAndBgTile(1, BIOME_TERRAIN_NONE),
+			//SizeAndBgTile(1, BIOME_TERRAIN_NONE),
 			BgTile::Lava,
 			BgTile::Spikes
 			),
@@ -830,6 +832,7 @@ void DungeonGen::GenInnards::_connect(
 		case GEN_SIDE_L:
 			if (
 				should_gen_connect()
+				&& !was_vert_path
 				&& (_temp_to_push_rp.is_horiz_path()
 				|| _temp_to_push_rp.is_room())
 			){
@@ -840,6 +843,7 @@ void DungeonGen::GenInnards::_connect(
 		case GEN_SIDE_T:
 			if (
 				should_gen_connect()
+				&& !was_horiz_path
 				&& (_temp_to_push_rp.is_vert_path()
 				|| _temp_to_push_rp.is_room())
 			) {
@@ -850,6 +854,7 @@ void DungeonGen::GenInnards::_connect(
 		case GEN_SIDE_R:
 			if (
 				should_gen_connect()
+				&& !was_vert_path
 				&& (_temp_to_push_rp.is_horiz_path()
 				|| _temp_to_push_rp.is_room())
 			) {
@@ -860,6 +865,7 @@ void DungeonGen::GenInnards::_connect(
 		case GEN_SIDE_B:
 			if (
 				should_gen_connect()
+				&& !was_horiz_path
 				&& (_temp_to_push_rp.is_vert_path()
 				|| _temp_to_push_rp.is_room())
 			) {
@@ -1218,7 +1224,7 @@ void DungeonGen::GenInnards::_insert_biome_terrain(
 			= engine->layout_rand_r2_in_pfnb
 				(GEN_BIOME_MBALL_GEN_MIN_SIZE_2D,
 				GEN_BIOME_MBALL_GEN_MAX_SIZE_2D);
-	printout(biome_mballs_bounds_r2, "\n");
+	//engine->log(biome_mballs_bounds_r2, "\n");
 
 	MetaballGen
 		//biome_mballs(floor_r2.size_2d);
@@ -1313,29 +1319,67 @@ void DungeonGen::GenInnards::_insert_biome_terrain(
 	//	}
 	//	engine->log("\n");
 	//}
-	std::vector<std::vector<BgTile>> biome_bg_tiles
+	std::vector<std::vector<std::pair<bool, BgTile>>> biome_bg_tiles
 		(biome_gen.size(),
-			std::vector<BgTile>
-				(biome_gen.front().size(), BIOME_TERRAIN_NONE));
+			std::vector<std::pair<bool, BgTile>>
+				(biome_gen.front().size(),
+					std::pair(false, BIOME_TERRAIN_NONE)));
 	for (size_t j=0; j<biome_gen.size(); ++j) {
 		const auto& row = biome_gen.at(j);
 		for (size_t i=0; i<row.size(); ++i) {
 			const auto& item = row.at(i);
-			auto& biome_bg_tile = biome_bg_tiles.at(j).at(i);
-			if (
-				//item < 0.5f
-				!item 
-			) {
-				biome_bg_tile = BgTile::Water;
-			}
+			biome_bg_tiles.at(j).at(i).first = !item;
 			//else if (
 			//	item < 0.075f
 			//	//item < 0.065f
 			//) {
-			//	biome_bg_tile = BgTile::Water;
+			//	bg_tile = BgTile::Water;
 			//}
 		}
 	}
+
+	// Breadth-first search
+	{
+		IntVec2Uset explored_uset;
+		IntVec2 pos;
+		for (pos.y=0; pos.y<i32(biome_bg_tiles.size()); ++pos.y) {
+			auto& row = biome_bg_tiles.at(pos.y);
+			for (pos.x=0; pos.x<i32(row.size()); ++pos.x) {
+				const BgTile rng_bg_tile=allowed_biome_terrain_vec
+					.at(engine->layout_rand<i32>
+						(0, allowed_biome_terrain_vec.size() - 1));
+				if (!explored_uset.contains(pos)) {
+					bfs_fill
+						(explored_uset, pos,
+						[&](
+							const IntVec2Uset& some_explored_uset,
+							const IntVec2& some_pos
+						) -> bool {
+							return PFIELD_PHYS_NO_BRDR_RECT2
+								.intersect(some_pos)
+								&& biome_bg_tiles.at(some_pos.y
+									- biome_mballs_bounds_r2.pos.y)
+								.at(some_pos.x
+									- biome_mballs_bounds_r2.pos.x).first;
+						},
+						[&](
+							const IntVec2Uset& some_explored_uset,
+							const IntVec2& some_pos
+						) -> void {
+							auto& bg_tile
+								= biome_bg_tiles.at(some_pos.y
+									- biome_mballs_bounds_r2.pos.y)
+								.at(some_pos.x
+									- biome_mballs_bounds_r2.pos.x);
+							if (bg_tile.first) {
+								bg_tile.second = rng_bg_tile;
+							}
+						});
+				}
+			}
+		}
+	}
+
 
 	engine->log("Debug: generated biome `BgTile`s\n");
 	for (size_t j=0; j<biome_bg_tiles.size(); ++j) {
@@ -1343,13 +1387,14 @@ void DungeonGen::GenInnards::_insert_biome_terrain(
 		engine->log(j, ": ");
 		for (size_t i=0; i<row.size(); ++i) {
 			const auto& bg_tile = row.at(i);
-			if (bg_tile == BIOME_TERRAIN_NONE) {
+			//if (bg_tile == BIOME_TERRAIN_NONE)
+			if (!bg_tile.first) {
 				engine->log(char(comp::drawable_data_umap().at
 					(bg_tile_str_map_at(BgTile::RoomFloor)).c));
-			} else { // if (bg_tile != BIOME_TERRAIN_NONE)
+			} else { // if (bg_tile.first)
 				const auto& draw_data
 					= comp::drawable_data_umap().at
-						(bg_tile_str_map_at(bg_tile));
+						(bg_tile_str_map_at(bg_tile.second));
 				engine->log(char(draw_data.c));
 			}
 		}
@@ -1420,27 +1465,31 @@ void DungeonGen::GenInnards::_insert_biome_terrain(
 				const IntVec2
 					temp_pos = pos - biome_mballs_bounds_r2.pos;
 
-				const BgTile
-					bg_tile = biome_bg_tiles.at(temp_pos.y).at(temp_pos.x);
+				const auto
+					& bg_tile = biome_bg_tiles.at(temp_pos.y)
+						.at(temp_pos.x);
 
-				if (bg_tile == BIOME_TERRAIN_NONE) {
+				if (!bg_tile.first) {
 					continue;
 				}
 
+				// TODO: incorporate `DijkstraMapGen` and connections
+				// between stairs
 				if (item.is_path()) {
-					if (!bg_tile_is_unsafe(bg_tile)) {
-						item.biome_terrain_umap[pos] = bg_tile;
+					if (!BASIC_UNSAFE_BG_TILE_USET.contains
+						(bg_tile.second)) {
+						item.biome_terrain_umap[pos] = bg_tile.second;
 					}
 				} else { // if (item.is_room())
 					if (
-						! bg_tile_is_unsafe(bg_tile)
+						!BASIC_UNSAFE_BG_TILE_USET.contains
+							(bg_tile.second)
 						|| (!item.pos_in_border(pos)
 							&& !item.pos_in_internal_border(pos))
 					) {
-						item.biome_terrain_umap[pos] = bg_tile;
+						item.biome_terrain_umap[pos] = bg_tile.second;
 					}
 				}
-
 			}
 		}
 	}

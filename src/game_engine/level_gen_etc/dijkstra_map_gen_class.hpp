@@ -49,30 +49,49 @@ class DijkstraMapGen final {
 public:		// types
 	//using Goal = std::pair<IntVec2, float>;
 	//using DmapV2d = std::vector<std::vector<float>>;
-	using Dmap = std::unordered_map<IntVec2, float>;
+	using Dmap = std::vector<std::vector<float>>;
 
+	class Goal final {
+	public:		// variables
+		IntVec2 pos;
+		float val;
+	};
 	//class Goal final {
 	//public:		// variables
-	//	IntVec2 pos;
 	//	float val;
 	//};
 public:		// constants
 	static constexpr float
-		FLIP_SCALE = 1.2f;
+		//DEFAULT_FLIP_SCALE = 1.2f;
+		DEFAULT_FLIP_BONUS = -0.2f,
+		VERY_HIGH_NUM
+			= float(PFIELD_PHYS_SIZE_2D.x + PFIELD_PHYS_SIZE_2D.y) + 50.0f;
+	//static const BgTileUset
+	//	DEFAULT_NO_PASS_USET;
 private:		// variables
-	std::unordered_map<IntVec2, float> _goal_umap;
+	//std::unordered_map<IntVec2, float> _goal_umap;
+	std::vector<Goal> _goal_vec;
 public:		// functions
 	DijkstraMapGen();
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(DijkstraMapGen);
 	~DijkstraMapGen();
 
-	// add a `Goal`
-	DijkstraMapGen& add(const IntVec2& pos, float val);
+	// add a goal
+	DijkstraMapGen& add(const IntVec2& pos, float val=0.0f);
 
-	Dmap gen_basic(const FloorLayout& floor_layout) const;
-	Dmap gen_flipped(const FloorLayout& floor_layout) const;
+	Dmap gen_basic(
+		const FloorLayout& floor_layout,
+		const BgTileUset& no_pass_uset
+	) const;
+	Dmap gen_flipped(
+		const FloorLayout& floor_layout,
+		const BgTileUset& no_pass_uset,
+		float bonus=DEFAULT_FLIP_BONUS
+	) const;
+	Dmap& flip(Dmap& dmap, float bonus=DEFAULT_FLIP_BONUS) const;
 
-	GEN_GETTER_BY_CON_REF(goal_umap);
+	//GEN_GETTER_BY_CON_REF(goal_umap);
+	GEN_GETTER_BY_CON_REF(goal_vec);
 };
 //--------
 } // namespace level_gen_etc

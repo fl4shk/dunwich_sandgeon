@@ -60,11 +60,17 @@ enum class BgTile: u8 {
 	#undef X
 };
 
-constexpr inline bool bg_tile_is_unsafe(BgTile bg_tile) {
-	return (bg_tile == BgTile::Pit
-		|| bg_tile == BgTile::Lava
-		|| bg_tile == BgTile::Spikes);
-}
+using BgTileUset = std::unordered_set<BgTile>;
+extern const BgTileUset
+	BASIC_NO_PASS_BG_TILE_USET,
+	BASIC_UNSAFE_BG_TILE_USET;
+	//PLAYER_UNSAFE_BG_TILE_USET;
+//inline bool bg_tile_is_player_unsafe(BgTile bg_tile) {
+//	//return (bg_tile == BgTile::Pit
+//	//	|| bg_tile == BgTile::Lava
+//	//	|| bg_tile == BgTile::Spikes);
+//	return PLAYER_UNSAFE_BG_TILE_USET.contains(bg_tile);
+//}
 
 //extern const std::unordered_map<BgTile, std::string>& bg_tile_str_map();
 constexpr inline std::string bg_tile_str_map_at(BgTile bg_tile) {
@@ -165,7 +171,8 @@ public:		// constants
 	static constexpr IntVec2
 		ROOM_MIN_SIZE_2D
 			//= {3, 3},
-			= {4, 4},
+			//= {4, 4},
+			= {5, 5},
 		ROOM_MAX_SIZE_2D
 			//= {9, 9};
 			//= {10, 10};

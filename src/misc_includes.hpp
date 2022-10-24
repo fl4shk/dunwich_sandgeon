@@ -79,6 +79,8 @@ namespace ecs = liborangepower::game::ecs;
 #include <initializer_list>
 #include <fstream>
 #include <deque>
+#include <stack>
+#include <queue>
 #include <map>
 #include <set>
 #include <unordered_map>

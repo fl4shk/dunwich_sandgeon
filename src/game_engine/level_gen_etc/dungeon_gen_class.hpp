@@ -213,8 +213,9 @@ public:		// constants
 			//= 20;
 	static constexpr IntVec2
 		GEN_BIOME_MBALL_MIN_SIZE_2D
-			= {1, 1},
+			//= {1, 1},
 			//= {3, 3},
+			= {4, 4},
 			//= {5, 5},
 			//= {6, 6},
 			//= {7, 7},
@@ -222,8 +223,9 @@ public:		// constants
 			//= {3, 3},
 			//= {5, 5},
 			//= {6, 6},
-			= {7, 7},
+			//= {7, 7},
 			//= {8, 8},
+			= {9, 9},
 			//= {10, 10},
 			//= {15, 15},
 		GEN_BIOME_MBALL_GEN_MIN_SIZE_2D
@@ -249,7 +251,8 @@ public:		// constants
 			{
 			//.same_max=0,
 			//.diff_max=9
-			.same_max=25,
+			//.same_max=25,
+			.same_max=34,
 			//.same_max=45,
 			.diff_max=99
 			},
@@ -264,7 +267,8 @@ public:		// constants
 			//.same_max=0,
 			//.same_max=2,
 			//.diff_max=9
-			.same_max=25,
+			.same_max=19,
+			//.same_max=25,
 			//.same_max=5,
 			.diff_max=99,
 			//.same_max=32,
@@ -307,7 +311,9 @@ public:		// constants
 			//.no_max=65,
 			//.no_max=34,
 			//.no_max=0,
-			.no_max=14,
+			//.no_max=4,
+			.no_max=7,
+			//.no_max=14,
 			//.no_max=35,
 			.yes_max=99
 			//.yes_max=999

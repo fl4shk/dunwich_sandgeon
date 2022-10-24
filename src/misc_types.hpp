@@ -25,8 +25,15 @@
 
 namespace dunwich_sandgeon {
 //--------
+template<typename T>
+using Vec2Uset = std::unordered_set<Vec2<T>>;
+template<typename T>
+using Vec3Uset = std::unordered_set<Vec3<T>>;
+
 using IntVec2 = math::Vec2<i32>;
 using IntVec3 = math::Vec3<i32>;
+using IntVec2Uset = Vec2Uset<i32>;
+using IntVec3Uset = Vec3Uset<i32>;
 
 ////using PosVec2 = binser::Vec2Ex<i32>;
 ////using PosVec3 = binser::Vec3Ex<i32>;
@@ -49,6 +56,8 @@ using IntRect2Ex = binser::Rect2Ex<i32>;
 //using FltVec2Ex = binser::Vec2Ex<float>;
 using FltVec2 = math::Vec2<float>;
 using FltVec3 = math::Vec3<float>;
+using FltVec2Uset = Vec2Uset<float>;
+using FltVec3Uset = Vec3Uset<float>;
 
 using FltVec2Ex = binser::Vec2Ex<float>;
 using FltVec3Ex = binser::Vec3Ex<float>;
