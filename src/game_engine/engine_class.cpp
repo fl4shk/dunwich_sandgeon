@@ -43,14 +43,12 @@ const std::string
 //auto Engine::NonEcsSerData::_gen_blank_pfield_ent_id_v3d()
 //	-> decltype(pfield_ent_id_v3d) {
 //	return
-//		decltype(pfield_ent_id_v3d) (
-//			NUM_FLOORS,
+//		decltype(pfield_ent_id_v3d) 
+//			(NUM_FLOORS,
 //			EntIdSetVec2d(W_BRDR_PFIELD_WINDOW_SIZE_2D.y,
-//				std::vector<std::unordered_set<ecs::EntId>>(
-//					W_BRDR_PFIELD_WINDOW_SIZE_2D.x,
-//					std::unordered_set<ecs::EntId>()
-//				))
-//		);
+//				std::vector<std::unordered_set<ecs::EntId>>
+//					(W_BRDR_PFIELD_WINDOW_SIZE_2D.x,
+//					std::unordered_set<ecs::EntId>())));
 //}
 
 Engine::NonEcsSerData::NonEcsSerData()
@@ -95,15 +93,23 @@ Engine::NonEcsSerData::NonEcsSerData(const binser::Value& bv) {
 
 	{
 		MEMB_AUTOSER_LIST_ENGINE_NON_ECS_SER_DATA(BINSER_MEMB_DESERIALIZE);
+		//#define X(name, func_map)
+		//	do { 
+		//		std::string str; 
+		//		binser::get_bv_memb(str, bv, #name, func_map); 
+		//		inv_sconcat(str, name); 
+		//	} while (0)
+		//MEMB_RNG_LIST_ENGINE_NON_ECS_SER_DATA(X)
+		//#undef X
 
-		std::string str;
-		//str = sconcat(Rng(0));
-		binser::get_bv_memb(str, bv, "_rng", std::nullopt);
-
-		//log("deserializing NonEcsSerData\n");
-		//log(str, "\n");
-		inv_sconcat(str, _rng);
-		//log(_rng, "\n");
+		//if (std::string str; true) {
+		//	binser::get_bv_memb(str, bv, "_rng", std::nullopt);
+		//	inv_sconcat(str, _rng);
+		//}
+		//if (std::string str; true) {
+		//	binser::get_bv_memb(str, bv, "_namegen_rng", std::nullopt);
+		//	inv_sconcat(str, _namegen_rng);
+		//}
 	}
 }
 
@@ -121,7 +127,8 @@ Engine::NonEcsSerData::operator binser::Value () const {
 	//	}
 	//	binser::set_bv_memb(ret, "layout_rng_arr", vec);
 	//}
-	binser::set_bv_memb(ret, "_rng", sconcat(_rng));
+	//binser::set_bv_memb(ret, "_rng", sconcat(_rng));
+	//binser::set_bv_memb(ret, "_namegen_rng", sconcat(_namegen_rng));
 
 	return ret;
 }
@@ -150,16 +157,15 @@ Engine::Engine(i32 s_argc, char** s_argv, bool do_create_or_load)
 	yes_no_menu(Menu()),
 	text_yes_no_menu(Menu()) {
 	if (_argc <= 0) {
-		err("Engine::Engine(): Eek!\n");
+		err("game_engine::Engine::Engine(): Eek!\n");
 	} else if (_argc == 1) {
 		_save_file_name = DEFAULT_SAVE_FILE_NAME;
 	} else if (_argc == 2) {
 		_save_file_name = const_cast<const char*>(_argv[1]);
 	} else {
-		err(
-			"Usage 1: ", _argv[0], "\n",
-			"Usage 2: ", _argv[0], " <save_file_name>\n"
-		);
+		err
+			("Usage 1: ", _argv[0], "\n",
+			"Usage 2: ", _argv[0], " <save_file_name>\n");
 	}
 	_curr_file_num = &ecs_engine.curr_file_num;
 	_src_file_num = &ecs_engine.src_file_num;
@@ -272,7 +278,7 @@ void Engine::deserialize(const binser::Value& bv) {
 	for (ecs::FileNum file_num=0; file_num<NUM_FILES; ++file_num) {
 		//auto& lr_arr = layout_rng_arr_fn(file_num);
 		auto& temp = non_ecs_ser_data_fn(file_num);
-		temp.seed_layout_rng_arr(layout_rng_arr_fn(file_num));
+		temp.seed_ext_rngs(layout_rng_arr_fn(file_num));
 		//temp.seed_rngs_etc(layout_rng_arr_fn(file_num));
 	}
 
@@ -532,9 +538,8 @@ void Engine::erase_file() {
 	temp = NonEcsSerData();
 	//layout_rng_arr_fn(*src_file_num()) = LayoutRngArr();
 	//temp.seed_layout_rng_arr(layout_rng_arr_fn(*src_file_num()));
-	temp.on_init_or_file_erase_seed_rngs_etc(
-		layout_rng_arr_fn(*src_file_num()), temp.base_rng_seed()
-	);
+	temp.on_init_or_file_erase_seed_rngs_etc
+		(layout_rng_arr_fn(*src_file_num()), temp.base_rng_seed());
 
 	//for (ecs::FileNum file_num=0; file_num<NUM_FILES; ++file_num) {
 	//	dbg_osprint_layout_rng_arr_fn(std::cout, file_num);

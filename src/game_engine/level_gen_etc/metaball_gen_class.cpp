@@ -34,31 +34,40 @@ MetaballGen::MetaballGen(const IntVec2& s_size_2d)
 //}
 MetaballGen::~MetaballGen() {}
 //--------
-MetaballGen& MetaballGen::add(const IntVec2& pos, float range) {
-	_ball_vec.push_back({.pos=pos, .size_2d{.x=range, .y=range}});
-	return *this;
+MetaballGen& MetaballGen::add(const FltVec2& pos, float range) {
+	//_ball_vec.push_back({.pos=pos, .size_2d{.x=range, .y=range}});
+	//return *this;
+	return add(pos, FltVec2{.x=range, .y=range});
 }
-MetaballGen& MetaballGen::add(const IntVec2& pos, const FltVec2& range) {
-	_ball_vec.push_back({.pos=pos, .size_2d=range});
+MetaballGen& MetaballGen::add(const FltVec2& pos, const FltVec2& range) {
+	//_ball_vec.push_back({.pos=pos, .size_2d=range});
+	if (_ball_umap.contains(pos)) {
+		throw std::invalid_argument(sconcat
+			("game_engine::level_gen_etc::MetaballGen::add(): ",
+			"Internal Error: ",
+			"already have a `Ball` with the `pos` ", pos));
+	}
+	_ball_umap.insert(std::pair(pos, Ball{.pos=pos, .size_2d=range}));
 	return *this;
 }
 //--------
 float MetaballGen::gen_single(const IntVec2& pos) const {
 	float ret = 0.0f;
 
-	for (const auto& ball: _ball_vec) {
-		//const FltRect2& temp_r2
-		//	{.pos=FltVec2(pos), .size_2d=FltVec2(_size_2d)};
-		//auto diff = ball.cntr_pos() - temp_r2.cntr_pos();
-		//auto diff = ball.cntr_pos()
-		//	- (FltVec2(pos) + (FltVec2(_size_2d) / 2));
-		//auto diff = ball.cntr_pos()
-		//	- (FltVec2(pos) - (FltVec2(_size_2d) / 2));
-		//auto diff = (ball.pos - pos) - (FltVec2(_size_2d) / 2);
-		auto diff = FltVec2(ball.pos) - FltVec2(pos);
-		//auto diff = ball.cntr_pos() - pos;
+	for (const auto& pair: _ball_umap) {
+		const auto& ball = pair.second;
+		auto diff = ball.pos - FltVec2(pos);
+
+		// Translate positions to the proper coordinate system (or at
+		// least, I tried to do that).
+		//const FltVec2
+		//	temp_ball_pos = FltVec2(ball.pos) - (ball.size_2d / 2.0f),
+		//	temp_pos = FltVec2(pos) - (FltVec2(_size_2d) / 2.0f);
+		//auto diff = temp_ball_pos - temp_pos;
+
 		// Try modifying the below two changes to `diff`
 		//diff.x = diff.x / ball.size_2d.x * ball.size_2d.y;
+		// Convert an ellipse to a circle
 		diff.y = (diff.y / ball.size_2d.y) * ball.size_2d.x;
 		const float
 			dist2 = (diff.x * diff.x) + (diff.y * diff.y);
@@ -73,7 +82,12 @@ float MetaballGen::gen_single(const IntVec2& pos) const {
 		//	to_add = (ball.size_2d.x + ball.size_2d.y) / dist2;
 		//ret += to_add;
 	}
-	//engine->log("MetaballGen::gen_single(): ", ret, "\n");
+	//auto print = [&]() -> void {
+	//	engine->log("MetaballGen::gen_single(): ", ret, "\n");
+	//};
+	//if (pos == IntVec2{0, 0}) {
+	//	print();
+	//}
 	return ret;
 }
 bool MetaballGen::gen_single(
@@ -95,10 +109,12 @@ FltDyna2d MetaballGen::gen() const {
 	for (pos.y=0; pos.y<_size_2d.y; ++pos.y) {
 		for (pos.x=0; pos.x<_size_2d.x; ++pos.x) {
 			//if (std::isnormal(val) && val <= threshold) {
-			//	printout("MetaballGen::gen(): val: ", val, "\n");
+			//	engine->log("MetaballGen::gen(): val: ", val, "\n");
 			//}
+			const float val = gen_single(pos);
 			ret.at(pos.y).at(pos.x)
-				= gen_single(pos);
+				= val;
+			//engine->log("MetaballGen::gen(): val: ", val, "\n");
 		}
 	}
 
@@ -117,7 +133,7 @@ BoolDyna2d MetaballGen::gen(float thresh_0, float thresh_1) const {
 	//	result(p) = value;
 	//}
 
-	//printout("MetaballGen::gen(): ", _size_2d, "\n");
+	//engine->log("MetaballGen::gen(): ", _size_2d, "\n");
 	//GenDyna2d ret(_size_2d.y, GenDynarr(_size_2d.x, 0.0f));
 	BoolDyna2d ret(_size_2d.y, BoolDynarr(_size_2d.x, 0));
 	//printout("{", ret.size(), " ", ret.front().size(), "}\n");
@@ -126,7 +142,7 @@ BoolDyna2d MetaballGen::gen(float thresh_0, float thresh_1) const {
 	for (pos.y=0; pos.y<_size_2d.y; ++pos.y) {
 		for (pos.x=0; pos.x<_size_2d.x; ++pos.x) {
 			//if (std::isnormal(val) && val <= threshold) {
-			//	printout("MetaballGen::gen(): val: ", val, "\n");
+			//	engine->log("MetaballGen::gen(): val: ", val, "\n");
 			//}
 			ret.at(pos.y).at(pos.x)
 				= gen_single(pos, thresh_0, thresh_1);

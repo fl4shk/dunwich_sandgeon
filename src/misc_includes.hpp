@@ -76,6 +76,7 @@ namespace ecs = liborangepower::game::ecs;
 #include <cstring>
 #include <cmath>
 
+#include <algorithm>
 #include <initializer_list>
 #include <fstream>
 #include <deque>
@@ -91,5 +92,6 @@ namespace ecs = liborangepower::game::ecs;
 #include <concepts>
 
 #include <pcg_random.hpp>
+//#include <random>
 
 #endif		// src_misc_includes_hpp

@@ -24,44 +24,6 @@ namespace dunwich_sandgeon {
 namespace game_engine {
 namespace level_gen_etc {
 //--------
-//const std::unordered_map<BgTile, std::string>& bg_tile_str_map() {
-//	//--------
-//	static const std::unordered_map<BgTile, std::string>
-//		BG_TILE_STR_MAP = {
-//		//{Tile::Wall, "TileWall"},
-//		//{Tile::Floor, "TileFloor"},
-//		//{Tile::UpStairs, "TileUpStairs"},
-//		//{Tile::DownStairs, "TileDownStairs"},
-//
-//		//{Tile::Door, "TileDoor"},
-//		//{Tile::Pit, "TilePit"},
-//		//{Tile::Water, "TileWater"},
-//		//{Tile::Spikes, "TileSpikes"},
-//		#define X(name) { BgTile:: name, "BgTile" #name },
-//		LIST_OF_BG_TILE(X)
-//		#undef X
-//	};
-//	//--------
-//	return BG_TILE_STR_MAP;
-//	//--------
-//}
-//--------
-const BgTileUset
-	BASIC_NO_PASS_BG_TILE_USET = {
-		BgTile::Blank,
-		BgTile::Error,
-		BgTile::Wall,
-		BgTile::Spikes,
-		BgTile::Pit,
-		BgTile::Lava,
-	},
-	BASIC_UNSAFE_BG_TILE_USET = {
-		BgTile::Spikes,
-		BgTile::Pit,
-		BgTile::Lava,
-	};
-//--------
-//--------
 const std::string
 	FloorLayout::KIND_STR("FloorLayout");
 
@@ -168,8 +130,8 @@ std::optional<BgTile> FloorLayout::bg_tile_at(
 		}
 	} else { // if (!in_border)
 		//if (!rp.door_pt_uset.contains(pos)) {
-		//	if (rp.biome_terrain_umap.contains(pos)) {
-		//		bg_tile = rp.biome_terrain_umap.at(pos);
+		//	if (rp.alt_terrain_umap.contains(pos)) {
+		//		bg_tile = rp.alt_terrain_umap.at(pos);
 		//	} else {
 		//		bg_tile
 		//			= rp.is_path()
@@ -189,14 +151,17 @@ const {
 	//if (!PFIELD_PHYS_RECT2.arg_inside(pos)) {
 	//	return std::nullopt;
 	//}
+	//if (!PFIELD_PHYS_NO_BRDR_RECT2.intersect(pos)) {
+	//	return std::nullopt;
+	//}
 	const auto& neighbors = cg_neighbors(pos);
 
 	for (auto& neighbor: neighbors) {
 		if (neighbor->bbox().intersect(pos)) {
 			RoomPath& rp = *static_cast<RoomPath*>(neighbor);
 
-			if (rp.biome_terrain_umap.contains(pos)) {
-				return rp.biome_terrain_umap.at(pos);
+			if (rp.alt_terrain_umap.contains(pos)) {
+				return rp.alt_terrain_umap.at(pos);
 			} else {
 				if (!rp.door_pt_uset.contains(pos)) {
 					return

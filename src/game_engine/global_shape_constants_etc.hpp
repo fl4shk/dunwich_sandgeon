@@ -220,6 +220,59 @@ constexpr inline IntRect2 r2_bottom_side_1ge_past_in_pfnb(
 }
 //--------
 static constexpr IntVec2
+	LEFT_OFFSET = {-1, 0},
+	TOP_OFFSET = {0, -1},
+	RIGHT_OFFSET = {1, 0},
+	BOTTOM_OFFSET = {0, 1};
+//--------
+enum class PathDir: i32 {
+	Left,
+	Top,
+	Right,
+	Bottom,
+};
+constexpr inline std::string to_string(PathDir dir) {
+	switch (dir) {
+	//--------
+	case PathDir::Left:
+		return "PathDir::Left";
+	case PathDir::Top:
+		return "PathDir::Top";
+	case PathDir::Right:
+		return "PathDir::Right";
+	case PathDir::Bottom:
+		return "PathDir::Bottom";
+	default:
+		throw std::invalid_argument(sconcat
+			("game_engine::level_gen_etc::operator ",
+			"std::string (PathDir): ",
+			"Internal Error: invalid `dir` of ", i32(dir)));
+	//--------
+	}
+}
+constexpr inline IntVec2 path_dir_to_side_pos(
+	const IntVec2& pos, PathDir dir
+) {
+	switch (dir) {
+	//--------
+	case PathDir::Left:
+		return pos + LEFT_OFFSET;
+	case PathDir::Top:
+		return pos + TOP_OFFSET;
+	case PathDir::Right:
+		return pos + RIGHT_OFFSET;
+	case PathDir::Bottom:
+		return pos + BOTTOM_OFFSET;
+	default:
+		throw std::invalid_argument(sconcat
+			("game_engine::level_gen_etc::path_dir_to_side_pos(): ",
+			"Internal Error: ",
+			"invalid `dir`: ", i32(dir)));
+	//--------
+	}
+}
+//--------
+static constexpr IntVec2
 	LOG_WINDOW_POS{.x=0, .y=PFIELD_WINDOW_END_POS.y},
 	//LOG_WINDOW_POS{.x=0, .y=PFIELD_WINDOW_SIZE_2D.y},
 	LOG_WINDOW_END_POS

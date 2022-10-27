@@ -30,6 +30,7 @@
 #include "level_gen_etc/floor_layout_class.hpp"
 #include "level_gen_etc/dungeon_gen_class.hpp"
 //#include "metaball_gen_class.hpp"
+#include "namegen.hpp"
 
 namespace dunwich_sandgeon {
 namespace game_engine {
@@ -83,6 +84,7 @@ concept EngineErrWhenEntNullIdObj = requires(ObjT obj) {
 };
 
 class Engine final {
+	friend class NameGen::Random;
 public:		// constants
 	// These are basement floors, going from B1F down to B25F
 	static constexpr i32
@@ -128,6 +130,7 @@ public:		// types
 	using LayoutRngA2d = std::array<LayoutRngArr, NUM_FILES>;
 public:		// types
 	class NonEcsSerData final {
+		friend class NameGen::Random;
 		friend class Engine;
 	public:		// variables
 		#define MEMB_AUTOSER_LIST_ENGINE_NON_ECS_SER_DATA(X) \
@@ -139,7 +142,11 @@ public:		// types
 			X(floor, std::nullopt) \
 			X(pfield_ent_id_map, std::nullopt) \
 			\
-			X(_base_rng_seed, std::nullopt)
+			X(_base_rng_seed, std::nullopt) \
+
+		#define MEMB_RNG_LIST_ENGINE_NON_ECS_SER_DATA(X) \
+			X(_rng, std::nullopt) \
+			/* X(_namegen_rng, std::nullopt) */ \
 
 		bool did_init_save_file = false;
 
@@ -158,7 +165,10 @@ public:		// types
 		u64 _base_rng_seed = 0;
 		// The RNG to use for tasks other than initial floor layout
 		// generation
-		Rng _rng;
+		Rng
+			_rng;
+		//pcg32
+		//	_namegen_rng;
 	//private:		// static functions
 	//	static decltype(pfield_ent_id_v3d)
 	//		_gen_blank_pfield_ent_id_v3d();
@@ -170,13 +180,14 @@ public:		// types
 
 		operator binser::Value () const;
 
-		inline i32 seed_layout_rng_arr(LayoutRngArr& layout_rng_arr)
-			const {
+		inline i32 seed_ext_rngs(LayoutRngArr& layout_rng_arr) {
 			i32 i;
 			for (i=0; i<i32(layout_rng_arr.size()); ++i) {
 				//layout_rng_arr.at(i).seed(_base_rng_seed + i);
 				layout_rng_arr.at(i) = Rng(_base_rng_seed + i);
 			}
+			//_namegen_rng = pcg32(_base_rng_seed + i);
+			//++i;
 			return i;
 		}
 		//inline void seed_rngs_etc(LayoutRngArr& layout_rng_arr) {
@@ -199,7 +210,7 @@ public:		// types
 			//_init_base_rng_seed();
 			_dbg_init_base_rng_seed(s_base_rng_seed);
 
-			const i32 i = seed_layout_rng_arr(layout_rng_arr);
+			const i32 i = seed_ext_rngs(layout_rng_arr);
 
 			_rng = Rng(_base_rng_seed + i);
 		}
@@ -371,6 +382,9 @@ public:		// functions
 	) {
 		_log_backend(sconcat(args...));
 	}
+	//inline void log(const std::stringstream& sstm) {
+	//	log(sstm.str());
+	//}
 
 	//void dbg_check_ecs_engine(const IntVec2& wb_pos=IntVec2(0, 0));
 

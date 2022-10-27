@@ -30,13 +30,14 @@ namespace level_gen_etc {
 //--------
 // Breadth-first search
 using BfsAtFunc = std::function<bool(
-	const IntVec2Uset&, const IntVec2&
+	const IntVec2Uset&, // explored_uset
+	const IntVec2& // pos
 )>;
 using BfsVoidAtFunc = std::function<void(
-	const IntVec2Uset&, const IntVec2&
+	const IntVec2Uset&, // explored_uset
+	const IntVec2& // pos
 )>;
 
-// This function returns the 
 void bfs_fill(
 	IntVec2Uset& explored_uset, const IntVec2& start_pos,
 	const BfsAtFunc& edge_exists_func, const BfsVoidAtFunc& fill_func
@@ -48,6 +49,7 @@ inline void bfs_fill(
 	IntVec2Uset explored_uset;
 	bfs_fill(explored_uset, start_pos, edge_exists_func, fill_func);
 }
+// Whether or not two positions are reachable
 bool bfs_reachable(
 	IntVec2Uset& explored_uset,
 	const IntVec2& start_pos, const IntVec2& end_pos,

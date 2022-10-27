@@ -24,102 +24,15 @@
 //#include "../shape_classes.hpp"
 #include "../w_bbox_base_classes.hpp"
 #include "../global_shape_constants_etc.hpp"
+//#include "path_class.hpp"
 //#include "../comp/general_comp_classes.hpp"
+#include "bg_tile_enum.hpp"
 
 namespace dunwich_sandgeon {
 namespace game_engine {
 namespace level_gen_etc {
 //--------
 class DungeonGen;
-//--------
-#define LIST_OF_BIOME_TERRAIN_BG_TILES(X) \
-	X(Water) \
-	X(Lava) \
-	X(Pit) \
-
-#define LIST_OF_BG_TILES(X) \
-	X(Blank) \
-	X(Error) \
-	\
-	X(Wall) \
-	X(Door) \
-	\
-	X(RoomFloor) \
-	X(PathFloor) \
-	X(Spikes) \
-	/* X(Floor) */ \
-	LIST_OF_BIOME_TERRAIN_BG_TILES(X) \
-	\
-	X(UpStairs) \
-	X(DownStairs) \
-
-enum class BgTile: u8 {
-	#define X(name) \
-		name ,
-	LIST_OF_BG_TILES(X)
-	#undef X
-};
-
-using BgTileUset = std::unordered_set<BgTile>;
-extern const BgTileUset
-	BASIC_NO_PASS_BG_TILE_USET,
-	BASIC_UNSAFE_BG_TILE_USET;
-	//PLAYER_UNSAFE_BG_TILE_USET;
-//inline bool bg_tile_is_player_unsafe(BgTile bg_tile) {
-//	//return (bg_tile == BgTile::Pit
-//	//	|| bg_tile == BgTile::Lava
-//	//	|| bg_tile == BgTile::Spikes);
-//	return PLAYER_UNSAFE_BG_TILE_USET.contains(bg_tile);
-//}
-
-//extern const std::unordered_map<BgTile, std::string>& bg_tile_str_map();
-constexpr inline std::string bg_tile_str_map_at(BgTile bg_tile) {
-	switch (bg_tile) {
-		#define X(name) \
-			case BgTile:: name : \
-				return "game_engine::level_gen_etc::BgTile::" #name ; \
-				break;
-		LIST_OF_BG_TILES(X)
-		#undef X
-
-		default:
-			throw std::invalid_argument(sconcat(
-				"game_engine::level_gen_etc::bg_tile_str_map_at(): Error: "
-				"Invalid `bg_tile`: ", i32(bg_tile)
-			));
-			return "";
-			break;
-	}
-}
-
-using SizeAndBgTile = std::pair<size_t, BgTile>;
-
-template<typename T>
-concept IsBuildBgTileVecArg
-	= (std::same_as<T, level_gen_etc::BgTile>
-	|| std::same_as<T, SizeAndBgTile>);
-
-constexpr inline void _build_bg_tile_vec_backend(
-	std::vector<BgTile>& ret, BgTile first_arg
-) {
-	ret.push_back(first_arg);
-}
-constexpr inline void _build_bg_tile_vec_backend(
-	std::vector<BgTile>& ret, const SizeAndBgTile& first_arg
-) {
-	for (size_t i=0; i<first_arg.first; ++i) {
-		ret.push_back(first_arg.second);
-	}
-}
-constexpr inline std::vector<BgTile> build_bg_tile_vec(
-	const IsBuildBgTileVecArg auto&... args
-) {
-	std::vector<BgTile> ret;
-
-	(_build_bg_tile_vec_backend(ret, args), ...);
-
-	return ret;
-}
 //--------
 // The dungeon while it's either being generated has finished generating.
 // As I don't think I'll be including breakable walls, in this game, this
@@ -206,7 +119,7 @@ public:		// types
 	public:		// variables
 		#define MEMB_LIST_COMP_DUNGEON_ROOM_PATH(X) \
 			/* X(rect, std::nullopt) */ \
-			/* X(alt_terrain_map, std::nullopt) */ \
+			/* X(alt_terrain_umap, std::nullopt) */ \
 			/* X(conn_index_set, std::nullopt) */ \
 			/* X(door_pt_set, std::nullopt) */ \
 
@@ -218,7 +131,7 @@ public:		// types
 		//class Xdata final {
 		//public:		// variables
 			i32 gen_side = 0;
-			std::unordered_map<IntVec2, BgTile> biome_terrain_umap;
+			std::unordered_map<IntVec2, BgTile> alt_terrain_umap;
 
 			std::unordered_set<i32> conn_index_uset;
 
@@ -247,12 +160,12 @@ public:		// types
 			return rect;
 		}
 		//--------
-		//inline std::unordered_map<IntVec2, BgTile>& biome_terrain_umap() {
-		//	return xdata.biome_terrain_umap;
+		//inline std::unordered_map<IntVec2, BgTile>& alt_terrain_umap() {
+		//	return xdata.alt_terrain_umap;
 		//}
 		//inline const std::unordered_map<IntVec2, BgTile>&
-		//biome_terrain_umap() const {
-		//	return xdata.biome_terrain_umap;
+		//alt_terrain_umap() const {
+		//	return xdata.alt_terrain_umap;
 		//}
 		//inline std::unordered_set<i32>& conn_index_uset() {
 		//	return xdata.conn_index_uset;
@@ -335,6 +248,22 @@ public:		// functions
 	//--------
 	std::optional<BgTile> bg_tile_at(const IntVec2& pos, size_t i) const;
 	std::optional<BgTile> phys_bg_tile_at(const IntVec2& pos) const;
+	inline std::optional<BgTile> left_phys_bg_tile_at(const IntVec2& pos)
+	const {
+		return phys_bg_tile_at(pos + LEFT_OFFSET);
+	}
+	inline std::optional<BgTile> top_phys_bg_tile_at(const IntVec2& pos)
+	const {
+		return phys_bg_tile_at(pos + TOP_OFFSET);
+	}
+	inline std::optional<BgTile> right_phys_bg_tile_at(const IntVec2& pos)
+	const {
+		return phys_bg_tile_at(pos + RIGHT_OFFSET);
+	}
+	inline std::optional<BgTile> bottom_phys_bg_tile_at(const IntVec2& pos)
+	const {
+		return phys_bg_tile_at(pos + BOTTOM_OFFSET);
+	}
 	//--------
 	inline auto begin() {
 		//return _rp_data.data.begin();

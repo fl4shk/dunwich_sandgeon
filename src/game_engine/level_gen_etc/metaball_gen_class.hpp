@@ -32,13 +32,13 @@ class MetaballGen final {
 public:		// types
 	class Ball final {
 	public:		// variables
-		IntVec2 pos;
+		FltVec2 pos;
 		FltVec2 size_2d;
 	};
 private:		// variables
 	IntVec2 _size_2d = PFIELD_PHYS_SIZE_2D;
 	//IntRect2 _bounds = PFIELD_PHYS_RECT2;
-	std::vector<Ball> _ball_vec;
+	std::unordered_map<FltVec2, Ball> _ball_umap;
 public:		// functions
 	MetaballGen();
 	MetaballGen(const IntVec2& s_size_2d);
@@ -46,8 +46,8 @@ public:		// functions
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(MetaballGen);
 	~MetaballGen();
 
-	MetaballGen& add(const IntVec2& pos, float range);
-	MetaballGen& add(const IntVec2& pos, const FltVec2& range);
+	MetaballGen& add(const FltVec2& pos, float range);
+	MetaballGen& add(const FltVec2& pos, const FltVec2& range);
 	
 	float gen_single(const IntVec2& pos) const;
 	bool gen_single(
@@ -58,7 +58,7 @@ public:		// functions
 
 	GEN_GETTER_BY_CON_REF(size_2d);
 	//GEN_GETTER_BY_CON_REF(bounds);
-	GEN_GETTER_BY_CON_REF(ball_vec);
+	GEN_GETTER_BY_CON_REF(ball_umap);
 };
 //--------
 } // namespace level_gen_etc

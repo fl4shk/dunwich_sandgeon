@@ -102,14 +102,14 @@ public:		// types
 	//--------
 public:		// constants
 	static constexpr BgTile
-		BIOME_TERRAIN_NONE = BgTile::Error;
+		ALT_TERRAIN_NONE = BgTile::Error;
 	static const std::vector<std::vector<BgTile>>
-		ALLOWED_BIOME_TERRAIN_V2D;
-		//LEVEL_1_BIOME_TERRAIN_VEC,
-		//LEVEL_2_BIOME_TERRAIN_VEC,
-		//LEVEL_3_BIOME_TERRAIN_VEC,
-		//LEVEL_4_BIOME_TERRAIN_VEC,
-		//LEVEL_5_BIOME_TERRAIN_VEC;
+		ALLOWED_ALT_TERRAIN_V2D;
+		//LEVEL_1_ALT_TERRAIN_VEC,
+		//LEVEL_2_ALT_TERRAIN_VEC,
+		//LEVEL_3_ALT_TERRAIN_VEC,
+		//LEVEL_4_ALT_TERRAIN_VEC,
+		//LEVEL_5_ALT_TERRAIN_VEC;
 	//--------
 public:		// constants
 	//--------
@@ -127,11 +127,8 @@ public:		// constants
 		ROOM_MAX_SIZE_2D = FloorLayout::ROOM_MAX_SIZE_2D;
 	//--------
 	static constexpr i32
+		//--------
 		// Generation percentages and stuff. 
-		//PATH_THRESH_MIN = 0,
-		//PATH_THRESH_MAX = 0,
-		//ROOM_THRESH_MIN = 1,
-		//ROOM_THRESH_MAX = 1,
 		//--------
 		GEN_TYPE_PATH = 0, MIN_GEN_TYPE = GEN_TYPE_PATH,
 		GEN_TYPE_ROOM = 1, MAX_GEN_TYPE = GEN_TYPE_ROOM,
@@ -187,8 +184,10 @@ public:		// constants
 			= 2.0f,
 			//= 4.0f,
 		MAX_GEN_BIOME_THRESH_0
-			//= 4.0f,
-			= 6.0f,
+			//= 1.0f,
+			//= 2.0f,
+			= 4.0f,
+			//= 6.0f,
 			//= 8.0f,
 		GEN_BIOME_THRESH_MM_SCALE = 1000.0f;
 	//static constexpr i32
@@ -201,31 +200,39 @@ public:		// constants
 		GEN_BIOME_MBALL_MIN_AMOUNT
 			//= 2,
 			//= 3,
-			= 4,
+			//= 4,
+			//= 7,
+			//= 10,
+			= 15,
+			//= 35,
 		GEN_BIOME_MBALL_MAX_AMOUNT
 			//= 4;
 			//= 5;
 			//= 7;
 			//= 8;
 			//= 10;
-			= 12;
+			//= 12;
 			//= 13;
+			//= 15;
 			//= 20;
+			= 25;
+			//= 35;
 	static constexpr IntVec2
 		GEN_BIOME_MBALL_MIN_SIZE_2D
 			//= {1, 1},
+			= {2, 2},
 			//= {3, 3},
-			= {4, 4},
+			//= {4, 4},
 			//= {5, 5},
 			//= {6, 6},
 			//= {7, 7},
 		GEN_BIOME_MBALL_MAX_SIZE_2D
 			//= {3, 3},
-			//= {5, 5},
+			= {5, 5},
 			//= {6, 6},
 			//= {7, 7},
 			//= {8, 8},
-			= {9, 9},
+			//= {9, 9},
 			//= {10, 10},
 			//= {15, 15},
 		GEN_BIOME_MBALL_GEN_MIN_SIZE_2D
@@ -499,7 +506,7 @@ private:		// types
 	private:		// functions
 		//--------
 		void _remove_dead_end_paths() const;
-		void _insert_biome_terrain(
+		void _insert_alt_terrain(
 			//bool do_clear
 		) const;
 		//--------

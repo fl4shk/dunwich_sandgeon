@@ -16,6 +16,8 @@
 // with Dunwich Sandgeon.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "bfs_funcs.hpp"
+#include "path_class.hpp"
+#include "../global_shape_constants_etc.hpp"
 
 namespace dunwich_sandgeon {
 namespace game_engine {
@@ -46,10 +48,10 @@ void bfs_fill(
 				}
 			}
 		};
-		maybe_add({-1, 0}); // left
-		maybe_add({0, -1}); // top
-		maybe_add({1, 0}); // right
-		maybe_add({0, 1}); // bottom
+		maybe_add(LEFT_OFFSET);
+		maybe_add(TOP_OFFSET);
+		maybe_add(RIGHT_OFFSET);
+		maybe_add(BOTTOM_OFFSET);
 	}
 }
 bool bfs_reachable(
@@ -79,16 +81,16 @@ bool bfs_reachable(
 			}
 			return false;
 		};
-		if (maybe_add({-1, 0})) { // left
+		if (maybe_add(LEFT_OFFSET)) {
 			return true;
 		}
-		if (maybe_add({0, -1})) { // top
+		if (maybe_add(TOP_OFFSET)) {
 			return true;
 		}
-		if (maybe_add({1, 0})) { // right
+		if (maybe_add(RIGHT_OFFSET)) {
 			return true;
 		}
-		if (maybe_add({0, 1})) {// bottom
+		if (maybe_add(BOTTOM_OFFSET)) {
 			return true;
 		}
 	}
