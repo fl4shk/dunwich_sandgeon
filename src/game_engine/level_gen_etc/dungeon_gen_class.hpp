@@ -115,7 +115,8 @@ public:		// constants
 	//--------
 	static constexpr i32
 		MIN_NUM_ROOM_PATHS = FloorLayout::MIN_NUM_ROOM_PATHS,
-		MAX_NUM_ROOM_PATHS = FloorLayout::MAX_NUM_ROOM_PATHS;
+		MAX_NUM_ROOM_PATHS = FloorLayout::MAX_NUM_ROOM_PATHS,
+		MIN_NUM_ROOMS = FloorLayout::MIN_NUM_ROOMS;
 	//--------
 	static constexpr i32
 		PATH_THICKNESS = FloorLayout::PATH_THICKNESS,
@@ -348,6 +349,8 @@ public:		// constants
 			//= 20;
 			//= 50;
 			= 100;
+		//GEN_EXITS_LIM_TRIES
+		//	= 350;
 	//--------
 private:		// variables
 	i32
@@ -434,7 +437,7 @@ private:		// types
 			RoomPath& some_rp
 			//, const std::optional<size_t>& index
 		);
-		void _connect(
+		void _connect_by_extending(
 			//bool was_horiz_path, bool was_vert_path,
 			//RoomPath& some_rp, //const std::optional<size_t>& index,
 			//const std::function<bool(
@@ -506,6 +509,7 @@ private:		// types
 	private:		// functions
 		//--------
 		void _remove_dead_end_paths() const;
+		void _insert_exits() const;
 		void _insert_alt_terrain(
 			//bool do_clear
 		) const;

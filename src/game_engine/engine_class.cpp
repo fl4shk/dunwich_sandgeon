@@ -93,14 +93,14 @@ Engine::NonEcsSerData::NonEcsSerData(const binser::Value& bv) {
 
 	{
 		MEMB_AUTOSER_LIST_ENGINE_NON_ECS_SER_DATA(BINSER_MEMB_DESERIALIZE);
-		//#define X(name, func_map)
-		//	do { 
-		//		std::string str; 
-		//		binser::get_bv_memb(str, bv, #name, func_map); 
-		//		inv_sconcat(str, name); 
-		//	} while (0)
-		//MEMB_RNG_LIST_ENGINE_NON_ECS_SER_DATA(X)
-		//#undef X
+		#define X(name, func_map) \
+			do {  \
+				std::string str;  \
+				binser::get_bv_memb(str, bv, #name, func_map);  \
+				inv_sconcat(str, name);  \
+			} while (0);
+		MEMB_RNG_LIST_ENGINE_NON_ECS_SER_DATA(X);
+		#undef X
 
 		//if (std::string str; true) {
 		//	binser::get_bv_memb(str, bv, "_rng", std::nullopt);
@@ -129,6 +129,10 @@ Engine::NonEcsSerData::operator binser::Value () const {
 	//}
 	//binser::set_bv_memb(ret, "_rng", sconcat(_rng));
 	//binser::set_bv_memb(ret, "_namegen_rng", sconcat(_namegen_rng));
+	#define X(name, func_map) \
+		binser::set_bv_memb(ret, #name , sconcat( name ));
+	MEMB_RNG_LIST_ENGINE_NON_ECS_SER_DATA(X);
+	#undef X
 
 	return ret;
 }

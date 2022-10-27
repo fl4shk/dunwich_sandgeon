@@ -61,7 +61,10 @@ public:		// constants
 			//= 8;
 			//= 15;
 			//= 42;
-			= 64;
+			= 64,
+		MIN_NUM_ROOMS
+			= 5;
+			//= 7;
 
 		//MIN_NUM_PATHS = 1,
 		//MAX_NUM_PATHS = 64;
@@ -126,6 +129,14 @@ public:		// types
 		IntRect2 rect
 			{.pos=IntVec2(),
 			.size_2d{.x=PATH_THICKNESS, .y=PATH_MIN_LEN}};
+
+		std::optional<IntVec2>
+			// where the player and other entities start from when entering
+			// this floor from above
+			ustairs_pos = std::nullopt,
+			dstairs_pos = std::nullopt;
+			//ustairs_pos = std::nullopt;
+
 		i32 id = -1;
 
 		//class Xdata final {
@@ -228,7 +239,6 @@ private:		// variables
 		/* X(_layout_noise_pos_scale, std::nullopt) */ \
 		/* X(_layout_noise_pos_offset, std::nullopt) */ \
 
-
 	std::vector<RoomPathSptr> _rp_data;
 	std::unordered_map<RoomPath*, size_t> _rp_to_index_umap;
 	CollGridT _coll_grid;
@@ -248,22 +258,22 @@ public:		// functions
 	//--------
 	std::optional<BgTile> bg_tile_at(const IntVec2& pos, size_t i) const;
 	std::optional<BgTile> phys_bg_tile_at(const IntVec2& pos) const;
-	inline std::optional<BgTile> left_phys_bg_tile_at(const IntVec2& pos)
-	const {
-		return phys_bg_tile_at(pos + LEFT_OFFSET);
-	}
-	inline std::optional<BgTile> top_phys_bg_tile_at(const IntVec2& pos)
-	const {
-		return phys_bg_tile_at(pos + TOP_OFFSET);
-	}
-	inline std::optional<BgTile> right_phys_bg_tile_at(const IntVec2& pos)
-	const {
-		return phys_bg_tile_at(pos + RIGHT_OFFSET);
-	}
-	inline std::optional<BgTile> bottom_phys_bg_tile_at(const IntVec2& pos)
-	const {
-		return phys_bg_tile_at(pos + BOTTOM_OFFSET);
-	}
+	//inline std::optional<BgTile> left_phys_bg_tile_at(const IntVec2& pos)
+	//const {
+	//	return phys_bg_tile_at(pos + LEFT_OFFSET);
+	//}
+	//inline std::optional<BgTile> top_phys_bg_tile_at(const IntVec2& pos)
+	//const {
+	//	return phys_bg_tile_at(pos + TOP_OFFSET);
+	//}
+	//inline std::optional<BgTile> right_phys_bg_tile_at(const IntVec2& pos)
+	//const {
+	//	return phys_bg_tile_at(pos + RIGHT_OFFSET);
+	//}
+	//inline std::optional<BgTile> bottom_phys_bg_tile_at(const IntVec2& pos)
+	//const {
+	//	return phys_bg_tile_at(pos + BOTTOM_OFFSET);
+	//}
 	//--------
 	inline auto begin() {
 		//return _rp_data.data.begin();
@@ -286,6 +296,7 @@ private:		// functions
 		//return _rp_data.data.at(index);
 		return *_rp_data.at(index);
 	}
+	//RoomPath& _raw_phys_at(const IntVec2& phys_pos);
 public:		// functions
 	//inline RoomPath& at(size_t index) {
 	//	//return _rp_data.data.at(index);
@@ -295,6 +306,8 @@ public:		// functions
 		//return _rp_data.data.at(index);
 		return *_rp_data.at(index);
 	}
+	std::optional<size_t> phys_pos_to_rp_index(const IntVec2& phys_pos)
+	const;
 	//inline RoomPath::Xdata& xdata_at(size_t index) {
 	//	return _rp_data.at(index)->xdata;
 	//}

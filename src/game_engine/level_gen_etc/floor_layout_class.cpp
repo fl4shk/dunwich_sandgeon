@@ -19,6 +19,7 @@
 #include "floor_layout_class.hpp"
 #include "../engine_class.hpp"
 #include "../global_shape_constants_etc.hpp"
+#include "../engine_class.hpp"
 
 namespace dunwich_sandgeon {
 namespace game_engine {
@@ -162,21 +163,38 @@ const {
 
 			if (rp.alt_terrain_umap.contains(pos)) {
 				return rp.alt_terrain_umap.at(pos);
+			} else if (rp.ustairs_pos && *rp.ustairs_pos == pos) {
+				return BgTile::UpStairs;
+			} else if (rp.dstairs_pos && *rp.dstairs_pos == pos) {
+				return BgTile::DownStairs;
+			} else if (rp.door_pt_uset.contains(pos)) {
+				return BgTile::Door;
 			} else {
-				if (!rp.door_pt_uset.contains(pos)) {
-					return
-						rp.is_path()
-						? BgTile::PathFloor
-						: BgTile::RoomFloor;
-				} else {
-					return BgTile::Door;
-				}
+				return
+					rp.is_path()
+					? BgTile::PathFloor
+					: BgTile::RoomFloor;
 			}
 		}
 	}
 	return std::nullopt;
 }
 //--------
+std::optional<size_t> FloorLayout::phys_pos_to_rp_index(
+	const IntVec2& phys_pos
+) const {
+	//if (!PFIELD_PHYS_NO_BRDR_RECT2.intersect(phys_pos)) {
+	//	return std::nullopt;
+	//}
+	const auto& neighbors = cg_neighbors(phys_pos);
+
+	for (auto& neighbor: neighbors) {
+		if (neighbor->bbox().intersect(phys_pos)) {
+			return rp_to_index_umap().at(static_cast<RoomPath*>(neighbor));
+		}
+	}
+	return std::nullopt;
+}
 void FloorLayout::push_back(RoomPath&& to_push) {
 	if (size() + size_t(1) > MAX_NUM_ROOM_PATHS) {
 		throw std::length_error(sconcat

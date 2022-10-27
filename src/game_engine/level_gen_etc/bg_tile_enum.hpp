@@ -30,6 +30,7 @@ namespace level_gen_etc {
 	X(Water) \
 	X(Lava) \
 	X(Pit) \
+	X(Spikes) \
 
 #define LIST_OF_BG_TILES(X) \
 	X(Blank) \
@@ -40,7 +41,6 @@ namespace level_gen_etc {
 	\
 	X(RoomFloor) \
 	X(PathFloor) \
-	X(Spikes) \
 	/* X(Floor) */ \
 	LIST_OF_ALT_TERRAIN_BG_TILES(X) \
 	\

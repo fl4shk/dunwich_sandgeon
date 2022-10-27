@@ -125,6 +125,16 @@ void DungeonGen::gen_curr_floor() {
 //}
 bool DungeonGen::GenInnards::gen_single_rp() {
 	//--------
+	auto redo = [this]() -> void {
+		engine->log
+			("Debug: game_engine::level_gen_etc::DungeonGen::GenInnards"
+			"::gen_single_rp(): ",
+			"Redoing generation\n");
+		_self->clear(
+			//_ecs_engine
+		);
+	};
+	//--------
 	const bool old_done_generating = _self->_done_generating;
 	//--------
 	if (_self->floor_layout().size() == 0) {
@@ -192,12 +202,7 @@ bool DungeonGen::GenInnards::gen_single_rp() {
 			//_self->_stop_gen_early = tries >= GEN_RP_LIM_TRIES;
 			if (_self->_stop_gen_early) {
 				if (_self->floor_layout().size() < MIN_NUM_ROOM_PATHS) {
-					engine->log
-						("Debug: game_engine::sys::gen_single_rp(): ",
-						"Redoing generation\n");
-					_self->clear(
-						//_ecs_engine
-					);
+					redo();
 				} else {
 					// If we failed to find a room that fits in the
 					// playfield, we stop floor generation early, and don't
@@ -218,6 +223,23 @@ bool DungeonGen::GenInnards::gen_single_rp() {
 		= _self->_stop_gen_early
 			|| i32(_self->floor_layout().size())
 				>= _self->_attempted_num_rp;
+	if (_self->_done_generating) {
+		i32 num_rooms = 0;
+		for (size_t i=0; i<_self->_floor_layout.size(); ++i) {
+			if (_self->_floor_layout.at(i).is_room()) {
+				++num_rooms;
+			}
+		}
+		if (num_rooms < MIN_NUM_ROOMS) {
+			engine->log
+				("Debug: game_engine::level_gen_etc::DungeonGen",
+				"::GenInnards::gen_single_rp(): ",
+				"Didn't generate enough rooms. ",
+				"Generated ", num_rooms, " rooms, but need at least ",
+				MIN_NUM_ROOMS, ".\n");
+			redo();
+		}
+	}
 	if (!old_done_generating && _self->_done_generating) {
 		engine->log
 			("Just finished generating the dungeon's basic shape.\n");
@@ -299,7 +321,7 @@ auto DungeonGen::GenInnards::_inner_gen_post_first()
 	//	return std::nullopt;
 	//}
 
-	_connect();
+	_connect_by_extending();
 	//--------
 	//_temp_to_push_rp.conn_index_uset.insert(conn_rp_index);
 	//conn_rp.conn_index_uset.insert(_self->floor_layout().size());
@@ -785,7 +807,7 @@ bool DungeonGen::GenInnards::_basic_shrink_extra_test_func(
 		&& _rp_is_connected(some_rp)
 		);
 }
-void DungeonGen::GenInnards::_connect(
+void DungeonGen::GenInnards::_connect_by_extending(
 	//bool was_horiz_path, bool was_vert_path,
 	//RoomPath& some_rp, //const std::optional<size_t>& index,
 	//const std::function<bool(
@@ -875,7 +897,7 @@ void DungeonGen::GenInnards::_connect(
 			break;
 		default:
 			throw std::runtime_error(sconcat
-				("game_engine::sys::DungeonGen::_connect(): ",
+				("game_engine::sys::DungeonGen::_connect_by_extending(): ",
 				"`switch (temp_side)`: Eek! `", temp_side, "`"));
 			break;
 		//--------
@@ -1157,6 +1179,7 @@ void DungeonGen::GenInnards::finalize(
 	//	}
 	//}
 	_remove_dead_end_paths();
+	_insert_exits();
 	_insert_alt_terrain();
 }
 void DungeonGen::GenInnards::_remove_dead_end_paths() const {
@@ -1206,6 +1229,78 @@ void DungeonGen::GenInnards::_remove_dead_end_paths() const {
 		) {
 			break;
 		}
+	}
+}
+void DungeonGen::GenInnards::_insert_exits() const {
+	auto inner_insert = [this](bool up) -> void {
+		//for (i32 tries=0; tries<GEN_EXITS_LIM_TRIES; ++tries)
+		for (;;) {
+			RoomPath& rp = _self->_floor_layout._raw_at
+				(engine->layout_rand_lt_bound<i32>
+					(_self->_floor_layout.size()));
+			
+			if (rp.is_room()) {
+				const IntVec2 stairs_pos
+					= engine->layout_rand_vec2(rp.rect);
+
+				bool did_intersect = false;
+
+				for (const auto& conn_index: rp.conn_index_uset) {
+					const RoomPath& conn_rp
+						= _self->_floor_layout.at(conn_index);
+					const IntRect2& rect = conn_rp.rect;
+					if (
+						(
+							conn_rp.is_horiz_path()
+							&& (
+								(rect.tl_corner() + LEFT_OFFSET
+									== stairs_pos)
+								|| (rect.tr_corner() + RIGHT_OFFSET
+									== stairs_pos)
+							)
+						) || (
+							conn_rp.is_vert_path()
+							&& (
+								(rect.tl_corner() + TOP_OFFSET
+									== stairs_pos)
+								|| (rect.bl_corner() + BOTTOM_OFFSET
+									== stairs_pos)
+							)
+						)
+					) {
+						did_intersect = true;
+						break;
+					}
+				}
+				if (did_intersect) {
+					continue;
+				}
+
+				if (up) {
+					if (rp.dstairs_pos && *rp.dstairs_pos == stairs_pos) {
+						continue;
+					} else {
+						rp.ustairs_pos = stairs_pos;
+					}
+				} else {
+					if (rp.ustairs_pos && *rp.ustairs_pos == stairs_pos) {
+						continue;
+					} else {
+						rp.dstairs_pos = stairs_pos;
+					}
+				}
+				return;
+			}
+		}
+	};
+	inner_insert(true);
+
+	if (engine->floor() != engine->LAST_FLOOR) {
+		//bool did_insert
+		//do {
+		//	did_insert = false;
+		//} while (!did_insert);
+		inner_insert(false);
 	}
 }
 void DungeonGen::GenInnards::_insert_alt_terrain(
