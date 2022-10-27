@@ -1507,20 +1507,32 @@ void DungeonGen::GenInnards::_insert_alt_terrain(
 			dmap_gen.add(*dstairs_pos);
 			const auto& dmap = dmap_gen.gen_basic
 				(_self->floor_layout(), BASIC_NO_PASS_BG_TILE_USET);
-			//const auto& path = dmap.make_path(ustairs_pos);
-			//path->fill
-			//	([&](const IntVec2& pos) -> bool {
-			//		auto& fl = _self->_floor_layout;
-			//		// This assumes that the `std::optional`s returned by
-			//		// these functions definitely contain values.
-			//		const auto& bg_tile = *fl.phys_bg_tile_at(pos);
-			//		const size_t rp_index = *fl.phys_pos_to_rp_index(pos);
-			//		if (BASIC_NO_PASS_BG_TILE_USET.contains(bg_tile)) {
-			//			auto& rp = fl._raw_at(rp_index);
-			//			rp.alt_terrain_umap.erase(pos);
-			//		}
-			//		return true;
-			//	});
+			const auto& path = dmap.make_path(ustairs_pos);
+			engine->log("Filling `path`\n");
+			path->fill
+				([&](const IntVec2& phys_pos) -> bool {
+					//auto& fl = _self->_floor_layout;
+					// This assumes that the `std::optional`s returned by
+					// these functions definitely contain values.
+					//const auto& bg_tile = *fl.phys_bg_tile_at(pos);
+					const IntVec2
+						pos = phys_pos - dmap.BOUNDS_R2.tl_corner();
+					auto& bg_tile = biome_bg_tiles.at(pos.y).at(pos.x);
+					//const size_t rp_index = *fl.phys_pos_to_rp_index(pos);
+					//engine->log(pos, ": ", bg_tile_str_map_at(bg_tile),
+					//	"\n");
+
+					if (
+						bg_tile.first
+						&& BASIC_NO_PASS_BG_TILE_USET.contains
+							(bg_tile.second)
+					) {
+						//auto& rp = fl._raw_at(rp_index);
+						//rp.alt_terrain_umap.erase(pos);
+						bg_tile.first = false;
+					}
+					return true;
+				});
 		}
 	}
 
@@ -1619,21 +1631,23 @@ void DungeonGen::GenInnards::_insert_alt_terrain(
 
 				// TODO: incorporate `DijkstraMapGen` and connections
 				// between stairs
-				if (item.is_path()) {
-					if (!BASIC_UNSAFE_BG_TILE_USET.contains
-						(bg_tile.second)) {
-						item.alt_terrain_umap[pos] = bg_tile.second;
-					}
-				} else { // if (item.is_room())
-					if (
-						!BASIC_UNSAFE_BG_TILE_USET.contains
-							(bg_tile.second)
-						|| (!item.pos_in_border(pos)
-							&& !item.pos_in_internal_border(pos))
-					) {
-						item.alt_terrain_umap[pos] = bg_tile.second;
-					}
-				}
+				//if (item.is_path()) {
+				//	if (!BASIC_UNSAFE_BG_TILE_USET.contains
+				//		(bg_tile.second)) {
+				//		item.alt_terrain_umap[pos] = bg_tile.second;
+				//	}
+				//} else { // if (item.is_room())
+				//	if (
+				//		!BASIC_UNSAFE_BG_TILE_USET.contains
+				//			(bg_tile.second)
+				//		|| (!item.pos_in_border(pos)
+				//			&& !item.pos_in_internal_border(pos))
+				//	) {
+				//		item.alt_terrain_umap[pos] = bg_tile.second;
+				//	}
+				//}
+				item.alt_terrain_umap.insert(std::pair
+					(pos, bg_tile.second));
 			}
 		}
 	}

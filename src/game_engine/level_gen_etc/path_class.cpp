@@ -64,7 +64,7 @@ size_t Path::fill(const FillFunc& fill_func) const {
 	size_t ret;
 	for (ret=0; ret<data().size(); ++ret) {
 		const auto& item = at(ret);
-		if (fill_func(item)) {
+		if (!fill_func(item)) {
 			break;
 		}
 	}

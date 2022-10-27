@@ -214,14 +214,13 @@ DijkstraMap DijkstraMapGen::gen_basic(
 							//	.at(ret_side_pos.y).at(ret_side_pos.x);
 							& ret_side_item
 								= ret._raw_phys_at(side_phys_pos);
-						if (ret_side_item > ret_item)
-						//if (ret_side_item > ret_item)
-						{
-							if (ret_side_item != ret_item + 1) {
-								ret_side_item = ret_item + 1;
-								//ret_side_item = ret_item;
-								did_change = true;
-							}
+						if (
+							ret_side_item > ret_item
+							&& ret_side_item != ret_item + 1
+						) {
+							ret_side_item = ret_item + 1;
+							//ret_side_item = ret_item;
+							did_change = true;
 						}
 					}
 				}

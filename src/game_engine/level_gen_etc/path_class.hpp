@@ -91,6 +91,7 @@ public:		// functions
 	GEN_GETTER_BY_CON_REF(data);
 	//--------
 };
+//std::ostream& operator << (std::ostream& os, const Path& path);
 //--------
 } // namespace level_gen_etc
 } // namespace game_engine
