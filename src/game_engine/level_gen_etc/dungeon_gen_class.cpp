@@ -18,6 +18,7 @@
 #include "dungeon_gen_class.hpp"
 #include "metaball_gen_class.hpp"
 #include "dijkstra_map_gen_class.hpp"
+#include "path_class.hpp"
 #include "bfs_funcs.hpp"
 #include "../engine_class.hpp"
 #include "../comp/drawable_data_umap.hpp"
@@ -41,7 +42,8 @@ const std::vector<std::vector<BgTile>>
 			//SizeAndBgTile(5, ALT_TERRAIN_NONE),
 			//SizeAndBgTile(1, ALT_TERRAIN_NONE),
 			//SizeAndBgTile(2, BgTile::Water),
-			SizeAndBgTile(2, BgTile::Water),
+			//SizeAndBgTile(2, BgTile::Water),
+			BgTile::Water,
 			BgTile::Spikes
 			//SizeAndBgTile(3, BgTile::Lava)
 			),
@@ -51,8 +53,8 @@ const std::vector<std::vector<BgTile>>
 			(
 			//SizeAndBgTile(6, ALT_TERRAIN_NONE),
 			//SizeAndBgTile(2, ALT_TERRAIN_NONE),
-			SizeAndBgTile(3, BgTile::Water),
-			SizeAndBgTile(2, BgTile::Spikes),
+			BgTile::Water,
+			BgTile::Spikes,
 			BgTile::Pit),
 
 		// Level 3 (index 2)
@@ -1276,17 +1278,19 @@ void DungeonGen::GenInnards::_insert_exits() const {
 					continue;
 				}
 
+				auto& ustairs_pos = _self->_floor_layout.ustairs_pos;
+				auto& dstairs_pos = _self->_floor_layout.dstairs_pos;
 				if (up) {
-					if (rp.dstairs_pos && *rp.dstairs_pos == stairs_pos) {
+					if (dstairs_pos && *dstairs_pos == stairs_pos) {
 						continue;
 					} else {
-						rp.ustairs_pos = stairs_pos;
+						ustairs_pos = stairs_pos;
 					}
 				} else {
-					if (rp.ustairs_pos && *rp.ustairs_pos == stairs_pos) {
+					if (ustairs_pos == stairs_pos) {
 						continue;
 					} else {
-						rp.dstairs_pos = stairs_pos;
+						dstairs_pos = stairs_pos;
 					}
 				}
 				return;
@@ -1311,9 +1315,9 @@ void DungeonGen::GenInnards::_insert_alt_terrain(
 			.at(engine->level_minus_1());
 
 	const IntRect2
-		floor_r2
-			= PFIELD_PHYS_RECT2,
-			//= r2_build_in_pfield({1, 1}, {9, 4}),
+		//floor_r2
+		//	= PFIELD_PHYS_RECT2,
+		//	//= r2_build_in_pfield({1, 1}, {9, 4}),
 		biome_mballs_bounds_r2
 			//= PFIELD_PHYS_NO_BRDR_RECT2;
 			= engine->layout_rand_r2_in_pfnb
@@ -1393,10 +1397,14 @@ void DungeonGen::GenInnards::_insert_alt_terrain(
 	//		//= 10;
 	//		//= 5;
 	const float
-		biome_thresh = float(engine->layout_rand<i32>
+		biome_thresh
+			= float(engine->layout_rand<i32>
 			(MIN_GEN_BIOME_THRESH_0 * GEN_BIOME_THRESH_MM_SCALE,
 			MAX_GEN_BIOME_THRESH_0 * GEN_BIOME_THRESH_MM_SCALE))
 			/ GEN_BIOME_THRESH_MM_SCALE;
+			//= 10.0f;
+			//= 5.0f;
+	//engine->log("biome_thresh: ", biome_thresh, "\n");
 
 	const auto& biome_gen
 		//= biome_mballs.gen(0.10f, 0.3f);
@@ -1439,6 +1447,14 @@ void DungeonGen::GenInnards::_insert_alt_terrain(
 			//}
 		}
 	}
+	//for (size_t j=0; j<biome_bg_tiles.size(); ++j) {
+	//	const auto& row = biome_bg_tiles.at(j);
+	//	for (size_t i=0; i<row.size(); ++i) {
+	//		const auto& item = row.at(i);
+	//		printout(item.first ? "~" : ".");
+	//	}
+	//	printout("\n");
+	//}
 
 	// Breadth-first search
 	{
@@ -1481,6 +1497,30 @@ void DungeonGen::GenInnards::_insert_alt_terrain(
 						});
 				}
 			}
+		}
+	}
+	{
+		const auto& ustairs_pos = _self->_floor_layout.ustairs_pos;
+		const auto& dstairs_pos = _self->_floor_layout.dstairs_pos;
+		if (dstairs_pos) {
+			DijkstraMapGen dmap_gen;
+			dmap_gen.add(*dstairs_pos);
+			const auto& dmap = dmap_gen.gen_basic
+				(_self->floor_layout(), BASIC_NO_PASS_BG_TILE_USET);
+			//const auto& path = dmap.make_path(ustairs_pos);
+			//path->fill
+			//	([&](const IntVec2& pos) -> bool {
+			//		auto& fl = _self->_floor_layout;
+			//		// This assumes that the `std::optional`s returned by
+			//		// these functions definitely contain values.
+			//		const auto& bg_tile = *fl.phys_bg_tile_at(pos);
+			//		const size_t rp_index = *fl.phys_pos_to_rp_index(pos);
+			//		if (BASIC_NO_PASS_BG_TILE_USET.contains(bg_tile)) {
+			//			auto& rp = fl._raw_at(rp_index);
+			//			rp.alt_terrain_umap.erase(pos);
+			//		}
+			//		return true;
+			//	});
 		}
 	}
 

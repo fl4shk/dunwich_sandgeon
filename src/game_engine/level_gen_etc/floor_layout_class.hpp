@@ -63,8 +63,9 @@ public:		// constants
 			//= 42;
 			= 64,
 		MIN_NUM_ROOMS
-			= 5;
+			//= 5;
 			//= 7;
+			= 10;
 
 		//MIN_NUM_PATHS = 1,
 		//MAX_NUM_PATHS = 64;
@@ -73,8 +74,8 @@ public:		// constants
 		PATH_THICKNESS = 1,
 		PATH_MIN_LEN
 			//= 2,
-			= 3,
-			//= 4,
+			//= 3,
+			= 4,
 			//= 5,
 		PATH_MAX_LEN
 			//= 32;
@@ -130,12 +131,12 @@ public:		// types
 			{.pos=IntVec2(),
 			.size_2d{.x=PATH_THICKNESS, .y=PATH_MIN_LEN}};
 
-		std::optional<IntVec2>
-			// where the player and other entities start from when entering
-			// this floor from above
-			ustairs_pos = std::nullopt,
-			dstairs_pos = std::nullopt;
-			//ustairs_pos = std::nullopt;
+		//std::optional<IntVec2>
+		//	// where the player and other entities start from when entering
+		//	// this floor from above
+		//	ustairs_pos = std::nullopt,
+		//	dstairs_pos = std::nullopt;
+		//	//ustairs_pos = std::nullopt;
 
 		i32 id = -1;
 
@@ -246,6 +247,11 @@ private:		// variables
 	//double
 	//	_layout_noise_pos_scale = 0.0d,
 	//	_layout_noise_pos_offset = 0.0d;
+public:		// variables
+	IntVec2
+		ustairs_pos;
+	std::optional<IntVec2>
+		dstairs_pos = std::nullopt;
 public:		// functions
 	//--------
 	FloorLayout();

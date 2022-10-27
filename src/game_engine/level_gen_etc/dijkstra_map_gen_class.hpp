@@ -83,7 +83,7 @@ public:		// functions
 	// This is potentially useful when we only have one `Goal`.
 	// It's best not to call this function on 
 	std::optional<Path> make_path(
-		const IntVec2& start_phys_pos, float stop_when_le_val
+		const IntVec2& start_phys_pos, float stop_when_le_val=0.0f
 	) const;
 	//DijkstraMap(IntVec2 s_size_2d);
 	//inline size_t size() const {
@@ -141,13 +141,14 @@ public:		// functions
 
 	DijkstraMap gen_basic(
 		const FloorLayout& floor_layout,
-		const BgTileUset& no_pass_uset
+		const BgTileUset& no_pass_uset=BgTileUset()
 	) const;
 	DijkstraMap gen_flipped(
 		const FloorLayout& floor_layout,
-		const BgTileUset& no_pass_uset,
+		const BgTileUset& no_pass_uset=BgTileUset(),
 		float bonus=DijkstraMap::DEFAULT_FLIP_BONUS
 	) const;
+
 	//static DijkstraMap& flip(
 	//	DijkstraMap& dmap, float bonus=DEFAULT_FLIP_BONUS
 	//);

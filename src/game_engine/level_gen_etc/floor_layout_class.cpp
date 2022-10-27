@@ -152,24 +152,24 @@ const {
 	//if (!PFIELD_PHYS_RECT2.arg_inside(pos)) {
 	//	return std::nullopt;
 	//}
-	//if (!PFIELD_PHYS_NO_BRDR_RECT2.intersect(pos)) {
-	//	return std::nullopt;
-	//}
+	if (!PFIELD_PHYS_NO_BRDR_RECT2.intersect(pos)) {
+		return std::nullopt;
+	}
 	const auto& neighbors = cg_neighbors(pos);
 
 	for (auto& neighbor: neighbors) {
 		if (neighbor->bbox().intersect(pos)) {
 			RoomPath& rp = *static_cast<RoomPath*>(neighbor);
 
-			if (rp.alt_terrain_umap.contains(pos)) {
-				return rp.alt_terrain_umap.at(pos);
-			} else if (rp.ustairs_pos && *rp.ustairs_pos == pos) {
+			if (ustairs_pos == pos) {
 				return BgTile::UpStairs;
-			} else if (rp.dstairs_pos && *rp.dstairs_pos == pos) {
+			} else if (dstairs_pos && *dstairs_pos == pos) {
 				return BgTile::DownStairs;
 			} else if (rp.door_pt_uset.contains(pos)) {
 				return BgTile::Door;
-			} else {
+			} else if (rp.alt_terrain_umap.contains(pos)) {
+				return rp.alt_terrain_umap.at(pos);
+			}  else {
 				return
 					rp.is_path()
 					? BgTile::PathFloor

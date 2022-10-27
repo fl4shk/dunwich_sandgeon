@@ -56,14 +56,7 @@ float MetaballGen::gen_single(const IntVec2& pos) const {
 
 	for (const auto& pair: _ball_umap) {
 		const auto& ball = pair.second;
-		auto diff = ball.pos - FltVec2(pos);
-
-		// Translate positions to the proper coordinate system (or at
-		// least, I tried to do that).
-		//const FltVec2
-		//	temp_ball_pos = FltVec2(ball.pos) - (ball.size_2d / 2.0f),
-		//	temp_pos = FltVec2(pos) - (FltVec2(_size_2d) / 2.0f);
-		//auto diff = temp_ball_pos - temp_pos;
+		auto diff = ball.pos - pos;
 
 		// Try modifying the below two changes to `diff`
 		//diff.x = diff.x / ball.size_2d.x * ball.size_2d.y;
@@ -73,6 +66,8 @@ float MetaballGen::gen_single(const IntVec2& pos) const {
 			dist2 = (diff.x * diff.x) + (diff.y * diff.y);
 			//dist2 = std::sqrt((diff.x * diff.x) + (diff.y * diff.y));
 		ret += (ball.size_2d.x * ball.size_2d.x) / dist2;
+		//ret += ball.size_2d.x / dist2;
+		//ret += 1.0f / dist2;
 
 		//const FltVec2 temp_diff = FltVec2(ball.pos);
 		//FltVec2 diff = temp_diff;
@@ -98,6 +93,7 @@ bool MetaballGen::gen_single(
 	//return ret_flt <= 10.0f;
 	return ret_flt >= math::min_va(thresh_0, thresh_1)
 		&& ret_flt <= math::max_va(thresh_0, thresh_1);
+	//return ret_flt <= thresh_0;
 	//return !(ret_flt >= math::min_va(thresh_0, thresh_1)
 	//	&& ret_flt <= math::max_va(thresh_0, thresh_1));
 	//return ret_flt <= thresh_0;
@@ -138,6 +134,12 @@ BoolDyna2d MetaballGen::gen(float thresh_0, float thresh_1) const {
 	BoolDyna2d ret(_size_2d.y, BoolDynarr(_size_2d.x, 0));
 	//printout("{", ret.size(), " ", ret.front().size(), "}\n");
 
+	//engine->log
+	//	("MetaballGen::gen(threshes): ",
+	//	"min{", math::min_va(thresh_0, thresh_1), "} ",
+	//	"max{", math::max_va(thresh_0, thresh_1), "}",
+	//	"\n");
+
 	IntVec2 pos;
 	for (pos.y=0; pos.y<_size_2d.y; ++pos.y) {
 		for (pos.x=0; pos.x<_size_2d.x; ++pos.x) {
@@ -146,7 +148,12 @@ BoolDyna2d MetaballGen::gen(float thresh_0, float thresh_1) const {
 			//}
 			ret.at(pos.y).at(pos.x)
 				= gen_single(pos, thresh_0, thresh_1);
+			//engine->log(i32(ret.at(pos.y).at(pos.x)));
+			//if (pos.x + 1 < _size_2d.x) {
+			//	engine->log(",");
+			//}
 		}
+		//engine->log("\n");
 	}
 
 	return ret;

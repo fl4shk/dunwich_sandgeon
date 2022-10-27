@@ -63,6 +63,12 @@ using namespace liborangepower::containers;
 namespace math = liborangepower::math;
 using math::Vec2;
 using math::Vec3;
+using math::Hit2;
+using math::Sweep2;
+using math::LineSeg2;
+using math::Tri2;
+using math::Rect2;
+
 using namespace liborangepower::time;
 namespace json = liborangepower::json;
 namespace binser = liborangepower::binser;

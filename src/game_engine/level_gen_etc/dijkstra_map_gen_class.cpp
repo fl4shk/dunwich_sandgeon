@@ -118,6 +118,8 @@ std::ostream& operator << (
 				osprintout(os, std::hex, "+ ", item, std::dec);
 			} else if (item >= 16 && item <= 255) {
 				osprintout(os, std::hex, "+", item, std::dec);
+			} else {
+				osprintout(os, "   ");
 			}
 			if (pos.x + 1 < self.size_2d().x) {
 				osprintout(os, " ");
@@ -168,7 +170,7 @@ DijkstraMap DijkstraMapGen::gen_basic(
 	// Insert goals
 	for (const auto& goal: goal_vec()) {
 		//ret.at(goal.pos.y).at(goal.pos.x) = goal.val;
-		ret._raw_at(goal.pos) = goal.val;
+		ret._raw_phys_at(goal.pos) = goal.val;
 	}
 
 	bool did_change;
@@ -181,8 +183,9 @@ DijkstraMap DijkstraMapGen::gen_basic(
 		auto edge_exists_func = [&](
 			const IntVec2Uset& explored_uset, const IntVec2& phys_pos
 		) -> bool {
-			return static_cast<bool>
-				(floor_layout.phys_bg_tile_at(phys_pos));
+			const auto& bg_tile = floor_layout.phys_bg_tile_at(phys_pos);
+			return (bg_tile && !no_pass_uset.contains(*bg_tile));
+			//return static_cast<bool>(bg_tile);
 		};
 		//--------
 		auto fill_func = [&](
@@ -200,18 +203,26 @@ DijkstraMap DijkstraMapGen::gen_basic(
 					side_phys_pos = phys_pos + offset;
 					//ret_side_pos = side_pos
 					//	- PFIELD_PHYS_NO_BRDR_RECT2.tl_corner();
-				if (
-					const auto bg_tile
-						= floor_layout.phys_bg_tile_at(side_phys_pos);
-					bg_tile
-				) {
-					auto
-						//& ret_side_item = ret
-						//	.at(ret_side_pos.y).at(ret_side_pos.x);
-						& ret_side_item = ret._raw_phys_at(side_phys_pos);
-					if (ret_side_item + 1 > ret_item) {
-						ret_side_item = ret_item + 1;
-						did_change = true;
+				if (ret.BOUNDS_R2.intersect(side_phys_pos)) {
+					if (
+						const auto bg_tile
+							= floor_layout.phys_bg_tile_at(side_phys_pos);
+						bg_tile && !no_pass_uset.contains(*bg_tile)
+					) {
+						auto
+							//& ret_side_item = ret
+							//	.at(ret_side_pos.y).at(ret_side_pos.x);
+							& ret_side_item
+								= ret._raw_phys_at(side_phys_pos);
+						if (ret_side_item > ret_item)
+						//if (ret_side_item > ret_item)
+						{
+							if (ret_side_item != ret_item + 1) {
+								ret_side_item = ret_item + 1;
+								//ret_side_item = ret_item;
+								did_change = true;
+							}
+						}
 					}
 				}
 			};
@@ -224,6 +235,40 @@ DijkstraMap DijkstraMapGen::gen_basic(
 		bfs_fill(start_pos, edge_exists_func, fill_func);
 		//--------
 	} while (did_change);
+	//bool did_change;
+	//do {
+	//	//--------
+	//	did_change = false;
+	//	//--------
+	//	IntVec2 pos;
+	//	for (pos.y=0; pos.y<ret.size_2d().y; ++pos.y) {
+	//		for (pos.x=0; pos.x<ret.size_2d().x; ++pos.x) {
+	//			if (
+	//				
+	//			) {
+	//			}
+	//		}
+	//	}
+	//	//--------
+	//} while (did_change);
+	//do {
+	//	const IntVec2 start_pos = floor_layout.at(0).rect.tl_corner();
+	//	//--------
+	//	auto edge_exists_func = [&](
+	//		const IntVec2Uset& explored_uset, const IntVec2& phys_pos
+	//	) -> bool {
+	//		const auto& bg_tile = floor_layout.phys_bg_tile_at(phys_pos);
+	//		return (bg_tile && !no_pass_uset.contains(*bg_tile));
+	//	}
+	//	//--------
+	//	auto fill_func = [&](
+	//		const IntVec2Uset& explored_uset, const IntVec2& phys_pos
+	//	) -> void {
+	//		const auto& ret_iem = ret.phys_at(phys_pos);
+	//		auto inner_func
+	//	};
+	//	//--------
+	//} while (did_change);
 
 	//if (std::stringstream sstm; true) {
 	//	osprint_dmap(sstm, ret);
