@@ -45,8 +45,8 @@ void GmMain::_init(ecs::Engine* ecs_engine) {
 				//		(comp::Player::KIND_STR))),
 				comp::make_drawable<comp::Player>()),
 			func_name);
-		// See `game_engine::Engine::NonEcsSerData::player_pos` for the
-		// player's position
+		// See `game_engine::Engine::NonEcsSerData`'s `player_pos3` and
+		// `prev_floor` for the player's position information
 	}
 	//--------
 }

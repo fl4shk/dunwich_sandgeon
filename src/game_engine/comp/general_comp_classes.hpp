@@ -122,7 +122,8 @@ public:		// constants
 private:		// variables
 	#define MEMB_AUTOSER_LIST_COMP_POSITION(X) \
 		X(_ent_id, std::nullopt) \
-		X(_pos3, std::nullopt)
+		X(_pos3, std::nullopt) \
+		X(_prev_floor, std::nullopt)
 	ecs::EntId _ent_id = ecs::ENT_NULL_ID;
 	PrevCurrPair<IntVec3> _pos3 = {
 		// The elements of these are initialized to `-1` as a debugging aid
