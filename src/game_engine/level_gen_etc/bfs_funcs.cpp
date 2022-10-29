@@ -39,12 +39,12 @@ void bfs_fill(
 		auto maybe_add = [&](const IntVec2& offset) -> void {
 			if (const IntVec2 w=v + offset; true) {
 				if (
-					edge_exists_func(explored_uset, w)
+					edge_exists_func(w)
 					&& !explored_uset.contains(w)
 				) {
 					explored_uset.insert(w);
 					q.push(w);
-					fill_func(explored_uset, w);
+					fill_func(w);
 				}
 			}
 		};
@@ -69,12 +69,12 @@ bool bfs_reachable(
 		auto maybe_add = [&](const IntVec2& offset) -> bool {
 			if (const IntVec2 w=v + offset; true) {
 				if (
-					edge_exists_func(explored_uset, w)
+					edge_exists_func(w)
 					&& !explored_uset.contains(w)
 				) {
 					explored_uset.insert(w);
 					q.push(w);
-					if (extra_test_func(explored_uset, w)) {
+					if (extra_test_func(w)) {
 						return true;
 					}
 				}

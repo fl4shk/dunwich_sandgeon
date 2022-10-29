@@ -187,20 +187,16 @@ DijkstraMap DijkstraMapGen::gen_basic(
 	std::deque<Sortable>
 		to_sort_deque, to_move_deque;
 
+	auto edge_exists_func = [&](const IntVec2& phys_pos) -> bool {
+		const auto& bg_tile = floor_layout.phys_bg_tile_at(phys_pos);
+		return bg_tile && !no_pass_uset.contains(*bg_tile);
+		//return static_cast<bool>(bg_tile);
+	};
 	{
 		//--------
 		const IntVec2 start_pos = floor_layout.at(0).rect.tl_corner();
 		//--------
-		auto edge_exists_func = [&](
-			const IntVec2Uset& explored_uset, const IntVec2& phys_pos
-		) -> bool {
-			const auto& bg_tile = floor_layout.phys_bg_tile_at(phys_pos);
-			return bg_tile && !no_pass_uset.contains(*bg_tile);
-			//return static_cast<bool>(bg_tile);
-		};
-		auto fill_func = [&](
-			const IntVec2Uset& explored_uset, const IntVec2& phys_pos
-		) -> void {
+		auto fill_func = [&](const IntVec2& phys_pos) -> void {
 			if (ret.phys_at(phys_pos) != ret.VERY_HIGH_NUM) {
 				to_sort_deque.push_back({&ret, phys_pos});
 			}
@@ -223,9 +219,10 @@ DijkstraMap DijkstraMapGen::gen_basic(
 				const IntVec2 side_phys_pos = phys_pos + offset;
 				if (ret.BOUNDS_R2.intersect(side_phys_pos)) {
 					if (
-						const auto bg_tile
-							= floor_layout.phys_bg_tile_at(side_phys_pos);
-						bg_tile && !no_pass_uset.contains(*bg_tile)
+						//const auto bg_tile
+						//	= floor_layout.phys_bg_tile_at(side_phys_pos);
+						//bg_tile && !no_pass_uset.contains(*bg_tile)
+						edge_exists_func(side_phys_pos)
 					) {
 						auto& ret_side_item
 							= ret._raw_phys_at(side_phys_pos);

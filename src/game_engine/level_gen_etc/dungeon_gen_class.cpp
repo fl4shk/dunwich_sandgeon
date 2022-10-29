@@ -1469,10 +1469,7 @@ void DungeonGen::GenInnards::_insert_alt_terrain(
 				if (!explored_uset.contains(pos)) {
 					bfs_fill
 						(explored_uset, pos,
-						[&](
-							const IntVec2Uset& some_explored_uset,
-							const IntVec2& some_pos
-						) -> bool {
+						[&](const IntVec2& some_pos) -> bool {
 							const IntVec2
 								temp_pos = some_pos
 									- biome_mballs_bounds_r2.tl_corner();
@@ -1481,10 +1478,7 @@ void DungeonGen::GenInnards::_insert_alt_terrain(
 								&& biome_bg_tiles
 									.at(temp_pos.y).at(temp_pos.x).first;
 						},
-						[&](
-							const IntVec2Uset& some_explored_uset,
-							const IntVec2& some_pos
-						) -> void {
+						[&](const IntVec2& some_pos) -> void {
 							const IntVec2
 								temp_pos = some_pos
 									- biome_mballs_bounds_r2.tl_corner();
@@ -1505,6 +1499,11 @@ void DungeonGen::GenInnards::_insert_alt_terrain(
 		if (dstairs_pos) {
 			DijkstraMapGen dmap_gen;
 			dmap_gen.add(*dstairs_pos);
+			
+			// This is just for checking that the dmap generates properly
+			// no matter the values of the goals
+			//dmap_gen.add(ustairs_pos, -4.5f); 
+
 			const auto& dmap = dmap_gen.gen_basic
 				(_self->floor_layout(), BASIC_NO_PASS_BG_TILE_USET);
 			const auto& path = dmap.make_path(ustairs_pos);

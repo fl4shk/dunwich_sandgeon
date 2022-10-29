@@ -30,11 +30,11 @@ namespace level_gen_etc {
 //--------
 // Breadth-first search
 using BfsAtFunc = std::function<bool(
-	const IntVec2Uset&, // explored_uset
+	//const IntVec2Uset&, // explored_uset
 	const IntVec2& // pos
 )>;
 using BfsVoidAtFunc = std::function<void(
-	const IntVec2Uset&, // explored_uset
+	//const IntVec2Uset&, // explored_uset
 	const IntVec2& // pos
 )>;
 
