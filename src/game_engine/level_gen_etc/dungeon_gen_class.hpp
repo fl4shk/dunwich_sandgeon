@@ -203,8 +203,8 @@ public:		// constants
 			//= 3,
 			//= 4,
 			//= 7,
-			//= 10,
-			= 15,
+			= 10,
+			//= 15,
 			//= 35,
 		GEN_BIOME_MBALL_MAX_AMOUNT
 			//= 4;
@@ -215,8 +215,9 @@ public:		// constants
 			//= 12;
 			//= 13;
 			//= 15;
+			= 17;
 			//= 20;
-			= 25;
+			//= 25;
 			//= 28;
 			//= 35;
 	static constexpr IntVec2
