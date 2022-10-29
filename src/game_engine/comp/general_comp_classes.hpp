@@ -120,13 +120,29 @@ private:		// variables
 		X(_ent_id, std::nullopt) \
 		X(_pos, std::nullopt)
 	ecs::EntId _ent_id = ecs::ENT_NULL_ID;
-	IntVec3 _pos;
+	PrevCurrPair<IntVec3> _pos = {
+		// The elements of these are initialized to `-1` as a debugging aid
+		// in case initialization didn't happen
+		IntVec3{.x=-1, .y=-1, .z=-1}, IntVec3{.x=-1, .y=-1, .z=-1} 
+	};
 public:		// variables
-	PlayfieldLayerPrio priority = PlayfieldLayerPrio::Block;
+	PlayfieldLayerPrio priority = PlayfieldLayerPrio::BgMach;
 public:		// functions
 	Position() = default;
-	Position(ecs::EntId s_ent_id, const IntVec3& s_pos,
-		PlayfieldLayerPrio s_priority);
+	Position(
+		ecs::EntId s_ent_id, const IntVec3& s_pos,
+		PlayfieldLayerPrio s_priority
+	);
+	Position(
+		ecs::EntId s_ent_id, const IntVec2& s_pos_on_curr_floor,
+		PlayfieldLayerPrio s_priority
+	);
+private:		// functions
+	void _init(
+		ecs::EntId s_ent_id, const IntVec3& s_pos,
+		PlayfieldLayerPrio s_priority
+	);
+public:		// functions
 	Position(const binser::Value& bv);
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Position);
 	virtual ~Position();
@@ -136,7 +152,8 @@ public:		// functions
 
 	GEN_GETTER_BY_VAL(ent_id);
 	GEN_GETTER_BY_CON_REF(pos);
-	void set_pos(const IntVec3& n_pos);
+	IntVec3& set_pos(const IntVec3& n_pos);
+	IntVec3& set_pos(const IntVec2& n_pos_on_curr_floor);
 };
 
 //class NonSerPosition final: public ecs::Comp {

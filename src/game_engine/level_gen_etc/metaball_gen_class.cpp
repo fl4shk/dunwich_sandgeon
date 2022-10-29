@@ -78,7 +78,7 @@ float MetaballGen::gen_single(const IntVec2& pos) const {
 		//ret += to_add;
 	}
 	//auto print = [&]() -> void {
-	//	engine->log("MetaballGen::gen_single(): ", ret, "\n");
+	//	engine->dbg_log("MetaballGen::gen_single(): ", ret, "\n");
 	//};
 	//if (pos == IntVec2{0, 0}) {
 	//	print();
@@ -105,12 +105,12 @@ FltDyna2d MetaballGen::gen() const {
 	for (pos.y=0; pos.y<_size_2d.y; ++pos.y) {
 		for (pos.x=0; pos.x<_size_2d.x; ++pos.x) {
 			//if (std::isnormal(val) && val <= threshold) {
-			//	engine->log("MetaballGen::gen(): val: ", val, "\n");
+			//	engine->dbg_log("MetaballGen::gen(): val: ", val, "\n");
 			//}
 			const float val = gen_single(pos);
 			ret.at(pos.y).at(pos.x)
 				= val;
-			//engine->log("MetaballGen::gen(): val: ", val, "\n");
+			//engine->dbg_log("MetaballGen::gen(): val: ", val, "\n");
 		}
 	}
 
@@ -129,12 +129,12 @@ BoolDyna2d MetaballGen::gen(float thresh_0, float thresh_1) const {
 	//	result(p) = value;
 	//}
 
-	//engine->log("MetaballGen::gen(): ", _size_2d, "\n");
+	//engine->dbg_log("MetaballGen::gen(): ", _size_2d, "\n");
 	//GenDyna2d ret(_size_2d.y, GenDynarr(_size_2d.x, 0.0f));
 	BoolDyna2d ret(_size_2d.y, BoolDynarr(_size_2d.x, 0));
 	//printout("{", ret.size(), " ", ret.front().size(), "}\n");
 
-	//engine->log
+	//engine->dbg_log
 	//	("MetaballGen::gen(threshes): ",
 	//	"min{", math::min_va(thresh_0, thresh_1), "} ",
 	//	"max{", math::max_va(thresh_0, thresh_1), "}",
@@ -144,16 +144,16 @@ BoolDyna2d MetaballGen::gen(float thresh_0, float thresh_1) const {
 	for (pos.y=0; pos.y<_size_2d.y; ++pos.y) {
 		for (pos.x=0; pos.x<_size_2d.x; ++pos.x) {
 			//if (std::isnormal(val) && val <= threshold) {
-			//	engine->log("MetaballGen::gen(): val: ", val, "\n");
+			//	engine->dbg_log("MetaballGen::gen(): val: ", val, "\n");
 			//}
 			ret.at(pos.y).at(pos.x)
 				= gen_single(pos, thresh_0, thresh_1);
-			//engine->log(i32(ret.at(pos.y).at(pos.x)));
+			//engine->dbg_log(i32(ret.at(pos.y).at(pos.x)));
 			//if (pos.x + 1 < _size_2d.x) {
-			//	engine->log(",");
+			//	engine->dbg_log(",");
 			//}
 		}
-		//engine->log("\n");
+		//engine->dbg_log("\n");
 	}
 
 	return ret;

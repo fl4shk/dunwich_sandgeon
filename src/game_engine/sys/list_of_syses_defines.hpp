@@ -27,5 +27,7 @@
 	X(GmOptions) \
 	X(GmFileSelect) \
 	X(GmDungeonGen) \
+	\
+	X(GmMain) \
 
 #endif		// src_game_engine_sys_list_of_syses_defines_hpp

@@ -59,7 +59,7 @@ private:		// variables
 	bool _fullscreen = false;
 	sdl::Window _window;
 	sdl::Renderer _renderer;
-	sdl::KeyStatusMap _key_status_map;
+	sdl::KeyStatusUmap _key_status_umap;
 	PrevCurrPair<bool> _mouse_right_button_state;
 	TextHandlerSdl _text_handler;
 public:		// functions

@@ -32,8 +32,8 @@ namespace sys {
 class GmDungeonGen final: public ecs::Sys {
 private:		// variables
 	//std::optional<ecs::EntId>
-	//	_bg_tile_map_id,
-	//	_dungeon_gen_id;
+	//	_bg_tile_map_id = std::nullopt,
+	//	_dungeon_gen_id = std::nullopt;
 
 public:		// constants
 	static const std::string
@@ -47,8 +47,6 @@ public:		// functions
 	virtual ~GmDungeonGen() = default;
 
 	virtual std::string kind_str() const;
-
-	void clear(ecs::Engine* ecs_engine);
 private:		// functions
 	virtual void _init(ecs::Engine* ecs_engine);
 public:		// functions

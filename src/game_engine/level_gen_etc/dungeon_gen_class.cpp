@@ -100,7 +100,7 @@ void DungeonGen::clear(
 void DungeonGen::gen_curr_floor() {
 
 	//if (floor_layout->size() == 0) {
-	//	engine->log("Debug: starting dungeon generation.\n");
+	//	engine->dbg_log("Debug: starting dungeon generation.\n");
 	//}
 	while (!_done_generating) {
 		GenInnards innards(
@@ -119,7 +119,7 @@ void DungeonGen::gen_curr_floor() {
 		}
 	}
 	//else {
-	//	engine->log("Debug: We're already done generating\n");
+	//	engine->dbg_log("Debug: We're already done generating\n");
 	//}
 }
 //void DungeonGen::_connect_room_paths(comp::StaticBgTileMap* bg_tile_map,
@@ -128,7 +128,7 @@ void DungeonGen::gen_curr_floor() {
 bool DungeonGen::GenInnards::gen_single_rp() {
 	//--------
 	auto redo = [this]() -> void {
-		engine->log
+		engine->dbg_log
 			("Debug: game_engine::level_gen_etc::DungeonGen::GenInnards"
 			"::gen_single_rp(): ",
 			"Redoing generation\n");
@@ -154,7 +154,7 @@ bool DungeonGen::GenInnards::gen_single_rp() {
 		//for (;;) {
 			RoomPath to_push_rp;
 			//--------
-			//engine->log("testificate 2\n");
+			//engine->dbg_log("testificate 2\n");
 			//--------
 			//to_push_rp.rect.pos.x = engine->layout_rand<i32>
 			//	(PFIELD_PHYS_RECT2.left_x(),
@@ -210,7 +210,7 @@ bool DungeonGen::GenInnards::gen_single_rp() {
 					// playfield, we stop floor generation early, and don't
 					// try any more for this floor.  This is to prevent
 					// infinite loops in the dungeon generation.
-					engine->log
+					engine->dbg_log
 						("Debug: game_engine::sys::gen_single_rp(): ",
 						"stopping room generation early: ",
 						_self->floor_layout().size(), " ",
@@ -233,7 +233,7 @@ bool DungeonGen::GenInnards::gen_single_rp() {
 			}
 		}
 		if (num_rooms < MIN_NUM_ROOMS) {
-			engine->log
+			engine->dbg_log
 				("Debug: game_engine::level_gen_etc::DungeonGen",
 				"::GenInnards::gen_single_rp(): ",
 				"Didn't generate enough rooms. ",
@@ -243,7 +243,7 @@ bool DungeonGen::GenInnards::gen_single_rp() {
 		}
 	}
 	if (!old_done_generating && _self->_done_generating) {
-		engine->log
+		engine->dbg_log
 			("Just finished generating the dungeon's basic shape.\n");
 	}
 
@@ -287,10 +287,10 @@ auto DungeonGen::GenInnards::_inner_gen_post_first()
 	//					|| _parallel_paths_too_close(some_rp, some_item));
 	//			});
 	//	//if (found) {
-	//	//	//engine->log("found{", *found, "}\n");
-	//	//	engine->log("found\n");
+	//	//	//engine->dbg_log("found{", *found, "}\n");
+	//	//	engine->dbg_log("found\n");
 	//	//} else {
-	//	//	engine->log("!found\n");
+	//	//	engine->dbg_log("!found\n");
 	//	//}
 	//	return (some_rp.fits_in_pfnb()
 	//		&& !found
@@ -316,7 +316,7 @@ auto DungeonGen::GenInnards::_inner_gen_post_first()
 
 
 	//if (any_intersect_find_first(_temp_to_push_rp, std::nullopt)) {
-	//	//engine->log("Debug: found early intersect!\n");
+	//	//engine->dbg_log("Debug: found early intersect!\n");
 	//	return std::nullopt;
 	//}
 	//if (any_path_sides_hit_wrongly_find_first(_temp_to_push_rp, std::nullopt)) {
@@ -329,14 +329,14 @@ auto DungeonGen::GenInnards::_inner_gen_post_first()
 	//conn_rp.conn_index_uset.insert(_self->floor_layout().size());
 	//--------
 	//--------
-	//engine->log("`gen_type`: ", gen_type, "\n");
+	//engine->dbg_log("`gen_type`: ", gen_type, "\n");
 
 	return _temp_to_push_rp;
 	//--------
 };
 void DungeonGen::GenInnards::_do_push_back(RoomPath&& to_push_rp) const {
 	//#ifdef DEBUG
-	//engine->log("Debug: Generated this `RoomPath`: ",
+	//engine->dbg_log("Debug: Generated this `RoomPath`: ",
 	//	//to_push_rp.rect, "; ",
 	//	"to_push_rp.tl:", to_push_rp.rect.tl_corner(), " ",
 	//	"to_push_rp.br:", to_push_rp.rect.br_corner(), "; ",
@@ -381,7 +381,7 @@ void DungeonGen::GenInnards::_do_push_back(RoomPath&& to_push_rp) const {
 			to_push_rp.conn_index_uset.insert(i32(item_index));
 			item.conn_index_uset.insert
 				(i32(to_push_rp_index));
-			//engine->log("Connected these RPs: ",
+			//engine->dbg_log("Connected these RPs: ",
 			//	"to_push_rp{", to_push_rp.rect.tl_corner(), " ",
 			//		to_push_rp.rect.br_corner(), "} ",
 			//		to_push_rp_index, " "
@@ -479,7 +479,7 @@ auto DungeonGen::GenInnards::_gen_initial_rp()
 	}
 	//--------
 	//const i32 _conn_rp_index = engine->layout_rand<i32>(0, 0);
-	//engine->log("test 1\n");
+	//engine->dbg_log("test 1\n");
 	const auto& conn_rp = _self->floor_layout().at(_conn_rp_index);
 
 	if (
@@ -795,10 +795,10 @@ bool DungeonGen::GenInnards::_basic_shrink_extra_test_func(
 					|| _parallel_paths_too_close(some_rp, some_item));
 			});
 	//if (found) {
-	//	//engine->log("found{", *found, "}\n");
-	//	engine->log("found\n");
+	//	//engine->dbg_log("found{", *found, "}\n");
+	//	engine->dbg_log("found\n");
 	//} else {
-	//	engine->log("!found\n");
+	//	engine->dbg_log("!found\n");
 	//}
 	return (some_rp.fits_in_pfnb()
 		&& !found
@@ -981,7 +981,7 @@ auto DungeonGen::GenInnards::any_path_sides_hit_wrongly_find_first(
 	//	if (index && (*index == k)) {
 	//		continue;
 	//	} else if (_path_sides_hit_wrongly(to_check_rp, some_item)) {
-	//		//engine->log("any_path_sides_hit_wrongly_find_first(): ",
+	//		//engine->dbg_log("any_path_sides_hit_wrongly_find_first(): ",
 	//		//	"wrong hit found: ",
 	//		//	"to_check_rp{", to_check_rp.rect.tl_corner(), " ",
 	//		//		to_check_rp.rect.br_corner(), "} ",
@@ -1173,11 +1173,11 @@ void DungeonGen::GenInnards::finalize(
 	//for (size_t i=0; i<_self->floor_layout().size(); ++i) {
 	//	const auto& some_rp = _self->_floor_layout.at(i);
 	//	if (some_rp.door_pt_uset.size() > 0) {
-	//		engine->log("door pts ", i, " [");
+	//		engine->dbg_log("door pts ", i, " [");
 	//		for (const auto& door_pt: some_rp.door_pt_uset) {
-	//			engine->log(door_pt, " ");
+	//			engine->dbg_log(door_pt, " ");
 	//		}
-	//		engine->log("]\n");
+	//		engine->dbg_log("]\n");
 	//	}
 	//}
 	_remove_dead_end_paths();
@@ -1202,7 +1202,7 @@ void DungeonGen::GenInnards::_remove_dead_end_paths() const {
 					GEN_YN_RM_DE_PATHS_DO_RM.rng_val_is_yes
 						(GEN_YN_RM_DE_PATHS_DO_RM.gen())
 				) {
-					//engine->log("_remove_dead_end_paths(): ",
+					//engine->dbg_log("_remove_dead_end_paths(): ",
 					//	"going to remove: ",
 					//	"item{", item.rect.tl_corner(), " ",
 					//		item.rect.br_corner(), "} ",
@@ -1323,7 +1323,7 @@ void DungeonGen::GenInnards::_insert_alt_terrain(
 			= engine->layout_rand_r2_in_pfnb
 				(GEN_BIOME_MBALL_GEN_MIN_SIZE_2D,
 				GEN_BIOME_MBALL_GEN_MAX_SIZE_2D);
-	//engine->log(biome_mballs_bounds_r2, "\n");
+	//engine->dbg_log(biome_mballs_bounds_r2, "\n");
 
 	MetaballGen
 		//biome_mballs(floor_r2.size_2d);
@@ -1404,7 +1404,7 @@ void DungeonGen::GenInnards::_insert_alt_terrain(
 			/ GEN_BIOME_THRESH_MM_SCALE;
 			//= 10.0f;
 			//= 5.0f;
-	//engine->log("biome_thresh: ", biome_thresh, "\n");
+	//engine->dbg_log("biome_thresh: ", biome_thresh, "\n");
 
 	const auto& biome_gen
 		//= biome_mballs.gen(0.10f, 0.3f);
@@ -1414,18 +1414,18 @@ void DungeonGen::GenInnards::_insert_alt_terrain(
 		//= biome_mballs.gen(BIOME_THRESH);
 		//= biome_mballs.gen();
 		= biome_mballs.gen(biome_thresh);
-	//engine->log("Debug: Generated metaballs\n");
+	//engine->dbg_log("Debug: Generated metaballs\n");
 	//for (size_t j=0; j<biome_gen.size(); ++j) {
 	//	const auto& row = biome_gen.at(j);
-	//	engine->log(j, ": ");
+	//	engine->dbg_log(j, ": ");
 	//	for (size_t i=0; i<row.size(); ++i) {
-	//		//engine->log(i, "{", row.at(i), "}");
-	//		engine->log(row.at(i));
+	//		//engine->dbg_log(i, "{", row.at(i), "}");
+	//		engine->dbg_log(row.at(i));
 	//		if (i + size_t(1) < row.size()) {
-	//			engine->log(" ");
+	//			engine->dbg_log(" ");
 	//		}
 	//	}
-	//	engine->log("\n");
+	//	engine->dbg_log("\n");
 	//}
 	std::vector<std::vector<std::pair<bool, BgTile>>> biome_bg_tiles
 		(biome_gen.size(),
@@ -1508,7 +1508,7 @@ void DungeonGen::GenInnards::_insert_alt_terrain(
 			const auto& dmap = dmap_gen.gen_basic
 				(_self->floor_layout(), BASIC_NO_PASS_BG_TILE_USET);
 			const auto& path = dmap.make_path(ustairs_pos);
-			engine->log("Filling `path`\n");
+			//engine->dbg_log("Filling `path`\n");
 			path->fill
 				([&](const IntVec2& phys_pos) -> bool {
 					//auto& fl = _self->_floor_layout;
@@ -1519,7 +1519,7 @@ void DungeonGen::GenInnards::_insert_alt_terrain(
 						pos = phys_pos - dmap.BOUNDS_R2.tl_corner();
 					auto& bg_tile = biome_bg_tiles.at(pos.y).at(pos.x);
 					//const size_t rp_index = *fl.phys_pos_to_rp_index(pos);
-					//engine->log(pos, ": ", bg_tile_str_map_at(bg_tile),
+					//engine->dbg_log(pos, ": ", bg_tile_str_map_at(bg_tile),
 					//	"\n");
 
 					if (
@@ -1537,25 +1537,25 @@ void DungeonGen::GenInnards::_insert_alt_terrain(
 	}
 
 
-	engine->log("Debug: generated biome `BgTile`s\n");
+	engine->dbg_log("Debug: generated biome `BgTile`s\n");
 	for (size_t j=0; j<biome_bg_tiles.size(); ++j) {
 		auto& row = biome_bg_tiles.at(j);
-		engine->log(j, ": ");
+		engine->dbg_log(j, ": ");
 		for (size_t i=0; i<row.size(); ++i) {
 			const auto& bg_tile = row.at(i);
 			//if (bg_tile == ALT_TERRAIN_NONE)
 			if (!bg_tile.first) {
-				engine->log(char(comp::drawable_data_umap().at
+				engine->dbg_log(char(comp::drawable_data_umap().at
 					(bg_tile_str_map_at(BgTile::RoomFloor)).c));
 			} else { // if (bg_tile.first)
 				const auto& draw_data
 					= comp::drawable_data_umap().at
 						(bg_tile_str_map_at(bg_tile.second));
-				engine->log(char(draw_data.c));
+				engine->dbg_log(char(draw_data.c));
 			}
 		}
 		//if (j + size_t(1) < biome_bg_tiles.size()) {
-			engine->log("\n");
+			engine->dbg_log("\n");
 		//}
 	}
 
@@ -1587,33 +1587,6 @@ void DungeonGen::GenInnards::_insert_alt_terrain(
 				pos.x<=item.rect.right_x() + i32(1);
 				++pos.x
 			) {
-				//const auto
-				//	//bg_tile_index = engine->layout_noise<i32>
-				//	//	(0, allowed_alt_terrain_vec.size() - 1, pos,
-				//	//	_self->_floor_layout.layout_noise_add_amount());
-				//	bg_tile_index = engine->mball_out
-				//		(0, allowed_alt_terrain_vec.size() - 1,
-				//		mball_dyna2d, pos);
-
-				//const auto
-				//	bg_tile_index =
-				//const BgTile
-				//	bg_tile
-				//		//= allowed_alt_terrain_vec.at(bg_tile_index);
-				//		//= BgTile::Water;
-				//		= biome_gen.at(pos.y).at(pos.x) 
-				//		//? BgTile::Spikes
-				//		? BgTile::Water
-				//		: ALT_TERRAIN_NONE;
-				//const auto& lake = biome_gen.at(pos.y).at(pos.x);
-				//BgTile bg_tile;
-				//if (lake <= 0.1f) {
-				//	bg_tile = BgTile::Spikes;
-				//} else if (lake <= 0.11f) {
-				//	bg_tile = BgTile::Water;
-				//} else {
-				//	bg_tile = ALT_TERRAIN_NONE;
-				//}
 				if (!biome_mballs_bounds_r2.intersect(pos)) {
 					continue;
 				}
@@ -1646,8 +1619,14 @@ void DungeonGen::GenInnards::_insert_alt_terrain(
 				//		item.alt_terrain_umap[pos] = bg_tile.second;
 				//	}
 				//}
-				item.alt_terrain_umap.insert(std::pair
-					(pos, bg_tile.second));
+				if (
+					item.is_room() 
+					|| !BASIC_NO_PASS_BG_TILE_USET.contains
+					(bg_tile.second)
+				) {
+					item.alt_terrain_umap.insert(std::pair
+						(pos, bg_tile.second));
+				}
 			}
 		}
 	}

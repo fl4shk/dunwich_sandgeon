@@ -33,7 +33,7 @@ std::string GmDungeonGen::kind_str() const {
 void GmDungeonGen::_init(ecs::Engine* ecs_engine) {
 	_init_start();
 
-	const std::string func_name("game_engine::sys::GmDungeonGen::_init");
+	//const std::string func_name("game_engine::sys::GmDungeonGen::_init");
 
 	//if (ecs_engine->has_ent_w_comp(
 	//	make_key_set<ecs::NonSerializable, comp::StaticBgTileMap>()
@@ -58,7 +58,7 @@ void GmDungeonGen::_init(ecs::Engine* ecs_engine) {
 	//		func_name
 	//	);
 
-	//	engine->log("game_engine::sys::GmDungeonGen::_init(): ",
+	//	engine->dbg_log("game_engine::sys::GmDungeonGen::_init(): ",
 	//		*_dungeon_gen_id, "\n");
 	//}
 	//clear(ecs_engine);
@@ -88,13 +88,9 @@ void GmDungeonGen::tick(ecs::Engine* ecs_engine) {
 
 		//floor_layout->draw(bg_tile_map);
 		//bg_tile_map->draw();
-		engine->pfield_window.clear();
-		engine->dungeon_gen.floor_layout().draw();
-		engine->screen_window.clear();
 
-		engine->screen_window.draw(engine->pfield_window);
-		engine->screen_window.draw(engine->log_window);
-		engine->screen_window.draw(engine->hud_window);
+		//engine->draw_main();
+		engine->set_game_mode(GameMode::Main);
 	}
 }
 

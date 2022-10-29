@@ -163,7 +163,7 @@ i32 RealMainSdl::run() {
 		while (SDL_PollEvent(&e) != 0) {
 			if (e.type == SDL_QUIT) {
 				quit = true;
-			} else if (handle_key_events(e, _key_status_map,
+			} else if (handle_key_events(e, _key_status_umap,
 				ksm_perf_total_backup)) {
 			} else if (
 				(e.type == SDL_MOUSEBUTTONDOWN)
@@ -351,10 +351,10 @@ void RealMainSdl::_update_engine_key_status() {
 	//auto update_key_status
 	//	= [this](PrevCurrPair<bool>& key_status_down, SDL_Keycode sym)
 	//	-> void {
-	//	if (_key_status_map.contains(sym)) {
-	//		//key_status_down() = _key_status_map.at(sym).down.prev();
+	//	if (_key_status_umap.contains(sym)) {
+	//		//key_status_down() = _key_status_umap.at(sym).down.prev();
 	//		key_status_down.back_up_and_update(
-	//			_key_status_map.at(sym).down()
+	//			_key_status_umap.at(sym).down()
 	//		);
 	//	}
 	//};
@@ -375,8 +375,8 @@ void RealMainSdl::_update_engine_key_status() {
 	//update_key_status(key_status.at(KeyStatus::Start), SDLK_RETURN);
 	//update_key_status(key_status.at(KeyStatus::Select), SDLK_ESCAPE);
 
-	_engine.key_status.update(_key_status_map,
-		sdl::EngineKeycMap<KeyKind>({
+	_engine.key_status.update(_key_status_umap,
+		sdl::EngineKeycUmap<KeyKind>({
 			{KeyKind::LeftL, SDLK_s},
 			{KeyKind::UpL, SDLK_e},
 			{KeyKind::RightL, SDLK_f},

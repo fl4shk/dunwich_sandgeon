@@ -58,6 +58,7 @@ class DijkstraMap final {
 	friend class DijkstraMapGen;
 public:		// types
 	using Data = std::vector<std::vector<float>>;
+	friend class Iterator;
 public:		// constants
 	static constexpr IntRect2
 		// Note: might need to change `BOUNDS_R2` to a non-constant at some
@@ -72,6 +73,57 @@ public:		// constants
 		VERY_HIGH_NUM
 			//= PFIELD_PHYS_SIZE_2D.x + PFIELD_PHYS_SIZE_2D.y + 50.0f;
 			= INFINITY;
+public:		// types
+	//class Iterator final {
+	//	friend class DijkstraMap;
+	//public:		// types
+	//	using iterator_category = std::random_access_iterator_tag;
+	//	using difference_type = i64;
+	//	using value_type = float;
+	//	using pointer = value_type*;
+	//	using reference = value_type&;
+	//private:		// variables
+	//	DijkstraMap* _self = nullptr;
+	//	IntVec2 _phys_pos = {0, 0};
+	//public:		// functions
+	//	inline Iterator() = default;
+	//	inline Iterator(DijkstraMap* s_self, const IntVec2& s_pos)
+	//		: _self(s_self), _pos(s_pos) {}
+	//	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Iterator);
+	//	inline ~Iterator() = default;
+
+	//	inline reference operator * () const {
+	//		return &_self->_raw_at(_pos);
+	//	}
+	//	inline Iterator& operator ++ () {
+	//		//if (_pos.x < _self->SIZE_2D.x && _pos.y < _self->SIZE_2D.y) {
+	//		//	++_pos.x;
+	//		//	if (_pos.x >= _self->SIZE_2D.x) {
+	//		//		_pos.x = 0;
+
+	//		//		++_pos.y;
+	//		//	}
+	//		//}
+	//		return *this;
+	//	}
+	//	inline Iterator& operator -- () {
+	//		//if (_pos.x >= 0 && _pos.y >= 0) {
+	//		//	--_pos.x
+	//		//}
+	//		if (_pos.y <= 0) {
+	//			_pos.x = math::max_va(_pos.x - 1, 0);
+	//		} else { // if (_pos.y > 0)
+	//			if (_pos.x <= 0) {
+	//				// wrap around backwards
+	//				_pos.x = _self->SIZE_2D.x - 1;
+	//			} else {
+	//				_pos.x = math::min_va(_pos.x - 1,
+	//					_self->SIZE_2D.x - 1);
+	//			}
+	//		}
+	//		return *this;
+	//	}
+	//};
 private:		// variables
 	Data _data;
 public:		// functions

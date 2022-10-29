@@ -32,9 +32,11 @@
 #include "sys/gm_options_class.hpp"
 #include "sys/gm_file_select_class.hpp"
 #include "sys/gm_dungeon_gen_class.hpp"
+#include "sys/gm_main_class.hpp"
 
 namespace dunwich_sandgeon {
 namespace game_engine {
+//--------
 //--------
 const std::string
 	Engine::DEFAULT_SAVE_FILE_NAME("save_file.binser.ignore"),
@@ -93,10 +95,10 @@ Engine::NonEcsSerData::NonEcsSerData(const binser::Value& bv) {
 
 	{
 		MEMB_AUTOSER_LIST_ENGINE_NON_ECS_SER_DATA(BINSER_MEMB_DESERIALIZE);
-		#define X(name, func_map) \
+		#define X(name, func_umap) \
 			do {  \
 				std::string str;  \
-				binser::get_bv_memb(str, bv, #name, func_map);  \
+				binser::get_bv_memb(str, bv, #name, func_umap);  \
 				inv_sconcat(str, name);  \
 			} while (0);
 		MEMB_RNG_LIST_ENGINE_NON_ECS_SER_DATA(X);
@@ -129,7 +131,7 @@ Engine::NonEcsSerData::operator binser::Value () const {
 	//}
 	//binser::set_bv_memb(ret, "_rng", sconcat(_rng));
 	//binser::set_bv_memb(ret, "_namegen_rng", sconcat(_namegen_rng));
-	#define X(name, func_map) \
+	#define X(name, func_umap) \
 		binser::set_bv_memb(ret, #name , sconcat( name ));
 	MEMB_RNG_LIST_ENGINE_NON_ECS_SER_DATA(X);
 	#undef X
@@ -182,7 +184,7 @@ Engine::Engine(i32 s_argc, char** s_argv, bool do_create_or_load)
 	//	//_non_ecs_ser_data_arr.push_back(NonEcsSerData());
 	//	//--------
 	//	//auto add_window = [](auto& vec_etc, Window&& to_push) -> void {
-	//	//	//log("add_window() testificate: ",
+	//	//	//dbg_log("add_window() testificate: ",
 	//	//	//	to_push.engine() == nullptr, "\n");
 	//	//	vec_etc.push_back(std::move(to_push));
 	//	//	//vec_etc.back().init_set_border();
@@ -241,7 +243,7 @@ Engine::Engine(i32 s_argc, char** s_argv, bool do_create_or_load)
 
 	set_game_mode(GameMode::TitleScreen);
 
-	//log("Engine::Engine()\n");
+	//dbg_log("Engine::Engine()\n");
 	//dbg_check_ecs_engine();
 	if (do_create_or_load) {
 		_create_or_load_save_file_etc();
@@ -273,10 +275,10 @@ Engine::operator binser::Value () const {
 void Engine::deserialize(const binser::Value& bv) {
 	//BINSER_MEMB_DESERIALIZE(ecs_engine);
 	//ecs_engine.deserialize(bv["ecs_engine"]);
-	//log("Engine::deserialize() before: ",
+	//dbg_log("Engine::deserialize() before: ",
 	//	aux_window(0).engine() == nullptr, "\n");
 	MEMB_SER_LIST_ENGINE(BINSER_MEMB_DESERIALIZE);
-	//log("Engine::deserialize() after: ",
+	//dbg_log("Engine::deserialize() after: ",
 	//	aux_window(0).engine() == nullptr, "\n");
 
 	for (ecs::FileNum file_num=0; file_num<NUM_FILES; ++file_num) {
@@ -287,7 +289,7 @@ void Engine::deserialize(const binser::Value& bv) {
 	}
 
 	#ifdef DEBUG
-	log("Engine::deserialize()\n");
+	dbg_log("Engine::deserialize()\n");
 	//dbg_osprint_layout_rng_a2d(std::cout);
 	#endif		// DEBUG
 }
@@ -297,12 +299,12 @@ void Engine::deserialize(const binser::Value& bv) {
 //		= screen_window.with_border_ent_id_at(wb_pos);
 //
 //	if (id != ecs::ENT_NULL_ID) {
-//		log("Engine::dbg_check_ecs_engine(): ",
+//		dbg_log("Engine::dbg_check_ecs_engine(): ",
 //			id, " ", ecs_engine.engine_comp_map().contains(id),
 //			"\n");
 //
 //		if (ecs_engine.engine_comp_map().contains(id)) {
-//			log(ecs_engine.comp_map(id).contains(
+//			dbg_log(ecs_engine.comp_map(id).contains(
 //					game_engine::comp::Drawable::KIND_STR
 //				),
 //				"\n"
@@ -311,9 +313,11 @@ void Engine::deserialize(const binser::Value& bv) {
 //	}
 //}
 
-void Engine::_log_backend(const std::string& msg) {
+void Engine::_dbg_log_backend(const std::string& msg) {
 	// This is temporary
+	//#ifdef DEBUG
 	printout(msg);
+	//#endif		// DEBUG
 }
 void Engine::tick() {
 	if (!_did_init_window_clear) {
@@ -389,11 +393,11 @@ void Engine::tick() {
 	}
 
 	{
-		//log("Ticking the game engine: ", _tick_counter, "\n");
+		//dbg_log("Ticking the game engine: ", _tick_counter, "\n");
 		//++_tick_counter;
 
 		//if (game_mode == GameMode::AuxTitleScreen) {
-		//	log("game_engine::Engine::tick(): ",
+		//	dbg_log("game_engine::Engine::tick(): ",
 		//		"Temporary title screen code\n");
 
 		//	yes_no_menu().tick(key_status);
@@ -407,9 +411,18 @@ void Engine::tick() {
 	}
 
 }
+void Engine::draw_to_main_windows() {
+	pfield_window.clear();
+	dungeon_gen.floor_layout().draw();
+	screen_window.clear();
+
+	screen_window.draw(engine->pfield_window);
+	screen_window.draw(engine->log_window);
+	screen_window.draw(engine->hud_window);
+}
 //--------
 void Engine::_create_or_load_save_file_etc() {
-	log("game_engine::Engine::_create_or_load_save_file_etc(): ",
+	dbg_log("game_engine::Engine::_create_or_load_save_file_etc(): ",
 		"testificate\n");
 
 	if (
@@ -446,7 +459,7 @@ void Engine::_create_or_load_save_file_etc() {
 					"\"", _save_file_name, "\".",
 					"\n");
 			}
-			//log("Testificate: Calling `deserialize()`\n");
+			//dbg_log("Testificate: Calling `deserialize()`\n");
 		}
 	} else {
 		//err("game_engine::Engine::_create_or_load_save_file_etc(): ",
@@ -468,7 +481,7 @@ void Engine::_create_or_load_save_file_etc() {
 
 		_save_to_binser(true);
 	}
-	//log("Testificate: ", ecs_engine.curr_file_num, "\n");
+	//dbg_log("Testificate: ", ecs_engine.curr_file_num, "\n");
 }
 
 //void Engine::_load_from_binser() {
@@ -478,7 +491,7 @@ void Engine::_create_or_load_save_file_etc() {
 //}
 void Engine::_save_to_binser(bool do_create_or_load) {
 	#ifdef DEBUG
-	log("game_engine::Engine::_save_to_binser(): testificate\n");
+	dbg_log("game_engine::Engine::_save_to_binser(): testificate\n");
 	#endif		// DEBUG
 
 	//binser::Value root 
@@ -501,7 +514,7 @@ void Engine::_save_to_binser(bool do_create_or_load) {
 
 void Engine::save_and_quit() {
 	#ifdef DEBUG
-	log("game_engine::Engine::save_and_quit(): testificate\n");
+	dbg_log("game_engine::Engine::save_and_quit(): testificate\n");
 	#endif		// DEBUG
 
 	_save_to_binser();
@@ -509,7 +522,7 @@ void Engine::save_and_quit() {
 }
 void Engine::save_and_return_to_title() {
 	#ifdef DEBUG
-	log("game_engine::Engine::save_and_return_to_title(): ",
+	dbg_log("game_engine::Engine::save_and_return_to_title(): ",
 		"testificate\n");
 	#endif		// DEBUG
 
@@ -519,7 +532,7 @@ void Engine::save_and_return_to_title() {
 
 void Engine::copy_file() {
 	#ifdef DEBUG
-	log("game_engine::Engine::copy_file(): testificate\n");
+	dbg_log("game_engine::Engine::copy_file(): testificate\n");
 	#endif		// DEBUG
 	ecs_engine.copy_file();
 	non_ecs_ser_data_fn(*copy_dst_file_num())
@@ -528,13 +541,13 @@ void Engine::copy_file() {
 		= layout_rng_arr_fn(*src_file_num());
 
 	#ifdef DEBUG
-	log("Engine::copy_file()\n");
+	dbg_log("Engine::copy_file()\n");
 	//dbg_osprint_layout_rng_a2d(std::cout);
 	#endif		// DEBUG
 }
 void Engine::erase_file() {
 	#ifdef DEBUG
-	log("game_engine::Engine::erase_file(): testificate\n");
+	dbg_log("game_engine::Engine::erase_file(): testificate\n");
 	#endif		// DEBUG
 	ecs_engine.erase_file();
 
@@ -547,11 +560,11 @@ void Engine::erase_file() {
 
 	//for (ecs::FileNum file_num=0; file_num<NUM_FILES; ++file_num) {
 	//	dbg_osprint_layout_rng_arr_fn(std::cout, file_num);
-	//	log("\n");
+	//	dbg_log("\n");
 	//}
 
 	#ifdef DEBUG
-	log("Engine::erase_file()\n");
+	dbg_log("Engine::erase_file()\n");
 	//dbg_osprint_layout_rng_a2d(std::cout);
 	#endif		// DEBUG
 }
@@ -567,7 +580,7 @@ void Engine::position_ctor_callback(comp::Position* obj) {
 
 	//auto& ent_id_set = pfield_ent_id_v3d()
 	//	.at(obj->pos().z).at(obj->pos().y).at(obj->pos().x);
-	auto& ent_id_set = pfield_ent_id_set(obj->pos());
+	auto& ent_id_set = pfield_ent_id_set(obj->pos()());
 
 	if (ent_id_set.contains(obj->ent_id())) {
 		fprintf(stderr, sconcat("Engine::position_ctor_callback(): ",
@@ -582,7 +595,7 @@ void Engine::position_dtor_callback(comp::Position* obj) {
 
 	//auto& ent_id_set = pfield_ent_id_v3d()
 	//	.at(obj->pos().z).at(obj->pos().y).at(obj->pos().x);
-	auto& ent_id_set = pfield_ent_id_set(obj->pos());
+	auto& ent_id_set = pfield_ent_id_set(obj->pos()());
 
 	if (!ent_id_set.contains(obj->ent_id())) {
 		fprintf(stderr, sconcat("Engine::position_dtor_callback(): ",
@@ -593,26 +606,29 @@ void Engine::position_dtor_callback(comp::Position* obj) {
 	ent_id_set.erase(obj->ent_id());
 }
 
-void Engine::position_set_pos_callback(
+IntVec3& Engine::position_set_pos_callback(
 	comp::Position* obj, const IntVec3& n_pos
 ) {
 	_err_when_ent_id_is_null(obj, "position_set_pos_callback");
 
 	position_dtor_callback(obj);
-	obj->_pos = n_pos;
+	//obj->_pos = n_pos;
+	auto& ret = obj->_pos.back_up_and_update(n_pos)();
 	position_ctor_callback(obj);
+
+	return ret;
 }
 
 GameMode& Engine::set_game_mode(GameMode n_game_mode) {
-	//log("old _game_mode: ", i32(_game_mode), "\n");
+	//dbg_log("old _game_mode: ", i32(_game_mode), "\n");
 	_game_mode = n_game_mode;
-	//log("new _game_mode: ", i32(_game_mode), "\n");
+	//dbg_log("new _game_mode: ", i32(_game_mode), "\n");
 
 	switch (game_mode()) {
 	//--------
 	#define X(arg) \
 		case GameMode::arg: \
-			ecs_engine.sys_map().at(sys::Gm##arg::KIND_STR) \
+			ecs_engine.sys_umap().at(sys::Gm##arg::KIND_STR) \
 				->prep_init(); \
 			break;
 	LIST_OF_GAME_MODES(X)
@@ -629,10 +645,10 @@ GameMode& Engine::set_game_mode(GameMode n_game_mode) {
 }
 
 //void Engine::_yes_no_menu_act_yes(Engine* self) {
-//	log("yes_no_menu: \"Yes\" button activated!\n");
+//	dbg_log("yes_no_menu: \"Yes\" button activated!\n");
 //}
 //void Engine::_yes_no_menu_act_no(Engine* self) {
-//	log("yes_no_menu: \"No\" button activated!\n");
+//	dbg_log("yes_no_menu: \"No\" button activated!\n");
 //}
 
 //void Engine::_save() {

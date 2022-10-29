@@ -15,27 +15,42 @@
 // You should have received a copy of the GNU General Public License along
 // with Dunwich Sandgeon.  If not, see <https://www.gnu.org/licenses/>.
 
-#ifndef src_game_engine_comp_drawable_data_map_hpp
-#define src_game_engine_comp_drawable_data_map_hpp
+#ifndef src_game_engine_sys_gm_main_class_hpp
+#define src_game_engine_sys_gm_main_class_hpp
 
-// src/game_engine/comp/drawable_data_umap.hpp
+// src/game_engine/sys/gm_main_class.hpp
 
 #include "../../misc_includes.hpp"
-#include "general_comp_classes.hpp"
 
 namespace dunwich_sandgeon {
 namespace game_engine {
-namespace comp {
 //--------
-const std::unordered_map<std::string, Drawable::Data>& drawable_data_umap();
-template<ecs::EngineDerivedFromComp T>
-inline ecs::CompSptr make_drawable() {
-	return ecs::CompSptr(new Drawable
-		(drawable_data_umap().at(T::KIND_STR)));
-}
+class Engine;
 //--------
-} // namespace comp
+namespace sys {
+//--------
+// The main "loop
+class GmMain final: public ecs::Sys {
+private:		// variables
+	std::optional<ecs::EntId>
+		_player_id = std::nullopt;
+public:		// constants
+	static const std::string
+		KIND_STR;
+public:		// functions
+	GmMain() = default;
+	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(GmMain);
+	virtual ~GmMain() = default;
+
+	virtual std::string kind_str() const;
+private:		// functions
+	virtual void _init(ecs::Engine* ecs_engine);
+public:		// functions
+	virtual void tick(ecs::Engine* ecs_engine);
+};
+//--------
+} // namespace sys
 } // namespace game_engine
 } // namespace dunwich_sandgeon
 
-#endif		// src_game_engine_comp_drawable_data_map_hpp
+#endif		// src_game_engine_sys_gm_main_class_hpp

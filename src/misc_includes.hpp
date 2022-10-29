@@ -83,6 +83,7 @@ namespace ecs = liborangepower::game::ecs;
 #include <cmath>
 
 #include <algorithm>
+#include <iterator>
 #include <initializer_list>
 #include <fstream>
 #include <deque>

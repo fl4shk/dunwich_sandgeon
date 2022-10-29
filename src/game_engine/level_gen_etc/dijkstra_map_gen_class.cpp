@@ -111,11 +111,11 @@ std::ostream& operator << (
 			if (item >= -255 && item <= -16) {
 				osprintout(os, std::hex, "-", std::abs(item), std::dec);
 			} else if (item >= -15 && item <= -1) {
-				osprintout(os, std::hex, "- ", std::abs(item), std::dec);
+				osprintout(os, std::hex, "-0", std::abs(item), std::dec);
 			} else if (item == 0) {
-				osprintout(os, std::hex, "  ", item, std::dec);
+				osprintout(os, std::hex, " 0", item, std::dec);
 			} else if (item >= 1 && item <= 15) {
-				osprintout(os, std::hex, "+ ", item, std::dec);
+				osprintout(os, std::hex, "+0", item, std::dec);
 			} else if (item >= 16 && item <= 255) {
 				osprintout(os, std::hex, "+", item, std::dec);
 			} else {
@@ -173,10 +173,21 @@ DijkstraMap DijkstraMapGen::gen_basic(
 		ret._raw_phys_at(goal.pos) = goal.val;
 	}
 
-	bool did_change;
-	do {
-		//--------
-		did_change = false;
+	class Sortable final {
+	public:		// variables
+		DijkstraMap* dmap = nullptr;
+		IntVec2 phys_pos;
+	public:		// functions
+		constexpr inline auto operator <=> (const Sortable& to_cmp) const {
+			return dmap->phys_at(phys_pos)
+				<=> to_cmp.dmap->phys_at(to_cmp.phys_pos);
+		}
+	};
+
+	std::deque<Sortable>
+		to_sort_deque, to_move_deque;
+
+	{
 		//--------
 		const IntVec2 start_pos = floor_layout.at(0).rect.tl_corner();
 		//--------
@@ -184,43 +195,48 @@ DijkstraMap DijkstraMapGen::gen_basic(
 			const IntVec2Uset& explored_uset, const IntVec2& phys_pos
 		) -> bool {
 			const auto& bg_tile = floor_layout.phys_bg_tile_at(phys_pos);
-			return (bg_tile && !no_pass_uset.contains(*bg_tile));
+			return bg_tile && !no_pass_uset.contains(*bg_tile);
 			//return static_cast<bool>(bg_tile);
 		};
-		//--------
 		auto fill_func = [&](
 			const IntVec2Uset& explored_uset, const IntVec2& phys_pos
 		) -> void {
+			if (ret.phys_at(phys_pos) != ret.VERY_HIGH_NUM) {
+				to_sort_deque.push_back({&ret, phys_pos});
+			}
+		};
+		//--------
+		// The initial `bfs_fill()` call that traverses the *entire* floor
+		bfs_fill(start_pos, edge_exists_func, fill_func);
+		//--------
+	}
+	bool did_change;
+	do {
+		did_change = false;
+		std::sort(to_sort_deque.begin(), to_sort_deque.end());
+
+		auto fill_func = [&](const IntVec2& phys_pos) -> void {
 			// At this point, `pos` is guaranteed to be at the location of
 			// a valid physical BG tile
-			//const IntVec2
-			//	ret_pos = pos - PFIELD_PHYS_NO_BRDR_RECT2.tl_corner();
-			const auto
-				//& ret_item = ret.at(ret_pos.y).at(ret_pos.x);
-				& ret_item = ret.phys_at(phys_pos);
+			const auto& ret_item = ret.phys_at(phys_pos);
 			auto inner_func = [&](const IntVec2& offset) -> void {
-				const IntVec2
-					side_phys_pos = phys_pos + offset;
-					//ret_side_pos = side_pos
-					//	- PFIELD_PHYS_NO_BRDR_RECT2.tl_corner();
+				const IntVec2 side_phys_pos = phys_pos + offset;
 				if (ret.BOUNDS_R2.intersect(side_phys_pos)) {
 					if (
 						const auto bg_tile
 							= floor_layout.phys_bg_tile_at(side_phys_pos);
 						bg_tile && !no_pass_uset.contains(*bg_tile)
 					) {
-						auto
-							//& ret_side_item = ret
-							//	.at(ret_side_pos.y).at(ret_side_pos.x);
-							& ret_side_item
-								= ret._raw_phys_at(side_phys_pos);
+						auto& ret_side_item
+							= ret._raw_phys_at(side_phys_pos);
 						if (
 							ret_side_item > ret_item
 							&& ret_side_item != ret_item + 1
 						) {
-							ret_side_item = ret_item + 1;
-							//ret_side_item = ret_item;
 							did_change = true;
+							ret_side_item = ret_item + 1;
+							to_move_deque.push_back({&ret, side_phys_pos});
+							//ret_side_item = ret_item;
 						}
 					}
 				}
@@ -230,21 +246,27 @@ DijkstraMap DijkstraMapGen::gen_basic(
 			inner_func(RIGHT_OFFSET);
 			inner_func(BOTTOM_OFFSET);
 		};
-		//--------
-		bfs_fill(start_pos, edge_exists_func, fill_func);
-		//--------
+		//const float lowest_val = to_sort_deque.front();
+		while (to_sort_deque.size() > 0) {
+			const Sortable item = to_sort_deque.front();
+			fill_func(item.phys_pos);
+			to_sort_deque.pop_front();
+		}
+		to_sort_deque = std::move(to_move_deque);
+		to_move_deque.clear();
 	} while (did_change);
-	//bool did_change;
+
 	//do {
 	//	//--------
 	//	did_change = false;
 	//	//--------
-	//	IntVec2 pos;
-	//	for (pos.y=0; pos.y<ret.size_2d().y; ++pos.y) {
-	//		for (pos.x=0; pos.x<ret.size_2d().x; ++pos.x) {
-	//			if (
-	//				
-	//			) {
+	//	if (IntVec2 pos; true) {
+	//		for (pos.y=0; pos.y<ret.size_2d().y; ++pos.y) {
+	//			for (pos.x=0; pos.x<ret.size_2d().x; ++pos.x) {
+	//				if (
+	//					
+	//				) {
+	//				}
 	//			}
 	//		}
 	//	}
@@ -271,9 +293,9 @@ DijkstraMap DijkstraMapGen::gen_basic(
 
 	//if (std::stringstream sstm; true) {
 	//	osprint_dmap(sstm, ret);
-	//	engine->log(sstm.str());
+	//	engine->dbg_log(sstm.str());
 	//}
-	engine->log(ret);
+	//engine->dbg_log(ret);
 
 	return ret;
 }
