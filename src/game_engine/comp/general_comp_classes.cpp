@@ -63,10 +63,10 @@ Position::Position(
 	_init(s_ent_id, s_pos, s_priority);
 }
 Position::Position(
-	ecs::EntId s_ent_id, const IntVec2& s_pos_on_curr_floor,
+	ecs::EntId s_ent_id, const IntVec2& s_pos2,
 	PlayfieldLayerPrio s_priority
 ) {
-	_init(s_ent_id, engine->to_pos_3d(s_pos_on_curr_floor), s_priority);
+	_init(s_ent_id, engine->to_pos3(s_pos2), s_priority);
 }
 void Position::_init(
 	ecs::EntId s_ent_id, const IntVec3& s_pos,
@@ -74,7 +74,13 @@ void Position::_init(
 ) {
 	_ent_id = s_ent_id;
 	//_pos = s_pos;
-	_pos.back_up_and_update(s_pos);
+	_pos3() = s_pos;
+	_pos3.back_up();
+	_prev_floor = prev_pos3().z;
+	//_pos2() = engine->to_pos2(s_pos);
+	//_pos2.back_up();
+	//_floor() = s_pos.z;
+	//_floor.back_up();
 	priority = s_priority;
 	engine->position_ctor_callback(this);
 }
@@ -96,11 +102,11 @@ Position::Position(const binser::Value& bv) {
 Position::~Position() {
 	engine->position_dtor_callback(this);
 }
-IntVec3& Position::set_pos(const IntVec3& n_pos) {
-	return engine->position_set_pos_callback(this, n_pos);
+void Position::set_pos3(const IntVec3& n_pos3) {
+	engine->position_set_pos3_callback(this, n_pos3);
 }
-IntVec3& Position::set_pos(const IntVec2& n_pos_on_curr_floor) {
-	return set_pos(engine->to_pos_3d(n_pos_on_curr_floor));
+void Position::set_pos2(const IntVec2& n_pos2) {
+	set_pos3({.x=n_pos2.x, .y=n_pos2.y, .z=floor()});
 }
 std::string Position::kind_str() const {
 	return KIND_STR;

@@ -153,7 +153,7 @@ public:		// types
 			X(log_msg_log, std::nullopt) \
 			X(hud_msg_log, std::nullopt) \
 			\
-			X(player_pos, std::nullopt) \
+			X(player_pos3, std::nullopt) \
 			X(pfield_ent_id_map, std::nullopt) \
 			\
 			X(_base_rng_seed, std::nullopt) \
@@ -168,11 +168,12 @@ public:		// types
 			log_msg_log,
 			hud_msg_log;
 
-		//PrevCurrPair<i32> floor_pcp = {HIGHEST_FLOOR, -1};
+		//PrevCurrPair<i32> floor = {FIRST_FLOOR, FIRST_FLOOR};
+		i32 prev_floor = FIRST_FLOOR;
 		//i32 floor = HIGHEST_FLOOR;
-		PrevCurrPair<IntVec3> player_pos
-			//= {IntVec3(-1, -1, -1), IntVec3(-1, -1, -1)};
-			= {IntVec3(0, 0, FIRST_FLOOR), IntVec3(0, 0, FIRST_FLOOR)};
+		PrevCurrPair<IntVec3> player_pos3
+			= {{0, 0, FIRST_FLOOR}, {0, 0, FIRST_FLOOR}};
+			//= {IntVec2(0, 0), IntVec2(0, 0)};
 
 		// dimensions: floor, y, x
 		// "pfield" is short for "playfield".
@@ -707,9 +708,6 @@ public:		// `_non_ecs_ser_data_arr` accessor functions
 		return hud_msg_log_fn(USE_CURR_FILE_NUM);
 	}
 	//--------
-	inline IntVec3 to_pos_3d(const IntVec2& pos_2d) const {
-		return IntVec3{.x=pos_2d.x, .y=pos_2d.y, .z=floor()};
-	}
 	//inline i32& floor_fn(ecs::FileNum file_num) {
 	//	return non_ecs_ser_data_fn(file_num).floor();
 	//}
@@ -718,55 +716,71 @@ public:		// `_non_ecs_ser_data_arr` accessor functions
 	//	floor_pcp.back_up_and_update(n_floor);
 	//	return floor_pcp();
 	//}
-	inline const IntVec3& player_pos_fn(ecs::FileNum file_num) const {
-		return non_ecs_ser_data_fn(file_num).player_pos();
+	inline const IntVec3& player_pos3_fn(ecs::FileNum file_num) const {
+		return non_ecs_ser_data_fn(file_num).player_pos3();
 	}
-	inline IntVec3& set_player_pos_fn(
-		ecs::FileNum file_num, const IntVec3& n_player_pos
+	inline const IntVec3& prev_player_pos3_fn(
+		ecs::FileNum file_num
+	) const {
+		return non_ecs_ser_data_fn(file_num).player_pos3.prev();
+	}
+	inline IntVec3& set_player_pos3_fn(
+		ecs::FileNum file_num, const IntVec3& n_player_pos3
 	) {
-		auto& player_pos = non_ecs_ser_data_fn(file_num).player_pos;
-		return player_pos.back_up_and_update(n_player_pos)();
+		//return non_ecs_ser_data_fn(file_num).player_pos2
+		//	.back_up_and_update(n_player_pos2)();
+		auto& the_player_pos3 = non_ecs_ser_data_fn(file_num).player_pos3;
+		auto& the_prev_floor = non_ecs_ser_data_fn(file_num).prev_floor;
+		const i32 old_floor = the_player_pos3().z;
+		the_player_pos3.back_up_and_update(n_player_pos3);
+		if (old_floor != the_player_pos3().z) {
+			the_prev_floor = old_floor;
+		}
+		return the_player_pos3();
 	}
-	inline IntVec3& set_player_pos_fn(
-		ecs::FileNum file_num, const IntVec2& n_player_pos_on_curr_floor
+	inline IntVec2 player_pos2_fn(ecs::FileNum file_num) const {
+		//return to_pos3_fn(file_num, player_pos2_fn(file_num));
+		return to_pos2(player_pos3_fn(file_num));
+	}
+	inline IntVec2 prev_player_pos2_fn(ecs::FileNum file_num) const {
+		return to_pos2(prev_player_pos3_fn(file_num));
+	}
+	inline void set_player_pos2_fn(
+		ecs::FileNum file_num, const IntVec2& n_player_pos2
 	) {
-		return set_player_pos_fn(file_num,
-			to_pos_3d(n_player_pos_on_curr_floor));
+		set_player_pos3_fn(file_num, to_pos3_fn(file_num, n_player_pos2));
 	}
-	inline const IntVec3& prev_player_pos_fn(ecs::FileNum file_num) const {
-		return non_ecs_ser_data_fn(file_num).player_pos.prev();
+	//--------
+	inline const IntVec3& player_pos3() const {
+		return player_pos3_fn(USE_CURR_FILE_NUM);
+	}
+	inline const IntVec3& prev_player_pos3() const {
+		return prev_player_pos3_fn(USE_CURR_FILE_NUM);
+	}
+	inline IntVec3& set_player_pos3(const IntVec3& n_player_pos3) {
+		return set_player_pos3_fn(USE_CURR_FILE_NUM, n_player_pos3);
 	}
 
-	inline const IntVec3& player_pos() const {
-		return player_pos_fn(USE_CURR_FILE_NUM);
+	inline IntVec2 player_pos2() const {
+		return player_pos2_fn(USE_CURR_FILE_NUM);
 	}
-	inline IntVec3& set_player_pos(const IntVec3& n_player_pos) {
-		return set_player_pos_fn(USE_CURR_FILE_NUM, n_player_pos);
+	inline IntVec2 prev_player_pos2() const {
+		return prev_player_pos2_fn(USE_CURR_FILE_NUM);
 	}
-	inline IntVec3& set_player_pos(
-		const IntVec2& n_player_pos_on_curr_floor
-	) {
-		return set_player_pos_fn(USE_CURR_FILE_NUM,
-			n_player_pos_on_curr_floor);
+	inline void set_player_pos2(const IntVec2& n_player_pos2) {
+		set_player_pos2_fn(USE_CURR_FILE_NUM, n_player_pos2);
 	}
-	inline const IntVec3& prev_player_pos() const {
-		return prev_player_pos_fn(USE_CURR_FILE_NUM);
-	}
-
+	//--------
 	inline const i32& floor_fn(ecs::FileNum file_num) const {
+		//return non_ecs_ser_data_fn(file_num).floor();
 		//return non_ecs_ser_data_fn(file_num).player_pos().z;
-		return player_pos_fn(file_num).z;
+		return player_pos3_fn(file_num).z;
 	}
 	inline const i32& prev_floor_fn(ecs::FileNum file_num) const {
+		return non_ecs_ser_data_fn(file_num).prev_floor;
 		//return non_ecs_ser_data_fn(file_num).player_pos.prev().z;
-		return prev_player_pos_fn(file_num).z;
+		//return prev_player_pos_fn(file_num).z;
 	}
-	//inline i32& floor() {
-	//	return floor_fn(USE_CURR_FILE_NUM);
-	//}
-	//inline const i32& set_floor(i32 n_floor) {
-	//	return set_floor_fn(USE_CURR_FILE_NUM, n_floor);
-	//}
 	inline const i32& floor() const {
 		return floor_fn(USE_CURR_FILE_NUM);
 	}
@@ -800,42 +814,42 @@ public:		// `_non_ecs_ser_data_arr` accessor functions
 		return level_minus_1_fn(USE_CURR_FILE_NUM);
 	}
 	//--------
-	inline ecs::EntIdUset& pfield_ent_id_set_fn(
+	inline ecs::EntIdUset& pfield_ent_id_uset_fn(
 		ecs::FileNum file_num, const IntVec3& pos
 	) {
 		return non_ecs_ser_data_fn(file_num).pfield_ent_id_map[pos];
 	}
-	//inline const ecs::EntIdUset& pfield_ent_id_set_fn(
+	//inline const ecs::EntIdUset& pfield_ent_id_uset_fn(
 	//	ecs::FileNum file_num, const IntVec3& pos
 	//) const {
 	//	return non_ecs_ser_data(file_num).pfield_ent_id_map[pos];
 	//}
-	inline ecs::EntIdUset& pfield_ent_id_set(const IntVec3& pos) {
-		return pfield_ent_id_set_fn(USE_CURR_FILE_NUM, pos);
+	inline ecs::EntIdUset& pfield_ent_id_uset(const IntVec3& pos) {
+		return pfield_ent_id_uset_fn(USE_CURR_FILE_NUM, pos);
 	}
-	//inline const ecs::EntIdUset& pfield_ent_id_set(const IntVec3& pos)
+	//inline const ecs::EntIdUset& pfield_ent_id_uset(const IntVec3& pos)
 	//	const {
-	//	return pfield_ent_id_set_fn(USE_CURR_FILE_NUM, pos);
+	//	return pfield_ent_id_uset_fn(USE_CURR_FILE_NUM, pos);
 	//}
 	//--------
-	inline ecs::EntIdUset& pfield_ent_id_set_fn(
-		ecs::FileNum file_num, const IntVec2& pos_2d
+	inline ecs::EntIdUset& pfield_ent_id_uset_fn(
+		ecs::FileNum file_num, const IntVec2& pos2
 	) {
-		return pfield_ent_id_set_fn(file_num,
-			to_int_vec3_fn(file_num, pos_2d));
+		return pfield_ent_id_uset_fn(file_num,
+			to_pos3_fn(file_num, pos2));
 	}
-	//inline const ecs::EntIdUset& pfield_ent_id_set_fn(
-	//	ecs::FileNum file_num, const IntVec2& pos_2d
+	//inline const ecs::EntIdUset& pfield_ent_id_uset_fn(
+	//	ecs::FileNum file_num, const IntVec2& pos2
 	//) const {
-	//	return pfield_ent_id_set_fn(file_num,
-	//		to_int_vec3_fn(file_num, pos_2d));
+	//	return pfield_ent_id_uset_fn(file_num,
+	//		to_pos3_fn(file_num, pos2));
 	//}
-	inline ecs::EntIdUset& pfield_ent_id_set(const IntVec2& pos_2d) {
-		return pfield_ent_id_set(to_int_vec3(pos_2d));
+	inline ecs::EntIdUset& pfield_ent_id_uset(const IntVec2& pos2) {
+		return pfield_ent_id_uset(to_pos3(pos2));
 	}
-	//inline const ecs::EntIdUset& pfield_ent_id_set(const IntVec2& pos_2d)
+	//inline const ecs::EntIdUset& pfield_ent_id_uset(const IntVec2& pos2)
 	//	const {
-	//	return pfield_ent_id_set(to_int_vec3(pos_2d));
+	//	return pfield_ent_id_uset(to_pos3(pos2));
 	//}
 	//inline EntIdSetVec2d& pfield_ent_id_v2d_fn(ecs::FileNum file_num) {
 	//	return pfield_ent_id_v3d_fn(file_num).at(floor_fn(file_num));
@@ -890,13 +904,16 @@ public:		// `_non_ecs_ser_data_arr` accessor functions
 	//--------
 public:		// functions
 	//--------
-	inline IntVec3 to_int_vec3_fn(
-		ecs::FileNum file_num, const IntVec2& pos_2d
+	inline IntVec3 to_pos3_fn(
+		ecs::FileNum file_num, const IntVec2& pos2
 	) const {
-		return IntVec3(pos_2d.x, pos_2d.y, floor_fn(file_num));
+		return IntVec3(pos2.x, pos2.y, floor_fn(file_num));
 	}
-	inline IntVec3 to_int_vec3(const IntVec2& pos_2d) const {
-		return to_int_vec3_fn(USE_CURR_FILE_NUM, pos_2d);
+	inline IntVec3 to_pos3(const IntVec2& pos2) const {
+		return to_pos3_fn(USE_CURR_FILE_NUM, pos2);
+	}
+	static inline IntVec2 to_pos2(const IntVec3& pos3) {
+		return {.x=pos3.x, .y=pos3.y};
 	}
 	//--------
 public:		// functions
@@ -937,8 +954,9 @@ private:		// static functions
 public:		// functions
 	void position_ctor_callback(comp::Position* obj);
 	void position_dtor_callback(comp::Position* obj);
-	IntVec3& position_set_pos_callback(comp::Position* obj,
-		const IntVec3& n_pos);
+	void position_set_pos3_callback(
+		comp::Position* obj, const IntVec3& n_pos3
+	);
 
 	inline Menu build_yes_no_menu(
 		auto* self, const std::function<void(decltype(self))>& yes_func,

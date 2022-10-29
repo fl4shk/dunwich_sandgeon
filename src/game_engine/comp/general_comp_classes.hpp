@@ -109,8 +109,12 @@ public:		// functions
 	GEN_GETTER_BY_CON_REF(data);
 };
 
-// Note that this is a 3D position within the game world.
+// Note: this is a 3D position within the game world.
 // Which floor the entity is on is what the Z axis represents.
+//
+// Note: this is not used for the `Player`'s position; see
+// `game_engine::Engine::NonEcsSerData`'s `player_pos2` and `floor` for
+// that.
 class Position final: public ecs::Comp {
 	friend class dunwich_sandgeon::game_engine::Engine;
 public:		// constants
@@ -118,23 +122,31 @@ public:		// constants
 private:		// variables
 	#define MEMB_AUTOSER_LIST_COMP_POSITION(X) \
 		X(_ent_id, std::nullopt) \
-		X(_pos, std::nullopt)
+		X(_pos3, std::nullopt)
 	ecs::EntId _ent_id = ecs::ENT_NULL_ID;
-	PrevCurrPair<IntVec3> _pos = {
+	PrevCurrPair<IntVec3> _pos3 = {
 		// The elements of these are initialized to `-1` as a debugging aid
 		// in case initialization didn't happen
 		IntVec3{.x=-1, .y=-1, .z=-1}, IntVec3{.x=-1, .y=-1, .z=-1} 
 	};
+	i32 _prev_floor = -1;
+
+	// The elements of these are initialized to `-1` as a debugging aid
+	// in case initialization didn't happen
+	//PrevCurrPair<IntVec2> _pos2 = {
+	//	{.x=-1, .y=-1}, {.x=-1, .y=-1}
+	//};
+	//PrevCurrPair<i32> _floor = {-1, -1};
 public:		// variables
 	PlayfieldLayerPrio priority = PlayfieldLayerPrio::BgMach;
 public:		// functions
 	Position() = default;
 	Position(
-		ecs::EntId s_ent_id, const IntVec3& s_pos,
+		ecs::EntId s_ent_id, const IntVec3& s_pos3,
 		PlayfieldLayerPrio s_priority
 	);
 	Position(
-		ecs::EntId s_ent_id, const IntVec2& s_pos_on_curr_floor,
+		ecs::EntId s_ent_id, const IntVec2& s_pos2,
 		PlayfieldLayerPrio s_priority
 	);
 private:		// functions
@@ -150,10 +162,41 @@ public:		// functions
 	virtual std::string kind_str() const;
 	virtual operator binser::Value () const;
 
+	inline const IntVec3& pos3() const {
+		return _pos3();
+		//return {.x=_pos2().x, .y=_pos2().y, .z=_floor()};
+	}
+	inline const IntVec3& prev_pos3() const {
+		return _pos3.prev();
+		//return {.x=_pos2.prev().x, .y=_pos2.prev().y, .z=_floor.prev()};
+	}
+
+	inline IntVec2 pos2() const {
+		return {.x=pos3().x, .y=pos3().y};
+		//return _pos2();
+	}
+	inline IntVec2 prev_pos2() const {
+		return {.x=prev_pos3().x, .y=prev_pos3().y};
+		//return _pos2.prev();
+	}
+	inline const i32& floor() const {
+		//return _floor();
+		return prev_pos3().z;
+	}
+	//inline const i32& prev_floor() const {
+	//	return _floor.prev();
+	//}
+
+	void set_pos3(const IntVec3& n_pos3);
+	void set_pos2(const IntVec2& n_pos2);
+	//{
+	//	(_pos3.x, _pos3.y) = n_pos2.x, n_pos2.y;
+	//}
+
 	GEN_GETTER_BY_VAL(ent_id);
-	GEN_GETTER_BY_CON_REF(pos);
-	IntVec3& set_pos(const IntVec3& n_pos);
-	IntVec3& set_pos(const IntVec2& n_pos_on_curr_floor);
+	GEN_GETTER_BY_VAL(prev_floor);
+	//GEN_GETTER_BY_CON_REF(pos2);
+	//GEN_GETTER_BY_CON_REF(floor);
 };
 
 //class NonSerPosition final: public ecs::Comp {

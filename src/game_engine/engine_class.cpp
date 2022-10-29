@@ -579,44 +579,48 @@ void Engine::position_ctor_callback(comp::Position* obj) {
 	_err_when_ent_id_is_null(obj, "position_ctor_callback");
 
 	//auto& ent_id_set = pfield_ent_id_v3d()
-	//	.at(obj->pos().z).at(obj->pos().y).at(obj->pos().x);
-	auto& ent_id_set = pfield_ent_id_set(obj->pos()());
+	//	.at(obj->pos3().z).at(obj->pos3().y).at(obj->pos3().x);
+	auto& ent_id_uset = pfield_ent_id_uset(obj->pos3());
 
-	if (ent_id_set.contains(obj->ent_id())) {
+	if (ent_id_uset.contains(obj->ent_id())) {
 		fprintf(stderr, sconcat("Engine::position_ctor_callback(): ",
 			"Internal error.\n").c_str());
 		exit(1);
 	}
 
-	ent_id_set.insert(obj->ent_id());
+	ent_id_uset.insert(obj->ent_id());
 }
 void Engine::position_dtor_callback(comp::Position* obj) {
 	_err_when_ent_id_is_null(obj, "position_dtor_callback");
 
 	//auto& ent_id_set = pfield_ent_id_v3d()
-	//	.at(obj->pos().z).at(obj->pos().y).at(obj->pos().x);
-	auto& ent_id_set = pfield_ent_id_set(obj->pos()());
+	//	.at(obj->pos3().z).at(obj->pos3().y).at(obj->pos3().x);
+	auto& ent_id_uset = pfield_ent_id_uset(obj->pos3());
 
-	if (!ent_id_set.contains(obj->ent_id())) {
+	if (!ent_id_uset.contains(obj->ent_id())) {
 		fprintf(stderr, sconcat("Engine::position_dtor_callback(): ",
 			"Internal error.\n").c_str());
 		exit(1);
 	}
 
-	ent_id_set.erase(obj->ent_id());
+	ent_id_uset.erase(obj->ent_id());
 }
 
-IntVec3& Engine::position_set_pos_callback(
-	comp::Position* obj, const IntVec3& n_pos
+void Engine::position_set_pos3_callback(
+	comp::Position* obj, const IntVec3& n_pos3
 ) {
-	_err_when_ent_id_is_null(obj, "position_set_pos_callback");
+	_err_when_ent_id_is_null(obj, "position_set_pos3_callback");
 
 	position_dtor_callback(obj);
-	//obj->_pos = n_pos;
-	auto& ret = obj->_pos.back_up_and_update(n_pos)();
+	const i32 old_floor = obj->floor();
+	//obj->_pos3 = n_pos3;
+	obj->_pos3.back_up_and_update(n_pos3)();
+	if (old_floor != obj->floor()) {
+		obj->_prev_floor = old_floor;
+	}
+	//obj->_pos2.back_up_and_update({.x=n_pos3.x, .y=n_pos.y});
+	//obj->_floor.back_up_and_update(n_pos3.z)
 	position_ctor_callback(obj);
-
-	return ret;
 }
 
 GameMode& Engine::set_game_mode(GameMode n_game_mode) {
