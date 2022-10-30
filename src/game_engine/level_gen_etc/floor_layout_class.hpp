@@ -124,8 +124,8 @@ public:		// types
 		#define MEMB_LIST_COMP_DUNGEON_ROOM_PATH(X) \
 			/* X(rect, std::nullopt) */ \
 			/* X(alt_terrain_umap, std::nullopt) */ \
-			/* X(conn_index_set, std::nullopt) */ \
-			/* X(door_pt_set, std::nullopt) */ \
+			/* X(conn_index_uset, std::nullopt) */ \
+			/* X(door_pt_uset, std::nullopt) */ \
 
 		IntRect2 rect
 			{.pos=IntVec2(),
@@ -143,12 +143,14 @@ public:		// types
 		//class Xdata final {
 		//public:		// variables
 			i32 gen_side = 0;
-			std::unordered_map<IntVec2, BgTile> alt_terrain_umap;
+			// These are coordinates within pfield-space
+			std::unordered_map<IntVec2, std::optional<BgTile>>
+				alt_terrain_umap;
 
 			std::unordered_set<i32> conn_index_uset;
 
-			/// These are coordinates within pfield-space
-			std::unordered_set<IntVec2> door_pt_uset;
+			std::unordered_map<IntVec2, std::optional<BgTile>>
+				door_umap;
 		//} xdata;
 		//bool show = false;
 	public:		// functions

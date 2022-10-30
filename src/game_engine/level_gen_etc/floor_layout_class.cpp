@@ -165,10 +165,20 @@ const {
 				return BgTile::UpStairs;
 			} else if (dstairs_pos && *dstairs_pos == pos) {
 				return BgTile::DownStairs;
-			} else if (rp.door_pt_uset.contains(pos)) {
-				return BgTile::Door;
-			} else if (rp.alt_terrain_umap.contains(pos)) {
-				return rp.alt_terrain_umap.at(pos);
+			} else if (
+				rp.door_umap.contains(pos)
+				&& rp.door_umap.at(pos)
+			) {
+				//return BgTile::Door;
+				//return rp.door_umap.at(pos)
+				//	? BgTile::LockedDoor : BgTile::Door;
+				return *rp.door_umap.at(pos);
+			} else if (
+				rp.alt_terrain_umap.contains(pos)
+				&& rp.alt_terrain_umap.at(pos)
+			) {
+				return *rp.alt_terrain_umap.at(pos);
+				//return BgTile::Error;
 			}  else {
 				return
 					rp.is_path()

@@ -293,7 +293,7 @@ DijkstraMap DijkstraMapGen::gen_basic(
 	//	osprint_dmap(sstm, ret);
 	//	engine->dbg_log(sstm.str());
 	//}
-	engine->dbg_log(ret);
+	//engine->dbg_log(ret);
 
 	return ret;
 }

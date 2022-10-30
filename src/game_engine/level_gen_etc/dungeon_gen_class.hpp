@@ -505,17 +505,14 @@ private:		// types
 		//--------
 	public:		// functions
 		//--------
-		void finalize(
-			//bool do_clear
-		) const;
+		void finalize() const;
 		//void insert_doors(bool do_clear) const;
 	private:		// functions
 		//--------
 		void _remove_dead_end_paths() const;
 		void _insert_exits() const;
-		void _insert_alt_terrain(
-			//bool do_clear
-		) const;
+		void _insert_alt_terrain_nullopts() const;
+		void _insert_keys_and_doors() const;
 		//--------
 	private:		// static functions
 		//--------

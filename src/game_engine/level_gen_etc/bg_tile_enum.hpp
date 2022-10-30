@@ -38,6 +38,7 @@ namespace level_gen_etc {
 	\
 	X(Wall) \
 	X(Door) \
+	X(LockedDoor) \
 	\
 	X(RoomFloor) \
 	X(PathFloor) \

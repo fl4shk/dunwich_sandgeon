@@ -110,10 +110,8 @@ void DungeonGen::gen_curr_floor() {
 		);
 		innards.gen_single_rp();
 		if (_done_generating) {
-			innards.finalize(
-				//true
-			);
-			//innards._insert_alt_terrain(
+			innards.finalize();
+			//innards._insert_alt_terrain_nullopts(
 			//	//true
 			//);
 		}
@@ -1063,9 +1061,7 @@ auto DungeonGen::GenInnards::_find_first_backend(
 	return std::nullopt;
 	//--------
 }
-void DungeonGen::GenInnards::finalize(
-	//bool do_clear
-) const {
+void DungeonGen::GenInnards::finalize() const {
 	//if (do_clear) {
 	//	//for (i=0; i<_self->floor_layout().size(); ++i)
 	//	for (auto& some_rp: *_self->_floor_layout) {
@@ -1132,7 +1128,9 @@ void DungeonGen::GenInnards::finalize(
 				RoomPath& some_rp, const IntVec2& some_corner
 			) -> void {
 				if (!some_rp.alt_terrain_umap.contains(some_corner)) {
-					some_rp.door_pt_uset.insert(some_corner);
+					//some_rp.door_pt_uset.insert(some_corner);
+					some_rp.door_umap.insert(std::pair
+						(some_corner, std::nullopt));
 				}
 			};
 			if (rp.is_room() && item->is_path()) {
@@ -1182,7 +1180,7 @@ void DungeonGen::GenInnards::finalize(
 	//}
 	_remove_dead_end_paths();
 	_insert_exits();
-	_insert_alt_terrain();
+	_insert_alt_terrain_nullopts();
 }
 void DungeonGen::GenInnards::_remove_dead_end_paths() const {
 	for (;;) {
@@ -1307,12 +1305,11 @@ void DungeonGen::GenInnards::_insert_exits() const {
 		inner_insert(false);
 	}
 }
-void DungeonGen::GenInnards::_insert_alt_terrain(
-	//bool do_clear
-) const {
-	const auto
-		& allowed_alt_terrain_vec = ALLOWED_ALT_TERRAIN_V2D
-			.at(engine->level_minus_1());
+// old code
+void DungeonGen::GenInnards::_insert_alt_terrain_nullopts() const {
+	//const auto
+	//	& allowed_alt_terrain_vec = ALLOWED_ALT_TERRAIN_V2D
+	//		.at(engine->level_minus_1());
 
 	const IntRect2
 		//floor_r2
@@ -1329,6 +1326,7 @@ void DungeonGen::GenInnards::_insert_alt_terrain(
 		//biome_mballs(floor_r2.size_2d);
 		biome_mballs(biome_mballs_bounds_r2.size_2d);
 
+	// old code, do not uncomment
 	//for (
 	//	size_t item_index=0;
 	//	item_index<_self->floor_layout().size();
@@ -1349,6 +1347,7 @@ void DungeonGen::GenInnards::_insert_alt_terrain(
 	//	//}
 	//	//}
 	//}
+
 	if (std::vector<IntRect2> biome_r2_vec; true) {
 		const i32
 			num_biome_r2s = engine->layout_rand<i32>
@@ -1378,6 +1377,7 @@ void DungeonGen::GenInnards::_insert_alt_terrain(
 		}
 	}
 
+	// old code, do not uncomment
 	//const float
 	//	//BIOME_THRESH_0 = engine->layout_rand<i32>
 	//	//	(MIN_GEN_BIOME_THRESH_0 * GEN_BIOME_THRESH_MM_SCALE,
@@ -1414,6 +1414,7 @@ void DungeonGen::GenInnards::_insert_alt_terrain(
 		//= biome_mballs.gen(BIOME_THRESH);
 		//= biome_mballs.gen();
 		= biome_mballs.gen(biome_thresh);
+	// old code, do not uncomment
 	//engine->dbg_log("Debug: Generated metaballs\n");
 	//for (size_t j=0; j<biome_gen.size(); ++j) {
 	//	const auto& row = biome_gen.at(j);
@@ -1427,26 +1428,33 @@ void DungeonGen::GenInnards::_insert_alt_terrain(
 	//	}
 	//	engine->dbg_log("\n");
 	//}
-	std::vector<std::vector<std::pair<bool, BgTile>>> biome_bg_tiles
-		(biome_gen.size(),
-			std::vector<std::pair<bool, BgTile>>
-				(biome_gen.front().size(),
-					std::pair(false, ALT_TERRAIN_NONE)));
-	for (size_t j=0; j<biome_gen.size(); ++j) {
+
+	//std::vector<std::vector<std::pair<bool, BgTile>>> biome_bg_tiles
+	//	(biome_gen.size(),
+	//		std::vector<std::pair<bool, BgTile>>
+	//			(biome_gen.front().size(),
+	//				std::pair(false, ALT_TERRAIN_NONE)));
+	for (i32 j=0; j<i32(biome_gen.size()); ++j) {
 		const auto& row = biome_gen.at(j);
-		for (size_t i=0; i<row.size(); ++i) {
+		for (i32 i=0; i<i32(row.size()); ++i) {
 			const auto& item = row.at(i);
-			biome_bg_tiles.at(j).at(i).first
-				= !item;
-				//= item;
-			//else if (
-			//	item < 0.075f
-			//	//item < 0.065f
-			//) {
-			//	bg_tile = BgTile::Water;
-			//}
+			//biome_bg_tiles.at(j).at(i).first
+			//	= !item;
+			//	//= item;
+			if (!item) {
+				const auto& neighbors
+					= _self->floor_layout().cg_neighbors(IntVec2{i, j});
+				for (auto& neighbor: neighbors) {
+					if (neighbor->bbox().intersect(IntVec2{i, j})) {
+						RoomPath& rp = *static_cast<RoomPath*>(neighbor);
+						rp.alt_terrain_umap.insert(std::pair
+							(IntVec2{i, j}, std::nullopt));
+					}
+				}
+			}
 		}
 	}
+	// old code, do not uncomment
 	//for (size_t j=0; j<biome_bg_tiles.size(); ++j) {
 	//	const auto& row = biome_bg_tiles.at(j);
 	//	for (size_t i=0; i<row.size(); ++i) {
@@ -1456,179 +1464,183 @@ void DungeonGen::GenInnards::_insert_alt_terrain(
 	//	printout("\n");
 	//}
 
+	// move/change this code
 	// Breadth-first search
-	{
-		IntVec2Uset explored_uset;
-		IntVec2 pos;
-		for (pos.y=0; pos.y<i32(biome_bg_tiles.size()); ++pos.y) {
-			auto& row = biome_bg_tiles.at(pos.y);
-			for (pos.x=0; pos.x<i32(row.size()); ++pos.x) {
-				const BgTile rng_bg_tile=allowed_alt_terrain_vec
-					.at(engine->layout_rand<i32>
-						(0, allowed_alt_terrain_vec.size() - 1));
-				if (!explored_uset.contains(pos)) {
-					bfs_fill
-						(explored_uset, pos,
-						[&](const IntVec2& some_pos) -> bool {
-							const IntVec2
-								temp_pos = some_pos
-									- biome_mballs_bounds_r2.tl_corner();
-							return PFIELD_PHYS_NO_BRDR_RECT2
-								.intersect(some_pos)
-								&& biome_bg_tiles
-									.at(temp_pos.y).at(temp_pos.x).first;
-						},
-						[&](const IntVec2& some_pos) -> void {
-							const IntVec2
-								temp_pos = some_pos
-									- biome_mballs_bounds_r2.tl_corner();
-							auto& bg_tile
-								= biome_bg_tiles
-									.at(temp_pos.y).at(temp_pos.x);
-							if (bg_tile.first) {
-								bg_tile.second = rng_bg_tile;
-							}
-						});
-				}
-			}
-		}
-	}
-	{
-		const auto& ustairs_pos = _self->_floor_layout.ustairs_pos;
-		const auto& dstairs_pos = _self->_floor_layout.dstairs_pos;
-		if (dstairs_pos) {
-			DijkstraMapGen dmap_gen;
-			dmap_gen.add(*dstairs_pos);
-			
-			// This is just for checking that the dmap generates properly
-			// no matter the values of the goals
-			//dmap_gen.add(ustairs_pos, -4.5f); 
+	//{
+	//	IntVec2Uset explored_uset;
+	//	IntVec2 pos;
+	//	for (pos.y=0; pos.y<i32(biome_bg_tiles.size()); ++pos.y) {
+	//		auto& row = biome_bg_tiles.at(pos.y);
+	//		for (pos.x=0; pos.x<i32(row.size()); ++pos.x) {
+	//			const BgTile rng_bg_tile=allowed_alt_terrain_vec
+	//				.at(engine->layout_rand<i32>
+	//					(0, allowed_alt_terrain_vec.size() - 1));
+	//			if (!explored_uset.contains(pos)) {
+	//				bfs_fill
+	//					(explored_uset, pos,
+	//					[&](const IntVec2& some_pos) -> bool {
+	//						const IntVec2
+	//							temp_pos = some_pos
+	//								- biome_mballs_bounds_r2.tl_corner();
+	//						return PFIELD_PHYS_NO_BRDR_RECT2
+	//							.intersect(some_pos)
+	//							&& biome_bg_tiles
+	//								.at(temp_pos.y).at(temp_pos.x).first;
+	//					},
+	//					[&](const IntVec2& some_pos) -> void {
+	//						const IntVec2
+	//							temp_pos = some_pos
+	//								- biome_mballs_bounds_r2.tl_corner();
+	//						auto& bg_tile
+	//							= biome_bg_tiles
+	//								.at(temp_pos.y).at(temp_pos.x);
+	//						if (bg_tile.first) {
+	//							bg_tile.second = rng_bg_tile;
+	//						}
+	//					});
+	//			}
+	//		}
+	//	}
+	//}
+	// move/change this code
+	//{
+	//	const auto& ustairs_pos = _self->_floor_layout.ustairs_pos;
+	//	const auto& dstairs_pos = _self->_floor_layout.dstairs_pos;
+	//	if (dstairs_pos) {
+	//		DijkstraMapGen dmap_gen;
+	//		dmap_gen.add(*dstairs_pos);
+	//		
+	//		// This is just for checking that the dmap generates properly
+	//		// no matter the values of the goals
+	//		//dmap_gen.add(ustairs_pos, -4.5f); 
 
-			const auto& dmap = dmap_gen.gen_basic
-				(_self->floor_layout(), BASIC_NO_PASS_BG_TILE_USET);
-			const auto& path = dmap.make_path(ustairs_pos);
-			//engine->dbg_log("Filling `path`\n");
-			path->fill
-				([&](const IntVec2& phys_pos) -> bool {
-					//auto& fl = _self->_floor_layout;
-					// This assumes that the `std::optional`s returned by
-					// these functions definitely contain values.
-					//const auto& bg_tile = *fl.phys_bg_tile_at(pos);
-					const IntVec2
-						pos = phys_pos - dmap.BOUNDS_R2.tl_corner();
-					auto& bg_tile = biome_bg_tiles.at(pos.y).at(pos.x);
-					//const size_t rp_index = *fl.phys_pos_to_rp_index(pos);
-					//engine->dbg_log(pos, ": ", bg_tile_str_map_at(bg_tile),
-					//	"\n");
+	//		const auto& dmap = dmap_gen.gen_basic
+	//			(_self->floor_layout(), BASIC_NO_PASS_BG_TILE_USET);
+	//		const auto& path = dmap.make_path(ustairs_pos);
+	//		//engine->dbg_log("Filling `path`\n");
+	//		path->fill
+	//			([&](const IntVec2& phys_pos) -> bool {
+	//				//auto& fl = _self->_floor_layout;
+	//				// This assumes that the `std::optional`s returned by
+	//				// these functions definitely contain values.
+	//				//const auto& bg_tile = *fl.phys_bg_tile_at(pos);
+	//				const IntVec2
+	//					pos = phys_pos - dmap.BOUNDS_R2.tl_corner();
+	//				auto& bg_tile = biome_bg_tiles.at(pos.y).at(pos.x);
+	//				//const size_t rp_index = *fl.phys_pos_to_rp_index(pos);
+	//				//engine->dbg_log(pos, ": ", bg_tile_str_map_at(bg_tile),
+	//				//	"\n");
 
-					if (
-						bg_tile.first
-						&& BASIC_NO_PASS_BG_TILE_USET.contains
-							(bg_tile.second)
-					) {
-						//auto& rp = fl._raw_at(rp_index);
-						//rp.alt_terrain_umap.erase(pos);
-						bg_tile.first = false;
-					}
-					return true;
-				});
-		}
-	}
+	//				if (
+	//					bg_tile.first
+	//					&& BASIC_NO_PASS_BG_TILE_USET.contains
+	//						(bg_tile.second)
+	//				) {
+	//					//auto& rp = fl._raw_at(rp_index);
+	//					//rp.alt_terrain_umap.erase(pos);
+	//					bg_tile.first = false;
+	//				}
+	//				return true;
+	//			});
+	//	}
+	//}
 
 
-	engine->dbg_log("Debug: generated biome `BgTile`s\n");
-	for (size_t j=0; j<biome_bg_tiles.size(); ++j) {
-		auto& row = biome_bg_tiles.at(j);
-		engine->dbg_log(j, ": ");
-		for (size_t i=0; i<row.size(); ++i) {
-			const auto& bg_tile = row.at(i);
-			//if (bg_tile == ALT_TERRAIN_NONE)
-			if (!bg_tile.first) {
-				engine->dbg_log(char(comp::drawable_data_umap().at
-					(bg_tile_str_map_at(BgTile::RoomFloor)).c));
-			} else { // if (bg_tile.first)
-				const auto& draw_data
-					= comp::drawable_data_umap().at
-						(bg_tile_str_map_at(bg_tile.second));
-				engine->dbg_log(char(draw_data.c));
-			}
-		}
-		//if (j + size_t(1) < biome_bg_tiles.size()) {
-			engine->dbg_log("\n");
-		//}
-	}
+	// move/change this code
+	//engine->dbg_log("Debug: generated biome `BgTile`s\n");
+	//for (size_t j=0; j<biome_bg_tiles.size(); ++j) {
+	//	auto& row = biome_bg_tiles.at(j);
+	//	engine->dbg_log(j, ": ");
+	//	for (size_t i=0; i<row.size(); ++i) {
+	//		const auto& bg_tile = row.at(i);
+	//		//if (bg_tile == ALT_TERRAIN_NONE)
+	//		if (!bg_tile.first) {
+	//			engine->dbg_log(char(comp::drawable_data_umap().at
+	//				(bg_tile_str_map_at(BgTile::RoomFloor)).c));
+	//		} else { // if (bg_tile.first)
+	//			const auto& draw_data
+	//				= comp::drawable_data_umap().at
+	//					(bg_tile_str_map_at(bg_tile.second));
+	//			engine->dbg_log(char(draw_data.c));
+	//		}
+	//	}
+	//	//if (j + size_t(1) < biome_bg_tiles.size()) {
+	//		engine->dbg_log("\n");
+	//	//}
+	//}
 
+	// move/change this code
 	////for (auto& item: *_self->floor_layout)
-	for (
-		size_t item_index=0;
-		item_index<_self->floor_layout().size();
-		++item_index
-	) {
-		auto& item = _self->_floor_layout._raw_at(item_index);
-		//if (do_clear) {
-		//	item.alt_terrain_umap.clear();
-		//}
+	//for (
+	//	size_t item_index=0;
+	//	item_index<_self->floor_layout().size();
+	//	++item_index
+	//) {
+	//	auto& item = _self->_floor_layout._raw_at(item_index);
+	//	//if (do_clear) {
+	//	//	item.alt_terrain_umap.clear();
+	//	//}
 
-		//if (item.is_path()) {
-		//	continue;
-		//}
+	//	//if (item.is_path()) {
+	//	//	continue;
+	//	//}
 
-		// Note that `RoomPath`s are already generated with their borders
-		IntVec2
-			pos;
-		for (
-			pos.y=item.rect.top_y() - i32(1);
-			pos.y<=item.rect.bottom_y() + i32(1);
-			++pos.y
-		) {
-			for (
-				pos.x=item.rect.left_x() - i32(1);
-				pos.x<=item.rect.right_x() + i32(1);
-				++pos.x
-			) {
-				if (!biome_mballs_bounds_r2.intersect(pos)) {
-					continue;
-				}
+	//	// Note that `RoomPath`s are already generated with their borders
+	//	IntVec2
+	//		pos;
+	//	for (
+	//		pos.y=item.rect.top_y() - i32(1);
+	//		pos.y<=item.rect.bottom_y() + i32(1);
+	//		++pos.y
+	//	) {
+	//		for (
+	//			pos.x=item.rect.left_x() - i32(1);
+	//			pos.x<=item.rect.right_x() + i32(1);
+	//			++pos.x
+	//		) {
+	//			if (!biome_mballs_bounds_r2.intersect(pos)) {
+	//				continue;
+	//			}
 
-				const IntVec2
-					temp_pos = pos - biome_mballs_bounds_r2.pos;
+	//			const IntVec2
+	//				temp_pos = pos - biome_mballs_bounds_r2.pos;
 
-				const auto
-					& bg_tile = biome_bg_tiles.at(temp_pos.y)
-						.at(temp_pos.x);
+	//			const auto
+	//				& bg_tile = biome_bg_tiles.at(temp_pos.y)
+	//					.at(temp_pos.x);
 
-				if (!bg_tile.first) {
-					continue;
-				}
+	//			if (!bg_tile.first) {
+	//				continue;
+	//			}
 
-				// TODO: incorporate `DijkstraMapGen` and connections
-				// between stairs
-				//if (item.is_path()) {
-				//	if (!BASIC_UNSAFE_BG_TILE_USET.contains
-				//		(bg_tile.second)) {
-				//		item.alt_terrain_umap[pos] = bg_tile.second;
-				//	}
-				//} else { // if (item.is_room())
-				//	if (
-				//		!BASIC_UNSAFE_BG_TILE_USET.contains
-				//			(bg_tile.second)
-				//		|| (!item.pos_in_border(pos)
-				//			&& !item.pos_in_internal_border(pos))
-				//	) {
-				//		item.alt_terrain_umap[pos] = bg_tile.second;
-				//	}
-				//}
-				if (
-					item.is_room() 
-					|| !BASIC_NO_PASS_BG_TILE_USET.contains
-					(bg_tile.second)
-				) {
-					item.alt_terrain_umap.insert(std::pair
-						(pos, bg_tile.second));
-				}
-			}
-		}
-	}
+	//			// TODO: incorporate `DijkstraMapGen` and connections
+	//			// between stairs
+	//			//if (item.is_path()) {
+	//			//	if (!BASIC_UNSAFE_BG_TILE_USET.contains
+	//			//		(bg_tile.second)) {
+	//			//		item.alt_terrain_umap[pos] = bg_tile.second;
+	//			//	}
+	//			//} else { // if (item.is_room())
+	//			//	if (
+	//			//		!BASIC_UNSAFE_BG_TILE_USET.contains
+	//			//			(bg_tile.second)
+	//			//		|| (!item.pos_in_border(pos)
+	//			//			&& !item.pos_in_internal_border(pos))
+	//			//	) {
+	//			//		item.alt_terrain_umap[pos] = bg_tile.second;
+	//			//	}
+	//			//}
+	//			if (
+	//				item.is_room() 
+	//				|| !BASIC_NO_PASS_BG_TILE_USET.contains
+	//				(bg_tile.second)
+	//			) {
+	//				item.alt_terrain_umap.insert(std::pair
+	//					(pos, bg_tile.second));
+	//			}
+	//		}
+	//	}
+	//}
 }
 //--------
 } // namespace level_gen_etc

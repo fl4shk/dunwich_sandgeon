@@ -59,6 +59,9 @@ auto drawable_data_umap()
 		{bg_tile_str_map_at(BgTile::Door),
 			{.c='+', .color_pair=FontColor::Gray,
 			.gs_color_pair=FontColor::Gray}},
+		{bg_tile_str_map_at(BgTile::LockedDoor),
+			{.c='+', .color_pair={FontColor::Black, FontColor::White},
+			.gs_color_pair={FontColor::Black, FontColor::White}}},
 
 		// ',', 44
 		{bg_tile_str_map_at(BgTile::PathFloor),
