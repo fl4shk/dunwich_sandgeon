@@ -166,13 +166,6 @@ DijkstraMap DijkstraMapGen::gen_basic(
 			"Internal Error: ",
 			"`floor_layout.size() == 0`, should be `> 0`"));
 	}
-
-	// Insert goals
-	for (const auto& goal: goal_vec()) {
-		//ret.at(goal.pos.y).at(goal.pos.x) = goal.val;
-		ret._raw_phys_at(goal.pos) = goal.val;
-	}
-
 	class Sortable final {
 	public:		// variables
 		DijkstraMap* dmap = nullptr;
@@ -187,25 +180,33 @@ DijkstraMap DijkstraMapGen::gen_basic(
 	std::deque<Sortable>
 		to_sort_deque, to_move_deque;
 
+
+	// Insert goals
+	for (const auto& goal: goal_vec()) {
+		//ret.at(goal.pos.y).at(goal.pos.x) = goal.val;
+		ret._raw_phys_at(goal.pos) = goal.val;
+		to_sort_deque.push_back({&ret, goal.pos});
+	}
+
 	auto edge_exists_func = [&](const IntVec2& phys_pos) -> bool {
 		const auto& bg_tile = floor_layout.phys_bg_tile_at(phys_pos);
 		return bg_tile && !no_pass_uset.contains(*bg_tile);
 		//return static_cast<bool>(bg_tile);
 	};
-	{
-		//--------
-		const IntVec2 start_pos = floor_layout.at(0).rect.tl_corner();
-		//--------
-		auto fill_func = [&](const IntVec2& phys_pos) -> void {
-			if (ret.phys_at(phys_pos) != ret.VERY_HIGH_NUM) {
-				to_sort_deque.push_back({&ret, phys_pos});
-			}
-		};
-		//--------
-		// The initial `bfs_fill()` call that traverses the *entire* floor
-		bfs_fill(start_pos, edge_exists_func, fill_func);
-		//--------
-	}
+	//{
+	//	//--------
+	//	const IntVec2 start_pos = floor_layout.at(0).rect.tl_corner();
+	//	//--------
+	//	auto fill_func = [&](const IntVec2& phys_pos) -> void {
+	//		if (ret.phys_at(phys_pos) != ret.VERY_HIGH_NUM) {
+	//			to_sort_deque.push_back({&ret, phys_pos});
+	//		}
+	//	};
+	//	//--------
+	//	// The initial `bfs_fill()` call that traverses the *entire* floor
+	//	bfs_fill(start_pos, edge_exists_func, fill_func);
+	//	//--------
+	//}
 	bool did_change;
 	do {
 		did_change = false;
@@ -292,7 +293,7 @@ DijkstraMap DijkstraMapGen::gen_basic(
 	//	osprint_dmap(sstm, ret);
 	//	engine->dbg_log(sstm.str());
 	//}
-	//engine->dbg_log(ret);
+	engine->dbg_log(ret);
 
 	return ret;
 }
