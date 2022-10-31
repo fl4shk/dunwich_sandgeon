@@ -7,7 +7,7 @@
 
 SHARED_SRC_DIRS:=src \
 	src/game_engine \
-	src/game_engine/level_gen_etc \
+	src/game_engine/lvgen_etc \
 	src/game_engine/comp \
 	src/game_engine/sys \
 	src/sdl \

@@ -15,16 +15,16 @@
 // You should have received a copy of the GNU General Public License along
 // with Dunwich Sandgeon.  If not, see <https://www.gnu.org/licenses/>.
 
-#ifndef src_game_engine_level_gen_etc_bg_tile_enum_hpp
-#define src_game_engine_level_gen_etc_bg_tile_enum_hpp
+#ifndef src_game_engine_lvgen_etc_bg_tile_enum_hpp
+#define src_game_engine_lvgen_etc_bg_tile_enum_hpp
 
-// src/game_engine/level_gen_etc/bg_tile_enum.hpp
+// src/game_engine/lvgen_etc/bg_tile_enum.hpp
 
 #include "../../misc_includes.hpp"
 
 namespace dunwich_sandgeon {
 namespace game_engine {
-namespace level_gen_etc {
+namespace lvgen_etc {
 //--------
 #define LIST_OF_ALT_TERRAIN_BG_TILES(X) \
 	X(Water) \
@@ -72,14 +72,14 @@ constexpr inline std::string bg_tile_str_map_at(BgTile bg_tile) {
 	switch (bg_tile) {
 		#define X(name) \
 			case BgTile:: name : \
-				return "game_engine::level_gen_etc::BgTile::" #name ; \
+				return "game_engine::lvgen_etc::BgTile::" #name ; \
 				break;
 		LIST_OF_BG_TILES(X)
 		#undef X
 
 		default:
 			throw std::invalid_argument(sconcat
-				("game_engine::level_gen_etc::bg_tile_str_map_at(): ",
+				("game_engine::lvgen_etc::bg_tile_str_map_at(): ",
 				"Internal Error: "
 				"Invalid `bg_tile`: ", i32(bg_tile)));
 			return "";
@@ -91,7 +91,7 @@ using SizeAndBgTile = std::pair<size_t, BgTile>;
 
 template<typename T>
 concept IsBuildBgTileVecArg
-	= (std::same_as<T, level_gen_etc::BgTile>
+	= (std::same_as<T, lvgen_etc::BgTile>
 	|| std::same_as<T, SizeAndBgTile>);
 
 constexpr inline void _build_bg_tile_vec_backend(
@@ -116,8 +116,8 @@ constexpr inline std::vector<BgTile> build_bg_tile_vec(
 	return ret;
 }
 //--------
-} // namespace level_gen_etc
+} // namespace lvgen_etc
 } // namespace game_engine
 } // namespace dunwich_sandgeon
 
-#endif		// src_game_engine_level_gen_etc_bg_tile_enum_hpp
+#endif		// src_game_engine_lvgen_etc_bg_tile_enum_hpp

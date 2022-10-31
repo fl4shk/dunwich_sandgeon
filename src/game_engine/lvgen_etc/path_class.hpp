@@ -15,10 +15,10 @@
 // You should have received a copy of the GNU General Public License along
 // with Dunwich Sandgeon.  If not, see <https://www.gnu.org/licenses/>.
 
-#ifndef src_game_engine_level_gen_etc_path_class_hpp
-#define src_game_engine_level_gen_etc_path_class_hpp
+#ifndef src_game_engine_lvgen_etc_path_class_hpp
+#define src_game_engine_lvgen_etc_path_class_hpp
 
-// src/game_engine/level_gen_etc/path_class.hpp
+// src/game_engine/lvgen_etc/path_class.hpp
 
 #include "../../misc_includes.hpp"
 #include "../global_shape_constants_etc.hpp"
@@ -29,7 +29,7 @@
 
 namespace dunwich_sandgeon {
 namespace game_engine {
-namespace level_gen_etc {
+namespace lvgen_etc {
 //--------
 class FloorLayout;
 class DijkstraMap;
@@ -93,8 +93,8 @@ public:		// functions
 };
 //std::ostream& operator << (std::ostream& os, const Path& path);
 //--------
-} // namespace level_gen_etc
+} // namespace lvgen_etc
 } // namespace game_engine
 } // namespace dunwich_sandgeon
 
-#endif		// src_game_engine_level_gen_etc_path_class_hpp
+#endif		// src_game_engine_lvgen_etc_path_class_hpp

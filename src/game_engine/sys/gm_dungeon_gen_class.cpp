@@ -62,7 +62,8 @@ void GmDungeonGen::_init(ecs::Engine* ecs_engine) {
 	//		*_dungeon_gen_id, "\n");
 	//}
 	//clear(ecs_engine);
-	engine->dungeon_gen.clear();
+	engine->dungeon_gen.clear_before_gen();
+	//engine->floor_layout().clear_before_gen();
 }
 
 void GmDungeonGen::tick(ecs::Engine* ecs_engine) {

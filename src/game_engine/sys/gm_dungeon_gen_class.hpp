@@ -21,7 +21,7 @@
 // src/game_engine/sys/gm_dungeon_gen_class.hpp
 
 #include "../../misc_includes.hpp"
-#include "../level_gen_etc/dungeon_gen_class.hpp"
+#include "../lvgen_etc/dungeon_gen_class.hpp"
 
 namespace dunwich_sandgeon {
 namespace game_engine {

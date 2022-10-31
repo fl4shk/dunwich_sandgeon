@@ -26,7 +26,7 @@
 
 namespace dunwich_sandgeon {
 namespace game_engine {
-namespace level_gen_etc {
+namespace lvgen_etc {
 //--------
 class MetaballGen final {
 public:		// types
@@ -61,7 +61,7 @@ public:		// functions
 	GEN_GETTER_BY_CON_REF(ball_umap);
 };
 //--------
-} // namespace level_gen_etc
+} // namespace lvgen_etc
 } // namespace game_engine
 } // namespace dunwich_sandgeon
 

@@ -22,7 +22,7 @@
 #include "comp/general_comp_classes.hpp"
 #include "comp/player_comp_class.hpp"
 //#include "comp/block_comp_classes.hpp"
-#include "level_gen_etc/floor_layout_class.hpp"
+#include "lvgen_etc/floor_layout_class.hpp"
 #include "comp/status_comp_classes.hpp"
 //#include "comp/ui_etc_comp_classes.hpp"
 
@@ -413,7 +413,8 @@ void Engine::tick() {
 }
 void Engine::draw_to_main_windows() {
 	pfield_window.clear();
-	dungeon_gen.floor_layout().draw();
+	//dungeon_gen.floor_layout().draw();
+	floor_layout().draw();
 	screen_window.clear();
 
 	screen_window.draw(engine->pfield_window);

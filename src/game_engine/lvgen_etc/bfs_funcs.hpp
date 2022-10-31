@@ -15,10 +15,10 @@
 // You should have received a copy of the GNU General Public License along
 // with Dunwich Sandgeon.  If not, see <https://www.gnu.org/licenses/>.
 
-#ifndef src_game_engine_level_gen_etc_bfs_funcs_hpp
-#define src_game_engine_level_gen_etc_bfs_funcs_hpp
+#ifndef src_game_engine_lvgen_etc_bfs_funcs_hpp
+#define src_game_engine_lvgen_etc_bfs_funcs_hpp
 
-// src/game_engine/level_gen_etc/bfs_funcs.hpp
+// src/game_engine/lvgen_etc/bfs_funcs.hpp
 
 #include "../../misc_includes.hpp"
 #include "../../misc_types.hpp"
@@ -26,7 +26,7 @@
 
 namespace dunwich_sandgeon {
 namespace game_engine {
-namespace level_gen_etc {
+namespace lvgen_etc {
 //--------
 // Breadth-first search
 using BfsAtFunc = std::function<bool(
@@ -68,9 +68,9 @@ inline bool bfs_reachable(
 //	const BfsAtFunc& edge_exists_func, const BfsVoidAtFunc& fill_func
 //);
 //--------
-} // namespace level_gen_etc
+} // namespace lvgen_etc
 } // namespace game_engine
 } // namespace dunwich_sandgeon
 
 
-#endif		// src_game_engine_level_gen_etc_bfs_funcs_hpp
+#endif		// src_game_engine_lvgen_etc_bfs_funcs_hpp

@@ -15,10 +15,10 @@
 // You should have received a copy of the GNU General Public License along
 // with Dunwich Sandgeon.  If not, see <https://www.gnu.org/licenses/>.
 
-#ifndef src_game_engine_dungeon_gen_floor_layout_class_hpp
-#define src_game_engine_dungeon_gen_floor_layout_class_hpp
+#ifndef src_game_engine_lvgen_etc_floor_layout_class_hpp
+#define src_game_engine_lvgen_etc_floor_layout_class_hpp
 
-// src/game_engine/level_gen_etc/floor_layout_class.hpp
+// src/game_engine/lvgen_etc/floor_layout_class.hpp
 
 #include "../../misc_includes.hpp"
 //#include "../shape_classes.hpp"
@@ -30,20 +30,17 @@
 
 namespace dunwich_sandgeon {
 namespace game_engine {
-namespace level_gen_etc {
+namespace lvgen_etc {
 //--------
 class DungeonGen;
 //--------
 // The dungeon while it's either being generated has finished generating.
-// As I don't think I'll be including breakable walls, in this game, this
-// `ecs::Comp` can be referenced even after the dungeon has fully been
-// generated for the purposes of, for example, monster AI.
+// As I don't think I'll be including breakable walls in this game, this
+// class can be referenced even after the dungeon has fully been generated
+// for the purposes of, for example, monster AI.
 class FloorLayout final {
-	#include "dungeon_floor_friends.hpp"
+	#include "floor_layout_friends.hpp"
 public:		// constants
-	static const std::string
-		KIND_STR;
-
 	static constexpr i32
 		// Chosen arbitrarily; might need to adjust later
 		MIN_NUM_ROOM_PATHS
@@ -119,13 +116,16 @@ public:		// static functions
 public:		// types
 	//--------
 	class RoomPath final: public WIntBboxBase {
-		#include "dungeon_floor_friends.hpp"
-	public:		// variables
-		#define MEMB_LIST_COMP_DUNGEON_ROOM_PATH(X) \
+		#include "floor_layout_friends.hpp"
+	public:		// serialized variables
+		#define MEMB_SER_LIST_LVGEN_ETC_FLOOR_LAYOUT_ROOM_PATH(X) \
 			/* X(rect, std::nullopt) */ \
 			/* X(alt_terrain_umap, std::nullopt) */ \
 			/* X(conn_index_uset, std::nullopt) */ \
 			/* X(door_pt_uset, std::nullopt) */ \
+			/* X(destroyed_alt_terrain_uset, std::nullopt) */
+
+		//std::unordered_set<IntVec2> destroyed_alt_terrain_uset;
 
 		IntRect2 rect
 			{.pos=IntVec2(),
@@ -138,29 +138,23 @@ public:		// types
 		//	dstairs_pos = std::nullopt;
 		//	//ustairs_pos = std::nullopt;
 
-		i32 id = -1;
+		//i32 id = -1;
 
-		//class Xdata final {
-		//public:		// variables
-			i32 gen_side = 0;
-			// These are coordinates within pfield-space
-			std::unordered_map<IntVec2, std::optional<BgTile>>
-				alt_terrain_umap;
+		i32 gen_side = 0;
+		// These are coordinates within pfield-space
+		std::unordered_map<IntVec2, std::optional<BgTile>>
+			alt_terrain_umap;
 
-			std::unordered_set<i32> conn_index_uset;
+		std::unordered_set<i32> conn_index_uset;
 
-			std::unordered_map<IntVec2, std::optional<BgTile>>
-				door_umap;
-		//} xdata;
+		std::unordered_map<IntVec2, std::optional<BgTile>> door_umap;
 		//bool show = false;
 	public:		// functions
 		//--------
-		inline RoomPath() = default;
+		RoomPath();
 		GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(RoomPath);
-		inline RoomPath(const IntRect2& s_rect)
-			: rect(s_rect) {
-		}
-		virtual inline ~RoomPath() = default;
+		RoomPath(const IntRect2& s_rect);
+		virtual ~RoomPath();
 		//--------
 		//static RoomPath from_bv(const binser::Value& bv);
 		//operator binser::Value () const;
@@ -173,26 +167,6 @@ public:		// types
 		virtual inline const IntRect2& bbox() const {
 			return rect;
 		}
-		//--------
-		//inline std::unordered_map<IntVec2, BgTile>& alt_terrain_umap() {
-		//	return xdata.alt_terrain_umap;
-		//}
-		//inline const std::unordered_map<IntVec2, BgTile>&
-		//alt_terrain_umap() const {
-		//	return xdata.alt_terrain_umap;
-		//}
-		//inline std::unordered_set<i32>& conn_index_uset() {
-		//	return xdata.conn_index_uset;
-		//}
-		//inline const std::unordered_set<i32>& conn_index_uset() const {
-		//	return xdata.conn_index_uset;
-		//}
-		//inline std::unordered_set<IntVec2>& door_pt_uset() {
-		//	return xdata.door_pt_uset;
-		//}
-		//inline const std::unordered_set<IntVec2>& door_pt_uset() const {
-		//	return xdata.door_pt_uset;
-		//}
 		//--------
 		constexpr inline bool pos_in_border(
 			const IntVec2& pos
@@ -237,13 +211,8 @@ public:		// types
 	using RoomPathSptr = std::shared_ptr<RoomPath>;
 	//--------
 private:		// variables
-	#define MEMB_LIST_COMP_DUNGEON(X) \
-		/* X(_rp_data, std::nullopt) */ \
-		/* X(_layout_noise_pos_scale, std::nullopt) */ \
-		/* X(_layout_noise_pos_offset, std::nullopt) */ \
-
 	std::vector<RoomPathSptr> _rp_data;
-	std::unordered_map<RoomPath*, size_t> _rp_to_index_umap;
+	std::unordered_map<RoomPath*, size_t> _rp_to_id_umap;
 	CollGridT _coll_grid;
 	//binser::VectorEx<RoomPath> _rp_data;
 	//double
@@ -254,15 +223,18 @@ public:		// variables
 		ustairs_pos;
 	std::optional<IntVec2>
 		dstairs_pos = std::nullopt;
+public:		// serialized variables
+	#define MEMB_SER_LIST_LVGEN_ETC_FLOOR_LAYOUT(X) \
+		X(destroyed_alt_terrain_uset, std::nullopt)
+	IntVec2Uset destroyed_alt_terrain_uset;
 public:		// functions
 	//--------
 	FloorLayout();
-	//FloorLayout(const binser::Value& bv);
+	FloorLayout(const binser::Value& bv);
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(FloorLayout);
 	~FloorLayout() = default;
 
-	//virtual std::string kind_str() const;
-	//virtual operator binser::Value () const;
+	operator binser::Value () const;
 	//--------
 	std::optional<BgTile> bg_tile_at(const IntVec2& pos, size_t i) const;
 	std::optional<BgTile> phys_bg_tile_at(const IntVec2& pos) const;
@@ -324,7 +296,7 @@ public:		// functions
 	//}
 	void push_back(RoomPath&& to_push);
 	//void pop_back() {
-	//	_rp_to_index_umap.erase(_rp_data.back().get());
+	//	_rp_to_id_umap.erase(_rp_data.back().get());
 	//	_coll_grid.erase(_rp_data.back().get());
 	//	_rp_data.pop_back();
 	//}
@@ -332,19 +304,13 @@ public:		// functions
 		//return _rp_data.data.size();
 		return _rp_data.size();
 	}
-	inline void clear(
+	// Note that this function *DOESN'T* clear `destroyed_alt_terrain_uset`
+	// because that is serialized
+	void clear_before_gen(
 		//double n_layout_noise_pos_scale,
 		//double n_layout_noise_pos_offset
-	) {
-		//_rp_data.data.resize(0);
-		//_rp_data.data.clear();
-		_rp_data.clear();
-		_rp_to_index_umap.clear();
-		_coll_grid.clear();
-		//_layout_noise_pos_scale = n_layout_noise_pos_scale;
-		//_layout_noise_pos_offset = n_layout_noise_pos_offset;
-	}
-	bool erase_maybe(size_t index);
+	);
+	bool erase_during_gen(size_t index);
 	CollGridT::DataElPtrUsetT cg_neighbors(RoomPath& rp) const;
 	CollGridT::DataElPtrUsetT cg_neighbors(size_t index) const;
 	CollGridT::DataElPtrUsetT cg_neighbors(const IntVec2& pos) const;
@@ -352,7 +318,7 @@ public:		// functions
 	void draw() const;
 	//--------
 	GEN_GETTER_BY_CON_REF(rp_data);
-	GEN_GETTER_BY_CON_REF(rp_to_index_umap);
+	GEN_GETTER_BY_CON_REF(rp_to_id_umap);
 	GEN_GETTER_BY_CON_REF(coll_grid);
 	//GEN_GETTER_BY_CON_REF(path_vec);
 	//GEN_GETTER_BY_CON_REF(layout_noise_pos_scale);
@@ -360,8 +326,8 @@ public:		// functions
 	//--------
 };
 //--------
-} // namespace level_gen_etc
+} // namespace lvgen_etc
 } // namespace game_engine
 } // namespace dunwich_sandgeon
 
-#endif		// src_game_engine_dungeon_gen_floor_layout_class_hpp
+#endif		// src_game_engine_lvgen_etc_floor_layout_class_hpp

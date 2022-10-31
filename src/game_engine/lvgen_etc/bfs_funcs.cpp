@@ -21,7 +21,7 @@
 
 namespace dunwich_sandgeon {
 namespace game_engine {
-namespace level_gen_etc {
+namespace lvgen_etc {
 //--------
 void bfs_fill(
 	IntVec2Uset& explored_uset, const IntVec2& start_pos,
@@ -97,6 +97,6 @@ bool bfs_reachable(
 	return false;
 }
 //--------
-} // namespace level_gen_etc
+} // namespace lvgen_etc
 } // namespace game_engine
 } // namespace dunwich_sandgeon

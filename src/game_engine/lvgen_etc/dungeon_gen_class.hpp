@@ -18,7 +18,7 @@
 #ifndef src_game_engine_dungeon_gen_dungeon_gen_class_hpp
 #define src_game_engine_dungeon_gen_dungeon_gen_class_hpp
 
-// src/game_engine/level_gen_etc/dungeon_gen_class.hpp
+// src/game_engine/lvgen_etc/dungeon_gen_class.hpp
 
 #include "../../misc_includes.hpp"
 #include "floor_layout_class.hpp"
@@ -30,7 +30,7 @@ namespace sys {
 class GmDungeonGen;
 } // namespace sys
 //--------
-namespace level_gen_etc {
+namespace lvgen_etc {
 //--------
 class DungeonGen final {
 	friend class sys::GmDungeonGen;
@@ -361,20 +361,17 @@ private:		// variables
 	bool
 		_stop_gen_early = false,
 		_done_generating = false;
-	FloorLayout _floor_layout;
+	//FloorLayout _floor_layout;
 public:		// functions
 	DungeonGen() = default;
-	//inline DungeonGen(const binser::Value& bv)
-	//	: ecs::Sys(bv) {
-	//}
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(DungeonGen);
 	inline ~DungeonGen() = default;
 
-	void clear(
+	void clear_before_gen(
 		//ecs::Engine* ecs_engine
 	);
 	void gen_curr_floor();
-	GEN_GETTER_BY_CON_REF(floor_layout);
+	//GEN_GETTER_BY_CON_REF(floor_layout);
 private:		// functions
 	//void _connect_room_paths(comp::StaticBgTileMap* bg_tile_map,
 	//	FloorLayout* floor_layout);
@@ -448,20 +445,7 @@ private:		// types
 			//)>& shrink_extra_test_func
 		);
 		//--------
-		inline bool _rp_is_connected(const RoomPath& some_rp) const {
-			const RoomPath& conn_rp
-				= _self->_floor_layout.at(_conn_rp_index);
-			return (
-				(some_rp.gen_side == GEN_SIDE_L
-					&& _ls_r2_hit(conn_rp, some_rp))
-				|| (some_rp.gen_side == GEN_SIDE_T
-					&& _ts_r2_hit(conn_rp, some_rp))
-				|| (some_rp.gen_side == GEN_SIDE_R
-					&& _rs_r2_hit(conn_rp, some_rp))
-				|| (some_rp.gen_side == GEN_SIDE_B
-					&& _bs_r2_hit(conn_rp, some_rp))
-			);
-		};
+		bool _rp_is_connected(const RoomPath& some_rp) const;
 		//--------
 	public:		// functions
 		//--------
@@ -513,6 +497,7 @@ private:		// types
 		void _insert_exits() const;
 		void _insert_alt_terrain_nullopts() const;
 		void _insert_keys_and_doors() const;
+		void _insert_non_key_items() const;
 		//--------
 	private:		// static functions
 		//--------
@@ -650,7 +635,7 @@ private:		// types
 	friend class GenInnards;
 };
 //--------
-} // namespace level_gen_etc
+} // namespace lvgen_etc
 } // namespace game_engine
 } // namespace dunwich_sandgeon
 

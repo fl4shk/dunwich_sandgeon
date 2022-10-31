@@ -26,7 +26,7 @@ namespace dunwich_sandgeon {
 namespace game_engine {
 //--------
 enum class PlayfieldLayerPrio: i32 {
-	BgMach,		// this is for the `game_engine::level_gen_etc::BgTile`s,
+	BgMach,		// this is for the `game_engine::lvgen_etc::BgTile`s,
 				// and also generated machines (switches, gates, traps,
 				// etc.)
 	Item,

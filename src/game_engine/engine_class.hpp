@@ -28,8 +28,8 @@
 #include "game_options_class.hpp"
 #include "comp/general_comp_classes.hpp"
 #include "global_shape_constants_etc.hpp"
-#include "level_gen_etc/floor_layout_class.hpp"
-#include "level_gen_etc/dungeon_gen_class.hpp"
+#include "lvgen_etc/floor_layout_class.hpp"
+#include "lvgen_etc/dungeon_gen_class.hpp"
 //#include "metaball_gen_class.hpp"
 #include "namegen.hpp"
 
@@ -140,8 +140,15 @@ public:		// types
 		//= pcg32;
 		= pcg64;
 	using RngSeedT = std::remove_cvref_t<decltype(std::declval<Rng>()())>;
-	using LayoutRngArr = std::array<Rng, NUM_FLOORS>;
-	using LayoutRngA2d = std::array<LayoutRngArr, NUM_FILES>;
+
+	template<typename ElemTarg>
+	using ArrWNumFloorsElems = std::array<ElemTarg, NUM_FLOORS>;
+	template<typename ElemTarg>
+	using ArrWNumFilesElems = std::array<ElemTarg, NUM_FILES>;
+
+	using LayoutRngArr = ArrWNumFloorsElems<Rng>;
+	using LayoutRngA2d = ArrWNumFilesElems<LayoutRngArr>;
+	using FloorLayoutArr = ArrWNumFloorsElems<lvgen_etc::FloorLayout>;
 public:		// types
 	class NonEcsSerData final {
 		friend class NameGen::Random;
@@ -155,6 +162,8 @@ public:		// types
 			\
 			X(player_pos3, std::nullopt) \
 			X(pfield_ent_id_map, std::nullopt) \
+			\
+			X(floor_layout_arr, std::nullopt) \
 			\
 			X(_base_rng_seed, std::nullopt) \
 
@@ -180,6 +189,8 @@ public:		// types
 		// I needed to have a shorter variable name, so I changed the name
 		// of this variable and related functions
 		std::unordered_map<IntVec3, ecs::EntIdUset> pfield_ent_id_map;
+		std::array<lvgen_etc::FloorLayout, NUM_FLOORS>
+			floor_layout_arr;
 	private:		// variables
 		u64 _base_rng_seed = 0;
 		// The RNG to use for tasks other than initial floor layout
@@ -302,8 +313,8 @@ private:		// serialized variables
 	std::array<NonEcsSerData, NUM_FILES> _non_ecs_ser_data_arr;
 public:		// non-serialized variables
 	EngineKeyStatus key_status;
-	level_gen_etc::DungeonGen dungeon_gen;
-	//level_gen_etc::FloorLayout floor_layout;
+	lvgen_etc::DungeonGen dungeon_gen;
+	//lvgen_etc::FloorLayout floor_layout;
 
 	////InputKind initial_input_kind = InputKind::None,
 	////	final_input_kind = InputKind::None;
@@ -454,8 +465,8 @@ public:		// functions
 		return layout_rng_arr_fn(USE_CURR_FILE_NUM);
 	}
 
-	// Note: `layout_rng_fn()` and `layout_rng()` return the current file
-	// number, current floor, layout RNG itself
+	// Note: `layout_rng_fn()` and `layout_rng()` return the current
+	// floor's layout RNG itself
 	inline Rng& layout_rng_fn(ecs::FileNum file_num) {
 		return layout_rng_arr_fn(file_num).at(floor_fn(file_num));
 	}
@@ -865,6 +876,58 @@ public:		// `_non_ecs_ser_data_arr` accessor functions
 	//inline const EntIdSetVec2d& pfield_ent_id_v2d() const {
 	//	return pfield_ent_id_v2d_fn(USE_CURR_FILE_NUM);
 	//}
+	//--------
+	inline FloorLayoutArr& floor_layout_arr_fn(
+		ecs::FileNum file_num
+	) {
+		return non_ecs_ser_data_fn(file_num).floor_layout_arr;
+	}
+	inline const FloorLayoutArr& floor_layout_arr_fn(
+		ecs::FileNum file_num
+	) const {
+		return non_ecs_ser_data_fn(file_num).floor_layout_arr;
+	}
+
+	inline FloorLayoutArr& floor_layout_arr() {
+		return floor_layout_arr_fn(USE_CURR_FILE_NUM);
+	}
+	inline const FloorLayoutArr& floor_layout_arr_fn() const {
+		return floor_layout_arr_fn(USE_CURR_FILE_NUM);
+	}
+
+	//inline void clear_floor_layout_arr_fn(
+	//	ecs::FileNum file_num
+	//) {
+	//	auto& fl_arr = floor_layout_arr_fn(file_num);
+	//	for (auto& fl: fl_arr) {
+	//		fl.clear();
+	//	}
+	//}
+	//inline void clear_floor_layout_arr() {
+	//	auto& fl_arr = floor_layout_arr();
+	//	for (auto& fl: fl_arr) {
+	//		fl.clear();
+	//	}
+	//}
+
+	// Note: `floor_layout_rng_fn()` and `layout_rng()` return the current
+	// floor's `lvgen_etc::FloorLayout` itself
+	inline lvgen_etc::FloorLayout& floor_layout_fn(
+		ecs::FileNum file_num
+	) {
+		return floor_layout_arr_fn(file_num).at(floor_fn(file_num));
+	}
+	inline const lvgen_etc::FloorLayout& floor_layout_fn(
+		ecs::FileNum file_num
+	) const {
+		return floor_layout_arr_fn(file_num).at(floor_fn(file_num));
+	}
+	inline lvgen_etc::FloorLayout& floor_layout() {
+		return floor_layout_fn(USE_CURR_FILE_NUM);
+	}
+	inline const lvgen_etc::FloorLayout& floor_layout() const {
+		return floor_layout_fn(USE_CURR_FILE_NUM);
+	}
 	//--------
 	//template<typename RetT=decltype(NonEcsSerData::_rng())>
 	//inline RetT rand()

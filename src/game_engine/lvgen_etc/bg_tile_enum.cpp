@@ -19,7 +19,7 @@
 
 namespace dunwich_sandgeon {
 namespace game_engine {
-namespace level_gen_etc {
+namespace lvgen_etc {
 //--------
 //const std::unordered_map<BgTile, std::string>& bg_tile_str_map() {
 //	//--------
@@ -58,6 +58,6 @@ const BgTileUset
 		BgTile::Lava,
 	};
 //--------
-} // namespace level_gen_etc
+} // namespace lvgen_etc
 } // namespace game_engine
 } // namespace dunwich_sandgeon

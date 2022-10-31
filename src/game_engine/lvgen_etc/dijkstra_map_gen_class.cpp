@@ -22,7 +22,7 @@
 
 namespace dunwich_sandgeon {
 namespace game_engine {
-namespace level_gen_etc {
+namespace lvgen_etc {
 //--------
 //const BgTileUset
 //	DijkstraMapGen::DEFAULT_NO_PASS_USET = {
@@ -53,7 +53,7 @@ std::optional<Path> DijkstraMap::make_path(
 
 	if (!BOUNDS_R2.intersect(start_phys_pos)) {
 		throw std::out_of_range(sconcat
-			("game_engine::level_gen_etc::DijkstraMapGen::make_path(): ",
+			("game_engine::lvgen_etc::DijkstraMapGen::make_path(): ",
 			"Internal Error: ",
 			"`start_phys_pos` (", start_phys_pos, ") is outside the ",
 			"bounds of `dmap`: ",
@@ -139,7 +139,7 @@ DijkstraMapGen& DijkstraMapGen::add(const IntVec2& pos, float val) {
 		for (size_t i=0; i<_goal_vec.size(); ++i) {
 			if (const auto& goal=_goal_vec.at(i); goal.pos == pos) {
 				throw std::invalid_argument(sconcat
-					("game_engine::level_gen_etc::DijkstraMapGen::add(): ",
+					("game_engine::lvgen_etc::DijkstraMapGen::add(): ",
 					"Internal Error: ",
 					"already have a `Goal` with that `pos`: ",
 					i, ": ", goal.pos, " ", goal.val));
@@ -162,7 +162,7 @@ DijkstraMap DijkstraMapGen::gen_basic(
 
 	if (floor_layout.size() == 0) {
 		throw std::invalid_argument(sconcat
-			("game_engine::level_gen_etc::DijkstraMapGen::gen_basic(): ",
+			("game_engine::lvgen_etc::DijkstraMapGen::gen_basic(): ",
 			"Internal Error: ",
 			"`floor_layout.size() == 0`, should be `> 0`"));
 	}
@@ -308,6 +308,6 @@ DijkstraMap DijkstraMapGen::gen_flipped(
 	return ret;
 }
 //--------
-} // namespace level_gen_etc
+} // namespace lvgen_etc
 } // namespace game_engine
 } // namespace dunwich_sandgeon

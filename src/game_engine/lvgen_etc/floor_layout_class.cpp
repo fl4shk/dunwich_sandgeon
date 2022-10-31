@@ -23,10 +23,13 @@
 
 namespace dunwich_sandgeon {
 namespace game_engine {
-namespace level_gen_etc {
+namespace lvgen_etc {
 //--------
-const std::string
-	FloorLayout::KIND_STR("FloorLayout");
+//const std::string
+FloorLayout::RoomPath::RoomPath() {}
+FloorLayout::RoomPath::RoomPath(const IntRect2& s_rect)
+	: rect(s_rect) {}
+FloorLayout::RoomPath::~RoomPath() {}
 
 //auto FloorLayout::RoomPath::from_bv(const binser::Value& bv) -> RoomPath {
 //	RoomPath ret;
@@ -44,13 +47,13 @@ const std::string
 //		//		data, " ", min, " ", max
 //		//));
 //		throw std::invalid_argument(sconcat(
-//			"game_engine::level_gen_etc::FloorLayout::RoomPath::from_bv(): ",
+//			"game_engine::lvgen_etc::FloorLayout::RoomPath::from_bv(): ",
 //			"`ret.rect` does not fit in the playfield: ", ret.rect
 //		));
 //	}
 //	if (!ret.is_path() && !ret.is_room()) {
 //		throw std::invalid_argument(sconcat(
-//			"game_engine::level_gen_etc::FloorLayout::RoomPath::from_bv(): ",
+//			"game_engine::lvgen_etc::FloorLayout::RoomPath::from_bv(): ",
 //			"`ret.rect` is the wrong shape to be a path or a room: ",
 //			ret.rect
 //		));
@@ -70,25 +73,22 @@ const std::string
 //	return ret;
 //}
 FloorLayout::FloorLayout() {}
-//FloorLayout::FloorLayout(const binser::Value& bv) {
-//	//_rp_data.checked_size = MAX_NUM_ROOM_PATHS;
-//	//_rp_data.cs_is_max = true;
-//	////_rp_data.min_size = 0;
-//	//_rp_data.min_size = MIN_NUM_ROOM_PATHS;
-//
-//	MEMB_LIST_COMP_DUNGEON(BINSER_MEMB_DESERIALIZE);
-//}
+FloorLayout::FloorLayout(const binser::Value& bv) {
+	//_rp_data.checked_size = MAX_NUM_ROOM_PATHS;
+	//_rp_data.cs_is_max = true;
+	////_rp_data.min_size = 0;
+	//_rp_data.min_size = MIN_NUM_ROOM_PATHS;
 
-//std::string FloorLayout::kind_str() const {
-//	return KIND_STR;
-//}
-//FloorLayout::operator binser::Value () const {
-//	binser::Value ret;
-//
-//	MEMB_LIST_COMP_DUNGEON(BINSER_MEMB_SERIALIZE);
-//
-//	return ret;
-//}
+	MEMB_SER_LIST_LVGEN_ETC_FLOOR_LAYOUT(BINSER_MEMB_DESERIALIZE);
+}
+
+FloorLayout::operator binser::Value () const {
+	binser::Value ret;
+
+	MEMB_SER_LIST_LVGEN_ETC_FLOOR_LAYOUT(BINSER_MEMB_SERIALIZE);
+
+	return ret;
+}
 //--------
 std::optional<BgTile> FloorLayout::bg_tile_at(
 	const IntVec2& pos, size_t i
@@ -114,7 +114,7 @@ std::optional<BgTile> FloorLayout::bg_tile_at(
 		}
 		//if (const auto& item_uset=cg_neighbors(i); true) {
 		//	for (const auto& item: item_uset) {
-		//		const auto j = _rp_to_index_umap
+		//		const auto j = _rp_to_id_umap
 		//			.at(static_cast<RoomPath*>(item));
 		//		if (item->bbox().intersect(pos) && j < i) {
 		//			did_intersect = true;
@@ -176,10 +176,11 @@ const {
 			} else if (
 				rp.alt_terrain_umap.contains(pos)
 				&& rp.alt_terrain_umap.at(pos)
+				&& !destroyed_alt_terrain_uset.contains(pos)
 			) {
 				return *rp.alt_terrain_umap.at(pos);
 				//return BgTile::Error;
-			}  else {
+			} else {
 				return
 					rp.is_path()
 					? BgTile::PathFloor
@@ -200,7 +201,7 @@ std::optional<size_t> FloorLayout::phys_pos_to_rp_index(
 
 	for (auto& neighbor: neighbors) {
 		if (neighbor->bbox().intersect(phys_pos)) {
-			return rp_to_index_umap().at(static_cast<RoomPath*>(neighbor));
+			return rp_to_id_umap().at(static_cast<RoomPath*>(neighbor));
 		}
 	}
 	return std::nullopt;
@@ -208,20 +209,35 @@ std::optional<size_t> FloorLayout::phys_pos_to_rp_index(
 void FloorLayout::push_back(RoomPath&& to_push) {
 	if (size() + size_t(1) > MAX_NUM_ROOM_PATHS) {
 		throw std::length_error(sconcat
-			("game_engine::level_gen_etc::FloorLayout::push_back(): ",
+			("game_engine::lvgen_etc::FloorLayout::push_back(): ",
 			"`_rp_data.data` cannot increase in size: ",
 			//_rp_data.data.size(),
 			_rp_data.size(),
 			" ", MAX_NUM_ROOM_PATHS));
 	}
-	to_push.id = i32(size());
+	//to_push.id = i32(size());
 	//_rp_data.data.push_back(std::move(to_push));
 	_rp_data.push_back(RoomPathSptr(new RoomPath(std::move(to_push))));
-	_rp_to_index_umap.insert(std::pair
+	_rp_to_id_umap.insert(std::pair
 		(_rp_data.back().get(), _rp_data.size() - size_t(1)));
 	_coll_grid.insert(_rp_data.back().get());
 }
-bool FloorLayout::erase_maybe(size_t index) {
+void FloorLayout::clear_before_gen(
+	//double n_layout_noise_pos_scale,
+	//double n_layout_noise_pos_offset
+) {
+	//_rp_data.data.resize(0);
+	//_rp_data.data.clear();
+	_rp_data.clear();
+	_rp_to_id_umap.clear();
+	_coll_grid.clear();
+	ustairs_pos = {-1, -1};
+	dstairs_pos = std::nullopt;
+	//destroyed_alt_terrain_uset.clear();
+	//_layout_noise_pos_scale = n_layout_noise_pos_scale;
+	//_layout_noise_pos_offset = n_layout_noise_pos_offset;
+}
+bool FloorLayout::erase_during_gen(size_t index) {
 	if (size() > MIN_NUM_ROOM_PATHS) {
 		//for (size_t i=0; i<size(); ++i) {
 		//	if (i == index) {
@@ -236,9 +252,36 @@ bool FloorLayout::erase_maybe(size_t index) {
 		//	//}
 		//	item.id = i32(i - 1);
 		//}
-		// We have to erase from `_rp_to_index_umap` and `_coll_grid`
+		if (auto& rp=*_rp_data.at(index); true) {
+			const auto& neighbors = cg_neighbors(rp);
+			for (auto& neighbor: neighbors) {
+				//RoomPath* other_rp = static_cast<RoomPath*>(neighbor);
+				//const size_t other_index = rp_to_id_umap().at(other_rp);
+				if (neighbor->bbox().intersect(rp.rect)) {
+					// Rooms are generated as not intersecting
+					IntVec2 pos;
+					for (
+						pos.y=rp.rect.top_y();
+						pos.y<=rp.rect.bottom_y();
+						++pos.y
+					) {
+						for (
+							pos.x=rp.rect.left_x();
+							pos.x<=rp.rect.right_x();
+							++pos.x
+						) {
+							if (destroyed_alt_terrain_uset.contains(pos)) {
+								destroyed_alt_terrain_uset.erase(pos);
+							}
+						}
+					}
+				}
+			}
+		}
+
+		// We have to erase from `_rp_to_id_umap` and `_coll_grid`
 		// before we erase from `_rp_data`.
-		_rp_to_index_umap.erase(_rp_data.at(index).get());
+		_rp_to_id_umap.erase(_rp_data.at(index).get());
 		_coll_grid.erase(_rp_data.at(index).get(), std::nullopt);
 		_rp_data.erase(_rp_data.begin() + index);
 		for (size_t i=0; i<size(); ++i) {
@@ -255,7 +298,7 @@ bool FloorLayout::erase_maybe(size_t index) {
 			//	item.conn_index_uset.erase(i32(index));
 			//}
 			item.conn_index_uset = std::move(temp_conn_index_uset);
-			item.id = i32(i);
+			//item.id = i32(i);
 		}
 		return true;
 	}
@@ -303,7 +346,7 @@ void FloorLayout::draw() const {
 								(bg_tile_str_map_at(*bg_tile));
 					}
 				} catch (const std::exception& e) {
-					printerr("game_engine::level_gen_etc::FloorLayout",
+					printerr("game_engine::lvgen_etc::FloorLayout",
 						"::draw(): "
 						"Exception thrown: ", e.what(), "\n");
 					throw std::out_of_range(sconcat(
@@ -319,6 +362,6 @@ void FloorLayout::draw() const {
 	}
 }
 //--------
-} // namespace level_gen_etc
+} // namespace lvgen_etc
 } // namespace game_engine
 } // namespace dunwich_sandgeon

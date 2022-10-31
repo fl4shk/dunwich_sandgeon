@@ -68,6 +68,7 @@ using math::Sweep2;
 using math::LineSeg2;
 using math::Tri2;
 using math::Rect2;
+namespace concepts = liborangepower::concepts;
 
 using namespace liborangepower::time;
 namespace json = liborangepower::json;

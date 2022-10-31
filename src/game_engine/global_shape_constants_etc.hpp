@@ -244,7 +244,7 @@ constexpr inline std::string to_string(PathDir dir) {
 		return "PathDir::Bottom";
 	default:
 		throw std::invalid_argument(sconcat
-			("game_engine::level_gen_etc::operator ",
+			("game_engine::lvgen_etc::operator ",
 			"std::string (PathDir): ",
 			"Internal Error: invalid `dir` of ", i32(dir)));
 	//--------
@@ -265,7 +265,7 @@ constexpr inline IntVec2 path_dir_to_side_pos(
 		return pos + BOTTOM_OFFSET;
 	default:
 		throw std::invalid_argument(sconcat
-			("game_engine::level_gen_etc::path_dir_to_side_pos(): ",
+			("game_engine::lvgen_etc::path_dir_to_side_pos(): ",
 			"Internal Error: ",
 			"invalid `dir`: ", i32(dir)));
 	//--------

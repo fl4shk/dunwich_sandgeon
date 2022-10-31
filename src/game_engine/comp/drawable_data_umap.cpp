@@ -19,13 +19,13 @@
 #include "../window_class.hpp"
 #include "player_comp_class.hpp"
 //#include "block_comp_classes.hpp"
-#include "../level_gen_etc/floor_layout_class.hpp"
+#include "../lvgen_etc/floor_layout_class.hpp"
 
 namespace dunwich_sandgeon {
 namespace game_engine {
 //--------
-using level_gen_etc::bg_tile_str_map_at;
-using level_gen_etc::BgTile;
+using lvgen_etc::bg_tile_str_map_at;
+using lvgen_etc::BgTile;
 //--------
 namespace comp {
 //--------

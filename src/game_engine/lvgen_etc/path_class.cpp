@@ -22,7 +22,7 @@
 
 namespace dunwich_sandgeon {
 namespace game_engine {
-namespace level_gen_etc {
+namespace lvgen_etc {
 //--------
 Path::Path() {
 }
@@ -36,7 +36,7 @@ Path& Path::add(const FloorLayout& floor_layout, PathDir dir) {
 	//--------
 	if (size() == 0) {
 		throw std::runtime_error(sconcat
-			("game_engine::level_gen_etc::Path::add(): ",
+			("game_engine::lvgen_etc::Path::add(): ",
 			"Internal Error: ",
 			"`size() == 0`"));
 	}
@@ -48,7 +48,7 @@ Path& Path::add(const FloorLayout& floor_layout, PathDir dir) {
 		!bg_tile
 	) {
 		throw std::invalid_argument(sconcat
-			("game_engine::level_gen_etc::Path::add(): ",
+			("game_engine::lvgen_etc::Path::add(): ",
 			"Internal Error: ",
 			"Invalid `dir` (", to_string(dir), ") for ",
 			"`back()` (", back(), ")"));
@@ -81,6 +81,6 @@ size_t Path::fill(const FillFunc& fill_func) const {
 //	return ret;
 //}
 //--------
-} // namespace level_gen_etc
+} // namespace lvgen_etc
 } // namespace game_engine
 } // namespace dunwich_sandgeon

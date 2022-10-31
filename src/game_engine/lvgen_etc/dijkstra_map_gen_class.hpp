@@ -30,7 +30,7 @@
 
 namespace dunwich_sandgeon {
 namespace game_engine {
-namespace level_gen_etc {
+namespace lvgen_etc {
 //--------
 class Path;
 class FloorLayout;
@@ -214,7 +214,7 @@ public:		// functions
 	GEN_GETTER_BY_CON_REF(goal_pos_to_index_umap);
 };
 //--------
-} // namespace level_gen_etc
+} // namespace lvgen_etc
 } // namespace game_engine
 } // namespace dunwich_sandgeon
 

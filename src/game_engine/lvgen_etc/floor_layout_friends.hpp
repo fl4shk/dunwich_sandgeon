@@ -15,17 +15,4 @@
 // You should have received a copy of the GNU General Public License along
 // with Dunwich Sandgeon.  If not, see <https://www.gnu.org/licenses/>.
 
-#include "bfs_funcs.hpp"
-
-namespace dunwich_sandgeon {
-namespace game_engine {
-namespace level_gen_etc {
-//--------
-bool basic_reachable(
-	const FloorLayout& floor_layout, const BgTileUset& no_pass_uset,
-	const IntVec2& start, const IntVec2& end
-);
-//--------
-} // namespace level_gen_etc
-} // namespace game_engine
-} // namespace dunwich_sandgeon
+friend class dunwich_sandgeon::game_engine::lvgen_etc::DungeonGen;

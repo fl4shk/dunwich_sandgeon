@@ -20,7 +20,7 @@
 
 namespace dunwich_sandgeon {
 namespace game_engine {
-namespace level_gen_etc {
+namespace lvgen_etc {
 //--------
 MetaballGen::MetaballGen() {}
 MetaballGen::MetaballGen(const IntVec2& s_size_2d) 
@@ -43,7 +43,7 @@ MetaballGen& MetaballGen::add(const FltVec2& pos, const FltVec2& range) {
 	//_ball_vec.push_back({.pos=pos, .size_2d=range});
 	if (_ball_umap.contains(pos)) {
 		throw std::invalid_argument(sconcat
-			("game_engine::level_gen_etc::MetaballGen::add(): ",
+			("game_engine::lvgen_etc::MetaballGen::add(): ",
 			"Internal Error: ",
 			"already have a `Ball` with the `pos` ", pos));
 	}
@@ -159,6 +159,6 @@ BoolDyna2d MetaballGen::gen(float thresh_0, float thresh_1) const {
 	return ret;
 }
 //--------
-} // namespace level_gen_etc
+} // namespace lvgen_etc
 } // namespace game_engine
 } // namespace dunwich_sandgeon
