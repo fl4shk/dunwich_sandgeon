@@ -37,7 +37,7 @@ i32 DngnGen::GenYesNo::gen() const {
 const std::vector<std::vector<BgTile>>
 	DngnGen::ALLOWED_ALT_TERRAIN_V2D({
 		// Level 1 (index 0)
-		build_bg_tile_vec
+		build_bg_tile_darr
 			(//SizeAndBgTile(20, ALT_TERRAIN_NONE),
 			//SizeAndBgTile(5, ALT_TERRAIN_NONE),
 			//SizeAndBgTile(1, ALT_TERRAIN_NONE),
@@ -49,7 +49,7 @@ const std::vector<std::vector<BgTile>>
 			),
 
 		// Level 2 (index 1)
-		build_bg_tile_vec
+		build_bg_tile_darr
 			(
 			//SizeAndBgTile(6, ALT_TERRAIN_NONE),
 			//SizeAndBgTile(2, ALT_TERRAIN_NONE),
@@ -58,7 +58,7 @@ const std::vector<std::vector<BgTile>>
 			BgTile::Pit),
 
 		// Level 3 (index 2)
-		build_bg_tile_vec
+		build_bg_tile_darr
 			(
 			//SizeAndBgTile(5, ALT_TERRAIN_NONE),
 			//SizeAndBgTile(3, ALT_TERRAIN_NONE),
@@ -68,7 +68,7 @@ const std::vector<std::vector<BgTile>>
 			BgTile::Pit),
 
 		// Level 4 (index 3)
-		build_bg_tile_vec
+		build_bg_tile_darr
 			(
 			//SizeAndBgTile(1, ALT_TERRAIN_NONE),
 			BgTile::Lava,
@@ -77,7 +77,7 @@ const std::vector<std::vector<BgTile>>
 			),
 
 		// Level 5 (index 4)
-		build_bg_tile_vec
+		build_bg_tile_darr
 			(
 			//SizeAndBgTile(1, ALT_TERRAIN_NONE),
 			BgTile::Lava,
@@ -1326,7 +1326,7 @@ void DngnGen::GenInnards::_insert_exits() const {
 }
 void DngnGen::GenInnards::_insert_alt_terrain_nullopts() const {
 	const auto
-		& allowed_alt_terrain_vec = ALLOWED_ALT_TERRAIN_V2D
+		& allowed_alt_terrain_darr = ALLOWED_ALT_TERRAIN_V2D
 			.at(engine->level_minus_1());
 
 	const IntRect2
@@ -1366,11 +1366,11 @@ void DngnGen::GenInnards::_insert_alt_terrain_nullopts() const {
 	//	//}
 	//}
 
-	if (std::vector<IntRect2> biome_r2_vec; true) {
+	if (std::vector<IntRect2> biome_r2_darr; true) {
 		const i32
 			num_biome_r2s = engine->layout_rand<i32>
 				(GEN_BIOME_MBALL_MIN_AMOUNT, GEN_BIOME_MBALL_MAX_AMOUNT);
-		while (i32(biome_r2_vec.size()) < num_biome_r2s) {
+		while (i32(biome_r2_darr.size()) < num_biome_r2s) {
 			const IntRect2
 				//to_push = engine->layout_rand_r2_in_pfnb
 				//	(GEN_BIOME_MBALL_MIN_SIZE_2D,
@@ -1381,10 +1381,10 @@ void DngnGen::GenInnards::_insert_alt_terrain_nullopts() const {
 					GEN_BIOME_MBALL_MAX_SIZE_2D);
 			//if (r2_fits_in_pfnb(IntRect2(to_push)))
 			{
-				biome_r2_vec.push_back(to_push);
+				biome_r2_darr.push_back(to_push);
 			}
 		}
-		for (const auto& biome_r2: biome_r2_vec) {
+		for (const auto& biome_r2: biome_r2_darr) {
 			const FltRect2 temp_biome_r2
 				{.pos=FltVec2(biome_r2.pos),
 				.size_2d=FltVec2(biome_r2.size_2d)};
@@ -1490,9 +1490,9 @@ void DngnGen::GenInnards::_insert_alt_terrain_nullopts() const {
 		for (pos.y=0; pos.y<i32(biome_bg_tiles.size()); ++pos.y) {
 			auto& row = biome_bg_tiles.at(pos.y);
 			for (pos.x=0; pos.x<i32(row.size()); ++pos.x) {
-				const BgTile rng_bg_tile=allowed_alt_terrain_vec
+				const BgTile rng_bg_tile=allowed_alt_terrain_darr
 					.at(engine->layout_rand<i32>
-						(0, allowed_alt_terrain_vec.size() - 1));
+						(0, allowed_alt_terrain_darr.size() - 1));
 				if (!explored_uset.contains(pos)) {
 					bfs_fill
 						(explored_uset, pos,

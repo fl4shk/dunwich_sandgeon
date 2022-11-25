@@ -35,12 +35,12 @@ MetaballGen::MetaballGen(const IntVec2& s_size_2d)
 MetaballGen::~MetaballGen() {}
 //--------
 MetaballGen& MetaballGen::add(const FltVec2& pos, float range) {
-	//_ball_vec.push_back({.pos=pos, .size_2d{.x=range, .y=range}});
+	//_ball_darr.push_back({.pos=pos, .size_2d{.x=range, .y=range}});
 	//return *this;
 	return add(pos, FltVec2{.x=range, .y=range});
 }
 MetaballGen& MetaballGen::add(const FltVec2& pos, const FltVec2& range) {
-	//_ball_vec.push_back({.pos=pos, .size_2d=range});
+	//_ball_darr.push_back({.pos=pos, .size_2d=range});
 	if (_ball_umap.contains(pos)) {
 		throw std::invalid_argument(sconcat
 			("game_engine::lvgen_etc::MetaballGen::add(): ",

@@ -331,7 +331,7 @@ public:		// functions
 	GEN_GETTER_BY_CON_REF(rp_to_id_umap);
 	GEN_GETTER_BY_CON_REF(coll_grid);
 	GEN_GETTER_BY_VAL(pos3_z);
-	//GEN_GETTER_BY_CON_REF(path_vec);
+	//GEN_GETTER_BY_CON_REF(path_darr);
 	//GEN_GETTER_BY_CON_REF(layout_noise_pos_scale);
 	//GEN_GETTER_BY_CON_REF(layout_noise_pos_offset);
 	//--------

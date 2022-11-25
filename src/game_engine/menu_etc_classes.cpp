@@ -62,11 +62,11 @@ Rope split_rope_by_whitespace(const Rope& rope, bool keep_sep) {
 	Rope ret;
 
 	for (const auto& rope_part: rope) {
-		auto str_vec = split_str_by_whitespace(rope_part.str, keep_sep);
+		auto str_darr = split_str_by_whitespace(rope_part.str, keep_sep);
 
 		//printout("split_rope_by_whitespace(): ",
 		//	"\"", rope_part.str, "\"", "\n");
-		for (const auto& str: str_vec) {
+		for (const auto& str: str_darr) {
 			//printout(str.size(), " ",
 			//	"\"", str, "\"; ");
 			ret.push_back(RopePart({.str=str,

@@ -136,8 +136,8 @@ DijkstraMapGen::~DijkstraMapGen() {}
 DijkstraMapGen& DijkstraMapGen::add(const IntVec2& pos, float val) {
 	//if (goal_umap().contains(pos))
 	if (goal_pos_to_index_umap().contains(pos)) {
-		for (size_t i=0; i<_goal_vec.size(); ++i) {
-			if (const auto& goal=_goal_vec.at(i); goal.pos == pos) {
+		for (size_t i=0; i<_goal_darr.size(); ++i) {
+			if (const auto& goal=_goal_darr.at(i); goal.pos == pos) {
 				throw std::invalid_argument(sconcat
 					("game_engine::lvgen_etc::DijkstraMapGen::add(): ",
 					"Internal Error: ",
@@ -146,8 +146,8 @@ DijkstraMapGen& DijkstraMapGen::add(const IntVec2& pos, float val) {
 			}
 		}
 	}
-	_goal_pos_to_index_umap.insert(std::pair(pos, _goal_vec.size()));
-	_goal_vec.push_back({.pos=pos, .val=val});
+	_goal_pos_to_index_umap.insert(std::pair(pos, _goal_darr.size()));
+	_goal_darr.push_back({.pos=pos, .val=val});
 	//_goal_umap.insert(std::pair(pos, Goal{.pos=pos, .val=val}));
 	return *this;
 }
@@ -182,7 +182,7 @@ DijkstraMap DijkstraMapGen::gen_basic(
 
 
 	// Insert goals
-	for (const auto& goal: goal_vec()) {
+	for (const auto& goal: goal_darr()) {
 		//ret.at(goal.pos.y).at(goal.pos.x) = goal.val;
 		ret._raw_phys_at(goal.pos) = goal.val;
 		to_sort_deque.push_back({&ret, goal.pos});

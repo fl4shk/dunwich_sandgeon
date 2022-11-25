@@ -106,7 +106,7 @@ constexpr inline void _build_bg_tile_vec_backend(
 		ret.push_back(first_arg.second);
 	}
 }
-constexpr inline std::vector<BgTile> build_bg_tile_vec(
+constexpr inline std::vector<BgTile> build_bg_tile_darr(
 	const IsBuildBgTileVecArg auto&... args
 ) {
 	std::vector<BgTile> ret;

@@ -37,11 +37,11 @@ void GmMain::_init(ecs::Engine* ecs_engine) {
 	const std::string func_name("game_engine::sys::GmMain::_init");
 
 	if (
-		auto ent_id_vec=ecs_engine->ent_id_vec_from_keys_all_v
+		auto ent_id_darr=ecs_engine->ent_id_darr_from_keys_all_v
 			(comp::Player::KIND_STR, comp::Drawable::KIND_STR);
 		true
 	) {
-		if (ent_id_vec.size() == 0) {
+		if (ent_id_darr.size() == 0) {
 			_player_id = ecs_engine->create_singleton_all
 				(ecs::make_comp_umap_ks
 					(ecs::CompSptr(new comp::Player()),
@@ -56,10 +56,10 @@ void GmMain::_init(ecs::Engine* ecs_engine) {
 			//	"\n");
 			// See `game_engine::Engine::NonEcsSerData`'s `player_pos3` and
 			// `prev_floor` for the player's position information
-		} else if (ent_id_vec.size() != 1) {
+		} else if (ent_id_darr.size() != 1) {
 			engine->corrupted_save_file_err();
-		} else { // if (ent_id_vec.size() == 1)
-			_player_id = ent_id_vec.front();
+		} else { // if (ent_id_darr.size() == 1)
+			_player_id = ent_id_darr.front();
 		}
 	}
 	//--------

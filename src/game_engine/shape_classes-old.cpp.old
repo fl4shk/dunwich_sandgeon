@@ -152,39 +152,39 @@ std::optional<Hit> Rect::intersection(const LineSeg& arg,
 			.x=DblVec2::ElemT(1) / temp_arg_delta.x,
 			.y=DblVec2::ElemT(1) / temp_arg_delta.y
 		}),
-		sign_vec({.x=sign(scale.x), .y=sign(scale.y)}),
+		sign_darr({.x=sign(scale.x), .y=sign(scale.y)}),
 
-		temp_time_vec
+		temp_time_darr
 		({
-			.x=sign_vec.x * (temp_half.x + padding.x),
-			.y=sign_vec.y * (temp_half.y + padding.y),
+			.x=sign_darr.x * (temp_half.x + padding.x),
+			.y=sign_darr.y * (temp_half.y + padding.y),
 		}),
-		near_time_vec
+		near_time_darr
 		({
-			.x=(temp_pos.x - temp_time_vec.x - temp_arg_p0.x) * scale.x,
-			.y=(temp_pos.y - temp_time_vec.y - temp_arg_p0.y) * scale.y,
+			.x=(temp_pos.x - temp_time_darr.x - temp_arg_p0.x) * scale.x,
+			.y=(temp_pos.y - temp_time_darr.y - temp_arg_p0.y) * scale.y,
 		}),
-		far_time_vec
+		far_time_darr
 		({
-			.x=(temp_pos.x + temp_time_vec.x - temp_arg_p0.x) * scale.x,
-			.y=(temp_pos.y + temp_time_vec.y - temp_arg_p0.y) * scale.y,
+			.x=(temp_pos.x + temp_time_darr.x - temp_arg_p0.x) * scale.x,
+			.y=(temp_pos.y + temp_time_darr.y - temp_arg_p0.y) * scale.y,
 		});
 
-	if (near_time_vec.x > far_time_vec.y
-		|| near_time_vec.y > far_time_vec.x)
+	if (near_time_darr.x > far_time_darr.y
+		|| near_time_darr.y > far_time_darr.x)
 	{
 		return std::nullopt;
 	}
 
 	const DblVec2::ElemT
 		near_time
-			= near_time_vec.x > near_time_vec.y
-			? near_time_vec.x
-			: near_time_vec.y,
+			= near_time_darr.x > near_time_darr.y
+			? near_time_darr.x
+			: near_time_darr.y,
 		far_time
-			= far_time_vec.x > far_time_vec.y
-			? far_time_vec.x
-			: far_time_vec.y;
+			= far_time_darr.x > far_time_darr.y
+			? far_time_darr.x
+			: far_time_darr.y;
 
 	if (near_time >= DblVec2::ElemT(1) || far_time <= DblVec2::ElemT(0))
 	{
@@ -194,15 +194,15 @@ std::optional<Hit> Rect::intersection(const LineSeg& arg,
 	Hit ret;
 	ret.t = clamp(near_time, 0.0, 1.0);
 
-	if (near_time_vec.x > near_time_vec.y)
+	if (near_time_darr.x > near_time_darr.y)
 	{
-		ret.normal.x = -sign_vec.x;
+		ret.normal.x = -sign_darr.x;
 		ret.normal.y = 0;
 	}
-	else // if (near_time_vec.x <= near_time_vec.y)
+	else // if (near_time_darr.x <= near_time_darr.y)
 	{
 		ret.normal.x = 0;
-		ret.normal.y = -sign_vec.y;
+		ret.normal.y = -sign_darr.y;
 	}
 	ret.delta.x = (1.0 - ret.t) * (-temp_arg_delta.x);
 	ret.delta.y = (1.0 - ret.t) * (-temp_arg_delta.y);

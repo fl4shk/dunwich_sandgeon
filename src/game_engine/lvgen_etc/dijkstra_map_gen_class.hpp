@@ -181,7 +181,7 @@ public:		// constants
 	//	DEFAULT_NO_PASS_USET;
 private:		// variables
 	//std::unordered_map<IntVec2, Goal> _goal_umap;
-	std::vector<Goal> _goal_vec;
+	std::vector<Goal> _goal_darr;
 	std::unordered_map<IntVec2, size_t> _goal_pos_to_index_umap;
 public:		// functions
 	DijkstraMapGen();
@@ -210,7 +210,7 @@ public:		// functions
 	//) const;
 
 	//GEN_GETTER_BY_CON_REF(goal_umap);
-	GEN_GETTER_BY_CON_REF(goal_vec);
+	GEN_GETTER_BY_CON_REF(goal_darr);
 	GEN_GETTER_BY_CON_REF(goal_pos_to_index_umap);
 };
 //--------

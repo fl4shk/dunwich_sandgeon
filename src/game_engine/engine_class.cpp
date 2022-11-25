@@ -191,29 +191,29 @@ Engine::Engine(i32 s_argc, char** s_argv, bool do_create_or_load)
 	//	//	//vec_etc.back().init_set_border();
 	//	//};
 	//	//--------
-	//	_screen_window_vec.push_back(Window(
+	//	_screen_window_darr.push_back(Window(
 	//		IntVec2(), W_BRDR_SCREEN_SIZE_2D, i
 	//	));
-	//	_aux_window_vec.push_back(Window(
+	//	_aux_window_darr.push_back(Window(
 	//		IntVec2(), W_BRDR_SCREEN_SIZE_2D, i
 	//	));
 	//	//--------
-	//	_pfield_window_vec.push_back(Window(
+	//	_pfield_window_darr.push_back(Window(
 	//		PFIELD_WINDOW_POS, PFIELD_WINDOW_END_POS, i
 	//	));
-	//	_log_window_vec.push_back(Window(
+	//	_log_window_darr.push_back(Window(
 	//		LOG_WINDOW_POS, LOG_WINDOW_END_POS, i
 	//	));
-	//	_hud_window_vec.push_back(Window(
+	//	_hud_window_darr.push_back(Window(
 	//		HUD_WINDOW_POS, HUD_WINDOW_END_POS, i
 	//	));
-	//	_popup_window_vec.push_back(Window(
+	//	_popup_window_darr.push_back(Window(
 	//		POPUP_WINDOW_POS, POPUP_WINDOW_END_POS, i
 	//	));
-	//	_yes_no_window_vec.push_back(Window(
+	//	_yes_no_window_darr.push_back(Window(
 	//		YES_NO_WINDOW_POS, YES_NO_WINDOW_END_POS, i
 	//	));
-	//	_text_yes_no_window_vec.push_back(Window(
+	//	_text_yes_no_window_darr.push_back(Window(
 	//		TEXT_YES_NO_WINDOW_POS, TEXT_YES_NO_WINDOW_END_POS, i
 	//	));
 	//	//--------
@@ -328,14 +328,14 @@ void Engine::tick() {
 		_did_init_window_clear = true;
 
 		//for (i32 i=0; i<NUM_FILES; ++i) {
-		//	_screen_window_vec.at(i).clear();
-		//	_aux_window_vec.at(i).clear();
-		//	_pfield_window_vec.at(i).clear();
-		//	_log_window_vec.at(i).clear();
-		//	_hud_window_vec.at(i).clear();
-		//	_popup_window_vec.at(i).clear();
-		//	_yes_no_window_vec.at(i).clear();
-		//	_text_yes_no_window_vec.at(i).clear();
+		//	_screen_window_darr.at(i).clear();
+		//	_aux_window_darr.at(i).clear();
+		//	_pfield_window_darr.at(i).clear();
+		//	_log_window_darr.at(i).clear();
+		//	_hud_window_darr.at(i).clear();
+		//	_popup_window_darr.at(i).clear();
+		//	_yes_no_window_darr.at(i).clear();
+		//	_text_yes_no_window_darr.at(i).clear();
 		//}
 
 		screen_window.clear();
@@ -497,18 +497,18 @@ void Engine::_create_or_load_save_file_etc() {
 		_save_to_binser(true);
 	}
 	//if (
-	//	auto ent_id_vec=ecs_engine.ent_id_vec_from_keys_any_fn
+	//	auto ent_id_darr=ecs_engine.ent_id_vec_from_keys_any_fn
 	//		({comp::Player::KIND_STR}, 0);
-	//	ent_id_vec.size() > 0
+	//	ent_id_darr.size() > 0
 	//) {
-	//	if (ent_id_vec.size() != 1) {
+	//	if (ent_id_darr.size() != 1) {
 	//		corrupted_save_file_err();
 	//	}
 	//	dbg_log("This `game_engine::comp::Player` `EntId` was found: ",
-	//		ent_id_vec.front(), "\n");
+	//		ent_id_darr.front(), "\n");
 
 	//	comp::Player* player = ecs_engine.casted_comp_at_fn<comp::Player>
-	//		(ent_id_vec.front(), 0);
+	//		(ent_id_darr.front(), 0);
 
 	//	dbg_log("game_engine::Engine::_create_or_load_save_file_etc(): ",
 	//		"Found `game_engine::comp::Player`: ",
@@ -605,7 +605,7 @@ void Engine::erase_file() {
 void Engine::_inner_draw_menu_w_pre_clear(Window& window, Menu& menu) {
 	window.clear();
 	window.draw(menu);
-	//_screen_window_vec.at(_sel_file_num(file_num)).draw(window);
+	//_screen_window_darr.at(_sel_file_num(file_num)).draw(window);
 	screen_window.draw(window);
 }
 
