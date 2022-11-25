@@ -17,7 +17,7 @@
 
 #include "path_class.hpp"
 #include "bg_tile_enum.hpp"
-#include "floor_layout_class.hpp"
+#include "dngn_floor_class.hpp"
 #include "dijkstra_map_gen_class.hpp"
 
 namespace dunwich_sandgeon {
@@ -32,7 +32,7 @@ Path::Path(const IntVec2& start_pos) {
 Path::~Path() {
 }
 
-Path& Path::add(const FloorLayout& floor_layout, PathDir dir) {
+Path& Path::add(const DngnFloor& dngn_floor, PathDir dir) {
 	//--------
 	if (size() == 0) {
 		throw std::runtime_error(sconcat
@@ -44,7 +44,7 @@ Path& Path::add(const FloorLayout& floor_layout, PathDir dir) {
 	const IntVec2 pos = path_dir_to_side_pos(back(), dir);
 	//--------
 	if (
-		const auto bg_tile = floor_layout.phys_bg_tile_at(pos);
+		const auto bg_tile = dngn_floor.phys_bg_tile_at(pos);
 		!bg_tile
 	) {
 		throw std::invalid_argument(sconcat

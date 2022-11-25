@@ -15,25 +15,25 @@
 // You should have received a copy of the GNU General Public License along
 // with Dunwich Sandgeon.  If not, see <https://www.gnu.org/licenses/>.
 
-#ifndef src_game_engine_dungeon_gen_dungeon_gen_class_hpp
-#define src_game_engine_dungeon_gen_dungeon_gen_class_hpp
+#ifndef src_game_engine_dngn_gen_dngn_gen_class_hpp
+#define src_game_engine_dngn_gen_dngn_gen_class_hpp
 
-// src/game_engine/lvgen_etc/dungeon_gen_class.hpp
+// src/game_engine/lvgen_etc/dngn_gen_class.hpp
 
 #include "../../misc_includes.hpp"
-#include "floor_layout_class.hpp"
+#include "dngn_floor_class.hpp"
 
 namespace dunwich_sandgeon {
 namespace game_engine {
 //--------
 namespace sys {
-class GmDungeonGen;
+class GmDngnGen;
 } // namespace sys
 //--------
 namespace lvgen_etc {
 //--------
-class DungeonGen final {
-	friend class sys::GmDungeonGen;
+class DngnGen final {
+	friend class sys::GmDngnGen;
 public:		// types
 	//--------
 	//// A `class` representing the next
@@ -44,8 +44,8 @@ public:		// types
 	//--------
 	//using BgTile = comp::BgTile;
 	//using SizeAndBgTile = comp::SizeAndBgTile;
-	//using FloorLayout = comp::FloorLayout;
-	using RoomPath = FloorLayout::RoomPath;
+	//using DngnFloor = comp::DngnFloor;
+	using RoomPath = DngnFloor::RoomPath;
 	//--------
 	class GenNext final {
 	public:		// variables
@@ -114,18 +114,18 @@ public:		// constants
 public:		// constants
 	//--------
 	static constexpr i32
-		MIN_NUM_ROOM_PATHS = FloorLayout::MIN_NUM_ROOM_PATHS,
-		MAX_NUM_ROOM_PATHS = FloorLayout::MAX_NUM_ROOM_PATHS,
-		MIN_NUM_ROOMS = FloorLayout::MIN_NUM_ROOMS;
+		MIN_NUM_ROOM_PATHS = DngnFloor::MIN_NUM_ROOM_PATHS,
+		MAX_NUM_ROOM_PATHS = DngnFloor::MAX_NUM_ROOM_PATHS,
+		MIN_NUM_ROOMS = DngnFloor::MIN_NUM_ROOMS;
 	//--------
 	static constexpr i32
-		PATH_THICKNESS = FloorLayout::PATH_THICKNESS,
-		PATH_MIN_LEN = FloorLayout::PATH_MIN_LEN,
-		PATH_MAX_LEN = FloorLayout::PATH_MAX_LEN;
+		PATH_THICKNESS = DngnFloor::PATH_THICKNESS,
+		PATH_MIN_LEN = DngnFloor::PATH_MIN_LEN,
+		PATH_MAX_LEN = DngnFloor::PATH_MAX_LEN;
 
 	static constexpr IntVec2
-		ROOM_MIN_SIZE_2D = FloorLayout::ROOM_MIN_SIZE_2D,
-		ROOM_MAX_SIZE_2D = FloorLayout::ROOM_MAX_SIZE_2D;
+		ROOM_MIN_SIZE_2D = DngnFloor::ROOM_MIN_SIZE_2D,
+		ROOM_MAX_SIZE_2D = DngnFloor::ROOM_MAX_SIZE_2D;
 	//--------
 	static constexpr i32
 		//--------
@@ -361,31 +361,31 @@ private:		// variables
 	bool
 		_stop_gen_early = false,
 		_done_generating = false;
-	//FloorLayout _floor_layout;
+	//DngnFloor _dngn_floor;
 public:		// functions
-	DungeonGen() = default;
-	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(DungeonGen);
-	inline ~DungeonGen() = default;
+	DngnGen() = default;
+	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(DngnGen);
+	inline ~DngnGen() = default;
 
 	void clear_before_gen(
 		//ecs::Engine* ecs_engine
 	);
 	void gen_curr_floor();
-	//GEN_GETTER_BY_CON_REF(floor_layout);
+	//GEN_GETTER_BY_CON_REF(dngn_floor);
 private:		// functions
 	//void _connect_room_paths(comp::StaticBgTileMap* bg_tile_map,
-	//	FloorLayout* floor_layout);
+	//	DngnFloor* dngn_floor);
 private:		// types
 	class GenInnards final {
 	public:		// types
-		using RoomPath = DungeonGen::RoomPath;
+		using RoomPath = DngnGen::RoomPath;
 	private:		// variables
-		DungeonGen
+		DngnGen
 			* _self = nullptr;
 		//ecs::Engine
 		//	* _ecs_engine = nullptr;
-		//FloorLayout
-		//	* _floor_layout = nullptr;
+		//DngnFloor
+		//	* _dngn_floor = nullptr;
 		RoomPath _temp_to_push_rp;
 		//RoomPath
 		//	* _rp = nullptr,
@@ -402,14 +402,14 @@ private:		// types
 		//	_check_i;
 	public:		// functions
 		inline GenInnards(
-			DungeonGen* s_self
+			DngnGen* s_self
 			//ecs::Engine* s_ecs_engine,
-			//FloorLayout* s_dungeon_floor
+			//DngnFloor* s_dngn_floor
 		)
 			: _self(s_self)
 			//_ecs_engine(s_ecs_engine),
-			//_floor_layout(s_dungeon_floor)
-			//_floor_layout(&_self->floor_layout)
+			//_dngn_floor(s_dngn_floor)
+			//_dngn_floor(&_self->dngn_floor)
 		{
 		}
 		bool gen_single_rp();
@@ -496,8 +496,7 @@ private:		// types
 		void _remove_dead_end_paths() const;
 		void _insert_exits() const;
 		void _insert_alt_terrain_nullopts() const;
-		void _insert_keys_and_doors() const;
-		void _insert_non_key_items() const;
+		void _insert_items_and_doors() const;
 		//--------
 	private:		// static functions
 		//--------
@@ -640,4 +639,4 @@ private:		// types
 } // namespace dunwich_sandgeon
 
 
-#endif		// src_game_engine_dungeon_gen_dungeon_gen_class_hpp
+#endif		// src_game_engine_dngn_gen_dngn_gen_class_hpp

@@ -34,7 +34,7 @@
 	/* comp::DownStairs, */ \
 	/* comp::UpStairs, */ \
 	/* comp::StaticBgTileMap, */\
-	/* comp::FloorLayout, */ \
+	/* comp::DngnFloor, */ \
 	\
 	comp::StatusOnFire, \
 	comp::StatusPoisoned, \

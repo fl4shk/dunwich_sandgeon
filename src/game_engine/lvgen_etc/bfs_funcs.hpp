@@ -22,7 +22,7 @@
 
 #include "../../misc_includes.hpp"
 #include "../../misc_types.hpp"
-//#include "floor_layout_class.hpp"
+//#include "dngn_floor_class.hpp"
 
 namespace dunwich_sandgeon {
 namespace game_engine {

@@ -17,7 +17,7 @@
 
 #include "dijkstra_map_gen_class.hpp"
 #include "path_class.hpp"
-#include "floor_layout_class.hpp"
+#include "dngn_floor_class.hpp"
 #include "../engine_class.hpp"
 
 namespace dunwich_sandgeon {
@@ -44,7 +44,7 @@ DijkstraMap& DijkstraMap::flip(float bonus) {
 	return *this;
 }
 std::optional<Path> DijkstraMap::make_path(
-	//const DijkstraMap& dmap, //const FloorLayout& floor_layout,
+	//const DijkstraMap& dmap, //const DngnFloor& dngn_floor,
 	const IntVec2& start_phys_pos, float stop_when_le_val
 ) const {
 	Path ret;
@@ -153,18 +153,18 @@ DijkstraMapGen& DijkstraMapGen::add(const IntVec2& pos, float val) {
 }
 //--------
 DijkstraMap DijkstraMapGen::gen_basic(
-	const FloorLayout& floor_layout, const BgTileUset& no_pass_uset
+	const DngnFloor& dngn_floor, const BgTileUset& no_pass_uset
 ) const {
 	//DijkstraMap ret(PFIELD_PHYS_NO_BRDR_RECT2.size_2d.y,
 	//	std::vector<float>
 	//		(PFIELD_PHYS_NO_BRDR_RECT2.size_2d.x, VERY_HIGH_NUM));
 	DijkstraMap ret;
 
-	if (floor_layout.size() == 0) {
+	if (dngn_floor.size() == 0) {
 		throw std::invalid_argument(sconcat
 			("game_engine::lvgen_etc::DijkstraMapGen::gen_basic(): ",
 			"Internal Error: ",
-			"`floor_layout.size() == 0`, should be `> 0`"));
+			"`dngn_floor.size() == 0`, should be `> 0`"));
 	}
 	class Sortable final {
 	public:		// variables
@@ -189,13 +189,13 @@ DijkstraMap DijkstraMapGen::gen_basic(
 	}
 
 	auto edge_exists_func = [&](const IntVec2& phys_pos) -> bool {
-		const auto& bg_tile = floor_layout.phys_bg_tile_at(phys_pos);
+		const auto& bg_tile = dngn_floor.phys_bg_tile_at(phys_pos);
 		return bg_tile && !no_pass_uset.contains(*bg_tile);
 		//return static_cast<bool>(bg_tile);
 	};
 	//{
 	//	//--------
-	//	const IntVec2 start_pos = floor_layout.at(0).rect.tl_corner();
+	//	const IntVec2 start_pos = dngn_floor.at(0).rect.tl_corner();
 	//	//--------
 	//	auto fill_func = [&](const IntVec2& phys_pos) -> void {
 	//		if (ret.phys_at(phys_pos) != ret.VERY_HIGH_NUM) {
@@ -221,7 +221,7 @@ DijkstraMap DijkstraMapGen::gen_basic(
 				if (ret.BOUNDS_R2.intersect(side_phys_pos)) {
 					if (
 						//const auto bg_tile
-						//	= floor_layout.phys_bg_tile_at(side_phys_pos);
+						//	= dngn_floor.phys_bg_tile_at(side_phys_pos);
 						//bg_tile && !no_pass_uset.contains(*bg_tile)
 						edge_exists_func(side_phys_pos)
 					) {
@@ -271,12 +271,12 @@ DijkstraMap DijkstraMapGen::gen_basic(
 	//	//--------
 	//} while (did_change);
 	//do {
-	//	const IntVec2 start_pos = floor_layout.at(0).rect.tl_corner();
+	//	const IntVec2 start_pos = dngn_floor.at(0).rect.tl_corner();
 	//	//--------
 	//	auto edge_exists_func = [&](
 	//		const IntVec2Uset& explored_uset, const IntVec2& phys_pos
 	//	) -> bool {
-	//		const auto& bg_tile = floor_layout.phys_bg_tile_at(phys_pos);
+	//		const auto& bg_tile = dngn_floor.phys_bg_tile_at(phys_pos);
 	//		return (bg_tile && !no_pass_uset.contains(*bg_tile));
 	//	}
 	//	//--------
@@ -298,10 +298,10 @@ DijkstraMap DijkstraMapGen::gen_basic(
 	return ret;
 }
 DijkstraMap DijkstraMapGen::gen_flipped(
-	const FloorLayout& floor_layout, const BgTileUset& no_pass_uset,
+	const DngnFloor& dngn_floor, const BgTileUset& no_pass_uset,
 	float bonus
 ) const {
-	DijkstraMap ret = gen_basic(floor_layout, no_pass_uset);
+	DijkstraMap ret = gen_basic(dngn_floor, no_pass_uset);
 	//flip(ret, bonus);
 	//return ret;
 	ret.flip(bonus);

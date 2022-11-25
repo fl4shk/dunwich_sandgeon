@@ -16,7 +16,7 @@
 // with Dunwich Sandgeon.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "../comp/drawable_data_umap.hpp"
-#include "floor_layout_class.hpp"
+#include "dngn_floor_class.hpp"
 #include "../engine_class.hpp"
 #include "../global_shape_constants_etc.hpp"
 #include "../engine_class.hpp"
@@ -26,12 +26,12 @@ namespace game_engine {
 namespace lvgen_etc {
 //--------
 //const std::string
-FloorLayout::RoomPath::RoomPath() {}
-FloorLayout::RoomPath::RoomPath(const IntRect2& s_rect)
+DngnFloor::RoomPath::RoomPath() {}
+DngnFloor::RoomPath::RoomPath(const IntRect2& s_rect)
 	: rect(s_rect) {}
-FloorLayout::RoomPath::~RoomPath() {}
+DngnFloor::RoomPath::~RoomPath() {}
 
-//auto FloorLayout::RoomPath::from_bv(const binser::Value& bv) -> RoomPath {
+//auto DngnFloor::RoomPath::from_bv(const binser::Value& bv) -> RoomPath {
 //	RoomPath ret;
 //
 //	MEMB_LIST_COMP_DUNGEON_ROOM_PATH(BINSER_MEMB_FROM_BV_DESERIALIZE);
@@ -47,13 +47,13 @@ FloorLayout::RoomPath::~RoomPath() {}
 //		//		data, " ", min, " ", max
 //		//));
 //		throw std::invalid_argument(sconcat(
-//			"game_engine::lvgen_etc::FloorLayout::RoomPath::from_bv(): ",
+//			"game_engine::lvgen_etc::DngnFloor::RoomPath::from_bv(): ",
 //			"`ret.rect` does not fit in the playfield: ", ret.rect
 //		));
 //	}
 //	if (!ret.is_path() && !ret.is_room()) {
 //		throw std::invalid_argument(sconcat(
-//			"game_engine::lvgen_etc::FloorLayout::RoomPath::from_bv(): ",
+//			"game_engine::lvgen_etc::DngnFloor::RoomPath::from_bv(): ",
 //			"`ret.rect` is the wrong shape to be a path or a room: ",
 //			ret.rect
 //		));
@@ -61,7 +61,7 @@ FloorLayout::RoomPath::~RoomPath() {}
 //
 //	return ret;
 //}
-//FloorLayout::RoomPath::operator binser::Value () const {
+//DngnFloor::RoomPath::operator binser::Value () const {
 //	binser::Value ret;
 //
 //	//MEMB_EX_MM_LIST_COMP_DUNGEON_ROOM_PATH(BINSER_MEMB_SERIALIZE);
@@ -72,8 +72,8 @@ FloorLayout::RoomPath::~RoomPath() {}
 //
 //	return ret;
 //}
-FloorLayout::FloorLayout() {}
-FloorLayout::FloorLayout(const binser::Value& bv) {
+DngnFloor::DngnFloor() {}
+DngnFloor::DngnFloor(const binser::Value& bv) {
 	//_rp_data.checked_size = MAX_NUM_ROOM_PATHS;
 	//_rp_data.cs_is_max = true;
 	////_rp_data.min_size = 0;
@@ -82,7 +82,7 @@ FloorLayout::FloorLayout(const binser::Value& bv) {
 	MEMB_SER_LIST_LVGEN_ETC_FLOOR_LAYOUT(BINSER_MEMB_DESERIALIZE);
 }
 
-FloorLayout::operator binser::Value () const {
+DngnFloor::operator binser::Value () const {
 	binser::Value ret;
 
 	MEMB_SER_LIST_LVGEN_ETC_FLOOR_LAYOUT(BINSER_MEMB_SERIALIZE);
@@ -90,7 +90,7 @@ FloorLayout::operator binser::Value () const {
 	return ret;
 }
 //--------
-std::optional<BgTile> FloorLayout::bg_tile_at(
+std::optional<BgTile> DngnFloor::bg_tile_at(
 	const IntVec2& pos, size_t i
 ) const {
 	//BgTile bg_tile = BgTile::Blank;
@@ -147,7 +147,7 @@ std::optional<BgTile> FloorLayout::bg_tile_at(
 	}
 	//return bg_tile;
 }
-std::optional<BgTile> FloorLayout::phys_bg_tile_at(const IntVec2& pos)
+std::optional<BgTile> DngnFloor::phys_bg_tile_at(const IntVec2& pos)
 const {
 	//if (!PFIELD_PHYS_RECT2.arg_inside(pos)) {
 	//	return std::nullopt;
@@ -177,10 +177,20 @@ const {
 				rp.alt_terrain_umap.contains(pos)
 				&& rp.alt_terrain_umap.at(pos)
 				&& !destroyed_alt_terrain_uset.contains(pos)
+				//&& !engine->pfield_ent_id_umap_contains
+				//	({pos.x, pos.y, pos3_z()})
 			) {
 				return *rp.alt_terrain_umap.at(pos);
 				//return BgTile::Error;
-			} else {
+			}
+			//else if (
+			//	//gnd_item_umap.contains(pos)
+			//	engine->pfield_ent_id_umap_contains
+			//		({pos.x, pos.y, pos3_z()})
+			//) {
+			//	return engine->ecs_engine
+			//}
+			else {
 				return
 					rp.is_path()
 					? BgTile::PathFloor
@@ -191,7 +201,7 @@ const {
 	return std::nullopt;
 }
 //--------
-std::optional<size_t> FloorLayout::phys_pos_to_rp_index(
+std::optional<size_t> DngnFloor::phys_pos_to_rp_index(
 	const IntVec2& phys_pos
 ) const {
 	//if (!PFIELD_PHYS_NO_BRDR_RECT2.intersect(phys_pos)) {
@@ -206,10 +216,10 @@ std::optional<size_t> FloorLayout::phys_pos_to_rp_index(
 	}
 	return std::nullopt;
 }
-void FloorLayout::push_back(RoomPath&& to_push) {
+void DngnFloor::push_back(RoomPath&& to_push) {
 	if (size() + size_t(1) > MAX_NUM_ROOM_PATHS) {
 		throw std::length_error(sconcat
-			("game_engine::lvgen_etc::FloorLayout::push_back(): ",
+			("game_engine::lvgen_etc::DngnFloor::push_back(): ",
 			"`_rp_data.data` cannot increase in size: ",
 			//_rp_data.data.size(),
 			_rp_data.size(),
@@ -222,7 +232,7 @@ void FloorLayout::push_back(RoomPath&& to_push) {
 		(_rp_data.back().get(), _rp_data.size() - size_t(1)));
 	_coll_grid.insert(_rp_data.back().get());
 }
-void FloorLayout::clear_before_gen(
+void DngnFloor::clear_before_gen(
 	//double n_layout_noise_pos_scale,
 	//double n_layout_noise_pos_offset
 ) {
@@ -237,8 +247,11 @@ void FloorLayout::clear_before_gen(
 	//_layout_noise_pos_scale = n_layout_noise_pos_scale;
 	//_layout_noise_pos_offset = n_layout_noise_pos_offset;
 }
-bool FloorLayout::erase_during_gen(size_t index) {
-	if (size() > MIN_NUM_ROOM_PATHS) {
+bool DngnFloor::erase_path_during_gen(size_t index) {
+	if (
+		size() > MIN_NUM_ROOM_PATHS
+		&& _rp_data.at(index)->is_path()
+	) {
 		//for (size_t i=0; i<size(); ++i) {
 		//	if (i == index) {
 		//		continue;
@@ -252,13 +265,16 @@ bool FloorLayout::erase_during_gen(size_t index) {
 		//	//}
 		//	item.id = i32(i - 1);
 		//}
-		if (auto& rp=*_rp_data.at(index); true) {
+		if (
+			auto& rp=*_rp_data.at(index);
+			destroyed_alt_terrain_uset.size() > 0
+		) {
 			const auto& neighbors = cg_neighbors(rp);
 			for (auto& neighbor: neighbors) {
 				//RoomPath* other_rp = static_cast<RoomPath*>(neighbor);
 				//const size_t other_index = rp_to_id_umap().at(other_rp);
 				if (neighbor->bbox().intersect(rp.rect)) {
-					// Rooms are generated as not intersecting
+					// Rooms and paths are generated as not intersecting
 					IntVec2 pos;
 					for (
 						pos.y=rp.rect.top_y();
@@ -304,20 +320,20 @@ bool FloorLayout::erase_during_gen(size_t index) {
 	}
 	return false;
 }
-CollGridT::DataElPtrUsetT FloorLayout::cg_neighbors(RoomPath& rp) const {
+CollGridT::DataElPtrUsetT DngnFloor::cg_neighbors(RoomPath& rp) const {
 	return _coll_grid.neighbors(&rp);
 }
-CollGridT::DataElPtrUsetT FloorLayout::cg_neighbors(size_t index) const {
+CollGridT::DataElPtrUsetT DngnFloor::cg_neighbors(size_t index) const {
 	return _coll_grid.neighbors(_rp_data.at(index).get());
 }
-CollGridT::DataElPtrUsetT FloorLayout::cg_neighbors(const IntVec2& pos)
+CollGridT::DataElPtrUsetT DngnFloor::cg_neighbors(const IntVec2& pos)
 const {
 	RoomPath temp_rp; //= {.rect{pos=pos, .size_2d={1, 1}}};
 	temp_rp.rect.pos = pos;
 	temp_rp.rect.size_2d = {1, 1};
 	return _coll_grid.neighbors(&temp_rp);
 }
-void FloorLayout::draw() const {
+void DngnFloor::draw() const {
 	//bg_tile_map->at({0, 0}) = BgTile::Floor;
 	for (size_t i=0; i<size(); ++i) 
 	//for (size_t i=1; i<size(); ++i)
@@ -346,7 +362,7 @@ void FloorLayout::draw() const {
 								(bg_tile_str_map_at(*bg_tile));
 					}
 				} catch (const std::exception& e) {
-					printerr("game_engine::lvgen_etc::FloorLayout",
+					printerr("game_engine::lvgen_etc::DngnFloor",
 						"::draw(): "
 						"Exception thrown: ", e.what(), "\n");
 					throw std::out_of_range(sconcat(

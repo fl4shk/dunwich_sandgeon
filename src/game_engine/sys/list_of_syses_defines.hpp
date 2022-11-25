@@ -26,7 +26,7 @@
 	X(GmTitleScreen) \
 	X(GmOptions) \
 	X(GmFileSelect) \
-	X(GmDungeonGen) \
+	X(GmDngnGen) \
 	\
 	X(GmMain) \
 

@@ -153,17 +153,22 @@ void GmFileSelect::_aux_menu_file_qmark_hpick_func(
 	std::get<Menu::Node::DataValue>(other_node.data)() = sfn;
 }
 void GmFileSelect::_aux_menu_start_game_func(GmFileSelect* self) {
-	engine->set_game_mode(GameMode::DungeonGen);
+	engine->set_game_mode(GameMode::DngnGen);
 	*engine->curr_file_num() = *engine->src_file_num();
 	//engine->fn_state = Engine::FnState::Curr;
 
 	if (!engine->did_init_save_file()) {
+		//printout("GmFileSelect::_aux_menu_start_game_func(): ",
+		//	"!did_init_save_file\n");
 		engine->did_init_save_file() = true;
 		auto& temp = engine->non_ecs_ser_data();
-		temp.on_init_or_file_erase_seed_rngs_etc(
-			engine->layout_rng_arr(), temp.base_rng_seed()
-		);
+		temp.on_init_or_file_erase_seed_rngs_etc
+			(engine->layout_rng_arr(), temp.base_rng_seed());
 	}
+	//else {
+	//	printout("GmFileSelect::_aux_menu_start_game_func(): ",
+	//		"did_init_save_file\n");
+	//}
 }
 void GmFileSelect::_aux_menu_copy_file_func(GmFileSelect* self) {
 	self->_win_state = WinState::Popup;

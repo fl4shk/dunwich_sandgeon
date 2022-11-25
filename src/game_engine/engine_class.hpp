@@ -28,10 +28,11 @@
 #include "game_options_class.hpp"
 #include "comp/general_comp_classes.hpp"
 #include "global_shape_constants_etc.hpp"
-#include "lvgen_etc/floor_layout_class.hpp"
-#include "lvgen_etc/dungeon_gen_class.hpp"
+#include "lvgen_etc/dngn_floor_class.hpp"
+#include "lvgen_etc/dngn_gen_class.hpp"
 //#include "metaball_gen_class.hpp"
 #include "namegen.hpp"
+#include "pfield_layer_prio_enum.hpp"
 
 namespace dunwich_sandgeon {
 namespace game_engine {
@@ -64,7 +65,7 @@ enum class KeyKind: i32 {
 	/* X(Credits) */ \
 	\
 	X(FileSelect) \
-	X(DungeonGen) \
+	X(DngnGen) \
 	X(Main) \
 	\
 	/* X(PopupShop) */ \
@@ -148,7 +149,7 @@ public:		// types
 
 	using LayoutRngArr = ArrWNumFloorsElems<Rng>;
 	using LayoutRngA2d = ArrWNumFilesElems<LayoutRngArr>;
-	using FloorLayoutArr = ArrWNumFloorsElems<lvgen_etc::FloorLayout>;
+	using DngnFloorArr = ArrWNumFloorsElems<lvgen_etc::DngnFloor>;
 public:		// types
 	class NonEcsSerData final {
 		friend class NameGen::Random;
@@ -161,9 +162,9 @@ public:		// types
 			X(hud_msg_log, std::nullopt) \
 			\
 			X(player_pos3, std::nullopt) \
-			X(pfield_ent_id_map, std::nullopt) \
+			X(pfield_ent_id_umap, std::nullopt) \
 			\
-			X(floor_layout_arr, std::nullopt) \
+			X(dngn_floor_arr, std::nullopt) \
 			\
 			X(_base_rng_seed, std::nullopt) \
 
@@ -188,9 +189,9 @@ public:		// types
 		// "pfield" is short for "playfield".
 		// I needed to have a shorter variable name, so I changed the name
 		// of this variable and related functions
-		std::unordered_map<IntVec3, ecs::EntIdUset> pfield_ent_id_map;
-		std::array<lvgen_etc::FloorLayout, NUM_FLOORS>
-			floor_layout_arr;
+		std::unordered_map<IntVec3, ecs::EntIdUset> pfield_ent_id_umap;
+		std::array<lvgen_etc::DngnFloor, NUM_FLOORS>
+			dngn_floor_arr;
 	private:		// variables
 		u64 _base_rng_seed = 0;
 		// The RNG to use for tasks other than initial floor layout
@@ -229,6 +230,8 @@ public:		// types
 	private:		// functions
 		inline void _init_base_rng_seed() {
 			_base_rng_seed = get_hrc_now_rng_seed();
+			//printout("NonEcsSerData::_init_base_rng_seed(): ",
+			//	_base_rng_seed, "\n");
 		}
 		inline void _dbg_init_base_rng_seed(RngSeedT s_base_rng_seed) {
 			_base_rng_seed = s_base_rng_seed;
@@ -310,11 +313,13 @@ public:		// serialized variables
 
 	GameOptions game_options;
 private:		// serialized variables
-	std::array<NonEcsSerData, NUM_FILES> _non_ecs_ser_data_arr;
+	//std::array<NonEcsSerData, NUM_FILES>
+	ArrWNumFilesElems<NonEcsSerData>
+		_non_ecs_ser_data_arr;
 public:		// non-serialized variables
 	EngineKeyStatus key_status;
-	lvgen_etc::DungeonGen dungeon_gen;
-	//lvgen_etc::FloorLayout floor_layout;
+	lvgen_etc::DngnGen dngn_gen;
+	//lvgen_etc::DngnFloor dngn_floor;
 
 	////InputKind initial_input_kind = InputKind::None,
 	////	final_input_kind = InputKind::None;
@@ -403,6 +408,11 @@ public:		// functions
 	) const {
 		printerr(objs...);
 		exit(1);
+	}
+	inline void corrupted_save_file_err() const {
+		err("Error: corrupted save file ",
+			"\"", _save_file_name, "\".",
+			"\n");
 	}
 private:		// functions
 	void _dbg_log_backend(const std::string& msg);
@@ -749,17 +759,18 @@ public:		// `_non_ecs_ser_data_arr` accessor functions
 		}
 		return the_player_pos3();
 	}
-	inline IntVec2 player_pos2_fn(ecs::FileNum file_num) const {
+	inline IntVec2 player_pos2_cf_fn(ecs::FileNum file_num) const {
 		//return to_pos3_fn(file_num, player_pos2_fn(file_num));
-		return to_pos2(player_pos3_fn(file_num));
+		return to_pos2_cf(player_pos3_fn(file_num));
 	}
-	inline IntVec2 prev_player_pos2_fn(ecs::FileNum file_num) const {
-		return to_pos2(prev_player_pos3_fn(file_num));
+	inline IntVec2 prev_player_pos2_cf_fn(ecs::FileNum file_num) const {
+		return to_pos2_cf(prev_player_pos3_fn(file_num));
 	}
-	inline void set_player_pos2_fn(
+	inline void set_player_pos2_cf_fn(
 		ecs::FileNum file_num, const IntVec2& n_player_pos2
 	) {
-		set_player_pos3_fn(file_num, to_pos3_fn(file_num, n_player_pos2));
+		set_player_pos3_fn(file_num,
+			to_pos3_cf_fn(file_num, n_player_pos2));
 	}
 	//--------
 	inline const IntVec3& player_pos3() const {
@@ -772,14 +783,14 @@ public:		// `_non_ecs_ser_data_arr` accessor functions
 		return set_player_pos3_fn(USE_CURR_FILE_NUM, n_player_pos3);
 	}
 
-	inline IntVec2 player_pos2() const {
-		return player_pos2_fn(USE_CURR_FILE_NUM);
+	inline IntVec2 player_pos2_cf() const {
+		return player_pos2_cf_fn(USE_CURR_FILE_NUM);
 	}
-	inline IntVec2 prev_player_pos2() const {
-		return prev_player_pos2_fn(USE_CURR_FILE_NUM);
+	inline IntVec2 prev_player_pos2_cf() const {
+		return prev_player_pos2_cf_fn(USE_CURR_FILE_NUM);
 	}
-	inline void set_player_pos2(const IntVec2& n_player_pos2) {
-		set_player_pos2_fn(USE_CURR_FILE_NUM, n_player_pos2);
+	inline void set_player_pos2_cf(const IntVec2& n_player_pos2) {
+		set_player_pos2_cf_fn(USE_CURR_FILE_NUM, n_player_pos2);
 	}
 	//--------
 	inline const i32& floor_fn(ecs::FileNum file_num) const {
@@ -825,15 +836,26 @@ public:		// `_non_ecs_ser_data_arr` accessor functions
 		return level_minus_1_fn(USE_CURR_FILE_NUM);
 	}
 	//--------
+	inline bool pfield_ent_id_umap_contains_fn(
+		ecs::FileNum file_num, const IntVec3& pos
+	) const {
+		return non_ecs_ser_data_fn(file_num).pfield_ent_id_umap
+			.contains(pos);
+	}
+	inline bool pfield_ent_id_umap_contains(const IntVec3& pos) const {
+		return pfield_ent_id_umap_contains_fn(USE_CURR_FILE_NUM, pos);
+	}
+
 	inline ecs::EntIdUset& pfield_ent_id_uset_fn(
 		ecs::FileNum file_num, const IntVec3& pos
 	) {
-		return non_ecs_ser_data_fn(file_num).pfield_ent_id_map[pos];
+		return non_ecs_ser_data_fn(file_num).pfield_ent_id_umap[pos];
+		//return non_ecs_ser_data_fn(file_num).pfield_ent_id_umap.at(pos);
 	}
 	//inline const ecs::EntIdUset& pfield_ent_id_uset_fn(
 	//	ecs::FileNum file_num, const IntVec3& pos
 	//) const {
-	//	return non_ecs_ser_data(file_num).pfield_ent_id_map[pos];
+	//	return non_ecs_ser_data(file_num).pfield_ent_id_umap[pos];
 	//}
 	inline ecs::EntIdUset& pfield_ent_id_uset(const IntVec3& pos) {
 		return pfield_ent_id_uset_fn(USE_CURR_FILE_NUM, pos);
@@ -843,21 +865,22 @@ public:		// `_non_ecs_ser_data_arr` accessor functions
 	//	return pfield_ent_id_uset_fn(USE_CURR_FILE_NUM, pos);
 	//}
 	//--------
-	inline ecs::EntIdUset& pfield_ent_id_uset_fn(
-		ecs::FileNum file_num, const IntVec2& pos2
-	) {
-		return pfield_ent_id_uset_fn(file_num,
-			to_pos3_fn(file_num, pos2));
-	}
+	//inline ecs::EntIdUset& pfield_ent_id_uset_fn(
+	//	ecs::FileNum file_num, const IntVec2& pos2
+	//) {
+	//	return pfield_ent_id_uset_fn(file_num,
+	//		to_pos3_fn(file_num, pos2));
+	//}
+
 	//inline const ecs::EntIdUset& pfield_ent_id_uset_fn(
 	//	ecs::FileNum file_num, const IntVec2& pos2
 	//) const {
 	//	return pfield_ent_id_uset_fn(file_num,
 	//		to_pos3_fn(file_num, pos2));
 	//}
-	inline ecs::EntIdUset& pfield_ent_id_uset(const IntVec2& pos2) {
-		return pfield_ent_id_uset(to_pos3(pos2));
-	}
+	//inline ecs::EntIdUset& pfield_ent_id_uset(const IntVec2& pos2) {
+	//	return pfield_ent_id_uset(to_pos3(pos2));
+	//}
 	//inline const ecs::EntIdUset& pfield_ent_id_uset(const IntVec2& pos2)
 	//	const {
 	//	return pfield_ent_id_uset(to_pos3(pos2));
@@ -877,56 +900,56 @@ public:		// `_non_ecs_ser_data_arr` accessor functions
 	//	return pfield_ent_id_v2d_fn(USE_CURR_FILE_NUM);
 	//}
 	//--------
-	inline FloorLayoutArr& floor_layout_arr_fn(
+	inline DngnFloorArr& dngn_floor_arr_fn(
 		ecs::FileNum file_num
 	) {
-		return non_ecs_ser_data_fn(file_num).floor_layout_arr;
+		return non_ecs_ser_data_fn(file_num).dngn_floor_arr;
 	}
-	inline const FloorLayoutArr& floor_layout_arr_fn(
+	inline const DngnFloorArr& dngn_floor_arr_fn(
 		ecs::FileNum file_num
 	) const {
-		return non_ecs_ser_data_fn(file_num).floor_layout_arr;
+		return non_ecs_ser_data_fn(file_num).dngn_floor_arr;
 	}
 
-	inline FloorLayoutArr& floor_layout_arr() {
-		return floor_layout_arr_fn(USE_CURR_FILE_NUM);
+	inline DngnFloorArr& dngn_floor_arr() {
+		return dngn_floor_arr_fn(USE_CURR_FILE_NUM);
 	}
-	inline const FloorLayoutArr& floor_layout_arr_fn() const {
-		return floor_layout_arr_fn(USE_CURR_FILE_NUM);
+	inline const DngnFloorArr& dngn_floor_arr_fn() const {
+		return dngn_floor_arr_fn(USE_CURR_FILE_NUM);
 	}
 
-	//inline void clear_floor_layout_arr_fn(
+	//inline void clear_dngn_floor_arr_fn(
 	//	ecs::FileNum file_num
 	//) {
-	//	auto& fl_arr = floor_layout_arr_fn(file_num);
+	//	auto& fl_arr = dngn_floor_arr_fn(file_num);
 	//	for (auto& fl: fl_arr) {
 	//		fl.clear();
 	//	}
 	//}
-	//inline void clear_floor_layout_arr() {
-	//	auto& fl_arr = floor_layout_arr();
+	//inline void clear_dngn_floor_arr() {
+	//	auto& fl_arr = dngn_floor_arr();
 	//	for (auto& fl: fl_arr) {
 	//		fl.clear();
 	//	}
 	//}
 
-	// Note: `floor_layout_rng_fn()` and `layout_rng()` return the current
-	// floor's `lvgen_etc::FloorLayout` itself
-	inline lvgen_etc::FloorLayout& floor_layout_fn(
+	// Note: `dngn_floor_rng_fn()` and `layout_rng()` return the current
+	// floor's `lvgen_etc::DngnFloor` itself
+	inline lvgen_etc::DngnFloor& dngn_floor_fn(
 		ecs::FileNum file_num
 	) {
-		return floor_layout_arr_fn(file_num).at(floor_fn(file_num));
+		return dngn_floor_arr_fn(file_num).at(floor_fn(file_num));
 	}
-	inline const lvgen_etc::FloorLayout& floor_layout_fn(
+	inline const lvgen_etc::DngnFloor& dngn_floor_fn(
 		ecs::FileNum file_num
 	) const {
-		return floor_layout_arr_fn(file_num).at(floor_fn(file_num));
+		return dngn_floor_arr_fn(file_num).at(floor_fn(file_num));
 	}
-	inline lvgen_etc::FloorLayout& floor_layout() {
-		return floor_layout_fn(USE_CURR_FILE_NUM);
+	inline lvgen_etc::DngnFloor& dngn_floor() {
+		return dngn_floor_fn(USE_CURR_FILE_NUM);
 	}
-	inline const lvgen_etc::FloorLayout& floor_layout() const {
-		return floor_layout_fn(USE_CURR_FILE_NUM);
+	inline const lvgen_etc::DngnFloor& dngn_floor() const {
+		return dngn_floor_fn(USE_CURR_FILE_NUM);
 	}
 	//--------
 	//template<typename RetT=decltype(NonEcsSerData::_rng())>
@@ -967,15 +990,15 @@ public:		// `_non_ecs_ser_data_arr` accessor functions
 	//--------
 public:		// functions
 	//--------
-	inline IntVec3 to_pos3_fn(
+	inline IntVec3 to_pos3_cf_fn(
 		ecs::FileNum file_num, const IntVec2& pos2
 	) const {
 		return IntVec3(pos2.x, pos2.y, floor_fn(file_num));
 	}
-	inline IntVec3 to_pos3(const IntVec2& pos2) const {
-		return to_pos3_fn(USE_CURR_FILE_NUM, pos2);
+	inline IntVec3 to_pos3_cf(const IntVec2& pos2) const {
+		return to_pos3_cf_fn(USE_CURR_FILE_NUM, pos2);
 	}
-	static inline IntVec2 to_pos2(const IntVec3& pos3) {
+	static inline IntVec2 to_pos2_cf(const IntVec3& pos3) {
 		return {.x=pos3.x, .y=pos3.y};
 	}
 	//--------

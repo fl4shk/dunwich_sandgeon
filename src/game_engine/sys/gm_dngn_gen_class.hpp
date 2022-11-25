@@ -15,13 +15,13 @@
 // You should have received a copy of the GNU General Public License along
 // with Dunwich Sandgeon.  If not, see <https://www.gnu.org/licenses/>.
 
-#ifndef src_game_engine_sys_gm_dungeon_gen_class_hpp
-#define src_game_engine_sys_gm_dungeon_gen_class_hpp
+#ifndef src_game_engine_sys_gm_dngn_gen_class_hpp
+#define src_game_engine_sys_gm_dngn_gen_class_hpp
 
-// src/game_engine/sys/gm_dungeon_gen_class.hpp
+// src/game_engine/sys/gm_dngn_gen_class.hpp
 
 #include "../../misc_includes.hpp"
-#include "../lvgen_etc/dungeon_gen_class.hpp"
+#include "../lvgen_etc/dngn_gen_class.hpp"
 
 namespace dunwich_sandgeon {
 namespace game_engine {
@@ -29,22 +29,22 @@ namespace sys {
 //--------
 //using SizeAndBgTile = std::pair<size_t, comp::BgTile>;
 // Game Mode: Dungeon Generation
-class GmDungeonGen final: public ecs::Sys {
+class GmDngnGen final: public ecs::Sys {
 private:		// variables
 	//std::optional<ecs::EntId>
 	//	_bg_tile_map_id = std::nullopt,
-	//	_dungeon_gen_id = std::nullopt;
+	//	_dngn_gen_id = std::nullopt;
 
 public:		// constants
 	static const std::string
 		KIND_STR;
 public:		// functions
-	GmDungeonGen() = default;
-	//inline GmDungeonGen(const binser::Value& bv)
+	GmDngnGen() = default;
+	//inline GmDngnGen(const binser::Value& bv)
 	//	: ecs::Sys(bv) {
 	//}
-	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(GmDungeonGen);
-	virtual ~GmDungeonGen() = default;
+	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(GmDngnGen);
+	virtual ~GmDngnGen() = default;
 
 	virtual std::string kind_str() const;
 private:		// functions
@@ -57,4 +57,4 @@ public:		// functions
 } // namespace game_engine
 } // namespace dunwich_sandgeon
 
-#endif		// src_game_engine_sys_gm_dungeon_gen_class_hpp
+#endif		// src_game_engine_sys_gm_dngn_gen_class_hpp

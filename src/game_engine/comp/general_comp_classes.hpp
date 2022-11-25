@@ -23,7 +23,7 @@
 #include "../../misc_includes.hpp"
 #include "../../misc_types.hpp"
 #include "../font_color_enum.hpp"
-#include "../playfield_layer_prio_enum.hpp"
+#include "../pfield_layer_prio_enum.hpp"
 
 namespace dunwich_sandgeon {
 namespace game_engine {
@@ -117,13 +117,21 @@ public:		// functions
 // that.
 class Position final: public ecs::Comp {
 	friend class dunwich_sandgeon::game_engine::Engine;
+public:		// types
+	//enum class EntKind {
+	//	Item,
+	//	Trap,
+	//	Monster,
+	//	Player,
+	//};
 public:		// constants
 	static const std::string KIND_STR;
 private:		// variables
 	#define MEMB_AUTOSER_LIST_COMP_POSITION(X) \
 		X(_ent_id, std::nullopt) \
 		X(_pos3, std::nullopt) \
-		X(_prev_floor, std::nullopt)
+		X(_prev_floor, std::nullopt) \
+		/* X(_ent_kind, std::nullopt) */
 	ecs::EntId _ent_id = ecs::ENT_NULL_ID;
 	PrevCurrPair<IntVec3> _pos3 = {
 		// The elements of these are initialized to `-1` as a debugging aid
@@ -138,22 +146,23 @@ private:		// variables
 	//	{.x=-1, .y=-1}, {.x=-1, .y=-1}
 	//};
 	//PrevCurrPair<i32> _floor = {-1, -1};
+	//EntKind _ent_kind;
 public:		// variables
-	PlayfieldLayerPrio priority = PlayfieldLayerPrio::BgMach;
+	PfieldLayerPrio priority = PfieldLayerPrio::Bakgnd;
 public:		// functions
 	Position() = default;
 	Position(
 		ecs::EntId s_ent_id, const IntVec3& s_pos3,
-		PlayfieldLayerPrio s_priority
+		PfieldLayerPrio s_priority//, EntKind s_ent_kind
 	);
 	Position(
 		ecs::EntId s_ent_id, const IntVec2& s_pos2,
-		PlayfieldLayerPrio s_priority
+		PfieldLayerPrio s_priority//, EntKind s_ent_kind
 	);
 private:		// functions
 	void _init(
 		ecs::EntId s_ent_id, const IntVec3& s_pos,
-		PlayfieldLayerPrio s_priority
+		PfieldLayerPrio s_priority//, EntKind s_ent_kind
 	);
 public:		// functions
 	Position(const binser::Value& bv);
@@ -196,6 +205,7 @@ public:		// functions
 
 	GEN_GETTER_BY_VAL(ent_id);
 	GEN_GETTER_BY_VAL(prev_floor);
+	//GEN_GETTER_BY_VAL(ent_kind);
 	//GEN_GETTER_BY_CON_REF(pos2);
 	//GEN_GETTER_BY_CON_REF(floor);
 };
@@ -211,11 +221,11 @@ public:		// functions
 //	ecs::EntId _ent_id = ecs::ENT_NULL_ID;
 //	IntVec3 _pos;
 //public:		// variables
-//	PlayfieldLayerPrio priority = PlayfieldLayerPrio::Block;
+//	PfieldLayerPrio priority = PfieldLayerPrio::Block;
 //public:		// functions
 //	NonSerPosition() = default;
 //	NonSerPosition(ecs::EntId s_ent_id, const IntVec3& s_pos,
-//		PlayfieldLayerPrio s_priority);
+//		PfieldLayerPrio s_priority);
 //	NonSerPosition(const binser::Value& bv);
 //	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(NonSerPosition);
 //	virtual ~NonSerPosition();

@@ -26,14 +26,14 @@
 #include "bfs_funcs.hpp"
 #include "bg_tile_enum.hpp"
 //#include "path_class.hpp"
-//#include "floor_layout_class.hpp"
+//#include "dngn_floor_class.hpp"
 
 namespace dunwich_sandgeon {
 namespace game_engine {
 namespace lvgen_etc {
 //--------
 class Path;
-class FloorLayout;
+class DngnFloor;
 //--------
 //class DijkstraPathFind final {
 //public:		// types
@@ -192,11 +192,11 @@ public:		// functions
 	DijkstraMapGen& add(const IntVec2& pos, float val=0.0f);
 
 	DijkstraMap gen_basic(
-		const FloorLayout& floor_layout,
+		const DngnFloor& dngn_floor,
 		const BgTileUset& no_pass_uset=BgTileUset()
 	) const;
 	DijkstraMap gen_flipped(
-		const FloorLayout& floor_layout,
+		const DngnFloor& dngn_floor,
 		const BgTileUset& no_pass_uset=BgTileUset(),
 		float bonus=DijkstraMap::DEFAULT_FLIP_BONUS
 	) const;
@@ -205,7 +205,7 @@ public:		// functions
 	//	DijkstraMap& dmap, float bonus=DEFAULT_FLIP_BONUS
 	//);
 	//Path make_path(
-	//	const DijkstraMap& dmap, //const FloorLayout& floor_layout,
+	//	const DijkstraMap& dmap, //const DngnFloor& dngn_floor,
 	//	const IntVec2& start_phys_pos
 	//) const;
 

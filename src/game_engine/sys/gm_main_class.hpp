@@ -32,8 +32,9 @@ namespace sys {
 // The main "loop
 class GmMain final: public ecs::Sys {
 private:		// variables
-	std::optional<ecs::EntId>
-		_player_id = std::nullopt;
+	//std::optional<ecs::EntId>
+	//	_player_id = std::nullopt;
+	ecs::EntId _player_id = ecs::ENT_NULL_ID;
 public:		// constants
 	static const std::string
 		KIND_STR;

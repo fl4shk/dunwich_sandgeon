@@ -36,17 +36,31 @@ void GmMain::_init(ecs::Engine* ecs_engine) {
 	//--------
 	const std::string func_name("game_engine::sys::GmMain::_init");
 
-	if (!_player_id) {
-		_player_id = ecs_engine->create_singleton_all
-			(ecs::make_comp_umap_ks
-				(ecs::CompSptr(new comp::Player()),
-				//ecs::CompSptr(new comp::Drawable
-				//	(comp::drawable_data_umap().at
-				//		(comp::Player::KIND_STR))),
-				comp::make_drawable<comp::Player>()),
-			func_name);
-		// See `game_engine::Engine::NonEcsSerData`'s `player_pos3` and
-		// `prev_floor` for the player's position information
+	if (
+		auto ent_id_vec=ecs_engine->ent_id_vec_from_keys_all_v
+			(comp::Player::KIND_STR, comp::Drawable::KIND_STR);
+		true
+	) {
+		if (ent_id_vec.size() == 0) {
+			_player_id = ecs_engine->create_singleton_all
+				(ecs::make_comp_umap_ks
+					(ecs::CompSptr(new comp::Player()),
+					//ecs::CompSptr(new comp::Drawable
+					//	(comp::drawable_data_umap().at
+					//		(comp::Player::KIND_STR))),
+					comp::make_drawable<comp::Player>()),
+				func_name);
+			//printout(ecs_engine->comp_at<comp::Player>(_player_id)->kind_str(),
+			//	" ",
+			//	ecs_engine->comp_at<comp::Drawable>(_player_id)->kind_str(),
+			//	"\n");
+			// See `game_engine::Engine::NonEcsSerData`'s `player_pos3` and
+			// `prev_floor` for the player's position information
+		} else if (ent_id_vec.size() != 1) {
+			engine->corrupted_save_file_err();
+		} else { // if (ent_id_vec.size() == 1)
+			_player_id = ent_id_vec.front();
+		}
 	}
 	//--------
 }
@@ -56,7 +70,12 @@ void GmMain::tick(ecs::Engine* ecs_engine) {
 			engine->game_mode() == GameMode::Main)
 	) {
 		//--------
-		if (
+		if (engine->key_status.key_just_went_down(KeyKind::DownR)) {
+			//engine->dbg_log("Returning to Title Screen\n");
+			//engine->set_game_mode(GameMode::TitleScreen);
+			//engine->save_and_return_to_title();
+			engine->save_and_quit();
+		} else if (
 			engine->key_status.key_just_went_down(KeyKind::LeftL)
 			&& engine->key_status.key_up_now(KeyKind::RightL)
 		) {
@@ -82,7 +101,7 @@ void GmMain::tick(ecs::Engine* ecs_engine) {
 		//--------
 		engine->draw_to_main_windows();
 		//engine->pfield_window.clear();
-		//engine->dungeon_gen.floor_layout().draw();
+		//engine->dngn_gen.dngn_floor().draw();
 		//engine->screen_window.clear();
 
 		//engine->screen_window.draw(engine->pfield_window);

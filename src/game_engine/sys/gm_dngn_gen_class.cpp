@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License along
 // with Dunwich Sandgeon.  If not, see <https://www.gnu.org/licenses/>.
 
-#include "gm_dungeon_gen_class.hpp"
+#include "gm_dngn_gen_class.hpp"
 #include "../engine_class.hpp"
 #include "../comp/drawable_data_umap.hpp"
 
@@ -24,16 +24,16 @@ namespace game_engine {
 namespace sys {
 //--------
 const std::string
-	GmDungeonGen::KIND_STR("GmDungeonGen");
+	GmDngnGen::KIND_STR("GmDngnGen");
 
-std::string GmDungeonGen::kind_str() const {
+std::string GmDngnGen::kind_str() const {
 	return KIND_STR;
 }
 
-void GmDungeonGen::_init(ecs::Engine* ecs_engine) {
+void GmDngnGen::_init(ecs::Engine* ecs_engine) {
 	_init_start();
 
-	//const std::string func_name("game_engine::sys::GmDungeonGen::_init");
+	//const std::string func_name("game_engine::sys::GmDngnGen::_init");
 
 	//if (ecs_engine->has_ent_w_comp(
 	//	make_key_set<ecs::NonSerializable, comp::StaticBgTileMap>()
@@ -49,45 +49,45 @@ void GmDungeonGen::_init(ecs::Engine* ecs_engine) {
 	//		func_name
 	//	);
 	//}
-	//if (!_dungeon_gen_id) {
-	//	_dungeon_gen_id = ecs_engine->create_singleton_all(
+	//if (!_dngn_gen_id) {
+	//	_dngn_gen_id = ecs_engine->create_singleton_all(
 	//		ecs::make_comp_map_ks(
 	//			ecs::CompSptr(new ecs::NonSerializable()),
-	//			ecs::CompSptr(new FloorLayout())
+	//			ecs::CompSptr(new DngnFloor())
 	//		),
 	//		func_name
 	//	);
 
-	//	engine->dbg_log("game_engine::sys::GmDungeonGen::_init(): ",
-	//		*_dungeon_gen_id, "\n");
+	//	engine->dbg_log("game_engine::sys::GmDngnGen::_init(): ",
+	//		*_dngn_gen_id, "\n");
 	//}
 	//clear(ecs_engine);
-	engine->dungeon_gen.clear_before_gen();
-	//engine->floor_layout().clear_before_gen();
+	engine->dngn_gen.clear_before_gen();
+	//engine->dngn_floor().clear_before_gen();
 }
 
-void GmDungeonGen::tick(ecs::Engine* ecs_engine) {
+void GmDngnGen::tick(ecs::Engine* ecs_engine) {
 	if (
 		_tick_helper(ecs_engine,
-			engine->game_mode() == GameMode::DungeonGen)
+			engine->game_mode() == GameMode::DngnGen)
 	) {
 		//auto* bg_tile_map
 		//	= ecs_engine->casted_comp_at<comp::StaticBgTileMap>(
 		//		*_bg_tile_map_id
 		//	);
-		//auto* floor_layout
-		//	= ecs_engine->casted_comp_at<FloorLayout>
-		//		(*_dungeon_gen_id);
+		//auto* dngn_floor
+		//	= ecs_engine->casted_comp_at<DngnFloor>
+		//		(*_dngn_gen_id);
 
 		//if (engine->key_status.key_just_went_down(KeyKind::DownR))
 		{
-			engine->dungeon_gen.gen_curr_floor();
+			engine->dngn_gen.gen_curr_floor();
 		}
-		//if (floor_layout->size() >= 2) {
+		//if (dngn_floor->size() >= 2) {
 		//	clear(ecs_engine);
 		//}
 
-		//floor_layout->draw(bg_tile_map);
+		//dngn_floor->draw(bg_tile_map);
 		//bg_tile_map->draw();
 
 		//engine->draw_main();

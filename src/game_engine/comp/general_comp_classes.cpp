@@ -55,22 +55,25 @@ Drawable::operator binser::Value () const {
 const std::string Position::KIND_STR("Position");
 Position::Position(
 	ecs::EntId s_ent_id, const IntVec3& s_pos,
-	PlayfieldLayerPrio s_priority
+	PfieldLayerPrio s_priority//, EntKind s_ent_kind
 )
 	//: _ent_id(s_ent_id), _pos(s_pos), priority(s_priority)
 	{
 	//engine->position_ctor_callback(this);
-	_init(s_ent_id, s_pos, s_priority);
+	_init(s_ent_id, s_pos, s_priority//, s_ent_kind
+		);
 }
 Position::Position(
 	ecs::EntId s_ent_id, const IntVec2& s_pos2,
-	PlayfieldLayerPrio s_priority
+	PfieldLayerPrio s_priority//, EntKind s_ent_kind
 ) {
-	_init(s_ent_id, engine->to_pos3(s_pos2), s_priority);
+	_init(s_ent_id, engine->to_pos3_cf(s_pos2), s_priority
+		//, s_ent_kind
+	);
 }
 void Position::_init(
 	ecs::EntId s_ent_id, const IntVec3& s_pos,
-	PlayfieldLayerPrio s_priority
+	PfieldLayerPrio s_priority//, EntKind s_ent_kind
 ) {
 	_ent_id = s_ent_id;
 	//_pos = s_pos;
@@ -82,15 +85,16 @@ void Position::_init(
 	//_floor() = s_pos.z;
 	//_floor.back_up();
 	priority = s_priority;
+	//_ent_kind = s_ent_kind;
 	engine->position_ctor_callback(this);
 }
 Position::Position(const binser::Value& bv) {
 	MEMB_AUTOSER_LIST_COMP_POSITION(BINSER_MEMB_DESERIALIZE);
-	//priority = static_cast<PlayfieldLayerPrio>(
+	//priority = static_cast<PfieldLayerPrio>(
 	//	get_bv_memb<i32>(bv, "priority")
 	//);
 
-	//priority = static_cast<PlayfieldLayerPrio>(val_from_jv<i32>(
+	//priority = static_cast<PfieldLayerPrio>(val_from_jv<i32>(
 	//	bv["priority"]
 	//));
 

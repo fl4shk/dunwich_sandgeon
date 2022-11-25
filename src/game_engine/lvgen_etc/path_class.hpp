@@ -25,13 +25,13 @@
 #include "bfs_funcs.hpp"
 //#include "dijkstra_map_gen_class.hpp"
 //#include "bg_tile_enum.hpp"
-//#include "floor_layout_class.hpp"
+//#include "dngn_floor_class.hpp"
 
 namespace dunwich_sandgeon {
 namespace game_engine {
 namespace lvgen_etc {
 //--------
-class FloorLayout;
+class DngnFloor;
 class DijkstraMap;
 //--------
 //using Path = std::vector<IntVec2>;
@@ -40,7 +40,7 @@ class DijkstraMap;
 //	const BgTileUset& walkable_bg_tiles, const BfsVoidAtFunc& fill_func
 //);
 //--------
-// Different from a `FloorLayout::RoomPath`.
+// Different from a `DngnFloor::RoomPath`.
 class Path final {
 	friend class DijkstraMap;
 public:		// types
@@ -56,7 +56,7 @@ public:		// functions
 	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(Path);
 	~Path();
 
-	Path& add(const FloorLayout& floor_layout, PathDir dir);
+	Path& add(const DngnFloor& dngn_floor, PathDir dir);
 	//Path& add(const DijkstraMapGen::Dmap& dmap, PathDir dir);
 	//--------
 	inline const IntVec2& front() const {

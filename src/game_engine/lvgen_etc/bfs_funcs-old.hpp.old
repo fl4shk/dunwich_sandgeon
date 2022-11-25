@@ -21,14 +21,14 @@
 // src/game_engine/lvgen_etc/bfs_funcs.hpp
 
 #include "../../misc_includes.hpp"
-#include "floor_layout_class.hpp"
+#include "dngn_floor_class.hpp"
 
 namespace dunwich_sandgeon {
 namespace game_engine {
 namespace lvgen_etc {
 //--------
 bool basic_reachable(
-	const FloorLayout& floor_layout, const BgTileUset& no_pass_uset,
+	const DngnFloor& dngn_floor, const BgTileUset& no_pass_uset,
 	const IntVec2& start, const IntVec2& end
 );
 //--------

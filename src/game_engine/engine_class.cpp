@@ -22,7 +22,7 @@
 #include "comp/general_comp_classes.hpp"
 #include "comp/player_comp_class.hpp"
 //#include "comp/block_comp_classes.hpp"
-#include "lvgen_etc/floor_layout_class.hpp"
+#include "lvgen_etc/dngn_floor_class.hpp"
 #include "comp/status_comp_classes.hpp"
 //#include "comp/ui_etc_comp_classes.hpp"
 
@@ -31,7 +31,7 @@
 #include "sys/gm_title_screen_class.hpp"
 #include "sys/gm_options_class.hpp"
 #include "sys/gm_file_select_class.hpp"
-#include "sys/gm_dungeon_gen_class.hpp"
+#include "sys/gm_dngn_gen_class.hpp"
 #include "sys/gm_main_class.hpp"
 
 namespace dunwich_sandgeon {
@@ -165,6 +165,7 @@ Engine::Engine(i32 s_argc, char** s_argv, bool do_create_or_load)
 	if (_argc <= 0) {
 		err("game_engine::Engine::Engine(): Eek!\n");
 	} else if (_argc == 1) {
+		//printout("testificate\n");
 		_save_file_name = DEFAULT_SAVE_FILE_NAME;
 	} else if (_argc == 2) {
 		_save_file_name = const_cast<const char*>(_argv[1]);
@@ -269,6 +270,9 @@ Engine::operator binser::Value () const {
 
 	//BINSER_MEMB_SERIALIZE(ecs_engine);
 	MEMB_SER_LIST_ENGINE(BINSER_MEMB_SERIALIZE);
+	//BINSER_MEMB_SERIALIZE(ecs_engine, std::nullopt);
+	//BINSER_MEMB_SERIALIZE(game_options, std::nullopt);
+	//BINSER_MEMB_SERIALIZE(_non_ecs_ser_data_arr, std::nullopt);
 
 	return ret;
 }
@@ -413,8 +417,8 @@ void Engine::tick() {
 }
 void Engine::draw_to_main_windows() {
 	pfield_window.clear();
-	//dungeon_gen.floor_layout().draw();
-	floor_layout().draw();
+	//dngn_gen.dngn_floor().draw();
+	dngn_floor().draw();
 	screen_window.clear();
 
 	screen_window.draw(engine->pfield_window);
@@ -434,7 +438,7 @@ void Engine::_create_or_load_save_file_etc() {
 		binser::Value root;
 		//std::string errs;
 
-		// If the on-computer JSON file has not been created yet
+		// If the on-computer binser file has not been created yet
 		if (file.peek() == decltype(file)::traits_type::eof()) {
 			//Engine()._save_to_binser();
 		}
@@ -451,14 +455,18 @@ void Engine::_create_or_load_save_file_etc() {
 				#endif		// DEBUG
 
 				binser::parse_binser(file, root);
+				//#ifdef DEBUG
+				//if (Json::Value jv_root=binser::bv_to_jv(root); true) {
+				//	json::write_json
+				//		("parsed_binser.json.ignore", &jv_root);
+				//}
+				//#endif		// DEBUG
 				deserialize(root);
 			} catch (const std::exception& e) {
 				#ifdef DEBUG
 				printerr("Error: ", e.what(), "\n");
 				#endif		// DEBUG
-				err("Error: corrupted save file ",
-					"\"", _save_file_name, "\".",
-					"\n");
+				corrupted_save_file_err();
 			}
 			//dbg_log("Testificate: Calling `deserialize()`\n");
 		}
@@ -474,14 +482,39 @@ void Engine::_create_or_load_save_file_etc() {
 		//		layout_rng_arr_fn(file_num), temp.base_rng_seed()
 		//	);
 		//}
-
 		#ifdef DEBUG
 		printerr("Engine::_create_or_load_save_file_etc(): ",
-			"_save_to_binser(true);");
+			"creating initial data;");
 		#endif		// DEBUG
+
+		for (ecs::FileNum file_num=0; file_num<NUM_FILES; ++file_num) {
+			for (size_t floor_num=0; floor_num<NUM_FLOORS; ++floor_num) {
+				dngn_floor_arr_fn(file_num).at(floor_num)._pos3_z
+					= static_cast<i32>(floor_num);
+			}
+		}
 
 		_save_to_binser(true);
 	}
+	//if (
+	//	auto ent_id_vec=ecs_engine.ent_id_vec_from_keys_any_fn
+	//		({comp::Player::KIND_STR}, 0);
+	//	ent_id_vec.size() > 0
+	//) {
+	//	if (ent_id_vec.size() != 1) {
+	//		corrupted_save_file_err();
+	//	}
+	//	dbg_log("This `game_engine::comp::Player` `EntId` was found: ",
+	//		ent_id_vec.front(), "\n");
+
+	//	comp::Player* player = ecs_engine.casted_comp_at_fn<comp::Player>
+	//		(ent_id_vec.front(), 0);
+
+	//	dbg_log("game_engine::Engine::_create_or_load_save_file_etc(): ",
+	//		"Found `game_engine::comp::Player`: ",
+	//		player->level, ".",
+	//		"\n");
+	//}
 	//dbg_log("Testificate: ", ecs_engine.curr_file_num, "\n");
 }
 
@@ -590,6 +623,12 @@ void Engine::position_ctor_callback(comp::Position* obj) {
 	}
 
 	ent_id_uset.insert(obj->ent_id());
+	//if (obj->ent_kind() == comp::Position::EntKind::Item) {
+	//	auto& the_dngn_floor = dngn_floor_arr().at(obj->pos3().z);
+	//	auto& gnd_item_uset = the_dngn_floor.gnd_item_umap.at(obj->pos2());
+	//	if (gnd_item_uset.contains(obj->pos2())) {
+	//	}
+	//}
 }
 void Engine::position_dtor_callback(comp::Position* obj) {
 	_err_when_ent_id_is_null(obj, "position_dtor_callback");

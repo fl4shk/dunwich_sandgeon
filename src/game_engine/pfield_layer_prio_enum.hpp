@@ -15,17 +15,27 @@
 // You should have received a copy of the GNU General Public License along
 // with Dunwich Sandgeon.  If not, see <https://www.gnu.org/licenses/>.
 
-#include "bfs_funcs.hpp"
+#ifndef src_game_engine_pfield_layer_prio_enum_hpp
+#define src_game_engine_pfield_layer_prio_enum_hpp
+
+// src/game_engine/pfield_layer_prio_enum.hpp
+
+#include "../misc_includes.hpp"
 
 namespace dunwich_sandgeon {
 namespace game_engine {
-namespace lvgen_etc {
 //--------
-bool basic_reachable(
-	const DngnFloor& dngn_floor, const BgTileUset& no_pass_uset,
-	const IntVec2& start, const IntVec2& end
-);
+enum class PfieldLayerPrio: i32 {
+	//BgTilesMachs,	// this is for the `game_engine::lvgen_etc::BgTile`s,
+	//				// and also generated machines (switches, gates, traps,
+	//				// etc.)
+	Bakgnd,
+	ItemsTraps,		// traps and items; need to prevent traps from
+					// occupying the same space as items in other logic
+	CharsMachs,		// The player, NPCs, and monsters; machines
+};
 //--------
-} // namespace lvgen_etc
 } // namespace game_engine
 } // namespace dunwich_sandgeon
+
+#endif		// src_game_engine_pfield_layer_prio_enum_hpp

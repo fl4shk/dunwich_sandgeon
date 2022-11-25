@@ -15,10 +15,10 @@
 // You should have received a copy of the GNU General Public License along
 // with Dunwich Sandgeon.  If not, see <https://www.gnu.org/licenses/>.
 
-#ifndef src_game_engine_lvgen_etc_floor_layout_class_hpp
-#define src_game_engine_lvgen_etc_floor_layout_class_hpp
+#ifndef src_game_engine_lvgen_etc_dngn_floor_class_hpp
+#define src_game_engine_lvgen_etc_dngn_floor_class_hpp
 
-// src/game_engine/lvgen_etc/floor_layout_class.hpp
+// src/game_engine/lvgen_etc/dngn_floor_class.hpp
 
 #include "../../misc_includes.hpp"
 //#include "../shape_classes.hpp"
@@ -30,16 +30,17 @@
 
 namespace dunwich_sandgeon {
 namespace game_engine {
+//--------
+class Engine;
+//--------
 namespace lvgen_etc {
 //--------
-class DungeonGen;
+class DngnGen;
 //--------
 // The dungeon while it's either being generated has finished generating.
-// As I don't think I'll be including breakable walls in this game, this
-// class can be referenced even after the dungeon has fully been generated
-// for the purposes of, for example, monster AI.
-class FloorLayout final {
-	#include "floor_layout_friends.hpp"
+// This includes generated items on the floor.
+class DngnFloor final {
+	#include "dngn_floor_friends.hpp"
 public:		// constants
 	static constexpr i32
 		// Chosen arbitrarily; might need to adjust later
@@ -116,7 +117,7 @@ public:		// static functions
 public:		// types
 	//--------
 	class RoomPath final: public WIntBboxBase {
-		#include "floor_layout_friends.hpp"
+		#include "dngn_floor_friends.hpp"
 	public:		// serialized variables
 		#define MEMB_SER_LIST_LVGEN_ETC_FLOOR_LAYOUT_ROOM_PATH(X) \
 			/* X(rect, std::nullopt) */ \
@@ -223,16 +224,23 @@ public:		// variables
 		ustairs_pos;
 	std::optional<IntVec2>
 		dstairs_pos = std::nullopt;
-public:		// serialized variables
+private:		// serialized variables
 	#define MEMB_SER_LIST_LVGEN_ETC_FLOOR_LAYOUT(X) \
-		X(destroyed_alt_terrain_uset, std::nullopt)
-	IntVec2Uset destroyed_alt_terrain_uset;
+		X(_pos3_z, std::nullopt) \
+		X(destroyed_alt_terrain_uset, std::nullopt) \
+		/* X(gnd_item_umap, std::nullopt) */ \
+
+	i32 _pos3_z = -1;
+public:		// serialized variables
+	IntVec2Uset
+		destroyed_alt_terrain_uset;
+	//std::unordered_map<IntVec2, ecs::EntIdUset> gnd_item_umap;
 public:		// functions
 	//--------
-	FloorLayout();
-	FloorLayout(const binser::Value& bv);
-	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(FloorLayout);
-	~FloorLayout() = default;
+	DngnFloor();
+	DngnFloor(const binser::Value& bv);
+	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(DngnFloor);
+	~DngnFloor() = default;
 
 	operator binser::Value () const;
 	//--------
@@ -310,7 +318,9 @@ public:		// functions
 		//double n_layout_noise_pos_scale,
 		//double n_layout_noise_pos_offset
 	);
-	bool erase_during_gen(size_t index);
+	// Note that this function *DOES* erase elements of
+	// `destroyed_alt_terrain_uset`
+	bool erase_path_during_gen(size_t index);
 	CollGridT::DataElPtrUsetT cg_neighbors(RoomPath& rp) const;
 	CollGridT::DataElPtrUsetT cg_neighbors(size_t index) const;
 	CollGridT::DataElPtrUsetT cg_neighbors(const IntVec2& pos) const;
@@ -320,6 +330,7 @@ public:		// functions
 	GEN_GETTER_BY_CON_REF(rp_data);
 	GEN_GETTER_BY_CON_REF(rp_to_id_umap);
 	GEN_GETTER_BY_CON_REF(coll_grid);
+	GEN_GETTER_BY_VAL(pos3_z);
 	//GEN_GETTER_BY_CON_REF(path_vec);
 	//GEN_GETTER_BY_CON_REF(layout_noise_pos_scale);
 	//GEN_GETTER_BY_CON_REF(layout_noise_pos_offset);
@@ -330,4 +341,4 @@ public:		// functions
 } // namespace game_engine
 } // namespace dunwich_sandgeon
 
-#endif		// src_game_engine_lvgen_etc_floor_layout_class_hpp
+#endif		// src_game_engine_lvgen_etc_dngn_floor_class_hpp

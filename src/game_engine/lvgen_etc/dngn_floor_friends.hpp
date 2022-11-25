@@ -15,25 +15,5 @@
 // You should have received a copy of the GNU General Public License along
 // with Dunwich Sandgeon.  If not, see <https://www.gnu.org/licenses/>.
 
-#ifndef src_game_engine_playfield_layer_prio_enum_hpp
-#define src_game_engine_playfield_layer_prio_enum_hpp
-
-// src/game_engine/playfield_layer_prio_enum.hpp
-
-#include "../misc_includes.hpp"
-
-namespace dunwich_sandgeon {
-namespace game_engine {
-//--------
-enum class PlayfieldLayerPrio: i32 {
-	BgMach,		// this is for the `game_engine::lvgen_etc::BgTile`s,
-				// and also generated machines (switches, gates, traps,
-				// etc.)
-	Item,
-	Char,		// The player, NPCs, and monsters
-};
-//--------
-} // namespace game_engine
-} // namespace dunwich_sandgeon
-
-#endif		// src_game_engine_playfield_layer_prio_enum_hpp
+friend class dunwich_sandgeon::game_engine::Engine;
+friend class dunwich_sandgeon::game_engine::lvgen_etc::DngnGen;
