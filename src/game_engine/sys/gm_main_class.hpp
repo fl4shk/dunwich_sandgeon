@@ -21,6 +21,7 @@
 // src/game_engine/sys/gm_main_class.hpp
 
 #include "../../misc_includes.hpp"
+#include "../../input_kind_enum.hpp"
 
 namespace dunwich_sandgeon {
 namespace game_engine {
@@ -31,6 +32,12 @@ namespace sys {
 //--------
 // The main "loop
 class GmMain final: public ecs::Sys {
+public:		// types
+	class PlayerAction final {
+	public:		// variables
+		//std::optional<PathDir> move_dir = std::nullopt;
+		InputKind kind = InputKind::None;
+	};
 private:		// variables
 	//std::optional<ecs::EntId>
 	//	_player_id = std::nullopt;

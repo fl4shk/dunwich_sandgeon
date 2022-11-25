@@ -560,6 +560,10 @@ void Engine::save_and_return_to_title() {
 		"testificate\n");
 	#endif		// DEBUG
 
+	auto& temp = non_ecs_ser_data();
+	temp.on_init_or_file_erase_seed_rngs_etc
+		(layout_rng_arr(), temp.base_rng_seed());
+
 	_save_to_binser();
 	set_game_mode(GameMode::TitleScreen);
 }

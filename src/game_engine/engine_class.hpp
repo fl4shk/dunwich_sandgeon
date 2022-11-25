@@ -409,8 +409,10 @@ public:		// functions
 		printerr(objs...);
 		exit(1);
 	}
-	inline void corrupted_save_file_err() const {
-		err("Error: corrupted save file ",
+	inline void corrupted_save_file_err(
+		const liborangepower::concepts::HasStdOstmOpLshift auto&... objs
+	) const {
+		err(objs..., "Error: corrupted save file ",
 			"\"", _save_file_name, "\".",
 			"\n");
 	}

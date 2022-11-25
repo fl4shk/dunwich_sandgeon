@@ -157,13 +157,15 @@ void GmFileSelect::_aux_menu_start_game_func(GmFileSelect* self) {
 	*engine->curr_file_num() = *engine->src_file_num();
 	//engine->fn_state = Engine::FnState::Curr;
 
+	auto& temp = engine->non_ecs_ser_data();
 	if (!engine->did_init_save_file()) {
 		//printout("GmFileSelect::_aux_menu_start_game_func(): ",
 		//	"!did_init_save_file\n");
 		engine->did_init_save_file() = true;
-		auto& temp = engine->non_ecs_ser_data();
 		temp.on_init_or_file_erase_seed_rngs_etc
 			(engine->layout_rng_arr(), temp.base_rng_seed());
+	} else {
+		temp.seed_ext_rngs(engine->layout_rng_arr());
 	}
 	//else {
 	//	printout("GmFileSelect::_aux_menu_start_game_func(): ",

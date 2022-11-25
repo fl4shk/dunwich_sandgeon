@@ -43,7 +43,7 @@ const std::vector<std::vector<BgTile>>
 			//SizeAndBgTile(1, ALT_TERRAIN_NONE),
 			//SizeAndBgTile(2, BgTile::Water),
 			//SizeAndBgTile(2, BgTile::Water),
-			BgTile::Water,
+			SizeAndBgTile(5, BgTile::Water),
 			BgTile::Spikes
 			//SizeAndBgTile(3, BgTile::Lava)
 			),

@@ -70,33 +70,128 @@ void GmMain::tick(ecs::Engine* ecs_engine) {
 			engine->game_mode() == GameMode::Main)
 	) {
 		//--------
-		if (engine->key_status.key_just_went_down(KeyKind::DownR)) {
+		PlayerAction action;
+		if (
+			(
+				engine->key_status.key_just_went_down(KeyKind::Start)
+				&& engine->key_status.key_down_now(KeyKind::Select)
+			) || (
+				engine->key_status.key_just_went_down(KeyKind::Select)
+				&& engine->key_status.key_down_now(KeyKind::Start)
+			)
+		) {
 			//engine->dbg_log("Returning to Title Screen\n");
 			//engine->set_game_mode(GameMode::TitleScreen);
-			//engine->save_and_return_to_title();
-			engine->save_and_quit();
+			engine->save_and_return_to_title();
+			//engine->save_and_quit();
 		} else if (
-			engine->key_status.key_just_went_down(KeyKind::LeftL)
-			&& engine->key_status.key_up_now(KeyKind::RightL)
+			engine->key_status.key_down_now(KeyKind::LeftL)
+			&& engine->key_status.key_uset_up_now(std::unordered_set
+				{KeyKind::RightL, KeyKind::UpL, KeyKind::DownL})
 		) {
+			//action.move_dir = PathDir::Left;
+			action.kind = InputKind::Left;
 		} else if (
 			engine->key_status.key_just_went_down(KeyKind::UpL)
-			&& engine->key_status.key_up_now(KeyKind::DownL)
+			&& engine->key_status.key_uset_up_now(std::unordered_set
+				{KeyKind::DownL, KeyKind::LeftL, KeyKind::RightL})
 		) {
+			//action.move_dir = PathDir::Top;
+			action.kind = InputKind::Up;
 		} else if (
 			engine->key_status.key_just_went_down(KeyKind::RightL)
-			&& engine->key_status.key_up_now(KeyKind::LeftL)
+			&& engine->key_status.key_uset_up_now(std::unordered_set
+				{KeyKind::LeftL, KeyKind::UpL, KeyKind::DownL})
 		) {
+			//action.kind = PathDir::Right;
+			action.kind = InputKind::Right;
 		} else if (
 			engine->key_status.key_just_went_down(KeyKind::DownL)
-			&& engine->key_status.key_up_now(KeyKind::UpL)
+			&& engine->key_status.key_uset_up_now(std::unordered_set
+				{KeyKind::UpL, KeyKind::LeftL, KeyKind::RightL})
+		) {
+			//action.move_dir = PathDir::Bottom;
+			action.kind = InputKind::Down;
+		} else if (
+			(
+				(
+					engine->key_status.key_just_went_down(KeyKind::LeftL)
+					&& engine->key_status.key_down_now(KeyKind::UpL)
+				) || (
+					engine->key_status.key_just_went_down(KeyKind::UpL)
+					&& engine->key_status.key_down_now(KeyKind::LeftL)
+				)
+			) 
+			&& engine->key_status.key_uset_up_now(std::unordered_set
+				{KeyKind::RightL, KeyKind::DownL})
+		) {
+			action.kind = InputKind::UpLeft;
+		} else if (
+			(
+				(
+					engine->key_status.key_just_went_down(KeyKind::RightL)
+					&& engine->key_status.key_down_now(KeyKind::UpL)
+				) || (
+					engine->key_status.key_just_went_down(KeyKind::UpL)
+					&& engine->key_status.key_down_now(KeyKind::RightL)
+				)
+			) 
+			&& engine->key_status.key_uset_up_now(std::unordered_set
+				{KeyKind::LeftL, KeyKind::DownL})
+		) {
+			action.kind = InputKind::UpRight;
+		} else if (
+			(
+				(
+					engine->key_status.key_just_went_down(KeyKind::RightL)
+					&& engine->key_status.key_down_now(KeyKind::DownL)
+				) || (
+					engine->key_status.key_just_went_down(KeyKind::DownL)
+					&& engine->key_status.key_down_now(KeyKind::RightL)
+				)
+			) 
+			&& engine->key_status.key_uset_up_now(std::unordered_set
+				{KeyKind::LeftL, KeyKind::UpL})
+		) {
+			action.kind = InputKind::DownRight;
+		} else if (
+			(
+				(
+					engine->key_status.key_just_went_down(KeyKind::LeftL)
+					&& engine->key_status.key_down_now(KeyKind::DownL)
+				) || (
+					engine->key_status.key_just_went_down(KeyKind::DownL)
+					&& engine->key_status.key_down_now(KeyKind::LeftL)
+				)
+			) 
+			&& engine->key_status.key_uset_up_now(std::unordered_set
+				{KeyKind::RightL, KeyKind::UpL})
+		) {
+			action.kind = InputKind::DownLeft;
+		} else if (
+			engine->key_status.key_just_went_down(KeyKind::LeftR)
+			&& engine->key_status.key_uset_up_now(std::unordered_set
+				{KeyKind::UpR, KeyKind::RightR, KeyKind::DownR})
+		) {
+		} else if (
+			engine->key_status.key_just_went_down(KeyKind::UpR)
+			&& engine->key_status.key_uset_up_now(std::unordered_set
+				{KeyKind::LeftR, KeyKind::RightR, KeyKind::DownR})
+		) {
+		} else if (
+			engine->key_status.key_just_went_down(KeyKind::RightR)
+			&& engine->key_status.key_uset_up_now(std::unordered_set
+				{KeyKind::LeftR, KeyKind::UpR, KeyKind::DownR})
+		) {
+		} else if (
+			engine->key_status.key_just_went_down(KeyKind::DownR)
+			&& engine->key_status.key_uset_up_now(std::unordered_set
+				{KeyKind::LeftR, KeyKind::UpR, KeyKind::RightR})
 		) {
 		}
 		//--------
-		//else if (
-		//) {
-		//} else if (
-		//) {
+		//if (action.move_dir) {
+		//	
 		//}
 		//--------
 		engine->draw_to_main_windows();
