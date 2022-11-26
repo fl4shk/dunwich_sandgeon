@@ -56,6 +56,13 @@ const BgTileUset
 		BgTile::Spikes,
 		BgTile::Pit,
 		BgTile::Lava,
+	},
+	DOOR_BG_TILE_USET = {
+		BgTile::Door,
+		BgTile::LockedDoor,
+	},
+	LOCKED_BG_TILE_USET = {
+		BgTile::LockedDoor,
 	};
 //--------
 } // namespace lvgen_etc

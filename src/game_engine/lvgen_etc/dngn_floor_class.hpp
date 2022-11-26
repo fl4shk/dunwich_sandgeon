@@ -27,6 +27,7 @@
 //#include "path_class.hpp"
 //#include "../comp/general_comp_classes.hpp"
 #include "bg_tile_enum.hpp"
+#include "room_tunnel_class.hpp"
 
 namespace dunwich_sandgeon {
 namespace game_engine {
@@ -37,185 +38,43 @@ namespace lvgen_etc {
 //--------
 class DngnGen;
 //--------
+enum class AltTerrainInnerState: u8 {
+	Normal,
+	Destroyed,
+	ShowAlt,
+};
+class AltTerrainState final {
+public:		// types
+public:		// variables
+	#define MEMB_LIST_LVGEN_ETC_ALT_TERRAIN_STATE(X) \
+		X(inner_state, std::nullopt) \
+		X(alt_bg_tile, std::nullopt) \
+		X(key, std::nullopt) \
+
+	//bool show = false;
+	//BgTile bg_tile = BgTile::Error;
+	//bool destroyed = false;
+	//bool destroyed: 1 = false;
+	//bool show_alt: 1 = false;
+	AltTerrainInnerState inner_state = AltTerrainInnerState::Normal;
+	BgTile alt_bg_tile = BgTile::Error;
+	ecs::EntId key = ecs::ENT_NULL_ID;
+public:		// functions
+	static AltTerrainState from_bv(const binser::Value& bv);
+	operator binser::Value () const;
+};
+//--------
 // The dungeon while it's either being generated has finished generating.
 // This includes generated items on the floor.
 class DngnFloor final {
 	#include "dngn_floor_friends.hpp"
 public:		// constants
-	static constexpr i32
-		// Chosen arbitrarily; might need to adjust later
-		MIN_NUM_ROOM_PATHS
-			//= 3,
-			//= 5,
-			//= 8,
-			//= 10,
-			//= 13,
-			//= 15,
-			//= 20,
-			= 25,
-		MAX_NUM_ROOM_PATHS
-			//= 3;
-			//= 5;
-			//= 8;
-			//= 15;
-			//= 42;
-			= 64,
-		MIN_NUM_ROOMS
-			//= 5;
-			//= 7;
-			= 10;
-
-		//MIN_NUM_PATHS = 1,
-		//MAX_NUM_PATHS = 64;
-
-	static constexpr i32
-		PATH_THICKNESS = 1,
-		PATH_MIN_LEN
-			//= 2,
-			//= 3,
-			= 4,
-			//= 5,
-		PATH_MAX_LEN
-			//= 32;
-			//= 20;
-			//= 15;
-			= 12;
-			//= 10;
-			//= 8;
-
-	static constexpr IntVec2
-		ROOM_MIN_SIZE_2D
-			//= {3, 3},
-			//= {4, 4},
-			= {5, 5},
-		ROOM_MAX_SIZE_2D
-			//= {9, 9};
-			//= {10, 10};
-			= {12, 12};
-			//= {15, 15};
-public:		// static functions
-	static constexpr inline bool r2_is_path(const IntRect2& r2) {
-		return r2_is_horiz_path(r2) || r2_is_vert_path(r2);
-	}
-	static constexpr inline bool r2_is_horiz_path(const IntRect2& r2) {
-		return (r2.size_2d.x >= PATH_MIN_LEN
-			&& r2.size_2d.y == PATH_THICKNESS);
-	}
-	static constexpr inline bool r2_is_vert_path(const IntRect2& r2) {
-		return (r2.size_2d.x == PATH_THICKNESS
-			&& r2.size_2d.y >= PATH_MIN_LEN);
-	}
-	static constexpr inline bool r2_is_room(const IntRect2& r2) {
-		return (r2.size_2d.x >= ROOM_MIN_SIZE_2D.x
-			&& r2.size_2d.x <= ROOM_MAX_SIZE_2D.x
-			&& r2.size_2d.y >= ROOM_MIN_SIZE_2D.y
-			&& r2.size_2d.y <= ROOM_MAX_SIZE_2D.y);
-	}
-	static constexpr inline bool r2_is_valid(const IntRect2& r2) {
-		return r2_is_path(r2) || r2_is_room(r2);
-	}
 public:		// types
-	//--------
-	class RoomPath final: public WIntBboxBase {
-		#include "dngn_floor_friends.hpp"
-	public:		// serialized variables
-		#define MEMB_SER_LIST_LVGEN_ETC_FLOOR_LAYOUT_ROOM_PATH(X) \
-			/* X(rect, std::nullopt) */ \
-			/* X(alt_terrain_umap, std::nullopt) */ \
-			/* X(conn_index_uset, std::nullopt) */ \
-			/* X(door_pt_uset, std::nullopt) */ \
-			/* X(destroyed_alt_terrain_uset, std::nullopt) */
-
-		//std::unordered_set<IntVec2> destroyed_alt_terrain_uset;
-
-		IntRect2 rect
-			{.pos=IntVec2(),
-			.size_2d{.x=PATH_THICKNESS, .y=PATH_MIN_LEN}};
-
-		//std::optional<IntVec2>
-		//	// where the player and other entities start from when entering
-		//	// this floor from above
-		//	ustairs_pos = std::nullopt,
-		//	dstairs_pos = std::nullopt;
-		//	//ustairs_pos = std::nullopt;
-
-		//i32 id = -1;
-
-		i32 gen_side = 0;
-		// These are coordinates within pfield-space
-		std::unordered_map<IntVec2, std::optional<BgTile>>
-			alt_terrain_umap;
-
-		std::unordered_set<i32> conn_index_uset;
-
-		std::unordered_map<IntVec2, std::optional<BgTile>> door_umap;
-		//bool show = false;
-	public:		// functions
-		//--------
-		RoomPath();
-		GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(RoomPath);
-		RoomPath(const IntRect2& s_rect);
-		virtual ~RoomPath();
-		//--------
-		//static RoomPath from_bv(const binser::Value& bv);
-		//operator binser::Value () const;
-		//--------
-		inline auto operator <=> (const RoomPath& to_cmp) const = default;
-		//--------
-		//virtual inline IntRect2& bbox() {
-		//	return rect;
-		//}
-		virtual inline const IntRect2& bbox() const {
-			return rect;
-		}
-		//--------
-		constexpr inline bool pos_in_border(
-			const IntVec2& pos
-		) const {
-			return r2_pos_in_border(rect, pos);
-		}
-		constexpr inline bool pos_in_internal_border(
-			const IntVec2& pos
-		) const {
-			return r2_pos_in_internal_border(rect, pos);
-		}
-		constexpr inline bool fits_in_pfnb() const {
-			//return (rect.pos.x >= 0
-			//	&& rect.pos.x <= PFIELD_SIZE_2D.x);
-			//return PFIELD_PHYS_RECT2.arg_inside(rect, false,
-			//	IntVec2());
-			//return PFIELD_PHYS_RECT2.arg_inside(rect, CDIFF_V2);
-			//return PFIELD_PHYS_RECT2.arg_inside(rect);
-			//return PFIELD_PHYS_RECT2.arg_inside<true>(rect);
-			return r2_fits_in_pfnb(rect);
-		}
-		constexpr inline bool is_path() const {
-			return r2_is_path(rect);
-		}
-		constexpr inline bool is_horiz_path() const {
-			return r2_is_horiz_path(rect);
-		}
-		constexpr inline bool is_vert_path() const {
-			return r2_is_vert_path(rect);
-		}
-
-		constexpr inline bool is_room() const {
-			return r2_is_room(rect);
-		}
-
-		constexpr inline bool is_valid() const {
-			return r2_is_valid(rect);
-		}
-		//--------
-	};
-	//--------
-	using RoomPathSptr = std::shared_ptr<RoomPath>;
-	//--------
 private:		// variables
-	std::vector<RoomPathSptr> _rp_data;
-	std::unordered_map<RoomPath*, size_t> _rp_to_id_umap;
+	std::vector<RoomTunnelSptr> _rt_data;
+	std::unordered_map<RoomTunnel*, size_t> _rt_to_id_umap;
 	CollGridT _coll_grid;
-	//binser::VectorEx<RoomPath> _rp_data;
+	//binser::VectorEx<RoomTunnel> _rt_data;
 	//double
 	//	_layout_noise_pos_scale = 0.0d,
 	//	_layout_noise_pos_offset = 0.0d;
@@ -227,13 +86,16 @@ public:		// variables
 private:		// serialized variables
 	#define MEMB_SER_LIST_LVGEN_ETC_FLOOR_LAYOUT(X) \
 		X(_pos3_z, std::nullopt) \
-		X(destroyed_alt_terrain_uset, std::nullopt) \
+		/* X(destroyed_alt_terrain_uset, std::nullopt) */ \
+		X(alt_terrain_state_umap, std::nullopt) \
 		/* X(gnd_item_umap, std::nullopt) */ \
 
 	i32 _pos3_z = -1;
 public:		// serialized variables
-	IntVec2Uset
-		destroyed_alt_terrain_uset;
+	//IntVec2Uset
+	//	destroyed_alt_terrain_uset;
+	std::unordered_map<IntVec2, AltTerrainState>
+		alt_terrain_state_umap;
 	//std::unordered_map<IntVec2, ecs::EntIdUset> gnd_item_umap;
 public:		// functions
 	//--------
@@ -264,53 +126,53 @@ public:		// functions
 	//}
 	//--------
 	inline auto begin() {
-		//return _rp_data.data.begin();
-		return _rp_data.begin();
+		//return _rt_data.data.begin();
+		return _rt_data.begin();
 	}
 	inline auto end() {
-		//return _rp_data.data.end();
-		return _rp_data.end();
+		//return _rt_data.data.end();
+		return _rt_data.end();
 	}
 	inline auto cbegin() const {
-		//return _rp_data.data.cbegin();
-		return _rp_data.cbegin();
+		//return _rt_data.data.cbegin();
+		return _rt_data.cbegin();
 	}
 	inline auto cend() const {
-		//return _rp_data.data.cend();
-		return _rp_data.cend();
+		//return _rt_data.data.cend();
+		return _rt_data.cend();
 	}
 private:		// functions
-	inline RoomPath& _raw_at(size_t index) {
-		//return _rp_data.data.at(index);
-		return *_rp_data.at(index);
+	inline RoomTunnel& _raw_at(size_t index) {
+		//return _rt_data.data.at(index);
+		return *_rt_data.at(index);
 	}
-	//RoomPath& _raw_phys_at(const IntVec2& phys_pos);
+	//RoomTunnel& _raw_phys_at(const IntVec2& phys_pos);
 public:		// functions
-	//inline RoomPath& at(size_t index) {
-	//	//return _rp_data.data.at(index);
-	//	return *_rp_data.at(index);
+	//inline RoomTunnel& at(size_t index) {
+	//	//return _rt_data.data.at(index);
+	//	return *_rt_data.at(index);
 	//}
-	inline const RoomPath& at(size_t index) const {
-		//return _rp_data.data.at(index);
-		return *_rp_data.at(index);
+	inline const RoomTunnel& at(size_t index) const {
+		//return _rt_data.data.at(index);
+		return *_rt_data.at(index);
 	}
-	std::optional<size_t> phys_pos_to_rp_index(const IntVec2& phys_pos)
+	std::optional<size_t> phys_pos_to_rt_index(const IntVec2& phys_pos)
 	const;
-	//inline RoomPath::Xdata& xdata_at(size_t index) {
-	//	return _rp_data.at(index)->xdata;
+	//inline RoomTunnel::Xdata& xdata_at(size_t index) {
+	//	return _rt_data.at(index)->xdata;
 	//}
-	//inline const RoomPath::Xdata& xdata_at(size_t index) const {
-	//	return _rp_data.at(index)->xdata;
+	//inline const RoomTunnel::Xdata& xdata_at(size_t index) const {
+	//	return _rt_data.at(index)->xdata;
 	//}
-	void push_back(RoomPath&& to_push);
+	void push_back(RoomTunnel&& to_push);
 	//void pop_back() {
-	//	_rp_to_id_umap.erase(_rp_data.back().get());
-	//	_coll_grid.erase(_rp_data.back().get());
-	//	_rp_data.pop_back();
+	//	_rt_to_id_umap.erase(_rt_data.back().get());
+	//	_coll_grid.erase(_rt_data.back().get());
+	//	_rt_data.pop_back();
 	//}
 	inline size_t size() const {
-		//return _rp_data.data.size();
-		return _rp_data.size();
+		//return _rt_data.data.size();
+		return _rt_data.size();
 	}
 	// Note that this function *DOESN'T* clear `destroyed_alt_terrain_uset`
 	// because that is serialized
@@ -321,14 +183,14 @@ public:		// functions
 	// Note that this function *DOES* erase elements of
 	// `destroyed_alt_terrain_uset`
 	bool erase_path_during_gen(size_t index);
-	CollGridT::DataElPtrUsetT cg_neighbors(RoomPath& rp) const;
+	CollGridT::DataElPtrUsetT cg_neighbors(RoomTunnel& rt) const;
 	CollGridT::DataElPtrUsetT cg_neighbors(size_t index) const;
 	CollGridT::DataElPtrUsetT cg_neighbors(const IntVec2& pos) const;
 
 	void draw() const;
 	//--------
-	GEN_GETTER_BY_CON_REF(rp_data);
-	GEN_GETTER_BY_CON_REF(rp_to_id_umap);
+	GEN_GETTER_BY_CON_REF(rt_data);
+	GEN_GETTER_BY_CON_REF(rt_to_id_umap);
 	GEN_GETTER_BY_CON_REF(coll_grid);
 	GEN_GETTER_BY_VAL(pos3_z);
 	//GEN_GETTER_BY_CON_REF(path_darr);

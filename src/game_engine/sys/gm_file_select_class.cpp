@@ -165,7 +165,7 @@ void GmFileSelect::_aux_menu_start_game_func(GmFileSelect* self) {
 		temp.on_init_or_file_erase_seed_rngs_etc
 			(engine->layout_rng_arr(), temp.base_rng_seed());
 	} else {
-		temp.seed_ext_rngs(engine->layout_rng_arr());
+		temp.seed_layout_rng_arr(engine->layout_rng_arr());
 	}
 	//else {
 	//	printout("GmFileSelect::_aux_menu_start_game_func(): ",

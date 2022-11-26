@@ -35,54 +35,40 @@ i32 DngnGen::GenYesNo::gen() const {
 }
 //--------
 const std::vector<std::vector<BgTile>>
-	DngnGen::ALLOWED_ALT_TERRAIN_V2D({
+	DngnGen::ALLOWED_ALT_TERRAIN_DA2D({
 		// Level 1 (index 0)
 		build_bg_tile_darr
-			(//SizeAndBgTile(20, ALT_TERRAIN_NONE),
-			//SizeAndBgTile(5, ALT_TERRAIN_NONE),
-			//SizeAndBgTile(1, ALT_TERRAIN_NONE),
-			//SizeAndBgTile(2, BgTile::Water),
-			//SizeAndBgTile(2, BgTile::Water),
-			SizeAndBgTile(5, BgTile::Water),
-			BgTile::Spikes
+			({{2, BgTile::Water},
+			//SizeAndBgTile(5, BgTile::Water),
+			//BgTile::Water,
+			{1, BgTile::Spikes}
+			//SizeAndBgTile(20, BgTile::Spikes)
 			//SizeAndBgTile(3, BgTile::Lava)
-			),
+			}),
 
 		// Level 2 (index 1)
 		build_bg_tile_darr
-			(
-			//SizeAndBgTile(6, ALT_TERRAIN_NONE),
-			//SizeAndBgTile(2, ALT_TERRAIN_NONE),
-			BgTile::Water,
-			BgTile::Spikes,
-			BgTile::Pit),
+			({{1, BgTile::Water},
+			{1, BgTile::Spikes},
+			{1, BgTile::Pit}}),
 
 		// Level 3 (index 2)
 		build_bg_tile_darr
-			(
-			//SizeAndBgTile(5, ALT_TERRAIN_NONE),
-			//SizeAndBgTile(3, ALT_TERRAIN_NONE),
-			SizeAndBgTile(2, BgTile::Water),
+			({{2, BgTile::Water},
 			//BgTile::Lava,
-			SizeAndBgTile(2, BgTile::Spikes),
-			BgTile::Pit),
+			{2, BgTile::Spikes},
+			{1, BgTile::Pit}}),
 
 		// Level 4 (index 3)
 		build_bg_tile_darr
-			(
-			//SizeAndBgTile(1, ALT_TERRAIN_NONE),
-			BgTile::Lava,
-			SizeAndBgTile(2, BgTile::Spikes),
-			BgTile::Pit
-			),
+			({{1, BgTile::Lava},
+			{2, BgTile::Spikes},
+			{1, BgTile::Pit}, }),
 
 		// Level 5 (index 4)
 		build_bg_tile_darr
-			(
-			//SizeAndBgTile(1, ALT_TERRAIN_NONE),
-			BgTile::Lava,
-			BgTile::Spikes
-			),
+			({{1, BgTile::Lava},
+			{1, BgTile::Spikes}}),
 	});
 void DngnGen::clear_before_gen(
 	//ecs::Engine* ecs_engine
@@ -93,8 +79,8 @@ void DngnGen::clear_before_gen(
 	//engine->clear_dngn_floor_arr();
 	//dngn_floor->clear(engine->calc_layout_noise_add_amount());
 	//_stop_gen_early = false;
-	_attempted_num_rp = engine->layout_rand<i32>
-		(i32(MIN_NUM_ROOM_PATHS), i32(MAX_NUM_ROOM_PATHS));
+	_attempted_num_rt = engine->layout_rand<i32>
+		(i32(MIN_NUM_ROOM_TUNNELS), i32(MAX_NUM_ROOM_TUNNELS));
 	_stop_gen_early = false;
 	_done_generating = false;
 }
@@ -109,10 +95,10 @@ void DngnGen::gen_curr_floor() {
 			//ecs_engine,
 			//dngn_floor
 		);
-		innards.gen_single_rp();
+		innards.gen_single_rt();
 		if (_done_generating) {
 			innards.finalize();
-			//innards._insert_alt_terrain_nullopts(
+			//innards._insert_alt_terrain(
 			//	//true
 			//);
 		}
@@ -124,12 +110,12 @@ void DngnGen::gen_curr_floor() {
 //void DngnGen::_connect_room_paths(comp::StaticBgTileMap* bg_tile_map,
 //	DngnFloor* dngn_floor) {
 //}
-bool DngnGen::GenInnards::gen_single_rp() {
+bool DngnGen::GenInnards::gen_single_rt() {
 	//--------
 	auto redo = [this]() -> void {
 		engine->dbg_log
 			("Debug: game_engine::lvgen_etc::DngnGen::GenInnards"
-			"::gen_single_rp(): ",
+			"::gen_single_rt(): ",
 			"Redoing generation\n");
 		_self->clear_before_gen(
 			//_ecs_engine
@@ -139,8 +125,8 @@ bool DngnGen::GenInnards::gen_single_rp() {
 	const bool old_done_generating = _self->_done_generating;
 	//--------
 	if (engine->dngn_floor().size() == 0) {
-		//_self->_attempted_num_rp = engine->layout_rand<i32>
-		//	(i32(MIN_NUM_ROOM_PATHS), i32(MAX_NUM_ROOM_PATHS));
+		//_self->_attempted_num_rt = engine->layout_rand<i32>
+		//	(i32(MIN_NUM_ROOM_TUNNELS), i32(MAX_NUM_ROOM_TUNNELS));
 		//_self->_stop_gen_early = false;
 		//_self->_done_generating = false;
 		_self->clear_before_gen(
@@ -151,42 +137,42 @@ bool DngnGen::GenInnards::gen_single_rp() {
 		//for (i32 tries=0; tries<GEN_RP_LIM_TRIES; ++tries)
 		// Force there to be at least one room
 		//for (;;) {
-			RoomPath to_push_rp;
+			RoomTunnel to_push_rt;
 			//--------
 			//engine->dbg_log("testificate 2\n");
 			//--------
-			//to_push_rp.rect.pos.x = engine->layout_rand<i32>
+			//to_push_rt.rect.pos.x = engine->layout_rand<i32>
 			//	(PFIELD_PHYS_RECT2.left_x(),
 			//	PFIELD_PHYS_RECT2.right_x() - ROOM_MIN_SIZE_2D.x - 1);
-			//to_push_rp.rect.pos.y = engine->layout_rand<i32>
+			//to_push_rt.rect.pos.y = engine->layout_rand<i32>
 			//	(PFIELD_PHYS_RECT2.top_y(),
 			//	PFIELD_PHYS_RECT2.bottom_y() - ROOM_MIN_SIZE_2D.y - 1);
 
-			//to_push_rp.rect.size_2d.x = engine->layout_rand<i32>
+			//to_push_rt.rect.size_2d.x = engine->layout_rand<i32>
 			//	(ROOM_MIN_SIZE_2D.x, ROOM_MAX_SIZE_2D.x);
-			//to_push_rp.rect.size_2d.y = engine->layout_rand<i32>
+			//to_push_rt.rect.size_2d.y = engine->layout_rand<i32>
 			//	(ROOM_MIN_SIZE_2D.y, ROOM_MAX_SIZE_2D.y);
-			to_push_rp.rect = engine->layout_rand_r2_in_pfnb
+			to_push_rt.rect = engine->layout_rand_r2_in_pfnb
 				(ROOM_MIN_SIZE_2D, ROOM_MAX_SIZE_2D);
 			//--------
-			//if (to_push_rp.fits_in_pfnb()) {
-			//	_do_push_back(std::move(to_push_rp));
+			//if (to_push_rt.fits_in_pfnb()) {
+			//	_do_push_back(std::move(to_push_rt));
 			//	break;
 			//}
-			_do_push_back(std::move(to_push_rp));
+			_do_push_back(std::move(to_push_rt));
 			//break;
 			//--------
 		//}
 	}
-	//else if (engine->dngn_floor().size() < MAX_NUM_ROOM_PATHS)
+	//else if (engine->dngn_floor().size() < MAX_NUM_ROOM_TUNNELS)
 	else if (
-		i32(engine->dngn_floor().size()) < _self->_attempted_num_rp
+		i32(engine->dngn_floor().size()) < _self->_attempted_num_rt
 	) {
-		//RoomPath to_push_rp;
-		//if (engine->dngn_floor().size() < MIN_NUM_ROOM_PATHS) {
+		//RoomTunnel to_push_rt;
+		//if (engine->dngn_floor().size() < MIN_NUM_ROOM_TUNNELS) {
 		//	for (;;) {
-		//		if (auto opt_rp=_inner_gen_post_first(); opt_rp) {
-		//			_do_push_back(std::move(*opt_rp));
+		//		if (auto opt_rt=_inner_gen_post_first(); opt_rt) {
+		//			_do_push_back(std::move(*opt_rt));
 		//			break;
 		//		}
 		//	}
@@ -194,15 +180,15 @@ bool DngnGen::GenInnards::gen_single_rp() {
 			i32 tries = 0;
 			for (; tries<GEN_RP_LIM_TRIES; ++tries) {
 				_self->_stop_gen_early = true;
-				if (auto opt_rp=_inner_gen_post_first(); opt_rp) {
-					_do_push_back(std::move(*opt_rp));
+				if (auto opt_rt=_inner_gen_post_first(); opt_rt) {
+					_do_push_back(std::move(*opt_rt));
 					_self->_stop_gen_early = false;
 					break;
 				}
 			}
 			//_self->_stop_gen_early = tries >= GEN_RP_LIM_TRIES;
 			if (_self->_stop_gen_early) {
-				if (engine->dngn_floor().size() < MIN_NUM_ROOM_PATHS) {
+				if (engine->dngn_floor().size() < MIN_NUM_ROOM_TUNNELS) {
 					redo();
 				} else {
 					// If we failed to find a room that fits in the
@@ -210,10 +196,10 @@ bool DngnGen::GenInnards::gen_single_rp() {
 					// try any more for this floor.  This is to prevent
 					// infinite loops in the dungeon generation.
 					engine->dbg_log
-						("Debug: game_engine::sys::gen_single_rp(): ",
+						("Debug: game_engine::sys::gen_single_rt(): ",
 						"stopping room generation early: ",
 						engine->dngn_floor().size(), " ",
-						_self->_attempted_num_rp, "\n");
+						_self->_attempted_num_rt, "\n");
 				}
 			}
 			//else {
@@ -223,7 +209,7 @@ bool DngnGen::GenInnards::gen_single_rp() {
 	_self->_done_generating
 		= _self->_stop_gen_early
 			|| i32(engine->dngn_floor().size())
-				>= _self->_attempted_num_rp;
+				>= _self->_attempted_num_rt;
 	if (_self->_done_generating) {
 		i32 num_rooms = 0;
 		for (size_t i=0; i<engine->dngn_floor().size(); ++i) {
@@ -234,7 +220,7 @@ bool DngnGen::GenInnards::gen_single_rp() {
 		if (num_rooms < MIN_NUM_ROOMS) {
 			engine->dbg_log
 				("Debug: game_engine::lvgen_etc::DngnGen",
-				"::GenInnards::gen_single_rp(): ",
+				"::GenInnards::gen_single_rt(): ",
 				"Didn't generate enough rooms. ",
 				"Generated ", num_rooms, " rooms, but need at least ",
 				MIN_NUM_ROOMS, ".\n");
@@ -249,41 +235,41 @@ bool DngnGen::GenInnards::gen_single_rp() {
 	return _self->_done_generating;
 }
 auto DngnGen::GenInnards::_inner_gen_post_first()
--> std::optional<RoomPath> {
+-> std::optional<RoomTunnel> {
 	//--------
-	//RoomPath _temp_to_push_rp;
+	//RoomTunnel _temp_to_push_rt;
 
-	if (auto temp=_gen_initial_rp(); temp) {
-		_temp_to_push_rp = std::move(*temp);
+	if (auto temp=_gen_initial_rt(); temp) {
+		_temp_to_push_rt = std::move(*temp);
 	} else {
 		return std::nullopt;
 	}
 	//--------
 	//const IntRect2
-	//	ORIG_TO_PUSH_RECT = _temp_to_push_rp.rect;
+	//	ORIG_TO_PUSH_RECT = _temp_to_push_rt.rect;
 	//const bool
-	//	was_horiz_path = DngnFloor::r2_is_horiz_path(ORIG_TO_PUSH_RECT),
-	//	was_vert_path = DngnFloor::r2_is_vert_path(ORIG_TO_PUSH_RECT);
+	//	was_horiz_tunnel = DngnFloor::r2_is_horiz_tunnel(ORIG_TO_PUSH_RECT),
+	//	was_vert_tunnel = DngnFloor::r2_is_vert_tunnel(ORIG_TO_PUSH_RECT);
 	//	//was_room = DngnFloor::r2_is_room(ORIG_TO_PUSH_RECT);
 	//--------
 	//auto _basic_shrink_extra_test_func = [this](
-	//	RoomPath& some_rp
+	//	RoomTunnel& some_rt
 	//	//, const std::optional<size_t>& index
 	//) -> bool {
 	//	const auto& found
 	//		= _find_first_backend(
-	//			some_rp, std::nullopt,
-	//			[](RoomPath& some_rp, const RoomPath& some_item)
+	//			some_rt, std::nullopt,
+	//			[](RoomTunnel& some_rt, const RoomTunnel& some_item)
 	//			-> bool {
-	//				//return !(some_item.rect.intersect(some_rp.rect)
-	//				//	|| _some_sides_hit(some_rp, some_item)
-	//				//	|| !_path_sides_hit_wrongly(some_rp, some_item));
-	//				return (some_item.rect.intersect(some_rp.rect)
-	//					//&& _some_sides_hit(some_rp, some_item)
-	//					|| _path_sides_hit_wrongly(some_rp, some_item)
+	//				//return !(some_item.rect.intersect(some_rt.rect)
+	//				//	|| _some_sides_hit(some_rt, some_item)
+	//				//	|| !_tunnel_sides_hit_wrongly(some_rt, some_item));
+	//				return (some_item.rect.intersect(some_rt.rect)
+	//					//&& _some_sides_hit(some_rt, some_item)
+	//					|| _tunnel_sides_hit_wrongly(some_rt, some_item)
 	//					// Reject pairs of horizontal/vertical paths that
 	//					// are too close
-	//					|| _parallel_paths_too_close(some_rp, some_item));
+	//					|| _parallel_tunnels_too_close(some_rt, some_item));
 	//			});
 	//	//if (found) {
 	//	//	//engine->dbg_log("found{", *found, "}\n");
@@ -291,13 +277,13 @@ auto DngnGen::GenInnards::_inner_gen_post_first()
 	//	//} else {
 	//	//	engine->dbg_log("!found\n");
 	//	//}
-	//	return (some_rp.fits_in_pfnb()
+	//	return (some_rt.fits_in_pfnb()
 	//		&& !found
-	//		//&& !any_intersect_find_first(some_rp, std::nullopt)
-	//		//&& any_sides_intersect_find_first(some_rp, std::nullopt)
-	//		//&& !any_path_sides_hit_wrongly_find_first
-	//		//	(some_rp, std::nullopt)
-	//		&& _rp_is_connected(some_rp)
+	//		//&& !any_intersect_find_first(some_rt, std::nullopt)
+	//		//&& any_sides_intersect_find_first(some_rt, std::nullopt)
+	//		//&& !any_tunnel_sides_hit_wrongly_find_first
+	//		//	(some_rt, std::nullopt)
+	//		&& _rt_is_connected(some_rt)
 	//		);
 	//};
 	// This is a simple algorithm that could be made faster and
@@ -305,48 +291,48 @@ auto DngnGen::GenInnards::_inner_gen_post_first()
 	// game will have fast enough hardware considering the maximum
 	// numbers of rooms/paths.
 	if (!_shrink
-		(_temp_to_push_rp.is_horiz_path(), _temp_to_push_rp.is_vert_path(),
-		_temp_to_push_rp, // std::nullopt,
-		[this](RoomPath& some_rp) -> bool {
-			return _basic_shrink_extra_test_func(some_rp);
+		(_temp_to_push_rt.is_horiz_tunnel(), _temp_to_push_rt.is_vert_tunnel(),
+		_temp_to_push_rt, // std::nullopt,
+		[this](RoomTunnel& some_rt) -> bool {
+			return _basic_shrink_extra_test_func(some_rt);
 		})) {
 		return std::nullopt;
 	}
 
 
-	//if (any_intersect_find_first(_temp_to_push_rp, std::nullopt)) {
+	//if (any_intersect_find_first(_temp_to_push_rt, std::nullopt)) {
 	//	//engine->dbg_log("Debug: found early intersect!\n");
 	//	return std::nullopt;
 	//}
-	//if (any_path_sides_hit_wrongly_find_first(_temp_to_push_rp, std::nullopt)) {
+	//if (any_tunnel_sides_hit_wrongly_find_first(_temp_to_push_rt, std::nullopt)) {
 	//	return std::nullopt;
 	//}
 
 	_connect_by_extending();
 	//--------
-	//_temp_to_push_rp.conn_index_uset.insert(conn_rp_index);
-	//conn_rp.conn_index_uset.insert(engine->dngn_floor().size());
+	//_temp_to_push_rt.conn_index_uset.insert(conn_rt_index);
+	//conn_rt.conn_index_uset.insert(engine->dngn_floor().size());
 	//--------
 	//--------
 	//engine->dbg_log("`gen_type`: ", gen_type, "\n");
 
-	return _temp_to_push_rp;
+	return _temp_to_push_rt;
 	//--------
 };
-void DngnGen::GenInnards::_do_push_back(RoomPath&& to_push_rp) const {
+void DngnGen::GenInnards::_do_push_back(RoomTunnel&& to_push_rt) const {
 	//#ifdef DEBUG
-	//engine->dbg_log("Debug: Generated this `RoomPath`: ",
-	//	//to_push_rp.rect, "; ",
-	//	"to_push_rp.tl:", to_push_rp.rect.tl_corner(), " ",
-	//	"to_push_rp.br:", to_push_rp.rect.br_corner(), "; ",
-	//	to_push_rp.is_horiz_path(), " ",
-	//	to_push_rp.is_vert_path(), " ",
-	//	to_push_rp.is_room(),
+	//engine->dbg_log("Debug: Generated this `RoomTunnel`: ",
+	//	//to_push_rt.rect, "; ",
+	//	"to_push_rt.tl:", to_push_rt.rect.tl_corner(), " ",
+	//	"to_push_rt.br:", to_push_rt.rect.br_corner(), "; ",
+	//	to_push_rt.is_horiz_tunnel(), " ",
+	//	to_push_rt.is_vert_tunnel(), " ",
+	//	to_push_rt.is_room(),
 	//	"\n");
 	//#endif		// DEBUG
 
 	const auto
-		to_push_rp_index = engine->dngn_floor().size();
+		to_push_rt_index = engine->dngn_floor().size();
 
 	for (
 		size_t item_index=0;
@@ -354,73 +340,73 @@ void DngnGen::GenInnards::_do_push_back(RoomPath&& to_push_rp) const {
 		++item_index
 	) {
 		auto& item = engine->dngn_floor()._raw_at(item_index);
-		if (item.rect.intersect(to_push_rp.rect)) {
+		if (item.rect.intersect(to_push_rt.rect)) {
 			throw std::runtime_error(sconcat
 				("game_engine::lvgen_etc::DngnGen",
 				"::GenInnards::_do_push_back(): ",
 				"Eek! ",
-				"to_push_rp{", to_push_rp.rect.tl_corner(), " ",
-					to_push_rp.rect.br_corner(), "} ",
+				"to_push_rt{", to_push_rt.rect.tl_corner(), " ",
+					to_push_rt.rect.br_corner(), "} ",
 				"item{", item.rect.tl_corner(), " ",
 					item.rect.br_corner(), "}\n"));
 		} else if (
-			_ls_r2_hit(to_push_rp, item)
-			|| _ts_r2_hit(to_push_rp, item)
-			|| _rs_r2_hit(to_push_rp, item)
-			|| _bs_r2_hit(to_push_rp, item)
-			//|| _ls_r2_hit(item, to_push_rp)
-			//|| _ts_r2_hit(item, to_push_rp)
-			//|| _rs_r2_hit(item, to_push_rp)
-			//|| _bs_r2_hit(item, to_push_rp)
-			//_ls_r2(item).intersect(to_push_rp.rect)
-			//|| _ts_r2(item).intersect(to_push_rp.rect)
-			//|| _rs_r2(item).intersect(to_push_rp.rect)
-			//|| _bs_r2(item).intersect(to_push_rp.rect)
+			_ls_r2_hit(to_push_rt, item)
+			|| _ts_r2_hit(to_push_rt, item)
+			|| _rs_r2_hit(to_push_rt, item)
+			|| _bs_r2_hit(to_push_rt, item)
+			//|| _ls_r2_hit(item, to_push_rt)
+			//|| _ts_r2_hit(item, to_push_rt)
+			//|| _rs_r2_hit(item, to_push_rt)
+			//|| _bs_r2_hit(item, to_push_rt)
+			//_ls_r2(item).intersect(to_push_rt.rect)
+			//|| _ts_r2(item).intersect(to_push_rt.rect)
+			//|| _rs_r2(item).intersect(to_push_rt.rect)
+			//|| _bs_r2(item).intersect(to_push_rt.rect)
 		) {
-			to_push_rp.conn_index_uset.insert(i32(item_index));
+			to_push_rt.conn_index_uset.insert(i32(item_index));
 			item.conn_index_uset.insert
-				(i32(to_push_rp_index));
+				(i32(to_push_rt_index));
 			//engine->dbg_log("Connected these RPs: ",
-			//	"to_push_rp{", to_push_rp.rect.tl_corner(), " ",
-			//		to_push_rp.rect.br_corner(), "} ",
-			//		to_push_rp_index, " "
+			//	"to_push_rt{", to_push_rt.rect.tl_corner(), " ",
+			//		to_push_rt.rect.br_corner(), "} ",
+			//		to_push_rt_index, " "
 			//	"item{", item.rect.tl_corner(), " ",
 			//		item.rect.br_corner(), "} ",
 			//		item_index, "\n");
 		}
 	}
 
-	engine->dngn_floor().push_back(std::move(to_push_rp));
+	engine->dngn_floor().push_back(std::move(to_push_rt));
 
-	//to_push_rp = RoomPath();
+	//to_push_rt = RoomTunnel();
 }
-auto DngnGen::GenInnards::_gen_initial_rp()
--> std::optional<RoomPath> {
+auto DngnGen::GenInnards::_gen_initial_rt()
+-> std::optional<RoomTunnel> {
 	//--------
-	RoomPath to_push_rp;
+	RoomTunnel to_push_rt;
 
 	const i32
-		prev_rp_index = engine->dngn_floor().size() - 1;
-	const RoomPath
-		& prev_rp = engine->dngn_floor().at(prev_rp_index);
+		prev_rt_index = engine->dngn_floor().size() - 1;
+	const RoomTunnel
+		& prev_rt = engine->dngn_floor().at(prev_rt_index);
 	const i32
 		prev_gen_type
-			= prev_rp.is_path() ? GEN_TYPE_PATH : GEN_TYPE_ROOM;
+			= prev_rt.is_tunnel() ? GEN_TYPE_TUNNEL : GEN_TYPE_ROOM;
 
-	to_push_rp.gen_side = 0;
+	to_push_rt.gen_side = 0;
 	_gen_next_type = 0;
-	_gen_next_conn_rp_index = 0;
+	_gen_next_conn_rt_index = 0;
 	_gen_type = 0;
-	_conn_rp_index = 0;
+	_conn_rt_index = 0;
 
 	//_gen_type = GEN_TYPE_ROOM,
-	//to_push_rp.gen_side = engine->layout_rand<i32>
+	//to_push_rt.gen_side = engine->layout_rand<i32>
 	//	(MIN_GEN_SIDE, MAX_GEN_SIDE),
 
-	_gen_next_type = (prev_gen_type == GEN_TYPE_PATH)
+	_gen_next_type = (prev_gen_type == GEN_TYPE_TUNNEL)
 		? engine->layout_rand<i32>
-			(GEN_NEXT_PATH_TYPE.full_min(),
-			GEN_NEXT_PATH_TYPE.full_max())
+			(GEN_NEXT_TUNNEL_TYPE.full_min(),
+			GEN_NEXT_TUNNEL_TYPE.full_max())
 		: engine->layout_rand<i32>
 			(GEN_NEXT_ROOM_TYPE.full_min(),
 			GEN_NEXT_ROOM_TYPE.full_max()),
@@ -428,9 +414,9 @@ auto DngnGen::GenInnards::_gen_initial_rp()
 	_gen_type = 0;
 	if (
 		(
-			prev_gen_type == GEN_TYPE_PATH
-			&& _gen_next_type >= GEN_NEXT_PATH_TYPE.same_min()
-			&& _gen_next_type <= GEN_NEXT_PATH_TYPE.same_max
+			prev_gen_type == GEN_TYPE_TUNNEL
+			&& _gen_next_type >= GEN_NEXT_TUNNEL_TYPE.same_min()
+			&& _gen_next_type <= GEN_NEXT_TUNNEL_TYPE.same_max
 		) || (
 			prev_gen_type == GEN_TYPE_ROOM
 			&& _gen_next_type >= GEN_NEXT_ROOM_TYPE.same_min()
@@ -446,67 +432,67 @@ auto DngnGen::GenInnards::_gen_initial_rp()
 	}
 	//--------
 	auto index_stuff = [&](const GenNext& some_gen_next_index) -> void {
-		_gen_next_conn_rp_index
+		_gen_next_conn_rt_index
 			= engine->layout_rand<i32>
 			(some_gen_next_index.full_min(),
 			some_gen_next_index.full_max());
 		if (
-			_gen_next_conn_rp_index >= some_gen_next_index.same_min()
-			&& _gen_next_conn_rp_index <= some_gen_next_index.same_max
+			_gen_next_conn_rt_index >= some_gen_next_index.same_min()
+			&& _gen_next_conn_rt_index <= some_gen_next_index.same_max
 		) {
-			_conn_rp_index = prev_rp_index;
+			_conn_rt_index = prev_rt_index;
 		} else {
-			if (prev_rp_index == 0) {
-				_conn_rp_index = prev_rp_index;
-			} else { // if (prev_rp_index > 0)
+			if (prev_rt_index == 0) {
+				_conn_rt_index = prev_rt_index;
+			} else { // if (prev_rt_index > 0)
 				// Force a different room from the last one to be
 				// picked in this case
-				_conn_rp_index
-					= engine->layout_rand<i32>(0, prev_rp_index - 1);
+				_conn_rt_index
+					= engine->layout_rand<i32>(0, prev_rt_index - 1);
 			}
 		}
 	};
-	if (prev_gen_type == GEN_TYPE_PATH) {
-		if (_gen_type == GEN_TYPE_PATH) {
-			index_stuff(GEN_NEXT_PATH_INDEX_NOW_PATH);
+	if (prev_gen_type == GEN_TYPE_TUNNEL) {
+		if (_gen_type == GEN_TYPE_TUNNEL) {
+			index_stuff(GEN_NEXT_TUNNEL_INDEX_NOW_TUNNEL);
 		} else { // if (_gen_type == GEN_TYPE_ROOM)
-			index_stuff(GEN_NEXT_PATH_INDEX_NOW_ROOM);
+			index_stuff(GEN_NEXT_TUNNEL_INDEX_NOW_ROOM);
 		}
-		//index_stuff(GEN_NEXT_PATH_INDEX);
+		//index_stuff(GEN_NEXT_TUNNEL_INDEX);
 	} else { // if (prev_gen_type == GEN_TYPE_ROOM)
 		index_stuff(GEN_NEXT_ROOM_INDEX);
 	}
 	//--------
-	//const i32 _conn_rp_index = engine->layout_rand<i32>(0, 0);
+	//const i32 _conn_rt_index = engine->layout_rand<i32>(0, 0);
 	//engine->dbg_log("test 1\n");
-	const auto& conn_rp = engine->dngn_floor().at(_conn_rp_index);
+	const auto& conn_rt = engine->dngn_floor().at(_conn_rt_index);
 
 	if (
-		//(conn_rp.is_path() && _gen_type == GEN_TYPE_PATH)
-		//|| (conn_rp.is_room() && _gen_type == GEN_TYPE_ROOM)
+		//(conn_rt.is_tunnel() && _gen_type == GEN_TYPE_TUNNEL)
+		//|| (conn_rt.is_room() && _gen_type == GEN_TYPE_ROOM)
 
-		//(conn_rp.is_path() && _gen_type == GEN_TYPE_PATH)
-		//|| conn_rp.is_room()
-		conn_rp.is_path()
+		//(conn_rt.is_tunnel() && _gen_type == GEN_TYPE_TUNNEL)
+		//|| conn_rt.is_room()
+		conn_rt.is_tunnel()
 	) {
-		if (_gen_type == GEN_TYPE_PATH) {
-			to_push_rp.gen_side = engine->layout_rand<i32>
+		if (_gen_type == GEN_TYPE_TUNNEL) {
+			to_push_rt.gen_side = engine->layout_rand<i32>
 				(MIN_GEN_SIDE, MAX_GEN_SIDE);
 		} else { // if (_gen_type == GEN_TYPE_ROOM)
-			if (conn_rp.is_horiz_path()) {
-				to_push_rp.gen_side
+			if (conn_rt.is_horiz_tunnel()) {
+				to_push_rt.gen_side
 					= engine->layout_rand<i32>(0, 1)
 					? GEN_SIDE_L
 					: GEN_SIDE_R;
-			} else { // if (conn_rp.is_vert_path())
-				to_push_rp.gen_side
+			} else { // if (conn_rt.is_vert_tunnel())
+				to_push_rt.gen_side
 					= engine->layout_rand<i32>(0, 1)
 					? GEN_SIDE_T
 					: GEN_SIDE_B;
 			}
 		}
-	} else { // if (conn_rp.is_room())
-		to_push_rp.gen_side = engine->layout_rand<i32>
+	} else { // if (conn_rt.is_room())
+		to_push_rt.gen_side = engine->layout_rand<i32>
 			(MIN_GEN_SIDE, MAX_GEN_SIDE);
 	}
 	//--------
@@ -516,14 +502,14 @@ auto DngnGen::GenInnards::_gen_initial_rp()
 	//IntVec2
 	//	temp_size_2d;
 
-	if (_gen_type == GEN_TYPE_PATH) {
+	if (_gen_type == GEN_TYPE_TUNNEL) {
 		thickness
 			//temp_size_2d.x
-			= PATH_THICKNESS,
+			= TUNNEL_THICKNESS,
 		length
 			//temp_size_2d.y
 			= engine->layout_rand<i32>
-				(PATH_MIN_LEN, PATH_MAX_LEN);
+				(TUNNEL_MIN_LEN, TUNNEL_MAX_LEN);
 	} else { // if (_gen_type == GEN_TYPE_ROOM)
 		const IntVec2 temp_vec2
 		//temp_size_2d =
@@ -537,13 +523,13 @@ auto DngnGen::GenInnards::_gen_initial_rp()
 		//length = engine->layout_rand<i32>
 		//	(ROOM_MIN_SIZE_2D.y, ROOM_MAX_SIZE_2D.y);
 
-		if (to_push_rp.gen_side == GEN_SIDE_L
-			|| to_push_rp.gen_side == GEN_SIDE_R) {
+		if (to_push_rt.gen_side == GEN_SIDE_L
+			|| to_push_rt.gen_side == GEN_SIDE_R) {
 			thickness = temp_vec2.y;
 			length = temp_vec2.x;
 		} else // if (
-			//to_push_rp.gen_side == GEN_SIDE_T
-			//|| to_push_rp.gen_side == GEN_SIDE_B
+			//to_push_rt.gen_side == GEN_SIDE_T
+			//|| to_push_rt.gen_side == GEN_SIDE_B
 		//)
 		{
 			//thickness = engine->layout_rand<i32>
@@ -554,100 +540,100 @@ auto DngnGen::GenInnards::_gen_initial_rp()
 	}
 	//--------
 	const i32
-		conn_rp_lx = conn_rp.rect.left_x(),
-		conn_rp_ty = conn_rp.rect.top_y(),
-		conn_rp_rx = conn_rp.rect.right_x(),
-		conn_rp_by = conn_rp.rect.bottom_y();
+		conn_rt_lx = conn_rt.rect.left_x(),
+		conn_rt_ty = conn_rt.rect.top_y(),
+		conn_rt_rx = conn_rt.rect.right_x(),
+		conn_rt_by = conn_rt.rect.bottom_y();
 
-	switch (to_push_rp.gen_side) {
+	switch (to_push_rt.gen_side) {
 	//--------
 	case GEN_SIDE_L:
-		to_push_rp.rect.pos = IntVec2
-			{.x=conn_rp_lx,
-			.y=engine->layout_rand<i32>(conn_rp_ty, conn_rp_by)}
+		to_push_rt.rect.pos = IntVec2
+			{.x=conn_rt_lx,
+			.y=engine->layout_rand<i32>(conn_rt_ty, conn_rt_by)}
 				- IntVec2{length, 0};
-		to_push_rp.rect.size_2d = {.x=length, .y=thickness};
+		to_push_rt.rect.size_2d = {.x=length, .y=thickness};
 		break;
 	case GEN_SIDE_T:
-		to_push_rp.rect.pos = IntVec2
-			{.x=engine->layout_rand<i32>(conn_rp_lx, conn_rp_rx),
-			.y=conn_rp_ty} - IntVec2{0, length};
-		to_push_rp.rect.size_2d = {.x=thickness, .y=length};
+		to_push_rt.rect.pos = IntVec2
+			{.x=engine->layout_rand<i32>(conn_rt_lx, conn_rt_rx),
+			.y=conn_rt_ty} - IntVec2{0, length};
+		to_push_rt.rect.size_2d = {.x=thickness, .y=length};
 		break;
 	case GEN_SIDE_R:
-		to_push_rp.rect.pos = IntVec2
-			{.x=conn_rp_rx,
-			.y=engine->layout_rand<i32>(conn_rp_ty, conn_rp_by)}
+		to_push_rt.rect.pos = IntVec2
+			{.x=conn_rt_rx,
+			.y=engine->layout_rand<i32>(conn_rt_ty, conn_rt_by)}
 				+ IntVec2{1, 0};
-		to_push_rp.rect.size_2d = {.x=length, .y=thickness};
+		to_push_rt.rect.size_2d = {.x=length, .y=thickness};
 		break;
 	case GEN_SIDE_B:
-		to_push_rp.rect.pos = IntVec2
-			{.x=engine->layout_rand<i32>(conn_rp_lx, conn_rp_rx),
-			.y=conn_rp_by} + IntVec2{0, 1};
-		to_push_rp.rect.size_2d = {.x=thickness, .y=length};
+		to_push_rt.rect.pos = IntVec2
+			{.x=engine->layout_rand<i32>(conn_rt_lx, conn_rt_rx),
+			.y=conn_rt_by} + IntVec2{0, 1};
+		to_push_rt.rect.size_2d = {.x=thickness, .y=length};
 		break;
 	default:
 		throw std::runtime_error(sconcat
-			("game_engine::sys::DngnGen::gen_single_rp(): ",
-			"(1st) `switch (to_push_rp.gen_side)`: Eek! `",
-			to_push_rp.gen_side,
+			("game_engine::sys::DngnGen::gen_single_rt(): ",
+			"(1st) `switch (to_push_rt.gen_side)`: Eek! `",
+			to_push_rt.gen_side,
 			"`"));
 		break;
 	//--------
 	}
-	return to_push_rp;
+	return to_push_rt;
 }
 bool DngnGen::GenInnards::_shrink(
-	bool was_horiz_path, bool was_vert_path,
-	RoomPath& some_rp, //const std::optional<size_t>& index,
+	bool was_horiz_tunnel, bool was_vert_tunnel,
+	RoomTunnel& some_rt, //const std::optional<size_t>& index,
 	const std::function<bool(
-		RoomPath&//, const std::optional<size_t>&
+		RoomTunnel&//, const std::optional<size_t>&
 	)>& extra_test_func
 ) {
 	//--------
 	auto shrink_left_x = [&]() -> void {
 		const auto temp_rect = IntRect2::build_in_grid_lim
-			(some_rp.rect.tl_corner() + IntVec2{1, 0},
-			some_rp.rect.br_corner(),
+			(some_rt.rect.tl_corner() + IntVec2{1, 0},
+			some_rt.rect.br_corner(),
 			PFIELD_PHYS_NO_BRDR_RECT2);
-		some_rp.rect = temp_rect;
+		some_rt.rect = temp_rect;
 	};
 	auto shrink_top_y = [&]() -> void {
 		const auto temp_rect = IntRect2::build_in_grid_lim
-			(some_rp.rect.tl_corner() + IntVec2{0, 1},
-			some_rp.rect.br_corner(),
+			(some_rt.rect.tl_corner() + IntVec2{0, 1},
+			some_rt.rect.br_corner(),
 			PFIELD_PHYS_NO_BRDR_RECT2);
-		some_rp.rect = temp_rect;
+		some_rt.rect = temp_rect;
 	};
 	auto shrink_right_x = [&]() -> void {
 		const auto temp_rect = IntRect2::build_in_grid_lim
-			(some_rp.rect.tl_corner(),
-			some_rp.rect.br_corner() - IntVec2{1, 0},
+			(some_rt.rect.tl_corner(),
+			some_rt.rect.br_corner() - IntVec2{1, 0},
 			PFIELD_PHYS_NO_BRDR_RECT2);
-		some_rp.rect = temp_rect;
+		some_rt.rect = temp_rect;
 	};
 	auto shrink_bottom_y = [&]() -> void {
 		const auto temp_rect = IntRect2::build_in_grid_lim
-			(some_rp.rect.tl_corner(),
-			some_rp.rect.br_corner() - IntVec2{0, 1},
+			(some_rt.rect.tl_corner(),
+			some_rt.rect.br_corner() - IntVec2{0, 1},
 			PFIELD_PHYS_NO_BRDR_RECT2);
-		some_rp.rect = temp_rect;
+		some_rt.rect = temp_rect;
 	};
 	//--------
-	//const RoomPath& conn_rp = engine->dngn_floor().at(_conn_rp_index);
+	//const RoomTunnel& conn_rt = engine->dngn_floor().at(_conn_rt_index);
 	//const bool
-	//	was_horiz_path = some_rp.is_horiz_path(),
-	//	was_vert_path = some_rp.is_vert_path();
-	//	//was_room = some_rp.is_room();
-	if (was_horiz_path) {
+	//	was_horiz_tunnel = some_rt.is_horiz_tunnel(),
+	//	was_vert_tunnel = some_rt.is_vert_tunnel();
+	//	//was_room = some_rt.is_room();
+	if (was_horiz_tunnel) {
 		const i32
 			SHRINK_NUM_ATTEMPTS = engine->layout_rand<i32>
-				(MIN_GEN_SHRINK_NUM_ATTEMPTS_PATH,
-				MAX_GEN_SHRINK_NUM_ATTEMPTS_PATH);
+				(MIN_GEN_SHRINK_NUM_ATTEMPTS_TUNNEL,
+				MAX_GEN_SHRINK_NUM_ATTEMPTS_TUNNEL);
 		for (i32 i=0; i<SHRINK_NUM_ATTEMPTS; ++i) {
 			//--------
-			switch (some_rp.gen_side) {
+			switch (some_rt.gen_side) {
 			//--------
 			case GEN_SIDE_L:
 				shrink_left_x();
@@ -666,25 +652,25 @@ bool DngnGen::GenInnards::_shrink(
 			}
 			//--------
 			if (
-				some_rp.is_horiz_path()
+				some_rt.is_horiz_tunnel()
 				&& extra_test_func(
-					some_rp//, index
+					some_rt//, index
 				)
 			) {
 				return true;
-			} else if (!some_rp.is_horiz_path()) {
+			} else if (!some_rt.is_horiz_tunnel()) {
 				return false;
 			}
 			//--------
 		}
-	} else if (was_vert_path) {
+	} else if (was_vert_tunnel) {
 		const i32
 			SHRINK_NUM_ATTEMPTS = engine->layout_rand<i32>
-				(MIN_GEN_SHRINK_NUM_ATTEMPTS_PATH,
-				MAX_GEN_SHRINK_NUM_ATTEMPTS_PATH);
+				(MIN_GEN_SHRINK_NUM_ATTEMPTS_TUNNEL,
+				MAX_GEN_SHRINK_NUM_ATTEMPTS_TUNNEL);
 		for (i32 i=0; i<SHRINK_NUM_ATTEMPTS; ++i) {
 			//--------
-			switch (some_rp.gen_side) {
+			switch (some_rt.gen_side) {
 			//--------
 			case GEN_SIDE_T:
 				shrink_top_y();
@@ -703,13 +689,13 @@ bool DngnGen::GenInnards::_shrink(
 			}
 			//--------
 			if (
-				some_rp.is_vert_path()
+				some_rt.is_vert_tunnel()
 				&& extra_test_func(
-					some_rp//, index
+					some_rt//, index
 				)
 			) {
 				return true;
-			} else if (!some_rp.is_vert_path()) {
+			} else if (!some_rt.is_vert_tunnel()) {
 				return false;
 			}
 			//--------
@@ -721,7 +707,7 @@ bool DngnGen::GenInnards::_shrink(
 				MAX_GEN_SHRINK_NUM_ATTEMPTS_ROOM);
 		for (i32 i=0; i<SHRINK_NUM_ATTEMPTS; ++i) {
 			//--------
-			const i32 gen_side = some_rp.gen_side;
+			const i32 gen_side = some_rt.gen_side;
 			//const i32 shrink_side = gen_side;
 			i32 shrink_side;
 
@@ -759,13 +745,13 @@ bool DngnGen::GenInnards::_shrink(
 			}
 			//--------
 			if (
-				some_rp.is_room()
+				some_rt.is_room()
 				&& extra_test_func(
-					some_rp//, index
+					some_rt//, index
 				)
 			) {
 				return true;
-			} else if (!some_rp.is_room()) {
+			} else if (!some_rt.is_room()) {
 				return false;
 			}
 			//--------
@@ -775,23 +761,23 @@ bool DngnGen::GenInnards::_shrink(
 	//return final_func();
 };
 bool DngnGen::GenInnards::_basic_shrink_extra_test_func(
-	RoomPath& some_rp
+	RoomTunnel& some_rt
 	//, const std::optional<size_t>& index
 ) {
 	const auto& found
 		= _find_first_backend(
-			some_rp, std::nullopt,
-			[](RoomPath& some_rp, const RoomPath& some_item)
+			some_rt, std::nullopt,
+			[](RoomTunnel& some_rt, const RoomTunnel& some_item)
 			-> bool {
-				//return !(some_item.rect.intersect(some_rp.rect)
-				//	|| _some_sides_hit(some_rp, some_item)
-				//	|| !_path_sides_hit_wrongly(some_rp, some_item));
-				return (some_item.rect.intersect(some_rp.rect)
-					//&& _some_sides_hit(some_rp, some_item)
-					|| _path_sides_hit_wrongly(some_rp, some_item)
+				//return !(some_item.rect.intersect(some_rt.rect)
+				//	|| _some_sides_hit(some_rt, some_item)
+				//	|| !_tunnel_sides_hit_wrongly(some_rt, some_item));
+				return (some_item.rect.intersect(some_rt.rect)
+					//&& _some_sides_hit(some_rt, some_item)
+					|| _tunnel_sides_hit_wrongly(some_rt, some_item)
 					// Reject pairs of horizontal/vertical paths that
 					// are too close
-					|| _parallel_paths_too_close(some_rp, some_item));
+					|| _parallel_tunnels_too_close(some_rt, some_item));
 			});
 	//if (found) {
 	//	//engine->dbg_log("found{", *found, "}\n");
@@ -799,20 +785,20 @@ bool DngnGen::GenInnards::_basic_shrink_extra_test_func(
 	//} else {
 	//	engine->dbg_log("!found\n");
 	//}
-	return (some_rp.fits_in_pfnb()
+	return (some_rt.fits_in_pfnb()
 		&& !found
-		//&& !any_intersect_find_first(some_rp, std::nullopt)
-		//&& any_sides_intersect_find_first(some_rp, std::nullopt)
-		//&& !any_path_sides_hit_wrongly_find_first
-		//	(some_rp, std::nullopt)
-		&& _rp_is_connected(some_rp)
+		//&& !any_intersect_find_first(some_rt, std::nullopt)
+		//&& any_sides_intersect_find_first(some_rt, std::nullopt)
+		//&& !any_tunnel_sides_hit_wrongly_find_first
+		//	(some_rt, std::nullopt)
+		&& _rt_is_connected(some_rt)
 		);
 }
 void DngnGen::GenInnards::_connect_by_extending(
-	//bool was_horiz_path, bool was_vert_path,
-	//RoomPath& some_rp, //const std::optional<size_t>& index,
+	//bool was_horiz_tunnel, bool was_vert_tunnel,
+	//RoomTunnel& some_rt, //const std::optional<size_t>& index,
 	//const std::function<bool(
-	//	RoomPath&//, const std::optional<size_t>&
+	//	RoomTunnel&//, const std::optional<size_t>&
 	//)>& shrink_extra_test_func
 ) {
 	auto should_gen_connect = []() -> bool {
@@ -823,22 +809,22 @@ void DngnGen::GenInnards::_connect_by_extending(
 			&& temp <= GEN_YN_CONNECT.yes_max);
 	};
 	const bool
-		was_horiz_path = _temp_to_push_rp.is_horiz_path(),
-		was_vert_path = _temp_to_push_rp.is_vert_path();
+		was_horiz_tunnel = _temp_to_push_rt.is_horiz_tunnel(),
+		was_vert_tunnel = _temp_to_push_rt.is_vert_tunnel();
 	auto attempt_extend = [&](
 		const IntVec2& tl_ext, const IntVec2& br_ext
 	) -> void {
-		RoomPath temp_rp;
-		temp_rp.rect = _temp_to_push_rp.rect.build_in_grid_inflated_lim
+		RoomTunnel temp_rt;
+		temp_rt.rect = _temp_to_push_rt.rect.build_in_grid_inflated_lim
 			(tl_ext, br_ext, PFIELD_PHYS_NO_BRDR_RECT2);
 		if (_shrink(
-			was_horiz_path, was_vert_path,
-			temp_rp,
-			[this](RoomPath& some_rp) -> bool {
-				return _basic_shrink_extra_test_func(some_rp);
+			was_horiz_tunnel, was_vert_tunnel,
+			temp_rt,
+			[this](RoomTunnel& some_rt) -> bool {
+				return _basic_shrink_extra_test_func(some_rt);
 			}
 		)) {
-			_temp_to_push_rp.rect = temp_rp.rect;
+			_temp_to_push_rt.rect = temp_rt.rect;
 		}
 	};
 	for (
@@ -855,9 +841,9 @@ void DngnGen::GenInnards::_connect_by_extending(
 		case GEN_SIDE_L:
 			if (
 				should_gen_connect()
-				&& !was_vert_path
-				&& (_temp_to_push_rp.is_horiz_path()
-				|| _temp_to_push_rp.is_room())
+				&& !was_vert_tunnel
+				&& (_temp_to_push_rt.is_horiz_tunnel()
+				|| _temp_to_push_rt.is_room())
 			){
 				attempt_extend
 					(IntVec2{GEN_EXTEND_AMOUNT_TSF, 0}, IntVec2());
@@ -866,9 +852,9 @@ void DngnGen::GenInnards::_connect_by_extending(
 		case GEN_SIDE_T:
 			if (
 				should_gen_connect()
-				&& !was_horiz_path
-				&& (_temp_to_push_rp.is_vert_path()
-				|| _temp_to_push_rp.is_room())
+				&& !was_horiz_tunnel
+				&& (_temp_to_push_rt.is_vert_tunnel()
+				|| _temp_to_push_rt.is_room())
 			) {
 				attempt_extend
 					(IntVec2{0, GEN_EXTEND_AMOUNT_TSF}, IntVec2());
@@ -877,9 +863,9 @@ void DngnGen::GenInnards::_connect_by_extending(
 		case GEN_SIDE_R:
 			if (
 				should_gen_connect()
-				&& !was_vert_path
-				&& (_temp_to_push_rp.is_horiz_path()
-				|| _temp_to_push_rp.is_room())
+				&& !was_vert_tunnel
+				&& (_temp_to_push_rt.is_horiz_tunnel()
+				|| _temp_to_push_rt.is_room())
 			) {
 				attempt_extend
 					(IntVec2(), IntVec2{GEN_EXTEND_AMOUNT_TSF, 0});
@@ -888,9 +874,9 @@ void DngnGen::GenInnards::_connect_by_extending(
 		case GEN_SIDE_B:
 			if (
 				should_gen_connect()
-				&& !was_horiz_path
-				&& (_temp_to_push_rp.is_vert_path()
-				|| _temp_to_push_rp.is_room())
+				&& !was_horiz_tunnel
+				&& (_temp_to_push_rt.is_vert_tunnel()
+				|| _temp_to_push_rt.is_room())
 			) {
 				attempt_extend
 					(IntVec2(), IntVec2{0, GEN_EXTEND_AMOUNT_TSF});
@@ -906,101 +892,101 @@ void DngnGen::GenInnards::_connect_by_extending(
 	}
 }
 
-bool DngnGen::GenInnards::_rp_is_connected(
-	const RoomPath& some_rp
+bool DngnGen::GenInnards::_rt_is_connected(
+	const RoomTunnel& some_rt
 ) const {
-	const RoomPath& conn_rp
-		= engine->dngn_floor().at(_conn_rp_index);
+	const RoomTunnel& conn_rt
+		= engine->dngn_floor().at(_conn_rt_index);
 	return (
-		(some_rp.gen_side == GEN_SIDE_L
-			&& _ls_r2_hit(conn_rp, some_rp))
-		|| (some_rp.gen_side == GEN_SIDE_T
-			&& _ts_r2_hit(conn_rp, some_rp))
-		|| (some_rp.gen_side == GEN_SIDE_R
-			&& _rs_r2_hit(conn_rp, some_rp))
-		|| (some_rp.gen_side == GEN_SIDE_B
-			&& _bs_r2_hit(conn_rp, some_rp))
+		(some_rt.gen_side == GEN_SIDE_L
+			&& _ls_r2_hit(conn_rt, some_rt))
+		|| (some_rt.gen_side == GEN_SIDE_T
+			&& _ts_r2_hit(conn_rt, some_rt))
+		|| (some_rt.gen_side == GEN_SIDE_R
+			&& _rs_r2_hit(conn_rt, some_rt))
+		|| (some_rt.gen_side == GEN_SIDE_B
+			&& _bs_r2_hit(conn_rt, some_rt))
 	);
 };
 //--------
 auto DngnGen::GenInnards::any_intersect_find_all(
-	RoomPath& to_check_rp, const std::optional<size_t>& index
+	RoomTunnel& to_check_rt, const std::optional<size_t>& index
 ) -> std::vector<size_t> {
-	return _find_all_backend(to_check_rp, index,
-		[](const RoomPath& to_check_rp, const RoomPath& some_item)
+	return _find_all_backend(to_check_rt, index,
+		[](const RoomTunnel& to_check_rt, const RoomTunnel& some_item)
 		-> bool {
-			return some_item.rect.intersect(to_check_rp.rect);
+			return some_item.rect.intersect(to_check_rt.rect);
 		});
 }
 auto DngnGen::GenInnards::any_intersect_find_first(
-	RoomPath& to_check_rp, const std::optional<size_t>& index
+	RoomTunnel& to_check_rt, const std::optional<size_t>& index
 ) -> std::optional<size_t> {
 	//for (size_t k=0; k<engine->dngn_floor().size(); ++k) {
 	//	auto& some_item = engine->dngn_floor().at(k);
 	//	if (index && (*index == k)) {
 	//		continue;
-	//	} else if (some_item.rect.intersect(to_check_rp.rect)) {
+	//	} else if (some_item.rect.intersect(to_check_rt.rect)) {
 	//		return &some_item;
 	//	}
 	//}
 	//return nullptr;
 
-	return _find_first_backend(to_check_rp, index,
-		[](const RoomPath& to_check_rp, const RoomPath& some_item)
+	return _find_first_backend(to_check_rt, index,
+		[](const RoomTunnel& to_check_rt, const RoomTunnel& some_item)
 		-> bool {
-			return some_item.rect.intersect(to_check_rp.rect);
+			return some_item.rect.intersect(to_check_rt.rect);
 		});
 }
 //--------
 auto DngnGen::GenInnards::any_sides_intersect_find_all(
-	RoomPath& to_check_rp, const std::optional<size_t>& index
+	RoomTunnel& to_check_rt, const std::optional<size_t>& index
 ) -> std::vector<size_t> {
-	return _find_all_backend(to_check_rp, index,
-		[](const RoomPath& to_check_rp, const RoomPath& some_item)
+	return _find_all_backend(to_check_rt, index,
+		[](const RoomTunnel& to_check_rt, const RoomTunnel& some_item)
 		-> bool {
-			return _some_sides_hit(to_check_rp, some_item);
+			return _some_sides_hit(to_check_rt, some_item);
 		});
 }
 auto DngnGen::GenInnards::any_sides_intersect_find_first(
-	RoomPath& to_check_rp, const std::optional<size_t>& index
+	RoomTunnel& to_check_rt, const std::optional<size_t>& index
 ) -> std::optional<size_t> {
 	//for (size_t k=0; k<engine->dngn_floor().size(); ++k) {
 	//	auto& some_item = engine->dngn_floor().at(k);
 	//	if (index && (*index == k)) {
 	//		continue;
-	//	} else if (_some_sides_hit(to_check_rp, some_item)) {
+	//	} else if (_some_sides_hit(to_check_rt, some_item)) {
 	//		return &some_item;
 	//	}
 	//}
 	//return nullptr;
-	return _find_first_backend(to_check_rp, index,
-		[](const RoomPath& to_check_rp, const RoomPath& some_item)
+	return _find_first_backend(to_check_rt, index,
+		[](const RoomTunnel& to_check_rt, const RoomTunnel& some_item)
 		-> bool {
-			return _some_sides_hit(to_check_rp, some_item);
+			return _some_sides_hit(to_check_rt, some_item);
 		});
 }
 //--------
-auto DngnGen::GenInnards::any_path_sides_hit_wrongly_find_all(
-	RoomPath& to_check_rp, const std::optional<size_t>& index
+auto DngnGen::GenInnards::any_tunnel_sides_hit_wrongly_find_all(
+	RoomTunnel& to_check_rt, const std::optional<size_t>& index
 ) -> std::vector<size_t> {
-	return _find_all_backend(to_check_rp, index,
-		[](const RoomPath& to_check_rp, const RoomPath& some_item)
+	return _find_all_backend(to_check_rt, index,
+		[](const RoomTunnel& to_check_rt, const RoomTunnel& some_item)
 		-> bool {
-			return _path_sides_hit_wrongly(to_check_rp, some_item);
+			return _tunnel_sides_hit_wrongly(to_check_rt, some_item);
 		});
 }
-auto DngnGen::GenInnards::any_path_sides_hit_wrongly_find_first(
-	RoomPath& to_check_rp, const std::optional<size_t>& index
+auto DngnGen::GenInnards::any_tunnel_sides_hit_wrongly_find_first(
+	RoomTunnel& to_check_rt, const std::optional<size_t>& index
 ) -> std::optional<size_t> {
 	//for (size_t k=0; k<engine->dngn_floor().size(); ++k) {
 	//	auto& some_item = engine->dngn_floor()._raw_at(k);
 	//	if (index && (*index == k)) {
 	//		continue;
-	//	} else if (_path_sides_hit_wrongly(to_check_rp, some_item)) {
-	//		//engine->dbg_log("any_path_sides_hit_wrongly_find_first(): ",
+	//	} else if (_tunnel_sides_hit_wrongly(to_check_rt, some_item)) {
+	//		//engine->dbg_log("any_tunnel_sides_hit_wrongly_find_first(): ",
 	//		//	"wrong hit found: ",
-	//		//	"to_check_rp{", to_check_rp.rect.tl_corner(), " ",
-	//		//		to_check_rp.rect.br_corner(), "} ",
+	//		//	"to_check_rt{", to_check_rt.rect.tl_corner(), " ",
+	//		//		to_check_rt.rect.br_corner(), "} ",
 	//		//	"engine->dngn_floor()._raw_at(", k, ")",
 	//		//		"{", some_item.rect.tl_corner(), " ",
 	//		//			some_item.rect.br_corner(), "}",
@@ -1010,45 +996,45 @@ auto DngnGen::GenInnards::any_path_sides_hit_wrongly_find_first(
 	//	}
 	//}
 	//return nullptr;
-	return _find_first_backend(to_check_rp, index,
-		[](const RoomPath& to_check_rp, const RoomPath& some_item)
+	return _find_first_backend(to_check_rt, index,
+		[](const RoomTunnel& to_check_rt, const RoomTunnel& some_item)
 		-> bool {
-			return _path_sides_hit_wrongly(to_check_rp, some_item);
+			return _tunnel_sides_hit_wrongly(to_check_rt, some_item);
 		});
 }
 //--------
 auto DngnGen::GenInnards::_find_all_backend(
-	RoomPath& to_check_rp,
+	RoomTunnel& to_check_rt,
 	const std::optional<size_t>& index,
 	const std::function<bool(
-		RoomPath&, const RoomPath&
+		RoomTunnel&, const RoomTunnel&
 	)>& test_func
 ) -> std::vector<size_t> {
 	std::vector<size_t> ret;
 
 	//const auto& raw_some_item_set
-	//	= engine->dngn_floor().cg_find_others(to_check_rp);
+	//	= engine->dngn_floor().cg_find_others(to_check_rt);
 	for (size_t k=0; k<engine->dngn_floor().size(); ++k)
 	//for (auto* raw_some_item: raw_some_item_set)
 	{
 		//const auto& some_item = engine->dngn_floor().at(k);
-		//RoomPath* some_item = static_cast<RoomPath*>(raw_some_item);
-		//const size_t k = engine->dngn_floor().rp_to_index_map()
+		//RoomTunnel* some_item = static_cast<RoomTunnel*>(raw_some_item);
+		//const size_t k = engine->dngn_floor().rt_to_index_map()
 		//	.at(some_item);
-		RoomPath* some_item = &engine->dngn_floor()._raw_at(k);
+		RoomTunnel* some_item = &engine->dngn_floor()._raw_at(k);
 		if (index && (*index == k)) {
 			continue;
-		} else if (test_func(to_check_rp, *some_item)) {
+		} else if (test_func(to_check_rt, *some_item)) {
 			ret.push_back(k);
 		}
 	}
 	return ret;
 }
 auto DngnGen::GenInnards::_find_first_backend(
-	RoomPath& to_check_rp,
+	RoomTunnel& to_check_rt,
 	const std::optional<size_t>& index,
 	const std::function<bool(
-		RoomPath&, const RoomPath&
+		RoomTunnel&, const RoomTunnel&
 	)>& test_func
 ) -> std::optional<size_t> {
 	//--------
@@ -1059,20 +1045,20 @@ auto DngnGen::GenInnards::_find_first_backend(
 	//}
 	//--------
 	//const auto& raw_some_item_uset
-	//	= engine->dngn_floor()._cg_find_others(to_check_rp);
+	//	= engine->dngn_floor()._cg_find_others(to_check_rt);
 	//const auto& raw_some_item_uset
-	//	= engine->dngn_floor()._coll_grid.find_others(&to_check_rp);
-	for (size_t k=0; k<engine->dngn_floor().size(); ++k) 
+	//	= engine->dngn_floor()._coll_grid.find_others(&to_check_rt);
+	for (size_t k=0; k<engine->dngn_floor().size(); ++k)
 	//for (auto* raw_some_item: raw_some_item_uset)
 	{
 		//const auto& some_item = engine->dngn_floor().at(k);
-		const RoomPath& some_item = engine->dngn_floor().at(k);
-		//RoomPath* some_item = static_cast<RoomPath*>(raw_some_item);
-		//const size_t k = engine->dngn_floor().rp_to_index_umap()
+		const RoomTunnel& some_item = engine->dngn_floor().at(k);
+		//RoomTunnel* some_item = static_cast<RoomTunnel*>(raw_some_item);
+		//const size_t k = engine->dngn_floor().rt_to_index_umap()
 		//	.at(some_item);
 		if (index && (*index == k)) {
 			continue;
-		} else if (test_func(to_check_rp, some_item)) {
+		} else if (test_func(to_check_rt, some_item)) {
 			return k;
 		}
 	}
@@ -1082,126 +1068,127 @@ auto DngnGen::GenInnards::_find_first_backend(
 void DngnGen::GenInnards::finalize() const {
 	//if (do_clear) {
 	//	//for (i=0; i<engine->dngn_floor().size(); ++i)
-	//	for (auto& some_rp: engine->dngn_floor()) {
-	//		//auto& some_rp = engine->dngn_floor().at(i);
+	//	for (auto& some_rt: engine->dngn_floor()) {
+	//		//auto& some_rt = engine->dngn_floor().at(i);
 	//		//engine->dngn_floor().at(i).door_pt_uset.clear();
-	//		some_rp.conn_index_uset.clear();
-	//		some_rp.door_pt_uset.clear();
+	//		some_rt.conn_index_uset.clear();
+	//		some_rt.door_pt_uset.clear();
 	//	}
 	//}
 	for (
-		size_t rp_index=0;
-		rp_index<engine->dngn_floor().size();
-		++rp_index
+		size_t rt_index=0;
+		rt_index<engine->dngn_floor().size();
+		++rt_index
 	) {
-		//if (item_index == rp_index) {
+		//if (item_index == rt_index) {
 		//	continue;
 		//}
 		auto
-			& rp = engine->dngn_floor()._raw_at(rp_index);
+			& rt = engine->dngn_floor()._raw_at(rt_index);
 			//& item = engine->dngn_floor()._raw_at(item_index);
-		//auto& rp_xdata = engine->dngn_floor().xdata_at(rp_index);
+		//auto& rt_xdata = engine->dngn_floor().xdata_at(rt_index);
 		//--------
 		//const auto& raw_item_uset = engine->dngn_floor().cg_neighbors
-		//	(rp_index);
+		//	(rt_index);
 		//for (auto* raw_item: raw_item_uset)
 		for (
 			size_t item_index=0;
 			item_index<engine->dngn_floor().size();
 			++item_index
 		) {
-			if (item_index == rp_index) {
+			if (item_index == rt_index) {
 				continue;
 			}
-			//RoomPath* item = static_cast<RoomPath*>(raw_item);
-			RoomPath* item = &engine->dngn_floor()._raw_at(item_index);
+			//RoomTunnel* item = static_cast<RoomTunnel*>(raw_item);
+			RoomTunnel* item = &engine->dngn_floor()._raw_at(item_index);
 			//auto& item_xdata = item->xdata;
 			//const size_t item_index
-			//	= engine->dngn_floor().rp_to_index_umap().at(item);
+			//	= engine->dngn_floor().rt_to_index_umap().at(item);
 			//--------
 			// set `conn_index_uset`
 			//// We only need to check intersection with one of the two
-			//// `RoomPath`'s sides
+			//// `RoomTunnel`'s sides
 			//if (
-			//	_ls_r2_hit(rp, *item) || _ts_r2_hit(rp, *item)
-			//	|| _rs_r2_hit(rp, *item) || _bs_r2_hit(rp, *item)
-			//	//|| _ls_r2_hit(*item, rp) || _ts_r2_hit(*item, rp)
-			//	//|| _rs_r2_hit(*item, rp) || _bs_r2_hit(*item, rp)
+			//	_ls_r2_hit(rt, *item) || _ts_r2_hit(rt, *item)
+			//	|| _rs_r2_hit(rt, *item) || _bs_r2_hit(rt, *item)
+			//	//|| _ls_r2_hit(*item, rt) || _ts_r2_hit(*item, rt)
+			//	//|| _rs_r2_hit(*item, rt) || _bs_r2_hit(*item, rt)
 			//) {
-			//	rp.conn_index_uset.insert(item_index);
-			//	item->conn_index_uset.insert(rp_index);
+			//	rt.conn_index_uset.insert(item_index);
+			//	item->conn_index_uset.insert(rt_index);
 			//}
 			//auto add_to_conn_index_uset = [](
-			//	RoomPath& rp_0, size_t rp_0_index,
-			//	RoomPath& rp_1, size_t rp_1_index
+			//	RoomTunnel& rt_0, size_t rt_0_index,
+			//	RoomTunnel& rt_1, size_t rt_1_index
 			//) -> void {
-			//	if (rp_0.is_horiz_path()) {
-			//	} else if (rp_0.is_vert_path()) {
-			//	} else { // if (rp_0.is_room())
+			//	if (rt_0.is_horiz_tunnel()) {
+			//	} else if (rt_0.is_vert_tunnel()) {
+			//	} else { // if (rt_0.is_room())
 			//	}
 			//};
 			//--------
 			// insert doors
 			auto maybe_insert_door = [](
-				RoomPath& some_rp, const IntVec2& some_corner
+				RoomTunnel& some_rt, const IntVec2& some_corner
 			) -> void {
-				if (!some_rp.alt_terrain_umap.contains(some_corner)) {
-					//some_rp.door_pt_uset.insert(some_corner);
-					some_rp.door_umap.insert(std::pair
-						(some_corner, std::nullopt));
+				if (!some_rt.alt_terrain_umap.contains(some_corner)) {
+					//some_rt.door_pt_uset.insert(some_corner);
+					//some_rt.door_umap.insert({some_corner, std::nullopt});
+					some_rt.alt_terrain_umap.insert
+						({some_corner, BgTile::Door});
 				}
 			};
-			if (rp.is_room() && item->is_path()) {
-				if (item->is_horiz_path()) {
-					if (_ls_r2_hit(*item, rp)) {
+			if (rt.is_room() && item->is_tunnel()) {
+				if (item->is_horiz_tunnel()) {
+					if (_ls_r2_hit(*item, rt)) {
 						maybe_insert_door(*item, item->rect.tl_corner());
 					}
-					if (_rs_r2_hit(*item, rp)) {
+					if (_rs_r2_hit(*item, rt)) {
 						maybe_insert_door(*item, item->rect.tr_corner());
 					}
-				} else { // if (item->is_vert_path())
-					if (_ts_r2_hit(*item, rp)) {
+				} else { // if (item->is_vert_tunnel())
+					if (_ts_r2_hit(*item, rt)) {
 						maybe_insert_door(*item, item->rect.tl_corner());
 					}
-					if (_bs_r2_hit(*item, rp)) {
+					if (_bs_r2_hit(*item, rt)) {
 						maybe_insert_door(*item, item->rect.bl_corner());
 					}
 				}
-			} else if (rp.is_path() && item->is_room()) {
-				if (rp.is_horiz_path()) {
-					if (_ls_r2_hit(rp, *item)) {
-						maybe_insert_door(rp, rp.rect.tl_corner());
+			} else if (rt.is_tunnel() && item->is_room()) {
+				if (rt.is_horiz_tunnel()) {
+					if (_ls_r2_hit(rt, *item)) {
+						maybe_insert_door(rt, rt.rect.tl_corner());
 					}
-					if (_rs_r2_hit(rp, *item)) {
-						maybe_insert_door(rp, rp.rect.tr_corner());
+					if (_rs_r2_hit(rt, *item)) {
+						maybe_insert_door(rt, rt.rect.tr_corner());
 					}
-				} else { // if (rp.is_vert_path())
-					if (_ts_r2_hit(rp, *item)) {
-						maybe_insert_door(rp, rp.rect.tl_corner());
+				} else { // if (rt.is_vert_tunnel())
+					if (_ts_r2_hit(rt, *item)) {
+						maybe_insert_door(rt, rt.rect.tl_corner());
 					}
-					if (_bs_r2_hit(rp, *item)) {
-						maybe_insert_door(rp, rp.rect.bl_corner());
+					if (_bs_r2_hit(rt, *item)) {
+						maybe_insert_door(rt, rt.rect.bl_corner());
 					}
 				}
 			}
 		}
 	}
 	//for (size_t i=0; i<engine->dngn_floor().size(); ++i) {
-	//	const auto& some_rp = engine->dngn_floor().at(i);
-	//	if (some_rp.door_pt_uset.size() > 0) {
+	//	const auto& some_rt = engine->dngn_floor().at(i);
+	//	if (some_rt.door_pt_uset.size() > 0) {
 	//		engine->dbg_log("door pts ", i, " [");
-	//		for (const auto& door_pt: some_rp.door_pt_uset) {
+	//		for (const auto& door_pt: some_rt.door_pt_uset) {
 	//			engine->dbg_log(door_pt, " ");
 	//		}
 	//		engine->dbg_log("]\n");
 	//	}
 	//}
-	_remove_dead_end_paths();
+	_remove_dead_end_tunnels();
 	_insert_exits();
-	_insert_alt_terrain_nullopts();
+	_insert_alt_terrain();
 	_insert_items_and_doors();
 }
-void DngnGen::GenInnards::_remove_dead_end_paths() const {
+void DngnGen::GenInnards::_remove_dead_end_tunnels() const {
 	for (;;) {
 		bool
 			did_rm = false,
@@ -1214,12 +1201,12 @@ void DngnGen::GenInnards::_remove_dead_end_paths() const {
 			did_rm = false;
 			erase_ret_inv = true;
 			auto& item = engine->dngn_floor()._raw_at(item_index);
-			if (item.is_path() && item.conn_index_uset.size() <= 1) {
+			if (item.is_tunnel() && item.conn_index_uset.size() <= 1) {
 				if (
-					GEN_YN_RM_DE_PATHS_DO_RM.rng_val_is_yes
-						(GEN_YN_RM_DE_PATHS_DO_RM.gen())
+					GEN_YN_RM_DE_TUNNELS_DO_RM.rng_val_is_yes
+						(GEN_YN_RM_DE_TUNNELS_DO_RM.gen())
 				) {
-					//engine->dbg_log("_remove_dead_end_paths(): ",
+					//engine->dbg_log("_remove_dead_end_tunnels(): ",
 					//	"going to remove: ",
 					//	"item{", item.rect.tl_corner(), " ",
 					//		item.rect.br_corner(), "} ",
@@ -1227,7 +1214,7 @@ void DngnGen::GenInnards::_remove_dead_end_paths() const {
 					if (item.conn_index_uset.size() == 0) {
 						throw std::runtime_error(sconcat
 							("game_engine::lvgen_etc::DngnGen",
-							"::GenInnards::_remove_dead_end_paths(): ",
+							"::GenInnards::_remove_dead_end_tunnels(): ",
 							"Eek! ", item_index, "; ",
 							item.rect.tl_corner(), " ",
 							item.rect.br_corner()));
@@ -1243,8 +1230,8 @@ void DngnGen::GenInnards::_remove_dead_end_paths() const {
 		}
 		if (
 			erase_ret_inv || !did_rm
-			//|| GEN_YN_RM_DE_PATHS_FINISH_IF.rng_val_is_yes
-			//	(GEN_YN_RM_DE_PATHS_FINISH_IF.gen())
+			//|| GEN_YN_RM_DE_TUNNELS_FINISH_IF.rng_val_is_yes
+			//	(GEN_YN_RM_DE_TUNNELS_FINISH_IF.gen())
 		) {
 			break;
 		}
@@ -1254,23 +1241,23 @@ void DngnGen::GenInnards::_insert_exits() const {
 	auto inner_insert = [this](bool up) -> void {
 		//for (i32 tries=0; tries<GEN_EXITS_LIM_TRIES; ++tries)
 		for (;;) {
-			RoomPath& rp = engine->dngn_floor()._raw_at
+			RoomTunnel& rt = engine->dngn_floor()._raw_at
 				(engine->layout_rand_lt_bound<i32>
 					(engine->dngn_floor().size()));
-			
-			if (rp.is_room()) {
+
+			if (rt.is_room()) {
 				const IntVec2 stairs_pos
-					= engine->layout_rand_vec2(rp.rect);
+					= engine->layout_rand_vec2(rt.rect);
 
 				bool did_intersect = false;
 
-				for (const auto& conn_index: rp.conn_index_uset) {
-					const RoomPath& conn_rp
+				for (const auto& conn_index: rt.conn_index_uset) {
+					const RoomTunnel& conn_rt
 						= engine->dngn_floor().at(conn_index);
-					const IntRect2& rect = conn_rp.rect;
+					const IntRect2& rect = conn_rt.rect;
 					if (
 						(
-							conn_rp.is_horiz_path()
+							conn_rt.is_horiz_tunnel()
 							&& (
 								(rect.tl_corner() + LEFT_OFFSET
 									== stairs_pos)
@@ -1278,7 +1265,7 @@ void DngnGen::GenInnards::_insert_exits() const {
 									== stairs_pos)
 							)
 						) || (
-							conn_rp.is_vert_path()
+							conn_rt.is_vert_tunnel()
 							&& (
 								(rect.tl_corner() + TOP_OFFSET
 									== stairs_pos)
@@ -1324,10 +1311,10 @@ void DngnGen::GenInnards::_insert_exits() const {
 		inner_insert(false);
 	}
 }
-void DngnGen::GenInnards::_insert_alt_terrain_nullopts() const {
+void DngnGen::GenInnards::_insert_alt_terrain() const {
 	const auto
-		& allowed_alt_terrain_darr = ALLOWED_ALT_TERRAIN_V2D
-			.at(engine->level_minus_1());
+		& allowed_alt_terrain_darr = ALLOWED_ALT_TERRAIN_DA2D
+			.at(engine->level_index());
 
 	const IntRect2
 		//floor_r2
@@ -1352,8 +1339,8 @@ void DngnGen::GenInnards::_insert_alt_terrain_nullopts() const {
 	//) {
 	//	const auto& item = engine->dngn_floor()._raw_at(item_index);
 	//	//if (
-	//	//	(item.is_path()
-	//	//		&& (gen_biome_mbins_type == GEN_BIOME_MBINS_TYPE_PATH
+	//	//	(item.is_tunnel()
+	//	//		&& (gen_biome_mbins_type == GEN_BIOME_MBINS_TYPE_TUNNEL
 	//	//			|| gen_biome_mbins_type == GEN_BIOME_MBINS_TYPE_BOTH))
 	//	//	|| (item.is_room()
 	//	//		&& (gen_biome_mbins_type == GEN_BIOME_MBINS_TYPE_ROOM
@@ -1448,10 +1435,11 @@ void DngnGen::GenInnards::_insert_alt_terrain_nullopts() const {
 	//}
 
 	std::vector<std::vector<std::pair<bool, BgTile>>> biome_bg_tiles
+		= std::vector<std::vector<std::pair<bool, BgTile>>>
 		(biome_gen.size(),
 			std::vector<std::pair<bool, BgTile>>
 				(biome_gen.front().size(),
-					std::pair(false, ALT_TERRAIN_NONE)));
+					{false, ALT_TERRAIN_NONE}));
 	for (i32 j=0; j<i32(biome_gen.size()); ++j) {
 		const auto& row = biome_gen.at(j);
 		for (i32 i=0; i<i32(row.size()); ++i) {
@@ -1464,9 +1452,9 @@ void DngnGen::GenInnards::_insert_alt_terrain_nullopts() const {
 			//		= engine->dngn_floor().cg_neighbors(IntVec2{i, j});
 			//	for (auto& neighbor: neighbors) {
 			//		if (neighbor->bbox().intersect(IntVec2{i, j})) {
-			//			RoomPath& rp = *static_cast<RoomPath*>(neighbor);
-			//			rp.alt_terrain_umap.insert(std::pair
-			//				(IntVec2{i, j}, std::nullopt));
+			//			RoomTunnel& rt = *static_cast<RoomTunnel*>(neighbor);
+			//			rt.alt_terrain_umap.insert
+			//				({IntVec2{i, j}, std::nullopt});
 			//		}
 			//	}
 			//}
@@ -1527,10 +1515,10 @@ void DngnGen::GenInnards::_insert_alt_terrain_nullopts() const {
 		if (dstairs_pos) {
 			DijkstraMapGen dmap_gen;
 			dmap_gen.add(*dstairs_pos);
-			
+
 			// This is just for checking that the dmap generates properly
 			// no matter the values of the goals
-			//dmap_gen.add(ustairs_pos, -4.5f); 
+			//dmap_gen.add(ustairs_pos, -4.5f);
 
 			const auto& dmap = dmap_gen.gen_basic
 				(engine->dngn_floor(), BASIC_NO_PASS_BG_TILE_USET);
@@ -1545,7 +1533,7 @@ void DngnGen::GenInnards::_insert_alt_terrain_nullopts() const {
 					const IntVec2
 						pos = phys_pos - dmap.BOUNDS_R2.tl_corner();
 					auto& bg_tile = biome_bg_tiles.at(pos.y).at(pos.x);
-					//const size_t rp_index = *fl.phys_pos_to_rp_index(pos);
+					//const size_t rt_index = *fl.phys_pos_to_rt_index(pos);
 					//engine->dbg_log(pos, ": ", bg_tile_str_map_at(bg_tile),
 					//	"\n");
 
@@ -1554,15 +1542,14 @@ void DngnGen::GenInnards::_insert_alt_terrain_nullopts() const {
 						&& BASIC_NO_PASS_BG_TILE_USET.contains
 							(bg_tile.second)
 					) {
-						//auto& rp = fl._raw_at(rp_index);
-						//rp.alt_terrain_umap.erase(pos);
+						//auto& rt = fl._raw_at(rt_index);
+						//rt.alt_terrain_umap.erase(pos);
 						bg_tile.first = false;
 					}
 					return true;
 				});
 		}
 	}
-
 
 	// move/change this code
 	//engine->dbg_log("Debug: generated biome `BgTile`s\n");
@@ -1599,11 +1586,11 @@ void DngnGen::GenInnards::_insert_alt_terrain_nullopts() const {
 		//	item.alt_terrain_umap.clear();
 		//}
 
-		//if (item.is_path()) {
+		//if (item.is_tunnel()) {
 		//	continue;
 		//}
 
-		// Note that `RoomPath`s are already generated with their borders
+		// Note that `RoomTunnel`s are already generated with their borders
 		IntVec2
 			pos;
 		for (
@@ -1633,7 +1620,7 @@ void DngnGen::GenInnards::_insert_alt_terrain_nullopts() const {
 
 				// TODO: incorporate `DijkstraMapGen` and connections
 				// between stairs
-				//if (item.is_path()) {
+				//if (item.is_tunnel()) {
 				//	if (!BASIC_UNSAFE_BG_TILE_USET.contains
 				//		(bg_tile.second)) {
 				//		item.alt_terrain_umap[pos] = bg_tile.second;
@@ -1649,17 +1636,18 @@ void DngnGen::GenInnards::_insert_alt_terrain_nullopts() const {
 				//	}
 				//}
 				if (
-					item.is_room() 
+					item.is_room()
 					|| !BASIC_NO_PASS_BG_TILE_USET.contains
-					(bg_tile.second)
+						(bg_tile.second)
 				) {
-					item.alt_terrain_umap.insert(std::pair
-						(pos, bg_tile.second));
+					item.alt_terrain_umap.insert({pos, bg_tile.second});
 				}
 			}
 		}
 	}
 }
+//void DngnGen::GenInnards::_fill_in_alt_terrain() const {
+//}
 void DngnGen::GenInnards::_insert_items_and_doors() const {
 }
 //--------

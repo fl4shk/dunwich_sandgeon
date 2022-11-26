@@ -211,7 +211,7 @@ public:		// types
 
 		operator binser::Value () const;
 
-		inline i32 seed_ext_rngs(LayoutRngArr& layout_rng_arr) {
+		inline i32 seed_layout_rng_arr(LayoutRngArr& layout_rng_arr) {
 			i32 i;
 			for (i=0; i<i32(layout_rng_arr.size()); ++i) {
 				//layout_rng_arr.at(i).seed(_base_rng_seed + i);
@@ -243,7 +243,7 @@ public:		// types
 			//_init_base_rng_seed();
 			_dbg_init_base_rng_seed(s_base_rng_seed);
 
-			const i32 i = seed_ext_rngs(layout_rng_arr);
+			const i32 i = seed_layout_rng_arr(layout_rng_arr);
 
 			_rng = Rng(_base_rng_seed + i);
 		}
@@ -812,7 +812,7 @@ public:		// `_non_ecs_ser_data_arr` accessor functions
 		return prev_floor_fn(USE_CURR_FILE_NUM);
 	}
 	//--------
-	inline i32 level_minus_1_fn(ecs::FileNum file_num) const {
+	inline i32 level_index_fn(ecs::FileNum file_num) const {
 		if (floor_fn(file_num) >= LEVEL_1_FLOOR_MIN
 			&& floor_fn(file_num) <= LEVEL_1_FLOOR_MAX) {
 			return 0;
@@ -830,12 +830,12 @@ public:		// `_non_ecs_ser_data_arr` accessor functions
 			return 4;
 		} else {
 			throw std::runtime_error(sconcat
-				("game_engine::Engine::level_minus_1_fn(): Eek! ",
+				("game_engine::Engine::level_index_fn(): Eek! ",
 				floor_fn(file_num)));
 		}
 	}
-	inline i32 level_minus_1() const {
-		return level_minus_1_fn(USE_CURR_FILE_NUM);
+	inline i32 level_index() const {
+		return level_index_fn(USE_CURR_FILE_NUM);
 	}
 	//--------
 	inline bool pfield_ent_id_umap_contains_fn(

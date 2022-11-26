@@ -113,6 +113,8 @@ constexpr inline bool r2_fits_in_other(
 ) {
 	return inside_rect.arg_inside<false>(rect);
 }
+// fits in playfield, no-border (i.e. not counting the playfield window's
+// border)
 constexpr inline bool r2_fits_in_pfnb(const IntRect2& rect) {
 	//return (rect.pos.x >= 0
 	//	&& rect.pos.x <= PFIELD_SIZE_2D.x);

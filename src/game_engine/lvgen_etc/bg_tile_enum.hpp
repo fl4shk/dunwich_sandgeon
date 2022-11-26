@@ -58,8 +58,10 @@ enum class BgTile: u8 {
 using BgTileUset = std::unordered_set<BgTile>;
 extern const BgTileUset
 	BASIC_NO_PASS_BG_TILE_USET,
-	BASIC_UNSAFE_BG_TILE_USET;
-	//PLAYER_UNSAFE_BG_TILE_USET;
+	BASIC_UNSAFE_BG_TILE_USET,
+	//PLAYER_UNSAFE_BG_TILE_USET,
+	DOOR_BG_TILE_USET,
+	LOCKED_BG_TILE_USET;
 //inline bool bg_tile_is_player_unsafe(BgTile bg_tile) {
 //	//return (bg_tile == BgTile::Pit
 //	//	|| bg_tile == BgTile::Lava
@@ -88,30 +90,44 @@ constexpr inline std::string bg_tile_str_map_at(BgTile bg_tile) {
 }
 
 using SizeAndBgTile = std::pair<size_t, BgTile>;
+using SizeAndBgTileDarr = std::vector<SizeAndBgTile>;
 
-template<typename T>
-concept IsBuildBgTileVecArg
-	= (std::same_as<T, lvgen_etc::BgTile>
-	|| std::same_as<T, SizeAndBgTile>);
+//template<typename T>
+//concept IsBuildBgTileDarrArg
+//	= (std::same_as<T, lvgen_etc::BgTile>
+//	|| std::same_as<T, SizeAndBgTile>);
 
-constexpr inline void _build_bg_tile_vec_backend(
-	std::vector<BgTile>& ret, BgTile first_arg
-) {
-	ret.push_back(first_arg);
-}
-constexpr inline void _build_bg_tile_vec_backend(
-	std::vector<BgTile>& ret, const SizeAndBgTile& first_arg
-) {
-	for (size_t i=0; i<first_arg.first; ++i) {
-		ret.push_back(first_arg.second);
-	}
-}
+//constexpr inline void _build_bg_tile_darr_backend(
+//	std::vector<BgTile>& ret, BgTile first_arg
+//) {
+//	ret.push_back(first_arg);
+//}
+//constexpr inline void _build_bg_tile_darr_backend(
+//	std::vector<BgTile>& ret, const SizeAndBgTile& first_arg
+//) {
+//	for (size_t i=0; i<first_arg.first; ++i) {
+//		ret.push_back(first_arg.second);
+//	}
+//}
+//constexpr inline std::vector<BgTile> build_bg_tile_darr(
+//	const IsBuildBgTileDarrArg auto&... args
+//) {
+//	std::vector<BgTile> ret;
+//
+//	(_build_bg_tile_darr_backend(ret, args), ...);
+//
+//	return ret;
+//}
 constexpr inline std::vector<BgTile> build_bg_tile_darr(
-	const IsBuildBgTileVecArg auto&... args
+	const std::vector<SizeAndBgTile>& sbt_darr
 ) {
 	std::vector<BgTile> ret;
 
-	(_build_bg_tile_vec_backend(ret, args), ...);
+	for (const auto& sbt: sbt_darr) {
+		for (size_t i=0; i<sbt.first; ++i) {
+			ret.push_back(sbt.second);
+		}
+	}
 
 	return ret;
 }

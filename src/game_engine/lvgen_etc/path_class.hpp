@@ -40,7 +40,7 @@ class DijkstraMap;
 //	const BgTileUset& walkable_bg_tiles, const BfsVoidAtFunc& fill_func
 //);
 //--------
-// Different from a `DngnFloor::RoomPath`.
+// Different from a `RoomTunnel`.
 class Path final {
 	friend class DijkstraMap;
 public:		// types

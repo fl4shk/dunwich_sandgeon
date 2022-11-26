@@ -21,6 +21,7 @@
 // src/game_engine/lvgen_etc/dngn_gen_class.hpp
 
 #include "../../misc_includes.hpp"
+#include "room_tunnel_class.hpp"
 #include "dngn_floor_class.hpp"
 
 namespace dunwich_sandgeon {
@@ -45,7 +46,7 @@ public:		// types
 	//using BgTile = comp::BgTile;
 	//using SizeAndBgTile = comp::SizeAndBgTile;
 	//using DngnFloor = comp::DngnFloor;
-	using RoomPath = DngnFloor::RoomPath;
+	//using RoomTunnel = RoomTunnel;
 	//--------
 	class GenNext final {
 	public:		// variables
@@ -104,7 +105,7 @@ public:		// constants
 	static constexpr BgTile
 		ALT_TERRAIN_NONE = BgTile::Error;
 	static const std::vector<std::vector<BgTile>>
-		ALLOWED_ALT_TERRAIN_V2D;
+		ALLOWED_ALT_TERRAIN_DA2D;
 		//LEVEL_1_ALT_TERRAIN_VEC,
 		//LEVEL_2_ALT_TERRAIN_VEC,
 		//LEVEL_3_ALT_TERRAIN_VEC,
@@ -114,24 +115,24 @@ public:		// constants
 public:		// constants
 	//--------
 	static constexpr i32
-		MIN_NUM_ROOM_PATHS = DngnFloor::MIN_NUM_ROOM_PATHS,
-		MAX_NUM_ROOM_PATHS = DngnFloor::MAX_NUM_ROOM_PATHS,
-		MIN_NUM_ROOMS = DngnFloor::MIN_NUM_ROOMS;
+		MIN_NUM_ROOM_TUNNELS = RoomTunnel::MIN_NUM_ROOM_TUNNELS,
+		MAX_NUM_ROOM_TUNNELS = RoomTunnel::MAX_NUM_ROOM_TUNNELS,
+		MIN_NUM_ROOMS = RoomTunnel::MIN_NUM_ROOMS;
 	//--------
 	static constexpr i32
-		PATH_THICKNESS = DngnFloor::PATH_THICKNESS,
-		PATH_MIN_LEN = DngnFloor::PATH_MIN_LEN,
-		PATH_MAX_LEN = DngnFloor::PATH_MAX_LEN;
+		TUNNEL_THICKNESS = RoomTunnel::TUNNEL_THICKNESS,
+		TUNNEL_MIN_LEN = RoomTunnel::TUNNEL_MIN_LEN,
+		TUNNEL_MAX_LEN = RoomTunnel::TUNNEL_MAX_LEN;
 
 	static constexpr IntVec2
-		ROOM_MIN_SIZE_2D = DngnFloor::ROOM_MIN_SIZE_2D,
-		ROOM_MAX_SIZE_2D = DngnFloor::ROOM_MAX_SIZE_2D;
+		ROOM_MIN_SIZE_2D = RoomTunnel::ROOM_MIN_SIZE_2D,
+		ROOM_MAX_SIZE_2D = RoomTunnel::ROOM_MAX_SIZE_2D;
 	//--------
 	static constexpr i32
 		//--------
 		// Generation percentages and stuff. 
 		//--------
-		GEN_TYPE_PATH = 0, MIN_GEN_TYPE = GEN_TYPE_PATH,
+		GEN_TYPE_TUNNEL = 0, MIN_GEN_TYPE = GEN_TYPE_TUNNEL,
 		GEN_TYPE_ROOM = 1, MAX_GEN_TYPE = GEN_TYPE_ROOM,
 		//--------
 		GEN_SIDE_L = 0, MIN_GEN_SIDE = GEN_SIDE_L,
@@ -139,9 +140,9 @@ public:		// constants
 		GEN_SIDE_R = 2,
 		GEN_SIDE_B = 3, MAX_GEN_SIDE = GEN_SIDE_B,
 		//--------
-		MIN_GEN_SHRINK_NUM_ATTEMPTS_PATH
-			= (PATH_MIN_LEN + PATH_MAX_LEN) / 2,
-		MAX_GEN_SHRINK_NUM_ATTEMPTS_PATH = PATH_MAX_LEN,
+		MIN_GEN_SHRINK_NUM_ATTEMPTS_TUNNEL
+			= (TUNNEL_MIN_LEN + TUNNEL_MAX_LEN) / 2,
+		MAX_GEN_SHRINK_NUM_ATTEMPTS_TUNNEL = TUNNEL_MAX_LEN,
 
 		MIN_GEN_SHRINK_NUM_ATTEMPTS_ROOM
 			= (math::max_va(ROOM_MIN_SIZE_2D.x, ROOM_MIN_SIZE_2D.y)
@@ -157,7 +158,7 @@ public:		// constants
 			//= 8,
 			//= 10,
 			= 15,
-		GEN_PARALLEL_PATH_MIN_DIST
+		GEN_PARALLEL_TUNNEL_MIN_DIST
 			//= 3;
 			= 4;
 			//= 5;
@@ -192,8 +193,8 @@ public:		// constants
 			//= 8.0f,
 		GEN_BIOME_THRESH_MM_SCALE = 1000.0f;
 	//static constexpr i32
-	//	GEN_BIOME_MBINS_TYPE_PATH = 0,
-	//		MIN_GEN_BIOME_MBINS_TYPE = GEN_BIOME_MBINS_TYPE_PATH,
+	//	GEN_BIOME_MBINS_TYPE_TUNNEL = 0,
+	//		MIN_GEN_BIOME_MBINS_TYPE = GEN_BIOME_MBINS_TYPE_TUNNEL,
 	//	GEN_BIOME_MBINS_TYPE_ROOM = 1,
 	//	GEN_BIOME_MBINS_TYPE_BOTH = 2,
 	//		MAX_GEN_BIOME_MBINS_TYPE = GEN_BIOME_MBINS_TYPE_BOTH;
@@ -273,7 +274,7 @@ public:		// constants
 			.diff_max=9
 			},
 
-		GEN_NEXT_PATH_TYPE
+		GEN_NEXT_TUNNEL_TYPE
 			{
 			//.same_max=0,
 			//.same_max=2,
@@ -286,11 +287,11 @@ public:		// constants
 			//.same_max=85,
 			//.diff_max=99
 			},
-		//GEN_NEXT_PATH_INDEX
+		//GEN_NEXT_TUNNEL_INDEX
 		//	{.same_max=85,
 		//	.diff_max=99};
 		// generating a room, and previously generated a path
-		GEN_NEXT_PATH_INDEX_NOW_ROOM
+		GEN_NEXT_TUNNEL_INDEX_NOW_ROOM
 			{
 			//.same_max=87,
 			//.same_max=93,
@@ -306,7 +307,7 @@ public:		// constants
 			//.diff_max=2000
 			},
 		// generating a path, and previously generated a path
-		GEN_NEXT_PATH_INDEX_NOW_PATH
+		GEN_NEXT_TUNNEL_INDEX_NOW_TUNNEL
 			{
 			.same_max=5,
 			.diff_max=9
@@ -330,14 +331,14 @@ public:		// constants
 			//.yes_max=999
 			},
 
-		GEN_YN_RM_DE_PATHS_DO_RM
+		GEN_YN_RM_DE_TUNNELS_DO_RM
 			{
 			//.no_max=29,
 			//.no_max=19,
 			.no_max=4,
 			.yes_max=99,
 			};
-		//GEN_YN_RM_DE_PATHS_FINISH_IF
+		//GEN_YN_RM_DE_TUNNELS_FINISH_IF
 		//	{
 		//	//.no_max=29,
 		//	//.no_max=19,
@@ -357,7 +358,7 @@ public:		// constants
 	//--------
 private:		// variables
 	i32
-		_attempted_num_rp = 0;
+		_attempted_num_rt = 0;
 	bool
 		_stop_gen_early = false,
 		_done_generating = false;
@@ -378,7 +379,7 @@ private:		// functions
 private:		// types
 	class GenInnards final {
 	public:		// types
-		using RoomPath = DngnGen::RoomPath;
+		//using RoomTunnel = DngnGen::RoomTunnel;
 	private:		// variables
 		DngnGen
 			* _self = nullptr;
@@ -386,20 +387,21 @@ private:		// types
 		//	* _ecs_engine = nullptr;
 		//DngnFloor
 		//	* _dngn_floor = nullptr;
-		RoomPath _temp_to_push_rp;
-		//RoomPath
-		//	* _rp = nullptr,
+		RoomTunnel _temp_to_push_rt;
+		//RoomTunnel
+		//	* _rt = nullptr,
 		//	* _item = nullptr;
-		//	//* _conn_rp = nullptr;
+		//	//* _conn_rt = nullptr;
 
 		i32
 			//_gen_side = 0,
 			_gen_next_type = 0,
-			_gen_next_conn_rp_index = 0,
+			_gen_next_conn_rt_index = 0,
 			_gen_type = 0,
-			_conn_rp_index = 0;
+			_conn_rt_index = 0;
 		//size_t
 		//	_check_i;
+		//std::vector<std::vector<std::pair<bool, BgTile>>> _biome_bg_tiles;
 	public:		// functions
 		inline GenInnards(
 			DngnGen* s_self
@@ -412,78 +414,78 @@ private:		// types
 			//_dngn_floor(&_self->dngn_floor)
 		{
 		}
-		bool gen_single_rp();
+		bool gen_single_rt();
 	public:		// functions
-		std::optional<RoomPath> _inner_gen_post_first();
+		std::optional<RoomTunnel> _inner_gen_post_first();
 	private:		// functions
 		//--------
-		void _do_push_back(RoomPath&& to_push_rp) const;
+		void _do_push_back(RoomTunnel&& to_push_rt) const;
 		//--------
-		std::optional<RoomPath> _gen_initial_rp();
+		std::optional<RoomTunnel> _gen_initial_rt();
 		//--------
 		//i32 _choose_shrink_or_extend_side(
-		//	bool was_horiz_path, bool was_vert_path,
-		//	//const RoomPath& some_rp
+		//	bool was_horiz_tunnel, bool was_vert_tunnel,
+		//	//const RoomTunnel& some_rt
 		//	//const std::optional<size_t>& index
 		//);
 		bool _shrink(
-			bool was_horiz_path, bool was_vert_path,
-			RoomPath& some_rp, //const std::optional<size_t>& index,
+			bool was_horiz_tunnel, bool was_vert_tunnel,
+			RoomTunnel& some_rt, //const std::optional<size_t>& index,
 			const std::function<bool(
-				RoomPath&//, const std::optional<size_t>&
+				RoomTunnel&//, const std::optional<size_t>&
 			)>& extra_test_func
 		);
 		bool _basic_shrink_extra_test_func(
-			RoomPath& some_rp
+			RoomTunnel& some_rt
 			//, const std::optional<size_t>& index
 		);
 		void _connect_by_extending(
-			//bool was_horiz_path, bool was_vert_path,
-			//RoomPath& some_rp, //const std::optional<size_t>& index,
+			//bool was_horiz_tunnel, bool was_vert_tunnel,
+			//RoomTunnel& some_rt, //const std::optional<size_t>& index,
 			//const std::function<bool(
-			//	RoomPath&//, const std::optional<size_t>&
+			//	RoomTunnel&//, const std::optional<size_t>&
 			//)>& shrink_extra_test_func
 		);
 		//--------
-		bool _rp_is_connected(const RoomPath& some_rp) const;
+		bool _rt_is_connected(const RoomTunnel& some_rt) const;
 		//--------
 	public:		// functions
 		//--------
 		std::vector<size_t> any_intersect_find_all(
-			RoomPath& to_check_rp, const std::optional<size_t>& index
+			RoomTunnel& to_check_rt, const std::optional<size_t>& index
 		);
 		std::optional<size_t> any_intersect_find_first(
-			RoomPath& to_check_rp, const std::optional<size_t>& index
+			RoomTunnel& to_check_rt, const std::optional<size_t>& index
 		);
 		//--------
 		std::vector<size_t> any_sides_intersect_find_all(
-			RoomPath& to_check_rp, const std::optional<size_t>& index
+			RoomTunnel& to_check_rt, const std::optional<size_t>& index
 		);
 		std::optional<size_t> any_sides_intersect_find_first(
-			RoomPath& to_check_rp, const std::optional<size_t>& index
+			RoomTunnel& to_check_rt, const std::optional<size_t>& index
 		);
 		//--------
-		std::vector<size_t> any_path_sides_hit_wrongly_find_all(
-			RoomPath& to_check_rp, const std::optional<size_t>& index
+		std::vector<size_t> any_tunnel_sides_hit_wrongly_find_all(
+			RoomTunnel& to_check_rt, const std::optional<size_t>& index
 		);
-		std::optional<size_t> any_path_sides_hit_wrongly_find_first(
-			RoomPath& to_check_rp, const std::optional<size_t>& index
+		std::optional<size_t> any_tunnel_sides_hit_wrongly_find_first(
+			RoomTunnel& to_check_rt, const std::optional<size_t>& index
 		);
 		//--------
 	private:		// functions
 		//--------
 		std::vector<size_t> _find_all_backend(
-			RoomPath& to_check_rp,
+			RoomTunnel& to_check_rt,
 			const std::optional<size_t>& index,
 			const std::function<bool(
-				RoomPath&, const RoomPath&
+				RoomTunnel&, const RoomTunnel&
 			)>& test_func
 		);
 		std::optional<size_t> _find_first_backend(
-			RoomPath& to_check_rp,
+			RoomTunnel& to_check_rt,
 			const std::optional<size_t>& index,
 			const std::function<bool(
-				RoomPath&, const RoomPath&
+				RoomTunnel&, const RoomTunnel&
 			)>& test_func
 		);
 		//--------
@@ -493,137 +495,146 @@ private:		// types
 		//void insert_doors(bool do_clear) const;
 	private:		// functions
 		//--------
-		void _remove_dead_end_paths() const;
+		void _remove_dead_end_tunnels() const;
 		void _insert_exits() const;
-		void _insert_alt_terrain_nullopts() const;
 		void _insert_items_and_doors() const;
+		void _insert_alt_terrain() const;
+		void _fill_in_alt_terrain() const;
 		//--------
 	private:		// static functions
 		//--------
-		static constexpr inline IntRect2 _ls_r2(const RoomPath& some_rp) {
-			return r2_left_side_1ge_past_in_pfnb(some_rp.rect);
+		static constexpr inline IntRect2 _ls_r2(const RoomTunnel& some_rt) {
+			return r2_left_side_1ge_past_in_pfnb(some_rt.rect);
 		}
-		static constexpr inline IntRect2 _ts_r2(const RoomPath& some_rp) {
-			return r2_top_side_1ge_past_in_pfnb(some_rp.rect);
+		static constexpr inline IntRect2 _ts_r2(const RoomTunnel& some_rt) {
+			return r2_top_side_1ge_past_in_pfnb(some_rt.rect);
 		}
-		static constexpr inline IntRect2 _rs_r2(const RoomPath& some_rp) {
-			return r2_right_side_1ge_past_in_pfnb(some_rp.rect);
+		static constexpr inline IntRect2 _rs_r2(const RoomTunnel& some_rt) {
+			return r2_right_side_1ge_past_in_pfnb(some_rt.rect);
 		}
-		static constexpr inline IntRect2 _bs_r2(const RoomPath& some_rp) {
-			return r2_bottom_side_1ge_past_in_pfnb(some_rp.rect);
+		static constexpr inline IntRect2 _bs_r2(const RoomTunnel& some_rt) {
+			return r2_bottom_side_1ge_past_in_pfnb(some_rt.rect);
 		}
 		//--------
 		static constexpr inline bool _ls_r2_hit(
-			const RoomPath& rp_0, const RoomPath& rp_1
+			const RoomTunnel& rt_0, const RoomTunnel& rt_1
 		) {
 			return 
-				(//i32(_check_i) != _conn_rp_index
-				//rp_0.gen_side == GEN_SIDE_L
+				(//i32(_check_i) != _conn_rt_index
+				//rt_0.gen_side == GEN_SIDE_L
 				//&&
-				r2_fits_in_pfnb(_ls_r2(rp_0))
-				//r2_intersects_pfield_nb(_ls_r2(rp_0))
-				&& rp_1.rect.intersect(_ls_r2(rp_0)));
+				r2_fits_in_pfnb(_ls_r2(rt_0))
+				//r2_intersects_pfield_nb(_ls_r2(rt_0))
+				&& rt_1.rect.intersect(_ls_r2(rt_0)));
 		}
 		static constexpr inline bool _ts_r2_hit(
-			const RoomPath& rp_0, const RoomPath& rp_1
+			const RoomTunnel& rt_0, const RoomTunnel& rt_1
 		) {
-			return (r2_fits_in_pfnb(_ts_r2(rp_0))
-				//r2_intersects_pfield_nb(_ts_r2(rp_0))
-				&& rp_1.rect.intersect(_ts_r2(rp_0)));
+			return (r2_fits_in_pfnb(_ts_r2(rt_0))
+				//r2_intersects_pfield_nb(_ts_r2(rt_0))
+				&& rt_1.rect.intersect(_ts_r2(rt_0)));
 		}
 		static constexpr inline bool _rs_r2_hit(
-			const RoomPath& rp_0, const RoomPath& rp_1
+			const RoomTunnel& rt_0, const RoomTunnel& rt_1
 		) {
-			return (r2_fits_in_pfnb(_rs_r2(rp_0))
-				//r2_intersects_pfield_nb(_rs_r2(rp_0))
-				&& rp_1.rect.intersect(_rs_r2(rp_0)));
+			return (r2_fits_in_pfnb(_rs_r2(rt_0))
+				//r2_intersects_pfield_nb(_rs_r2(rt_0))
+				&& rt_1.rect.intersect(_rs_r2(rt_0)));
 		}
 		static constexpr inline bool _bs_r2_hit(
-			const RoomPath& rp_0, const RoomPath& rp_1
+			const RoomTunnel& rt_0, const RoomTunnel& rt_1
 		) {
-			return (r2_fits_in_pfnb(_bs_r2(rp_0))
-				//r2_intersects_pfield_nb(_bs_r2(rp_0))
-				&& rp_1.rect.intersect(_bs_r2(rp_0)));
+			return (r2_fits_in_pfnb(_bs_r2(rt_0))
+				//r2_intersects_pfield_nb(_bs_r2(rt_0))
+				&& rt_1.rect.intersect(_bs_r2(rt_0)));
 		}
 		//--------
 		static constexpr inline bool _ls_and_rs_hit(
-			const RoomPath& rp_ls, const RoomPath& rp_rs
+			const RoomTunnel& rt_ls, const RoomTunnel& rt_rs
 		) {
-			return _ls_r2(rp_ls).intersect(_rs_r2(rp_rs));
+			return _ls_r2(rt_ls).intersect(_rs_r2(rt_rs));
 		}
 		static constexpr inline bool _ts_and_bs_hit(
-			const RoomPath& rp_ts, const RoomPath& rp_bs
+			const RoomTunnel& rt_ts, const RoomTunnel& rt_bs
 		) {
-			return _ts_r2(rp_ts).intersect(_bs_r2(rp_bs));
+			return _ts_r2(rt_ts).intersect(_bs_r2(rt_bs));
 		}
 		//--------
 		static constexpr inline bool _some_sides_hit(
-			const RoomPath& rp_0, const RoomPath& rp_1
+			const RoomTunnel& rt_0, const RoomTunnel& rt_1
 		) {
-			return (_ls_r2_hit(rp_0, rp_1)
-				|| _ts_r2_hit(rp_0, rp_1)
-				|| _rs_r2_hit(rp_0, rp_1)
-				|| _bs_r2_hit(rp_0, rp_1));
+			return (_ls_r2_hit(rt_0, rt_1)
+				|| _ts_r2_hit(rt_0, rt_1)
+				|| _rs_r2_hit(rt_0, rt_1)
+				|| _bs_r2_hit(rt_0, rt_1));
 		}
-		static constexpr inline bool _path_sides_hit_wrongly(
-			const RoomPath& rp_0, const RoomPath& rp_1
+		static constexpr inline bool _tunnel_sides_hit_wrongly(
+			const RoomTunnel& rt_0, const RoomTunnel& rt_1
 		) {
 			return (
 				(
-					rp_0.is_horiz_path()
-					&& (rp_1.is_horiz_path() || rp_1.is_room())
-					&& (_ts_r2_hit(rp_0, rp_1)
-						|| _bs_r2_hit(rp_0, rp_1))
+					rt_0.is_horiz_tunnel()
+					&& (rt_1.is_horiz_tunnel() || rt_1.is_room())
+					&& (_ts_r2_hit(rt_0, rt_1)
+						|| _bs_r2_hit(rt_0, rt_1))
 				) || (
-					rp_0.is_vert_path()
-					&& (rp_1.is_vert_path() || rp_1.is_room())
-					&& (_ls_r2_hit(rp_0, rp_1)
-						|| _rs_r2_hit(rp_0, rp_1))
+					rt_0.is_vert_tunnel()
+					&& (rt_1.is_vert_tunnel() || rt_1.is_room())
+					&& (_ls_r2_hit(rt_0, rt_1)
+						|| _rs_r2_hit(rt_0, rt_1))
 				) || (
-					rp_1.is_horiz_path()
-					&& (rp_0.is_horiz_path() || rp_0.is_room())
-					&& (_ts_r2_hit(rp_1, rp_0)
-						|| _bs_r2_hit(rp_1, rp_0))
+					rt_1.is_horiz_tunnel()
+					&& (rt_0.is_horiz_tunnel() || rt_0.is_room())
+					&& (_ts_r2_hit(rt_1, rt_0)
+						|| _bs_r2_hit(rt_1, rt_0))
 				) || (
-					rp_1.is_vert_path()
-					&& (rp_0.is_vert_path() || rp_0.is_room())
-					&& (_ls_r2_hit(rp_1, rp_0)
-						|| _rs_r2_hit(rp_1, rp_0))
+					rt_1.is_vert_tunnel()
+					&& (rt_0.is_vert_tunnel() || rt_0.is_room())
+					&& (_ls_r2_hit(rt_1, rt_0)
+						|| _rs_r2_hit(rt_1, rt_0))
 				)
 			);
 		}
-		static constexpr inline bool _parallel_paths_too_close(
-			const RoomPath& rp_0, const RoomPath& rp_1
+		static constexpr inline bool _parallel_tunnels_too_close(
+			const RoomTunnel& rt_0, const RoomTunnel& rt_1
 		) {
-			if (rp_0.is_horiz_path() && rp_1.is_horiz_path()) {
+			if (rt_0.is_horiz_tunnel() && rt_1.is_horiz_tunnel()) {
 				return (
-					rp_0.rect.build_in_grid_inflated_lim
-						(IntVec2{0, GEN_PARALLEL_PATH_MIN_DIST}, IntVec2(),
-						PFIELD_PHYS_NO_BRDR_RECT2).intersect(rp_1.rect)
-					|| rp_1.rect.build_in_grid_inflated_lim
-						(IntVec2{0, GEN_PARALLEL_PATH_MIN_DIST}, IntVec2(),
-						PFIELD_PHYS_NO_BRDR_RECT2).intersect(rp_0.rect)
-					|| rp_0.rect.build_in_grid_inflated_lim
-						(IntVec2(), IntVec2{0, GEN_PARALLEL_PATH_MIN_DIST},
-						PFIELD_PHYS_NO_BRDR_RECT2).intersect(rp_1.rect)
-					|| rp_1.rect.build_in_grid_inflated_lim
-						(IntVec2(), IntVec2{0, GEN_PARALLEL_PATH_MIN_DIST},
-						PFIELD_PHYS_NO_BRDR_RECT2).intersect(rp_0.rect)
+					rt_0.rect.build_in_grid_inflated_lim
+						(IntVec2{0, GEN_PARALLEL_TUNNEL_MIN_DIST},
+						IntVec2(),
+						PFIELD_PHYS_NO_BRDR_RECT2).intersect(rt_1.rect)
+					|| rt_1.rect.build_in_grid_inflated_lim
+						(IntVec2{0, GEN_PARALLEL_TUNNEL_MIN_DIST},
+						IntVec2(),
+						PFIELD_PHYS_NO_BRDR_RECT2).intersect(rt_0.rect)
+					|| rt_0.rect.build_in_grid_inflated_lim
+						(IntVec2(),
+						IntVec2{0, GEN_PARALLEL_TUNNEL_MIN_DIST},
+						PFIELD_PHYS_NO_BRDR_RECT2).intersect(rt_1.rect)
+					|| rt_1.rect.build_in_grid_inflated_lim
+						(IntVec2(),
+						IntVec2{0, GEN_PARALLEL_TUNNEL_MIN_DIST},
+						PFIELD_PHYS_NO_BRDR_RECT2).intersect(rt_0.rect)
 				);
-			} else if (rp_0.is_vert_path() && rp_1.is_vert_path()) {
+			} else if (rt_0.is_vert_tunnel() && rt_1.is_vert_tunnel()) {
 				return (
-					rp_0.rect.build_in_grid_inflated_lim
-						(IntVec2{GEN_PARALLEL_PATH_MIN_DIST, 0}, IntVec2(),
-						PFIELD_PHYS_NO_BRDR_RECT2).intersect(rp_1.rect)
-					|| rp_1.rect.build_in_grid_inflated_lim
-						(IntVec2{GEN_PARALLEL_PATH_MIN_DIST, 0}, IntVec2(),
-						PFIELD_PHYS_NO_BRDR_RECT2).intersect(rp_0.rect)
-					|| rp_0.rect.build_in_grid_inflated_lim
-						(IntVec2(), IntVec2{GEN_PARALLEL_PATH_MIN_DIST, 0},
-						PFIELD_PHYS_NO_BRDR_RECT2).intersect(rp_1.rect)
-					|| rp_1.rect.build_in_grid_inflated_lim
-						(IntVec2(), IntVec2{GEN_PARALLEL_PATH_MIN_DIST, 0},
-						PFIELD_PHYS_NO_BRDR_RECT2).intersect(rp_0.rect)
+					rt_0.rect.build_in_grid_inflated_lim
+						(IntVec2{GEN_PARALLEL_TUNNEL_MIN_DIST, 0},
+						IntVec2(),
+						PFIELD_PHYS_NO_BRDR_RECT2).intersect(rt_1.rect)
+					|| rt_1.rect.build_in_grid_inflated_lim
+						(IntVec2{GEN_PARALLEL_TUNNEL_MIN_DIST, 0},
+						IntVec2(),
+						PFIELD_PHYS_NO_BRDR_RECT2).intersect(rt_0.rect)
+					|| rt_0.rect.build_in_grid_inflated_lim
+						(IntVec2(),
+						IntVec2{GEN_PARALLEL_TUNNEL_MIN_DIST, 0},
+						PFIELD_PHYS_NO_BRDR_RECT2).intersect(rt_1.rect)
+					|| rt_1.rect.build_in_grid_inflated_lim
+						(IntVec2(),
+						IntVec2{GEN_PARALLEL_TUNNEL_MIN_DIST, 0},
+						PFIELD_PHYS_NO_BRDR_RECT2).intersect(rt_0.rect)
 				);
 			} else {
 				return false;

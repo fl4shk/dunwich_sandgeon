@@ -288,7 +288,7 @@ void Engine::deserialize(const binser::Value& bv) {
 	for (ecs::FileNum file_num=0; file_num<NUM_FILES; ++file_num) {
 		//auto& lr_arr = layout_rng_arr_fn(file_num);
 		auto& temp = non_ecs_ser_data_fn(file_num);
-		temp.seed_ext_rngs(layout_rng_arr_fn(file_num));
+		temp.seed_layout_rng_arr(layout_rng_arr_fn(file_num));
 		//temp.seed_rngs_etc(layout_rng_arr_fn(file_num));
 	}
 
