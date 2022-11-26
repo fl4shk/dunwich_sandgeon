@@ -39,48 +39,6 @@ AltTerrainState::operator binser::Value () const {
 
 	return ret;
 }
-//const std::string
-//auto RoomTunnel::from_bv(const binser::Value& bv) -> RoomTunnel {
-//	RoomTunnel ret;
-//
-//	MEMB_LIST_COMP_DUNGEON_ROOM_TUNNEL(BINSER_MEMB_FROM_BV_DESERIALIZE);
-//
-//	//if (!ret.is_valid())
-//	if (!ret.fits_in_pfield_nb()) {
-//		//throw std::invalid_argument(sconcat(
-//		//		(func_name ? sconcat(*func_name, "(): ") : std::string()),
-//		//		(msg ? sconcat(*msg, ": ") : std::string()),
-//		//		data_str, " < ", min_str,
-//		//			" || ", data_str, " || ", max_str,
-//		//			": ",
-//		//		data, " ", min, " ", max
-//		//));
-//		throw std::invalid_argument(sconcat(
-//			"game_engine::lvgen_etc::RoomTunnel::from_bv(): ",
-//			"`ret.rect` does not fit in the playfield: ", ret.rect
-//		));
-//	}
-//	if (!ret.is_tunnel() && !ret.is_room()) {
-//		throw std::invalid_argument(sconcat(
-//			"game_engine::lvgen_etc::RoomTunnel::from_bv(): ",
-//			"`ret.rect` is the wrong shape to be a path or a room: ",
-//			ret.rect
-//		));
-//	}
-//
-//	return ret;
-//}
-//RoomTunnel::operator binser::Value () const {
-//	binser::Value ret;
-//
-//	//MEMB_EX_MM_LIST_COMP_DUNGEON_ROOM_TUNNEL(BINSER_MEMB_SERIALIZE);
-//	//MEMB_EX_CS_LIST_COMP_DUNGEON_ROOM_TUNNEL(BINSER_MEMB_SERIALIZE);
-//	//MEMB_AUTOSER_LIST_COMP_DUNGEON_ROOM_TUNNEL(BINSER_MEMB_SERIALIZE);
-//	//BINSER_MEMB_SERIALIZE(rect);
-//	MEMB_LIST_COMP_DUNGEON_ROOM_TUNNEL(BINSER_MEMB_SERIALIZE);
-//
-//	return ret;
-//}
 DngnFloor::DngnFloor() {}
 DngnFloor::DngnFloor(const binser::Value& bv) {
 	//_rt_data.checked_size = RoomTunnel::MAX_NUM_ROOM_TUNNELS;
