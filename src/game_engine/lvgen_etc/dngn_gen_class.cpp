@@ -765,8 +765,8 @@ bool DngnGen::GenInnards::_basic_shrink_extra_test_func(
 	//, const std::optional<size_t>& index
 ) {
 	const auto& found
-		= _find_first_backend(
-			some_rt, std::nullopt,
+		= _find_first_backend
+			(some_rt, std::nullopt,
 			[](RoomTunnel& some_rt, const RoomTunnel& some_item)
 			-> bool {
 				//return !(some_item.rect.intersect(some_rt.rect)
@@ -1186,7 +1186,7 @@ void DngnGen::GenInnards::finalize() const {
 	_remove_dead_end_tunnels();
 	_insert_exits();
 	_insert_alt_terrain();
-	_insert_items_and_doors();
+	_insert_items_and_locked_doors();
 }
 void DngnGen::GenInnards::_remove_dead_end_tunnels() const {
 	for (;;) {
@@ -1648,7 +1648,7 @@ void DngnGen::GenInnards::_insert_alt_terrain() const {
 }
 //void DngnGen::GenInnards::_fill_in_alt_terrain() const {
 //}
-void DngnGen::GenInnards::_insert_items_and_doors() const {
+void DngnGen::GenInnards::_insert_items_and_locked_doors() const {
 }
 //--------
 } // namespace lvgen_etc

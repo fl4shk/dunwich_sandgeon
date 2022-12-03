@@ -497,7 +497,7 @@ private:		// types
 		//--------
 		void _remove_dead_end_tunnels() const;
 		void _insert_exits() const;
-		void _insert_items_and_doors() const;
+		void _insert_items_and_locked_doors() const;
 		void _insert_alt_terrain() const;
 		void _fill_in_alt_terrain() const;
 		//--------

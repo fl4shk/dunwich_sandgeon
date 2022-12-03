@@ -25,20 +25,21 @@ namespace dunwich_sandgeon {
 namespace game_engine {
 namespace lvgen_etc {
 //--------
-AltTerrainState AltTerrainState::from_bv(const binser::Value& bv) {
-	AltTerrainState ret;
+AltTerrainInfo AltTerrainInfo::from_bv(const binser::Value& bv) {
+	AltTerrainInfo ret;
 
 	MEMB_LIST_LVGEN_ETC_ALT_TERRAIN_STATE(BINSER_MEMB_FROM_BV_DESERIALIZE);
 
 	return ret;
 }
-AltTerrainState::operator binser::Value () const {
+AltTerrainInfo::operator binser::Value () const {
 	binser::Value ret;
 
 	MEMB_LIST_LVGEN_ETC_ALT_TERRAIN_STATE(BINSER_MEMB_SERIALIZE);
 
 	return ret;
 }
+//--------
 DngnFloor::DngnFloor() {}
 DngnFloor::DngnFloor(const binser::Value& bv) {
 	//_rt_data.checked_size = RoomTunnel::MAX_NUM_ROOM_TUNNELS;
@@ -147,28 +148,32 @@ const {
 				//&& rt.alt_terrain_umap.at(pos)
 				//&& !engine->pfield_ent_id_umap_contains
 				//	({pos.x, pos.y, pos3_z()})
-				&& (
-					!alt_terrain_state_umap.contains(pos)
-					|| alt_terrain_state_umap.at(pos).inner_state
-						!= AltTerrainInnerState::Destroyed
+				&& !(
+					alt_terrain_state_umap.contains(pos)
+					&& alt_terrain_state_umap.at(pos).state
+						== AltTerrainState::Destroyed
 				)
 			) {
 				if (
-					!alt_terrain_state_umap.contains(pos)
-					|| alt_terrain_state_umap.at(pos).inner_state
-						== AltTerrainInnerState::Normal
+					//alt_terrain_state_umap.contains(pos)
+					//&& alt_terrain_state_umap.at(pos).alt_bg_tile
+					alt_terrain_state_umap.contains(pos)
+					&& alt_terrain_state_umap.at(pos).state
+						== AltTerrainState::ShowAlt
 				) {
+					return alt_terrain_state_umap.at(pos).alt_bg_tile;
+				}
+				else
+				//if (
+				//	!alt_terrain_state_umap.contains(pos)
+				//	|| alt_terrain_state_umap.at(pos).state
+				//		== AltTerrainState::Normal
+				//)
+				{
 					return
 						//*rt.alt_terrain_umap.at(pos);
 						rt.alt_terrain_umap.at(pos);
 					//return BgTile::Error;
-				} else if (
-					//alt_terrain_state_umap.contains(pos)
-					//&& alt_terrain_state_umap.at(pos).alt_bg_tile
-					alt_terrain_state_umap.at(pos).inner_state
-						== AltTerrainInnerState::ShowAlt
-				) {
-					return alt_terrain_state_umap.at(pos).alt_bg_tile;
 				}
 			}
 			//else if (
@@ -281,8 +286,8 @@ bool DngnFloor::erase_path_during_gen(size_t index) {
 								//alt_terrain_state_umap.at(pos).destroyed
 								//	= true;
 								alt_terrain_state_umap.erase(pos);
-								//alt_terrain_state_umap.at(pos).inner_state
-								//	= AltTerrainInnerState::Destroyed;
+								//alt_terrain_state_umap.at(pos).state
+								//	= AltTerrainState::Destroyed;
 							}
 						}
 					}

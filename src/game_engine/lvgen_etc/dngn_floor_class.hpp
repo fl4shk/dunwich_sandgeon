@@ -38,16 +38,16 @@ namespace lvgen_etc {
 //--------
 class DngnGen;
 //--------
-enum class AltTerrainInnerState: u8 {
+enum class AltTerrainState: u8 {
 	Normal,
 	Destroyed,
 	ShowAlt,
 };
-class AltTerrainState final {
+class AltTerrainInfo final {
 public:		// types
 public:		// variables
 	#define MEMB_LIST_LVGEN_ETC_ALT_TERRAIN_STATE(X) \
-		X(inner_state, std::nullopt) \
+		X(state, std::nullopt) \
 		X(alt_bg_tile, std::nullopt) \
 		X(key, std::nullopt) \
 
@@ -56,11 +56,11 @@ public:		// variables
 	//bool destroyed = false;
 	//bool destroyed: 1 = false;
 	//bool show_alt: 1 = false;
-	AltTerrainInnerState inner_state = AltTerrainInnerState::Normal;
+	AltTerrainState state = AltTerrainState::Normal;
 	BgTile alt_bg_tile = BgTile::Error;
 	ecs::EntId key = ecs::ENT_NULL_ID;
 public:		// functions
-	static AltTerrainState from_bv(const binser::Value& bv);
+	static AltTerrainInfo from_bv(const binser::Value& bv);
 	operator binser::Value () const;
 };
 //--------
@@ -94,7 +94,7 @@ private:		// serialized variables
 public:		// serialized variables
 	//IntVec2Uset
 	//	destroyed_alt_terrain_uset;
-	std::unordered_map<IntVec2, AltTerrainState>
+	std::unordered_map<IntVec2, AltTerrainInfo>
 		alt_terrain_state_umap;
 	//std::unordered_map<IntVec2, ecs::EntIdUset> gnd_item_umap;
 public:		// functions
