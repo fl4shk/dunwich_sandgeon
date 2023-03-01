@@ -115,6 +115,7 @@ std::optional<BgTile> DngnFloor::bg_tile_at(
 		return phys_bg_tile_at(pos
 			//+
 			//+ IntVec2{1, 1}
+			//- IntVec2{1, 1}
 			);
 		//do_draw();
 	}
@@ -133,6 +134,29 @@ const {
 	for (auto& neighbor: neighbors) {
 		if (neighbor->bbox().intersect(phys_pos)) {
 			RoomTunnel& rt = *static_cast<RoomTunnel*>(neighbor);
+			//if (
+			//	//!_dbg_did_show
+			//	//&&
+			//	phys_pos
+			//		== IntVec2{9, 16}
+			//		//== IntVec2{10, 16}
+			//) {
+			//	//_dbg_did_show = true;
+			//	engine->dbg_log
+			//		("DngnFloor::phys_bg_tile_at(): ",
+			//		"`AltTerrainState::Normal`: ",
+			//		//char(comp::drawable_data_umap().at
+			//		//	(bg_tile_str_map_at(*bg_tile)).c),
+			//		//char(comp::drawable_data_umap().at
+			//		//	(bg_tile_str_map_at
+			//		//		(rt.alt_terrain_umap.at(phys_pos))).c),
+			//		(rt.alt_terrain_umap.contains(phys_pos)
+			//			? sconcat(char(comp::drawable_data_umap().at
+			//				(bg_tile_str_map_at
+			//					(rt.alt_terrain_umap.at(phys_pos))).c))
+			//			: "!contains"), 
+			//		"\n");
+			//}
 
 			if (ustairs_pos && *ustairs_pos == phys_pos) {
 				return BgTile::UpStairs;
@@ -175,6 +199,22 @@ const {
 				//		== AltTerrainState::Normal
 				//)
 				{
+					//if (
+					//	//!_dbg_did_show
+					//	//&&
+					//	phys_pos == IntVec2{9, 16}
+					//) {
+					//	//_dbg_did_show = true;
+					//	engine->dbg_log
+					//		("DngnFloor::phys_bg_tile_at(): ",
+					//		"`AltTerrainState::Normal`: ",
+					//		//char(comp::drawable_data_umap().at
+					//		//	(bg_tile_str_map_at(*bg_tile)).c),
+					//		char(comp::drawable_data_umap().at
+					//			(bg_tile_str_map_at
+					//				(rt.alt_terrain_umap.at(phys_pos))).c),
+					//		"\n");
+					//}
 					return
 						//*rt.alt_terrain_umap.at(phys_pos);
 						rt.alt_terrain_umap.at(phys_pos);

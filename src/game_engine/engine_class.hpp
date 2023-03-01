@@ -519,6 +519,7 @@ public:		// functions
 			{.x=layout_rand<i32>(min.x, max.x),
 			.y=layout_rand<i32>(min.y, max.y)};
 	}
+	// This forces the generated `IntVec2` to be inside of `inside_r2`
 	inline IntVec2 layout_rand_vec2(
 		const IntRect2& inside_r2
 	) {
@@ -530,6 +531,7 @@ public:		// functions
 		return layout_rand_vec2(PFIELD_PHYS_NO_BRDR_RECT2);
 	}
 
+	// This forces the generated `IntRect2` to be inside of `inside_r2`
 	inline IntRect2 layout_rand_r2(
 		const IntRect2& inside_r2, const IntVec2& min_size,
 		const IntVec2& max_size

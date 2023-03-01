@@ -291,7 +291,8 @@ auto DngnGen::GenInnards::_inner_gen_post_first()
 	// game will have fast enough hardware considering the maximum
 	// numbers of rooms/paths.
 	if (!_shrink
-		(_temp_to_push_rt.is_horiz_tunnel(), _temp_to_push_rt.is_vert_tunnel(),
+		(_temp_to_push_rt.is_horiz_tunnel(), 
+		_temp_to_push_rt.is_vert_tunnel(),
 		_temp_to_push_rt, // std::nullopt,
 		[this](RoomTunnel& some_rt) -> bool {
 			return _basic_shrink_extra_test_func(some_rt);
@@ -1555,9 +1556,13 @@ void DngnGen::GenInnards::_insert_alt_terrain() const {
 	}
 
 	// move/change this code
+	// This displays the biome `BgTile`s via `engine->dbg_log()`
 	//engine->dbg_log("Debug: generated biome `BgTile`s\n");
 	//for (size_t j=0; j<biome_bg_tiles.size(); ++j) {
 	//	auto& row = biome_bg_tiles.at(j);
+	//	if (j < 10u) {
+	//		engine->dbg_log(0);
+	//	}
 	//	engine->dbg_log(j, ": ");
 	//	for (size_t i=0; i<row.size(); ++i) {
 	//		const auto& bg_tile = row.at(i);
@@ -1643,7 +1648,15 @@ void DngnGen::GenInnards::_insert_alt_terrain() const {
 					|| !BASIC_NO_PASS_BG_TILE_USET.contains
 						(bg_tile.second)
 				) {
-					item.alt_terrain_umap.insert({pos, bg_tile.second});
+					item.alt_terrain_umap.insert
+					({
+						//--------
+						// convert coordinate systems
+						pos + TL_CORNER_OFFSET,
+						//--------
+						bg_tile.second
+						//--------
+					});
 				}
 			}
 		}

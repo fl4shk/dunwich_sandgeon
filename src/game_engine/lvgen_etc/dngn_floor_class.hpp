@@ -78,6 +78,7 @@ private:		// variables
 	//double
 	//	_layout_noise_pos_scale = 0.0d,
 	//	_layout_noise_pos_offset = 0.0d;
+	//bool _dbg_did_show = false;
 public:		// variables
 	//IntVec2
 	//	ustairs_pos;
