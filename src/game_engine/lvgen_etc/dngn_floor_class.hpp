@@ -1,6 +1,6 @@
 // This file is part of Dunwich Sandgeon.
 // 
-// Copyright 2022 FL4SHK
+// Copyright 2023 FL4SHK
 //
 // Dunwich Sandgeon is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by the
@@ -79,10 +79,13 @@ private:		// variables
 	//	_layout_noise_pos_scale = 0.0d,
 	//	_layout_noise_pos_offset = 0.0d;
 public:		// variables
-	IntVec2
-		ustairs_pos;
+	//IntVec2
+	//	ustairs_pos;
 	std::optional<IntVec2>
+		ustairs_pos = std::nullopt,
 		dstairs_pos = std::nullopt;
+	//std::vector<std::optional<IntVec2>>
+	//	extra_target_pos_darr;
 private:		// serialized variables
 	#define MEMB_SER_LIST_LVGEN_ETC_FLOOR_LAYOUT(X) \
 		X(_pos3_z, std::nullopt) \
@@ -107,7 +110,8 @@ public:		// functions
 	operator binser::Value () const;
 	//--------
 	std::optional<BgTile> bg_tile_at(const IntVec2& pos, size_t i) const;
-	std::optional<BgTile> phys_bg_tile_at(const IntVec2& pos) const;
+	// This doesn't take a `phys_pos` argument.
+	std::optional<BgTile> phys_bg_tile_at(const IntVec2& phys_pos) const;
 	//inline std::optional<BgTile> left_phys_bg_tile_at(const IntVec2& pos)
 	//const {
 	//	return phys_bg_tile_at(pos + LEFT_OFFSET);
@@ -141,6 +145,7 @@ public:		// functions
 		//return _rt_data.data.cend();
 		return _rt_data.cend();
 	}
+	//--------
 private:		// functions
 	inline RoomTunnel& _raw_at(size_t index) {
 		//return _rt_data.data.at(index);
@@ -180,9 +185,14 @@ public:		// functions
 		//double n_layout_noise_pos_scale,
 		//double n_layout_noise_pos_offset
 	);
+	// This functions erases non-walkable `BgTile`s along a `Path`. 
+	void make_path_walkable(
+		const IntVec2& start_phys_pos, const IntVec2& end_phys_pos,
+		const BgTileUset& no_pass_uset=BASIC_NO_PASS_BG_TILE_USET
+	);
 	// Note that this function *DOES* erase elements of
 	// `destroyed_alt_terrain_uset`
-	bool erase_path_during_gen(size_t index);
+	bool erase_tunnel_during_gen(size_t index);
 	CollGridT::DataElPtrUsetT cg_neighbors(RoomTunnel& rt) const;
 	CollGridT::DataElPtrUsetT cg_neighbors(size_t index) const;
 	CollGridT::DataElPtrUsetT cg_neighbors(const IntVec2& pos) const;
@@ -193,7 +203,7 @@ public:		// functions
 	GEN_GETTER_BY_CON_REF(rt_to_id_umap);
 	GEN_GETTER_BY_CON_REF(coll_grid);
 	GEN_GETTER_BY_VAL(pos3_z);
-	//GEN_GETTER_BY_CON_REF(path_darr);
+	//GEN_GETTER_BY_CON_REF(tunnel_darr);
 	//GEN_GETTER_BY_CON_REF(layout_noise_pos_scale);
 	//GEN_GETTER_BY_CON_REF(layout_noise_pos_offset);
 	//--------

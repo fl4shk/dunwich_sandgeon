@@ -1,6 +1,6 @@
 // This file is part of Dunwich Sandgeon.
 // 
-// Copyright 2022 FL4SHK
+// Copyright 2023 FL4SHK
 //
 // Dunwich Sandgeon is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by the

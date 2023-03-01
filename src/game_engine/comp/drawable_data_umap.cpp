@@ -1,6 +1,6 @@
 // This file is part of Dunwich Sandgeon.
 // 
-// Copyright 2022 FL4SHK
+// Copyright 2023 FL4SHK
 //
 // Dunwich Sandgeon is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by the
@@ -64,7 +64,7 @@ auto drawable_data_umap()
 			.gs_color_pair={FontColor::Black, FontColor::White}}},
 
 		// ',', 44
-		{bg_tile_str_map_at(BgTile::PathFloor),
+		{bg_tile_str_map_at(BgTile::TunnelFloor),
 			{.c=',',
 			//.color_pair=FontColor::White,
 			//.color_pair=FontColor::Brown,

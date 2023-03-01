@@ -1,6 +1,6 @@
 // This file is part of Dunwich Sandgeon.
 // 
-// Copyright 2022 FL4SHK
+// Copyright 2023 FL4SHK
 //
 // Dunwich Sandgeon is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by the
@@ -497,9 +497,9 @@ private:		// types
 		//--------
 		void _remove_dead_end_tunnels() const;
 		void _insert_exits() const;
-		void _insert_items_and_locked_doors() const;
 		void _insert_alt_terrain() const;
-		void _fill_in_alt_terrain() const;
+		//void _fill_in_alt_terrain() const;
+		void _insert_items_and_locked_doors() const;
 		//--------
 	private:		// static functions
 		//--------

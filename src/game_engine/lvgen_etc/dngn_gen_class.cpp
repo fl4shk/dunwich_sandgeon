@@ -1,6 +1,6 @@
 // This file is part of Dunwich Sandgeon.
 // 
-// Copyright 2022 FL4SHK
+// Copyright 2023 FL4SHK
 //
 // Dunwich Sandgeon is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by the
@@ -1105,7 +1105,8 @@ void DngnGen::GenInnards::finalize() const {
 			//const size_t item_index
 			//	= engine->dngn_floor().rt_to_index_umap().at(item);
 			//--------
-			// set `conn_index_uset`
+			// Old code to set `conn_index_uset`. See `_do_push_back` for
+			// the new code to do this.
 			//// We only need to check intersection with one of the two
 			//// `RoomTunnel`'s sides
 			//if (
@@ -1221,7 +1222,7 @@ void DngnGen::GenInnards::_remove_dead_end_tunnels() const {
 					} else {
 						did_rm = true;
 						erase_ret_inv
-							= !engine->dngn_floor().erase_path_during_gen
+							= !engine->dngn_floor().erase_tunnel_during_gen
 								(item_index);
 						break;
 					}
@@ -1290,8 +1291,8 @@ void DngnGen::GenInnards::_insert_exits() const {
 					} else {
 						ustairs_pos = stairs_pos;
 					}
-				} else {
-					if (ustairs_pos == stairs_pos) {
+				} else { // if (!up)
+					if (ustairs_pos && *ustairs_pos == stairs_pos) {
 						continue;
 					} else {
 						dstairs_pos = stairs_pos;
@@ -1427,7 +1428,7 @@ void DngnGen::GenInnards::_insert_alt_terrain() const {
 	//	for (size_t i=0; i<row.size(); ++i) {
 	//		//engine->dbg_log(i, "{", row.at(i), "}");
 	//		engine->dbg_log(row.at(i));
-	//		if (i + size_t(1) < row.size()) {
+	//		if (i + 1u < row.size()) {
 	//			engine->dbg_log(" ");
 	//		}
 	//	}
@@ -1481,6 +1482,8 @@ void DngnGen::GenInnards::_insert_alt_terrain() const {
 				const BgTile rng_bg_tile=allowed_alt_terrain_darr
 					.at(engine->layout_rand<i32>
 						(0, allowed_alt_terrain_darr.size() - 1));
+				// `explored_uset` contains all positions that have been
+				// visited by the calls to `bfs_fill`
 				if (!explored_uset.contains(pos)) {
 					bfs_fill
 						(explored_uset, pos,
@@ -1512,7 +1515,7 @@ void DngnGen::GenInnards::_insert_alt_terrain() const {
 	{
 		const auto& ustairs_pos = engine->dngn_floor().ustairs_pos;
 		const auto& dstairs_pos = engine->dngn_floor().dstairs_pos;
-		if (dstairs_pos) {
+		if (ustairs_pos && dstairs_pos) {
 			DijkstraMapGen dmap_gen;
 			dmap_gen.add(*dstairs_pos);
 
@@ -1522,7 +1525,7 @@ void DngnGen::GenInnards::_insert_alt_terrain() const {
 
 			const auto& dmap = dmap_gen.gen_basic
 				(engine->dngn_floor(), BASIC_NO_PASS_BG_TILE_USET);
-			const auto& path = dmap.make_path(ustairs_pos);
+			const auto& path = dmap.make_path(*ustairs_pos);
 			//engine->dbg_log("Filling `path`\n");
 			path->fill
 				([&](const IntVec2& phys_pos) -> bool {
@@ -1569,7 +1572,7 @@ void DngnGen::GenInnards::_insert_alt_terrain() const {
 	//			engine->dbg_log(char(draw_data.c));
 	//		}
 	//	}
-	//	//if (j + size_t(1) < biome_bg_tiles.size()) {
+	//	//if (j + 1u < biome_bg_tiles.size()) {
 	//		engine->dbg_log("\n");
 	//	//}
 	//}
@@ -1646,10 +1649,10 @@ void DngnGen::GenInnards::_insert_alt_terrain() const {
 		}
 	}
 }
-//void DngnGen::GenInnards::_fill_in_alt_terrain() const {
-//}
 void DngnGen::GenInnards::_insert_items_and_locked_doors() const {
 }
+//void DngnGen::GenInnards::_fill_in_alt_terrain() const {
+//}
 //--------
 } // namespace lvgen_etc
 } // namespace game_engine

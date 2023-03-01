@@ -1,6 +1,6 @@
 // This file is part of Dunwich Sandgeon.
 // 
-// Copyright 2022 FL4SHK
+// Copyright 2023 FL4SHK
 //
 // Dunwich Sandgeon is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by the
@@ -41,7 +41,7 @@ namespace lvgen_etc {
 	X(LockedDoor) \
 	\
 	X(RoomFloor) \
-	X(PathFloor) \
+	X(TunnelFloor) \
 	/* X(Floor) */ \
 	LIST_OF_ALT_TERRAIN_BG_TILES(X) \
 	\
