@@ -347,9 +347,9 @@ public:		// constants
 		//	};
 	//--------
 	static constexpr i32
-		// This is the number of tries to attempt room/path generation
+		// This is the number of tries to attempt room/tunnel generation
 		// after failing to generate a valid one.
-		GEN_RP_LIM_TRIES
+		GEN_RT_LIM_TRIES
 			//= 20;
 			//= 50;
 			= 100;

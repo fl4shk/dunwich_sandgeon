@@ -134,7 +134,7 @@ bool DngnGen::GenInnards::gen_single_rt() {
 		);
 
 		// We always generate a room in this case.
-		//for (i32 tries=0; tries<GEN_RP_LIM_TRIES; ++tries)
+		//for (i32 tries=0; tries<GEN_RT_LIM_TRIES; ++tries)
 		// Force there to be at least one room
 		//for (;;) {
 			RoomTunnel to_push_rt;
@@ -178,7 +178,7 @@ bool DngnGen::GenInnards::gen_single_rt() {
 		//	}
 		//} else if (!_self->_stop_gen_early) {
 			i32 tries = 0;
-			for (; tries<GEN_RP_LIM_TRIES; ++tries) {
+			for (; tries<GEN_RT_LIM_TRIES; ++tries) {
 				_self->_stop_gen_early = true;
 				if (auto opt_rt=_inner_gen_post_first(); opt_rt) {
 					_do_push_back(std::move(*opt_rt));
@@ -186,7 +186,7 @@ bool DngnGen::GenInnards::gen_single_rt() {
 					break;
 				}
 			}
-			//_self->_stop_gen_early = tries >= GEN_RP_LIM_TRIES;
+			//_self->_stop_gen_early = tries >= GEN_RT_LIM_TRIES;
 			if (_self->_stop_gen_early) {
 				if (engine->dngn_floor().size() < MIN_NUM_ROOM_TUNNELS) {
 					redo();
@@ -367,7 +367,7 @@ void DngnGen::GenInnards::_do_push_back(RoomTunnel&& to_push_rt) const {
 			to_push_rt.conn_index_uset.insert(i32(item_index));
 			item.conn_index_uset.insert
 				(i32(to_push_rt_index));
-			//engine->dbg_log("Connected these RPs: ",
+			//engine->dbg_log("Connected these RTs: ",
 			//	"to_push_rt{", to_push_rt.rect.tl_corner(), " ",
 			//		to_push_rt.rect.br_corner(), "} ",
 			//		to_push_rt_index, " "
@@ -1327,6 +1327,20 @@ void DngnGen::GenInnards::_insert_alt_terrain() const {
 			= engine->layout_rand_r2_in_pfnb
 				(GEN_BIOME_MBALL_GEN_MIN_SIZE_2D,
 				GEN_BIOME_MBALL_GEN_MAX_SIZE_2D);
+	//engine->dbg_log
+	//	("DngnGen::GenInnards::_insert_alt_terrain():\n",
+	//	"PFIELD_PHYS_RECT2: ",
+	//		PFIELD_PHYS_RECT2, " ",
+	//		"{", "tl", PFIELD_PHYS_RECT2.tl_corner(), " ",
+	//		"br", PFIELD_PHYS_RECT2.br_corner(), "}", "\n",
+	//	"PFIELD_PHYS_NO_BRDR_RECT2: ",
+	//		PFIELD_PHYS_NO_BRDR_RECT2, " ",
+	//		"{", "tl", PFIELD_PHYS_NO_BRDR_RECT2.tl_corner(), " ",
+	//		"br", PFIELD_PHYS_NO_BRDR_RECT2.br_corner(), "}", "\n",
+	//	"biome_mballs_bounds_r2: ",
+	//		biome_mballs_bounds_r2, " ",
+	//		"{", "tl", biome_mballs_bounds_r2.tl_corner(), " ",
+	//		"br", biome_mballs_bounds_r2.br_corner(), "}", "\n");
 	//engine->dbg_log(biome_mballs_bounds_r2, "\n");
 
 	MetaballGen
@@ -1602,18 +1616,32 @@ void DngnGen::GenInnards::_insert_alt_terrain() const {
 		IntVec2
 			pos;
 		for (
-			pos.y=item.rect.top_y() - i32(1);
-			pos.y<=item.rect.bottom_y() + i32(1);
+			pos.y=item.rect.top_y()
+				//+ TOP_OFFSET.y
+				;
+			pos.y<=item.rect.bottom_y()
+				//+ BOTTOM_OFFSET.y
+				;
 			++pos.y
 		) {
 			for (
-				pos.x=item.rect.left_x() - i32(1);
-				pos.x<=item.rect.right_x() + i32(1);
+				pos.x=item.rect.left_x()
+					//+ LEFT_OFFSET.x
+					;
+				pos.x<=item.rect.right_x()
+					//+ RIGHT_OFFSET.x
+					;
 				++pos.x
 			) {
-				if (!biome_mballs_bounds_r2.intersect(pos)) {
-					continue;
-				}
+				//if (!biome_mballs_bounds_r2.intersect(pos)) {
+				//	engine->dbg_log
+				//		("DngnGen debug: _insert_alt_terrain(): ",
+				//		"biome_mballs_bounds_r2",
+				//			"{", biome_mballs_bounds_r2.tl_corner(), " ",
+				//			biome_mballs_bounds_r2.br_corner(), "}\n",
+				//		"pos", pos, "\n");
+				//	continue;
+				//}
 
 				const IntVec2
 					temp_pos = pos - biome_mballs_bounds_r2.pos;
@@ -1628,6 +1656,7 @@ void DngnGen::GenInnards::_insert_alt_terrain() const {
 
 				// TODO: incorporate `DijkstraMapGen` and connections
 				// between stairs
+				// NOTE: now the above ^ is done
 				//if (item.is_tunnel()) {
 				//	if (!BASIC_UNSAFE_BG_TILE_USET.contains
 				//		(bg_tile.second)) {
@@ -1645,14 +1674,18 @@ void DngnGen::GenInnards::_insert_alt_terrain() const {
 				//}
 				if (
 					item.is_room()
-					|| !BASIC_NO_PASS_BG_TILE_USET.contains
-						(bg_tile.second)
+					|| !BASIC_NO_PASS_BG_TILE_USET.contains(bg_tile.second)
 				) {
 					item.alt_terrain_umap.insert
 					({
 						//--------
-						// convert coordinate systems
-						pos + TL_CORNER_OFFSET,
+						pos
+							// (old code) convert coordinate systems
+							//+ TL_CORNER_OFFSET
+							// oops, `biome_mballs_bounds_r2` was actually
+							// supposed to be inside of the
+							// no-internal-border area of the playfield.
+							,
 						//--------
 						bg_tile.second
 						//--------

@@ -121,8 +121,9 @@ std::optional<BgTile> DngnFloor::bg_tile_at(
 	}
 	//return bg_tile;
 }
-std::optional<BgTile> DngnFloor::phys_bg_tile_at(const IntVec2& phys_pos)
-const {
+std::optional<BgTile> DngnFloor::phys_bg_tile_at(
+	const IntVec2& phys_pos, RoomTunnel* ret_rt
+) const {
 	//if (!PFIELD_PHYS_RECT2.arg_inside(phys_pos)) {
 	//	return std::nullopt;
 	//}
@@ -134,6 +135,9 @@ const {
 	for (auto& neighbor: neighbors) {
 		if (neighbor->bbox().intersect(phys_pos)) {
 			RoomTunnel& rt = *static_cast<RoomTunnel*>(neighbor);
+			if (ret_rt) {
+				ret_rt = &rt;
+			}
 			//if (
 			//	//!_dbg_did_show
 			//	//&&
@@ -298,13 +302,17 @@ void DngnFloor::make_path_walkable(
 	const auto& path = dmap.make_path(end_phys_pos);
 	path->fill
 		([&](const IntVec2& phys_pos) -> bool {
-			const IntVec2
-				pos = phys_pos - dmap.BOUNDS_R2.tl_corner();
-			const auto& bg_tile = phys_bg_tile_at(pos);
+			//const IntVec2
+			//	pos = phys_pos - dmap.BOUNDS_R2.tl_corner();
+			RoomTunnel rt;
+			const auto& bg_tile = phys_bg_tile_at(phys_pos, &rt);
 			if (
 				bg_tile
 				&& no_pass_uset.contains(*bg_tile)
 			) {
+				//RoomTunnel* rt = _raw_at(phys_pos_to_rt_index(phys_pos));
+				if (rt.alt_terrain_umap.contains(phys_pos)) {
+				}
 			}
 			return true;
 		});

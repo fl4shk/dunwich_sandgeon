@@ -110,9 +110,11 @@ public:		// functions
 
 	operator binser::Value () const;
 	//--------
-	std::optional<BgTile> bg_tile_at(const IntVec2& pos, size_t i) const;
 	// This doesn't take a `phys_pos` argument.
-	std::optional<BgTile> phys_bg_tile_at(const IntVec2& phys_pos) const;
+	std::optional<BgTile> bg_tile_at(const IntVec2& pos, size_t i) const;
+	std::optional<BgTile> phys_bg_tile_at(
+		const IntVec2& phys_pos, RoomTunnel* ret_rt=nullptr
+	) const;
 	//inline std::optional<BgTile> left_phys_bg_tile_at(const IntVec2& pos)
 	//const {
 	//	return phys_bg_tile_at(pos + LEFT_OFFSET);
@@ -162,8 +164,9 @@ public:		// functions
 		//return _rt_data.data.at(index);
 		return *_rt_data.at(index);
 	}
-	std::optional<size_t> phys_pos_to_rt_index(const IntVec2& phys_pos)
-	const;
+	std::optional<size_t> phys_pos_to_rt_index(
+		const IntVec2& phys_pos
+	) const;
 	//inline RoomTunnel::Xdata& xdata_at(size_t index) {
 	//	return _rt_data.at(index)->xdata;
 	//}

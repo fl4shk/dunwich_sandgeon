@@ -33,9 +33,66 @@ static constexpr float
 static constexpr FltVec2
 	CDIFF_V2{.x=CDIFF, .y=CDIFF};
 //--------
+static constexpr IntVec2
+	LEFT_OFFSET = {-1, 0},
+	TOP_OFFSET = {0, -1},
+	RIGHT_OFFSET = {1, 0},
+	BOTTOM_OFFSET = {0, 1},
+	TL_CORNER_OFFSET = LEFT_OFFSET + TOP_OFFSET,
+	TR_CORNER_OFFSET = RIGHT_OFFSET + TOP_OFFSET,
+	BL_CORNER_OFFSET = LEFT_OFFSET + BOTTOM_OFFSET,
+	BR_CORNER_OFFSET = RIGHT_OFFSET + BOTTOM_OFFSET;
+//--------
+enum class PathDir: i32 {
+	Left,
+	Top,
+	Right,
+	Bottom,
+};
+constexpr inline std::string to_string(PathDir dir) {
+	switch (dir) {
+	//--------
+	case PathDir::Left:
+		return "PathDir::Left";
+	case PathDir::Top:
+		return "PathDir::Top";
+	case PathDir::Right:
+		return "PathDir::Right";
+	case PathDir::Bottom:
+		return "PathDir::Bottom";
+	default:
+		throw std::invalid_argument(sconcat
+			("game_engine::lvgen_etc::operator ",
+			"std::string (PathDir): ",
+			"Internal Error: invalid `dir` of ", i32(dir)));
+	//--------
+	}
+}
+constexpr inline IntVec2 path_dir_to_side_pos(
+	const IntVec2& pos, PathDir dir
+) {
+	switch (dir) {
+	//--------
+	case PathDir::Left:
+		return pos + LEFT_OFFSET;
+	case PathDir::Top:
+		return pos + TOP_OFFSET;
+	case PathDir::Right:
+		return pos + RIGHT_OFFSET;
+	case PathDir::Bottom:
+		return pos + BOTTOM_OFFSET;
+	default:
+		throw std::invalid_argument(sconcat
+			("game_engine::lvgen_etc::path_dir_to_side_pos(): ",
+			"Internal Error: ",
+			"invalid `dir`: ", i32(dir)));
+	//--------
+	}
+}
+//--------
 // This constant has values in the amount of tilemap entries
 static constexpr IntVec2
-	W_BRDR_SCREEN_SIZE_2D{
+	W_BRDR_SCREEN_SIZE_2D{ // "with border..."
 		//.x=82, .y=62,
 		.x=80, .y=60,
 		//.x=62, .y=42,
@@ -80,11 +137,20 @@ static constexpr IntVec2
 	PFIELD_PHYS_END_POS(
 		//IntVec2{PFIELD_WINDOW_END_POS.x, PFIELD_WINDOW_END_POS.y}
 		//	- IntVec2{2, 2}
-		PFIELD_WINDOW_END_POS - IntVec2{2, 2}
+		// subtract off the sums of the thicknesses of the border tiles
+		PFIELD_WINDOW_END_POS - IntVec2{2, 2} 
 	);
 static constexpr IntRect2
+	// "phys" is short for "physics". "Phys" means within the coordinate
+	// system inside of `engine->pfield_window`, not counting the drawn
+	// border. Positions within the "phys" coordinate system can be
+	// converted to 
 	PFIELD_PHYS_RECT2=IntRect2::build_in_grid
 		(PFIELD_PHYS_POS, PFIELD_PHYS_END_POS),
+
+	// This is used to guarantee that the borders of `RoomTunnel`s will fit
+	// inside of the playfield; this means that there's an internal
+	// border inside of the borderless parts of `engine->pfield_window`
 	PFIELD_PHYS_NO_BRDR_RECT2=IntRect2::build_in_grid
 		(PFIELD_PHYS_POS + IntVec2{1, 1},
 		PFIELD_PHYS_END_POS - IntVec2{1, 1});
@@ -219,63 +285,6 @@ constexpr inline IntRect2 r2_bottom_side_1ge_past_in_pfnb(
 	const IntRect2& rect
 ) {
 	return rect.bottom_side_1ge_past_lim(PFIELD_PHYS_NO_BRDR_RECT2);
-}
-//--------
-static constexpr IntVec2
-	LEFT_OFFSET = {-1, 0},
-	TOP_OFFSET = {0, -1},
-	RIGHT_OFFSET = {1, 0},
-	BOTTOM_OFFSET = {0, 1},
-	TL_CORNER_OFFSET = LEFT_OFFSET + TOP_OFFSET,
-	TR_CORNER_OFFSET = RIGHT_OFFSET + TOP_OFFSET,
-	BL_CORNER_OFFSET = LEFT_OFFSET + BOTTOM_OFFSET,
-	BR_CORNER_OFFSET = RIGHT_OFFSET + BOTTOM_OFFSET;
-//--------
-enum class PathDir: i32 {
-	Left,
-	Top,
-	Right,
-	Bottom,
-};
-constexpr inline std::string to_string(PathDir dir) {
-	switch (dir) {
-	//--------
-	case PathDir::Left:
-		return "PathDir::Left";
-	case PathDir::Top:
-		return "PathDir::Top";
-	case PathDir::Right:
-		return "PathDir::Right";
-	case PathDir::Bottom:
-		return "PathDir::Bottom";
-	default:
-		throw std::invalid_argument(sconcat
-			("game_engine::lvgen_etc::operator ",
-			"std::string (PathDir): ",
-			"Internal Error: invalid `dir` of ", i32(dir)));
-	//--------
-	}
-}
-constexpr inline IntVec2 path_dir_to_side_pos(
-	const IntVec2& pos, PathDir dir
-) {
-	switch (dir) {
-	//--------
-	case PathDir::Left:
-		return pos + LEFT_OFFSET;
-	case PathDir::Top:
-		return pos + TOP_OFFSET;
-	case PathDir::Right:
-		return pos + RIGHT_OFFSET;
-	case PathDir::Bottom:
-		return pos + BOTTOM_OFFSET;
-	default:
-		throw std::invalid_argument(sconcat
-			("game_engine::lvgen_etc::path_dir_to_side_pos(): ",
-			"Internal Error: ",
-			"invalid `dir`: ", i32(dir)));
-	//--------
-	}
 }
 //--------
 static constexpr IntVec2
