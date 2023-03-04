@@ -122,7 +122,7 @@ std::optional<BgTile> DngnFloor::bg_tile_at(
 	//return bg_tile;
 }
 std::optional<BgTile> DngnFloor::phys_bg_tile_at(
-	const IntVec2& phys_pos, RoomTunnel* ret_rt
+	const IntVec2& phys_pos, RoomTunnel** ret_rt
 ) const {
 	//if (!PFIELD_PHYS_RECT2.arg_inside(phys_pos)) {
 	//	return std::nullopt;
@@ -136,7 +136,7 @@ std::optional<BgTile> DngnFloor::phys_bg_tile_at(
 		if (neighbor->bbox().intersect(phys_pos)) {
 			RoomTunnel& rt = *static_cast<RoomTunnel*>(neighbor);
 			if (ret_rt) {
-				ret_rt = &rt;
+				*ret_rt = &rt;
 			}
 			//if (
 			//	//!_dbg_did_show
@@ -292,30 +292,60 @@ void DngnFloor::clear_before_gen(
 	//_layout_noise_pos_scale = n_layout_noise_pos_scale;
 	//_layout_noise_pos_offset = n_layout_noise_pos_offset;
 }
-void DngnFloor::make_path_walkable(
+void DngnFloor::erase_alt_terrain_in_path(
 	const IntVec2& start_phys_pos, const IntVec2& end_phys_pos,
 	const BgTileUset& no_pass_uset
 ) {
 	DijkstraMapGen dmap_gen;
 	dmap_gen.add(start_phys_pos);
-	const auto& dmap = dmap_gen.gen_basic(*this, no_pass_uset);
+	const auto& dmap
+		= dmap_gen.gen_basic(*this, {});
 	const auto& path = dmap.make_path(end_phys_pos);
-	path->fill
-		([&](const IntVec2& phys_pos) -> bool {
-			//const IntVec2
-			//	pos = phys_pos - dmap.BOUNDS_R2.tl_corner();
-			RoomTunnel rt;
-			const auto& bg_tile = phys_bg_tile_at(phys_pos, &rt);
-			if (
-				bg_tile
-				&& no_pass_uset.contains(*bg_tile)
-			) {
-				//RoomTunnel* rt = _raw_at(phys_pos_to_rt_index(phys_pos));
-				if (rt.alt_terrain_umap.contains(phys_pos)) {
+	//engine->dbg_log
+	//	("DngnFloor::erase_alt_terrain_in_path():\n",
+	//	"start_phys_pos: ", start_phys_pos, "\n",
+	//	"end_phys_pos: ", end_phys_pos, "\n",
+	//	"dmap.BOUNDS_R2: ", dmap.BOUNDS_R2, "\n",
+	//	"bool(path): ", static_cast<bool>(path), "\n",
+	//	"path->size(): ",
+	//		(path ? sconcat(path->size()) : "invalid"), "\n");
+	if (path) {
+		//for (const auto& item: *path) {
+		//	//engine->dbg_log(item, " ");
+		//	const auto& bg_tile = phys_bg_tile_at(item);
+		//	engine->dbg_log
+		//		(item, ": ",
+		//		(bg_tile
+		//			? sconcat(char(comp::drawable_data_umap().at
+		//				(bg_tile_str_map_at(*bg_tile)).c))
+		//			: "(invalid)"),
+		//		"\n");
+		//}
+		//engine->dbg_log("\n");
+		path->fill
+			([&](const IntVec2& phys_pos) -> bool {
+				//const IntVec2
+				//	pos = phys_pos - dmap.BOUNDS_R2.tl_corner();
+				//engine->dbg_log
+				//	("DngnFloor::erase_alt_terrain_in_path(): ",
+				//	phys_pos, "\n");
+				RoomTunnel* rt;
+				const auto& bg_tile = phys_bg_tile_at(phys_pos, &rt);
+				if (
+					bg_tile
+					&& no_pass_uset.contains(*bg_tile)
+				)
+				{
+					//RoomTunnel* rt = _raw_at(phys_pos_to_rt_index(phys_pos));
+					if (rt->alt_terrain_umap.contains(phys_pos)) {
+						//engine->dbg_log("testificate\n");
+						rt->alt_terrain_umap.erase(phys_pos);
+						//rt->alt_terrain_umap[phys_pos] = BgTile::Lava;
+					}
 				}
-			}
-			return true;
-		});
+				return true;
+			});
+	}
 }
 bool DngnFloor::erase_tunnel_during_gen(size_t index) {
 	if (

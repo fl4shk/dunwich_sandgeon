@@ -38,10 +38,16 @@ const std::vector<std::vector<BgTile>>
 	DngnGen::ALLOWED_ALT_TERRAIN_DA2D({
 		// Level 1 (index 0)
 		build_bg_tile_darr
-			({{2, BgTile::Water},
+			({
+			//{2, BgTile::Water},
 			//SizeAndBgTile(5, BgTile::Water),
 			//BgTile::Water,
-			{1, BgTile::Spikes}
+			{
+				//1
+				20
+				, 
+				BgTile::Spikes
+			}
 			//SizeAndBgTile(20, BgTile::Spikes)
 			//SizeAndBgTile(3, BgTile::Lava)
 			}),
@@ -1527,47 +1533,47 @@ void DngnGen::GenInnards::_insert_alt_terrain() const {
 		}
 	}
 	// move/change this code
-	{
-		const auto& ustairs_pos = engine->dngn_floor().ustairs_pos;
-		const auto& dstairs_pos = engine->dngn_floor().dstairs_pos;
-		if (ustairs_pos && dstairs_pos) {
-			DijkstraMapGen dmap_gen;
-			dmap_gen.add(*dstairs_pos);
+	//{
+	//	const auto& ustairs_pos = engine->dngn_floor().ustairs_pos;
+	//	const auto& dstairs_pos = engine->dngn_floor().dstairs_pos;
+	//	if (ustairs_pos && dstairs_pos) {
+	//		DijkstraMapGen dmap_gen;
+	//		dmap_gen.add(*dstairs_pos);
 
-			// This is just for checking that the dmap generates properly
-			// no matter the values of the goals
-			//dmap_gen.add(ustairs_pos, -4.5f);
+	//		// This is just for checking that the dmap generates properly
+	//		// no matter the values of the goals
+	//		//dmap_gen.add(ustairs_pos, -4.5f);
 
-			const auto& dmap = dmap_gen.gen_basic
-				(engine->dngn_floor(), BASIC_NO_PASS_BG_TILE_USET);
-			const auto& path = dmap.make_path(*ustairs_pos);
-			//engine->dbg_log("Filling `path`\n");
-			path->fill
-				([&](const IntVec2& phys_pos) -> bool {
-					//auto& fl = engine->dngn_floor();
-					// This assumes that the `std::optional`s returned by
-					// these functions definitely contain values.
-					//const auto& bg_tile = *fl.phys_bg_tile_at(pos);
-					const IntVec2
-						pos = phys_pos - dmap.BOUNDS_R2.tl_corner();
-					auto& bg_tile = biome_bg_tiles.at(pos.y).at(pos.x);
-					//const size_t rt_index = *fl.phys_pos_to_rt_index(pos);
-					//engine->dbg_log(pos, ": ", bg_tile_str_map_at(bg_tile),
-					//	"\n");
+	//		const auto& dmap = dmap_gen.gen_basic
+	//			(engine->dngn_floor(), BASIC_NO_PASS_BG_TILE_USET);
+	//		const auto& path = dmap.make_path(*ustairs_pos);
+	//		//engine->dbg_log("Filling `path`\n");
+	//		path->fill
+	//			([&](const IntVec2& phys_pos) -> bool {
+	//				//auto& fl = engine->dngn_floor();
+	//				// This assumes that the `std::optional`s returned by
+	//				// these functions definitely contain values.
+	//				//const auto& bg_tile = *fl.phys_bg_tile_at(pos);
+	//				const IntVec2
+	//					pos = phys_pos - dmap.BOUNDS_R2.tl_corner();
+	//				auto& bg_tile = biome_bg_tiles.at(pos.y).at(pos.x);
+	//				//const size_t rt_index = *fl.phys_pos_to_rt_index(pos);
+	//				//engine->dbg_log(pos, ": ", bg_tile_str_map_at(bg_tile),
+	//				//	"\n");
 
-					if (
-						bg_tile.first
-						&& BASIC_NO_PASS_BG_TILE_USET.contains
-							(bg_tile.second)
-					) {
-						//auto& rt = fl._raw_at(rt_index);
-						//rt.alt_terrain_umap.erase(pos);
-						bg_tile.first = false;
-					}
-					return true;
-				});
-		}
-	}
+	//				if (
+	//					bg_tile.first
+	//					&& BASIC_NO_PASS_BG_TILE_USET.contains
+	//						(bg_tile.second)
+	//				) {
+	//					//auto& rt = fl._raw_at(rt_index);
+	//					//rt.alt_terrain_umap.erase(pos);
+	//					bg_tile.first = false;
+	//				}
+	//				return true;
+	//			});
+	//	}
+	//}
 
 	// move/change this code
 	// This displays the biome `BgTile`s via `engine->dbg_log()`
@@ -1692,6 +1698,15 @@ void DngnGen::GenInnards::_insert_alt_terrain() const {
 					});
 				}
 			}
+		}
+	}
+	{
+		const auto
+			& ustairs_pos = engine->dngn_floor().ustairs_pos,
+			& dstairs_pos = engine->dngn_floor().dstairs_pos;
+		if (ustairs_pos && dstairs_pos) {
+			engine->dngn_floor().erase_alt_terrain_in_path
+				(*ustairs_pos, *dstairs_pos, BASIC_NO_PASS_BG_TILE_USET);
 		}
 	}
 }

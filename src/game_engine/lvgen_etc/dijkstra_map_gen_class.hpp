@@ -150,14 +150,26 @@ private:		// functions
 		return _data.at(pos.y).at(pos.x);
 	}
 	constexpr inline float& _raw_phys_at(const IntVec2& phys_pos) {
-		return _raw_at(phys_pos - BOUNDS_R2.tl_corner());
+		return _raw_at(phys_pos
+			//- (BOUNDS_R2.tl_corner() - TL_CORNER_OFFSET)
+			//- BOUNDS_R2.tl_corner() - TL_CORNER_OFFSET
+			//+ BOUNDS_R2.tl_corner()
+			- BOUNDS_R2.tl_corner()
+			//- IntVec2{1, 1}
+			);
 	}
 public:		// functions
 	constexpr inline const float& at(const IntVec2& pos) const {
 		return _data.at(pos.y).at(pos.x);
 	}
 	constexpr inline const float& phys_at(const IntVec2& phys_pos) const {
-		return at(phys_pos - BOUNDS_R2.tl_corner());
+		return at(phys_pos
+			//- (BOUNDS_R2.tl_corner() - TL_CORNER_OFFSET)
+			//- BOUNDS_R2.tl_corner() - TL_CORNER_OFFSET
+			//+ BOUNDS_R2.tl_corner()
+			- BOUNDS_R2.tl_corner()
+			//- IntVec2{1, 1}
+			);
 	}
 	//static std::ostream& osprint_dmap(std::ostream& os, const Dmap& dmap);
 };

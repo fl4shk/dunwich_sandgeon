@@ -113,7 +113,7 @@ public:		// functions
 	// This doesn't take a `phys_pos` argument.
 	std::optional<BgTile> bg_tile_at(const IntVec2& pos, size_t i) const;
 	std::optional<BgTile> phys_bg_tile_at(
-		const IntVec2& phys_pos, RoomTunnel* ret_rt=nullptr
+		const IntVec2& phys_pos, RoomTunnel** ret_rt=nullptr
 	) const;
 	//inline std::optional<BgTile> left_phys_bg_tile_at(const IntVec2& pos)
 	//const {
@@ -190,7 +190,10 @@ public:		// functions
 		//double n_layout_noise_pos_offset
 	);
 	// This functions erases non-walkable `BgTile`s along a `Path`. 
-	void make_path_walkable(
+	void 
+		//make_path_walkable
+		erase_alt_terrain_in_path
+	(
 		const IntVec2& start_phys_pos, const IntVec2& end_phys_pos,
 		const BgTileUset& no_pass_uset=BASIC_NO_PASS_BG_TILE_USET
 	);

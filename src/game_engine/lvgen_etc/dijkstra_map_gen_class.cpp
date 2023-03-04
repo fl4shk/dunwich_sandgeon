@@ -65,9 +65,12 @@ std::optional<Path> DijkstraMap::make_path(
 	//for (;;)
 	while (phys_at(phys_pos) > stop_when_le_val) {
 		auto inner_func = [&](PathDir dir) -> bool {
+			const auto side_phys_pos=path_dir_to_side_pos(phys_pos, dir);
+			//engine->dbg_log
+			//	("side_phys_pos stuff: ",
+			//	side_phys_pos, " ",
+			//	side_phys_pos - BOUNDS_R2.tl_corner(), "\n");
 			if (
-				const auto side_phys_pos=path_dir_to_side_pos
-					(phys_pos, dir);
 				BOUNDS_R2.intersect(side_phys_pos)
 			) {
 				//ret._data.push_back(side_pos);
@@ -77,10 +80,17 @@ std::optional<Path> DijkstraMap::make_path(
 					ret._data.push_back(phys_pos);
 					return true;
 				} else {
+					//engine->dbg_log
+					//	("testificate 0: ",
+					//	"{", BOUNDS_R2.tl_corner(), " ",
+					//		BOUNDS_R2.br_corner(), "} ",
+					//	side_phys_pos, " ",
+					//	phys_pos, "\n");
 					return false;
 				}
 			} else {
 				//return InnerFuncRet::OutOfBounds;
+				//engine->dbg_log("testificate 1\n");
 				return false;
 			}
 		};
@@ -92,6 +102,12 @@ std::optional<Path> DijkstraMap::make_path(
 				|| inner_func(PathDir::Bottom)
 			)
 		) {
+			//engine->dbg_log
+			//	("DijkstraMap::make_path(): Failed to find a `Path`\n");
+			//for (const IntVec2& item: ret) {
+			//	engine->dbg_log(item, " ");
+			//}
+			//engine->dbg_log("\n");
 			// This happens when we fail to find a `Path`. I'm about 90%
 			// certain there's *not* an off-by-one error here.
 			return std::nullopt;
