@@ -335,8 +335,7 @@ void DngnFloor::erase_alt_terrain_in_path(
 					bg_tile
 					&& alt_terrain_to_erase_uset.contains(*bg_tile)
 					&& rt->alt_terrain_umap.contains(phys_pos)
-				)
-				{
+				) {
 					//RoomTunnel
 					//	* rt = _raw_at(phys_pos_to_rt_index(phys_pos));
 					//if (rt->alt_terrain_umap.contains(phys_pos)) {
