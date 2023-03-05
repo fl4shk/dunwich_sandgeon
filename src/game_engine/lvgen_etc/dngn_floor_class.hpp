@@ -195,7 +195,8 @@ public:		// functions
 		erase_alt_terrain_in_path
 	(
 		const IntVec2& start_phys_pos, const IntVec2& end_phys_pos,
-		const BgTileUset& no_pass_uset=BASIC_NO_PASS_BG_TILE_USET
+		const BgTileUset& alt_terrain_to_erase_uset,
+		const BgTileUset& no_pass_uset=RT_BRDR_BG_TILE_USET
 	);
 	// Note that this function *DOES* erase elements of
 	// `destroyed_alt_terrain_uset`

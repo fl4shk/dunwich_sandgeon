@@ -48,8 +48,10 @@ enum class KeyKind: i32 {
 	RightR,
 	DownR,
 
-	ShoulderL,
-	ShoulderR,
+	ShoulderLB,
+	ShoulderLT,
+	ShoulderRB,
+	ShoulderRT,
 
 	Start,
 	Select,

@@ -57,6 +57,7 @@ enum class BgTile: u8 {
 
 using BgTileUset = std::unordered_set<BgTile>;
 extern const BgTileUset
+	RT_BRDR_BG_TILE_USET,
 	BASIC_NO_PASS_BG_TILE_USET,
 	BASIC_UNSAFE_BG_TILE_USET,
 	//PLAYER_UNSAFE_BG_TILE_USET,

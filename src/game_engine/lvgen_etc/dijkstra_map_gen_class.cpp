@@ -196,7 +196,6 @@ DijkstraMap DijkstraMapGen::gen_basic(
 	std::deque<Sortable>
 		to_sort_deque, to_move_deque;
 
-
 	// Insert goals
 	for (const auto& goal: goal_darr()) {
 		//ret.at(goal.pos.y).at(goal.pos.x) = goal.val;

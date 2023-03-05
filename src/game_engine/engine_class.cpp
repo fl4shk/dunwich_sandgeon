@@ -421,9 +421,9 @@ void Engine::draw_to_main_windows() {
 	dngn_floor().draw();
 	screen_window.clear();
 
-	screen_window.draw(engine->pfield_window);
-	screen_window.draw(engine->log_window);
 	screen_window.draw(engine->hud_window);
+	screen_window.draw(engine->log_window);
+	screen_window.draw(engine->pfield_window);
 }
 //--------
 void Engine::_create_or_load_save_file_etc() {

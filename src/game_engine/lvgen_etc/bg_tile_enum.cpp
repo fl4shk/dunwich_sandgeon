@@ -44,6 +44,12 @@ namespace lvgen_etc {
 //}
 //--------
 const BgTileUset
+	// Stay in a `RoomTunnel`
+	RT_BRDR_BG_TILE_USET = {
+		BgTile::Blank,
+		BgTile::Error,
+		BgTile::Wall,
+	},
 	BASIC_NO_PASS_BG_TILE_USET = {
 		BgTile::Blank,
 		BgTile::Error,

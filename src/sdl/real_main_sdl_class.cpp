@@ -387,8 +387,10 @@ void RealMainSdl::_update_engine_key_status() {
 			{KeyKind::RightR, SDLK_l},
 			{KeyKind::DownR, SDLK_k},
 
-			{KeyKind::ShoulderL, SDLK_a},
-			{KeyKind::ShoulderR, SDLK_SEMICOLON},
+			{KeyKind::ShoulderLB, SDLK_a},
+			{KeyKind::ShoulderLT, SDLK_q},
+			{KeyKind::ShoulderRB, SDLK_SEMICOLON},
+			{KeyKind::ShoulderRT, SDLK_p},
 
 			{KeyKind::Start, SDLK_RETURN},
 			{KeyKind::Select, SDLK_ESCAPE},

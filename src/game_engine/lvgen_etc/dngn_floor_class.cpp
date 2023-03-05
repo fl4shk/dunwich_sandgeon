@@ -294,12 +294,12 @@ void DngnFloor::clear_before_gen(
 }
 void DngnFloor::erase_alt_terrain_in_path(
 	const IntVec2& start_phys_pos, const IntVec2& end_phys_pos,
+	const BgTileUset& alt_terrain_to_erase_uset,
 	const BgTileUset& no_pass_uset
 ) {
 	DijkstraMapGen dmap_gen;
 	dmap_gen.add(start_phys_pos);
-	const auto& dmap
-		= dmap_gen.gen_basic(*this, {});
+	const auto& dmap = dmap_gen.gen_basic(*this, no_pass_uset);
 	const auto& path = dmap.make_path(end_phys_pos);
 	//engine->dbg_log
 	//	("DngnFloor::erase_alt_terrain_in_path():\n",
@@ -333,15 +333,17 @@ void DngnFloor::erase_alt_terrain_in_path(
 				const auto& bg_tile = phys_bg_tile_at(phys_pos, &rt);
 				if (
 					bg_tile
-					&& no_pass_uset.contains(*bg_tile)
+					&& alt_terrain_to_erase_uset.contains(*bg_tile)
+					&& rt->alt_terrain_umap.contains(phys_pos)
 				)
 				{
-					//RoomTunnel* rt = _raw_at(phys_pos_to_rt_index(phys_pos));
-					if (rt->alt_terrain_umap.contains(phys_pos)) {
+					//RoomTunnel
+					//	* rt = _raw_at(phys_pos_to_rt_index(phys_pos));
+					//if (rt->alt_terrain_umap.contains(phys_pos)) {
 						//engine->dbg_log("testificate\n");
 						rt->alt_terrain_umap.erase(phys_pos);
 						//rt->alt_terrain_umap[phys_pos] = BgTile::Lava;
-					}
+					//}
 				}
 				return true;
 			});

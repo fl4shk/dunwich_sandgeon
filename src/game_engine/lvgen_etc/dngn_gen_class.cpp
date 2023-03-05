@@ -39,12 +39,12 @@ const std::vector<std::vector<BgTile>>
 		// Level 1 (index 0)
 		build_bg_tile_darr
 			({
-			//{2, BgTile::Water},
+			{2, BgTile::Water},
 			//SizeAndBgTile(5, BgTile::Water),
 			//BgTile::Water,
 			{
-				//1
-				20
+				1
+				//20
 				, 
 				BgTile::Spikes
 			}
@@ -1577,30 +1577,30 @@ void DngnGen::GenInnards::_insert_alt_terrain() const {
 
 	// move/change this code
 	// This displays the biome `BgTile`s via `engine->dbg_log()`
-	//engine->dbg_log("Debug: generated biome `BgTile`s\n");
-	//for (size_t j=0; j<biome_bg_tiles.size(); ++j) {
-	//	auto& row = biome_bg_tiles.at(j);
-	//	if (j < 10u) {
-	//		engine->dbg_log(0);
-	//	}
-	//	engine->dbg_log(j, ": ");
-	//	for (size_t i=0; i<row.size(); ++i) {
-	//		const auto& bg_tile = row.at(i);
-	//		//if (bg_tile == ALT_TERRAIN_NONE)
-	//		if (!bg_tile.first) {
-	//			engine->dbg_log(char(comp::drawable_data_umap().at
-	//				(bg_tile_str_map_at(BgTile::RoomFloor)).c));
-	//		} else { // if (bg_tile.first)
-	//			const auto& draw_data
-	//				= comp::drawable_data_umap().at
-	//					(bg_tile_str_map_at(bg_tile.second));
-	//			engine->dbg_log(char(draw_data.c));
-	//		}
-	//	}
-	//	//if (j + 1u < biome_bg_tiles.size()) {
-	//		engine->dbg_log("\n");
-	//	//}
-	//}
+	engine->dbg_log("Debug: generated biome `BgTile`s\n");
+	for (size_t j=0; j<biome_bg_tiles.size(); ++j) {
+		auto& row = biome_bg_tiles.at(j);
+		if (j < 10u) {
+			engine->dbg_log(0);
+		}
+		engine->dbg_log(j, ": ");
+		for (size_t i=0; i<row.size(); ++i) {
+			const auto& bg_tile = row.at(i);
+			//if (bg_tile == ALT_TERRAIN_NONE)
+			if (!bg_tile.first) {
+				engine->dbg_log(char(comp::drawable_data_umap().at
+					(bg_tile_str_map_at(BgTile::RoomFloor)).c));
+			} else { // if (bg_tile.first)
+				const auto& draw_data
+					= comp::drawable_data_umap().at
+						(bg_tile_str_map_at(bg_tile.second));
+				engine->dbg_log(char(draw_data.c));
+			}
+		}
+		//if (j + 1u < biome_bg_tiles.size()) {
+			engine->dbg_log("\n");
+		//}
+	}
 
 	// move/change this code
 	//for (auto& item: engine->dngn_floor())
@@ -1706,7 +1706,8 @@ void DngnGen::GenInnards::_insert_alt_terrain() const {
 			& dstairs_pos = engine->dngn_floor().dstairs_pos;
 		if (ustairs_pos && dstairs_pos) {
 			engine->dngn_floor().erase_alt_terrain_in_path
-				(*ustairs_pos, *dstairs_pos, BASIC_NO_PASS_BG_TILE_USET);
+				(*ustairs_pos, *dstairs_pos,
+				BASIC_UNSAFE_BG_TILE_USET, RT_BRDR_BG_TILE_USET);
 		}
 	}
 }
