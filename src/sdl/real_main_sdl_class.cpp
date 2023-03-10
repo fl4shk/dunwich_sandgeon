@@ -359,15 +359,15 @@ void RealMainSdl::_update_engine_key_status() {
 	//	}
 	//};
 	// Hard code the keybindings for now.
-	//update_key_status(key_status.at(KeyStatus::LeftL), SDLK_s);
-	//update_key_status(key_status.at(KeyStatus::UpL), SDLK_e);
-	//update_key_status(key_status.at(KeyStatus::RightL), SDLK_f);
-	//update_key_status(key_status.at(KeyStatus::DownL), SDLK_d);
+	//update_key_status(key_status.at(KeyStatus::LeftD), SDLK_s);
+	//update_key_status(key_status.at(KeyStatus::UpD), SDLK_e);
+	//update_key_status(key_status.at(KeyStatus::RightD), SDLK_f);
+	//update_key_status(key_status.at(KeyStatus::DownD), SDLK_d);
 
-	//update_key_status(key_status.at(KeyStatus::LeftR), SDLK_j);
-	//update_key_status(key_status.at(KeyStatus::UpR), SDLK_i);
-	//update_key_status(key_status.at(KeyStatus::RightR), SDLK_l);
-	//update_key_status(key_status.at(KeyStatus::DownR), SDLK_k);
+	//update_key_status(key_status.at(KeyStatus::LeftF), SDLK_j);
+	//update_key_status(key_status.at(KeyStatus::UpF), SDLK_i);
+	//update_key_status(key_status.at(KeyStatus::RightF), SDLK_l);
+	//update_key_status(key_status.at(KeyStatus::DownF), SDLK_k);
 
 	//update_key_status(key_status.at(KeyStatus::ShoulderL), SDLK_a);
 	//update_key_status(key_status.at(KeyStatus::ShoulderR), SDLK_SEMICOLON);
@@ -377,20 +377,20 @@ void RealMainSdl::_update_engine_key_status() {
 
 	_engine.key_status.update(_key_status_umap,
 		sdl::EngineKeycUmap<KeyKind>({
-			{KeyKind::LeftL, SDLK_s},
-			{KeyKind::UpL, SDLK_e},
-			{KeyKind::RightL, SDLK_f},
-			{KeyKind::DownL, SDLK_d},
+			{KeyKind::LeftD, SDLK_s},
+			{KeyKind::UpD, SDLK_e},
+			{KeyKind::RightD, SDLK_f},
+			{KeyKind::DownD, SDLK_d},
 
-			{KeyKind::LeftR, SDLK_j},
-			{KeyKind::UpR, SDLK_i},
-			{KeyKind::RightR, SDLK_l},
-			{KeyKind::DownR, SDLK_k},
+			{KeyKind::LeftF, SDLK_j},
+			{KeyKind::UpF, SDLK_i},
+			{KeyKind::RightF, SDLK_l},
+			{KeyKind::DownF, SDLK_k},
 
-			{KeyKind::ShoulderLB, SDLK_a},
-			{KeyKind::ShoulderLT, SDLK_q},
-			{KeyKind::ShoulderRB, SDLK_SEMICOLON},
-			{KeyKind::ShoulderRT, SDLK_p},
+			{KeyKind::ShoulderLb, SDLK_a},
+			{KeyKind::ShoulderLt, SDLK_q},
+			{KeyKind::ShoulderRb, SDLK_SEMICOLON},
+			{KeyKind::ShoulderRt, SDLK_p},
 
 			{KeyKind::Start, SDLK_RETURN},
 			{KeyKind::Select, SDLK_ESCAPE},

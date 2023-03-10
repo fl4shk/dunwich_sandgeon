@@ -86,7 +86,11 @@ public:		// functions
 	}
 	//--------
 	// This function returns where it stopped at
-	size_t fill(const FillFunc& fill_func) const;
+	size_t fill(
+		const FillFunc& fill_func
+		//const std::optional<IntVec2>& start_r2_sz2d=std::nullopt,
+		//const std::optional<IntVec2>& end_r2_sz2d=std::nullopt
+	) const;
 	//--------
 	GEN_GETTER_BY_CON_REF(data);
 	//--------

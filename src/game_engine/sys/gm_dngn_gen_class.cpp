@@ -79,7 +79,7 @@ void GmDngnGen::tick(ecs::Engine* ecs_engine) {
 		//	= ecs_engine->casted_comp_at<DngnFloor>
 		//		(*_dngn_gen_id);
 
-		//if (engine->key_status.key_just_went_down(KeyKind::DownR))
+		//if (engine->key_status.key_just_went_down(KeyKind::DownF))
 		{
 			engine->dngn_gen.gen_curr_floor();
 		}

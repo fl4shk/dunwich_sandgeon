@@ -182,24 +182,24 @@ std::optional<BgTile> DngnFloor::phys_bg_tile_at(
 				//&& !engine->pfield_ent_id_umap_contains
 				//	({phys_pos.x, phys_pos.y, pos3_z()})
 				&& !(
-					alt_terrain_state_umap.contains(phys_pos)
-					&& alt_terrain_state_umap.at(phys_pos).state
+					alt_terrain_info_umap.contains(phys_pos)
+					&& alt_terrain_info_umap.at(phys_pos).state
 						== AltTerrainState::Destroyed
 				)
 			) {
 				if (
-					//alt_terrain_state_umap.contains(phys_pos)
-					//&& alt_terrain_state_umap.at(phys_pos).alt_bg_tile
-					alt_terrain_state_umap.contains(phys_pos)
-					&& alt_terrain_state_umap.at(phys_pos).state
+					//alt_terrain_info_umap.contains(phys_pos)
+					//&& alt_terrain_info_umap.at(phys_pos).alt_bg_tile
+					alt_terrain_info_umap.contains(phys_pos)
+					&& alt_terrain_info_umap.at(phys_pos).state
 						== AltTerrainState::ShowAlt
 				) {
-					return alt_terrain_state_umap.at(phys_pos).alt_bg_tile;
+					return alt_terrain_info_umap.at(phys_pos).alt_bg_tile;
 				}
 				else
 				//if (
-				//	!alt_terrain_state_umap.contains(phys_pos)
-				//	|| alt_terrain_state_umap.at(phys_pos).state
+				//	!alt_terrain_info_umap.contains(phys_pos)
+				//	|| alt_terrain_info_umap.at(phys_pos).state
 				//		== AltTerrainState::Normal
 				//)
 				{
@@ -287,13 +287,15 @@ void DngnFloor::clear_before_gen(
 		//= {-1, -1};
 		= std::nullopt;
 	dstairs_pos = std::nullopt;
-	alt_terrain_state_umap.clear();
+	alt_terrain_info_umap.clear();
 	//destroyed_alt_terrain_uset.clear();
 	//_layout_noise_pos_scale = n_layout_noise_pos_scale;
 	//_layout_noise_pos_offset = n_layout_noise_pos_offset;
 }
 void DngnFloor::erase_alt_terrain_in_path(
 	const IntVec2& start_phys_pos, const IntVec2& end_phys_pos,
+	const std::optional<IntVec2>& start_r2_sz2d,
+	const std::optional<IntVec2>& end_r2_sz2d,
 	const BgTileUset& alt_terrain_to_erase_uset,
 	const BgTileUset& no_pass_uset
 ) {
@@ -322,30 +324,101 @@ void DngnFloor::erase_alt_terrain_in_path(
 		//		"\n");
 		//}
 		//engine->dbg_log("\n");
-		path->fill
-			([&](const IntVec2& phys_pos) -> bool {
-				//const IntVec2
-				//	pos = phys_pos - dmap.BOUNDS_R2.tl_corner();
+		auto fill_func = [&](const IntVec2& phys_pos) -> bool {
+			//const IntVec2
+			//	pos = phys_pos - dmap.BOUNDS_R2.tl_corner();
+			//engine->dbg_log
+			//	("DngnFloor::erase_alt_terrain_in_path(): ",
+			//	phys_pos, "\n");
+			RoomTunnel* rt;
+			const auto& bg_tile = phys_bg_tile_at(phys_pos, &rt);
+			if (
+				bg_tile
+				&& alt_terrain_to_erase_uset.contains(*bg_tile)
+				&& rt->alt_terrain_umap.contains(phys_pos)
+			) {
+				//RoomTunnel
+				//	* rt = _raw_at(phys_pos_to_rt_index(phys_pos));
+				//if (rt->alt_terrain_umap.contains(phys_pos)) {
+					//engine->dbg_log("testificate\n");
+					rt->alt_terrain_umap.erase(phys_pos);
+					//rt->alt_terrain_umap[phys_pos] = BgTile::Lava;
+				//}
+			}
+			return true;
+		};
+		path->fill(fill_func);
+
+		auto erase_endpt_func = [this, &fill_func](
+			const IntVec2& endpt_phys_pos,
+			const std::optional<IntVec2>& endpt_r2_sz2d
+		) -> bool {
+			
+			if (
+				endpt_r2_sz2d
+				&& endpt_r2_sz2d->x != 0 && endpt_r2_sz2d->y != 0
+			) {
 				//engine->dbg_log
-				//	("DngnFloor::erase_alt_terrain_in_path(): ",
-				//	phys_pos, "\n");
-				RoomTunnel* rt;
-				const auto& bg_tile = phys_bg_tile_at(phys_pos, &rt);
-				if (
-					bg_tile
-					&& alt_terrain_to_erase_uset.contains(*bg_tile)
-					&& rt->alt_terrain_umap.contains(phys_pos)
+				//	("`endpt_r2_sz2d` non-null and non-zero: ",
+				//	*endpt_r2_sz2d, " ", endpt_phys_pos, "\n");
+				IntVec2 phys_pos;
+				const IntVec2
+					phys_pos_tl
+						(i32(float(endpt_phys_pos.x)
+							+ std::ceil((-(float(endpt_r2_sz2d->x) - 1.0f))
+								/ 2.0f)),
+						i32(float(endpt_phys_pos.y)
+							+ std::ceil((-(float(endpt_r2_sz2d->y) - 1.0f)) 
+								/ 2.0f))),
+					phys_pos_br
+						(i32(float(endpt_phys_pos.x)
+							+ std::ceil((float(endpt_r2_sz2d->x) - 1.0f)
+								/ 2.0f)),
+						i32(float(endpt_phys_pos.y)
+							+ std::ceil((float(endpt_r2_sz2d->y) - 1.0f)
+								/ 2.0f)));
+				//engine->dbg_log
+				//	("tl", phys_pos_tl, " ", "br", phys_pos_br, "\n");
+
+				for (
+					phys_pos.y=phys_pos_tl.y;
+					phys_pos.y<=phys_pos_br.y;
+					++phys_pos.y
 				) {
-					//RoomTunnel
-					//	* rt = _raw_at(phys_pos_to_rt_index(phys_pos));
-					//if (rt->alt_terrain_umap.contains(phys_pos)) {
-						//engine->dbg_log("testificate\n");
-						rt->alt_terrain_umap.erase(phys_pos);
-						//rt->alt_terrain_umap[phys_pos] = BgTile::Lava;
-					//}
+					for (
+						phys_pos.x=phys_pos_tl.x;
+						phys_pos.x<=phys_pos_br.x;
+						++phys_pos.x
+					) {
+						//engine->dbg_log(phys_pos, "\n");
+						fill_func(phys_pos);
+						//RoomTunnel* rt;
+						//const auto& bg_tile
+						//	= phys_bg_tile_at(phys_pos, &rt);
+						//if (bg_tile) {
+						//	if (
+						//		//alt_terrain_to_erase_uset.contains
+						//		//	(*bg_tile)
+						//		//&&
+						//		rt->alt_terrain_umap.contains(phys_pos)
+						//	) {
+						//		rt->alt_terrain_umap.erase(phys_pos);
+						//	}
+						//}
+						//else { // if (!bg_tile)
+						//	engine->dbg_log
+						//		("didn't have a `bg_tile`: ",
+						//		phys_pos, "\n");
+						//}
+					}
 				}
 				return true;
-			});
+			} else {
+				return false;
+			}
+		};
+		erase_endpt_func(start_phys_pos, start_r2_sz2d);
+		erase_endpt_func(end_phys_pos, end_r2_sz2d);
 	}
 }
 bool DngnFloor::erase_tunnel_during_gen(size_t index) {
@@ -369,7 +442,7 @@ bool DngnFloor::erase_tunnel_during_gen(size_t index) {
 		if (
 			auto& rt=*_rt_data.at(index);
 			//destroyed_alt_terrain_uset.size() > 0
-			//alt_terrain_state_umap
+			//alt_terrain_info_umap
 			true
 		) {
 			const auto& neighbors = cg_neighbors(rt);
@@ -389,11 +462,11 @@ bool DngnFloor::erase_tunnel_during_gen(size_t index) {
 							pos.x<=rt.rect.right_x();
 							++pos.x
 						) {
-							if (alt_terrain_state_umap.contains(pos)) {
-								//alt_terrain_state_umap.at(pos).destroyed
+							if (alt_terrain_info_umap.contains(pos)) {
+								//alt_terrain_info_umap.at(pos).destroyed
 								//	= true;
-								alt_terrain_state_umap.erase(pos);
-								//alt_terrain_state_umap.at(pos).state
+								alt_terrain_info_umap.erase(pos);
+								//alt_terrain_info_umap.at(pos).state
 								//	= AltTerrainState::Destroyed;
 							}
 						}

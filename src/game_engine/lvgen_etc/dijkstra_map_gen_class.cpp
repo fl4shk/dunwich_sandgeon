@@ -162,6 +162,16 @@ DijkstraMapGen& DijkstraMapGen::add(const IntVec2& pos, float val) {
 			}
 		}
 	}
+	//if (!PFIELD_PHYS_NO_BRDR_RECT2.intersect(pos)) {
+	//	throw std::invalid_argument(sconcat
+	//		("game_engine::lvgen_etc::DijkstraMapGen::add(): ",
+	//		"Internal Error: ",
+	//		"`pos` is not inclusively inside of ",
+	//		"`PFIELD_PHYS_NO_BRDR_RECT2`: ",
+	//		pos, " ",
+	//		"{", "tl", PFIELD_PHYS_NO_BRDR_RECT2.tl_corner(), " ",
+	//			"br", PFIELD_PHYS_NO_BRDR_RECT2.br_corner(), "}"));
+	//}
 	_goal_pos_to_index_umap.insert(std::pair(pos, _goal_darr.size()));
 	_goal_darr.push_back({.pos=pos, .val=val});
 	//_goal_umap.insert(std::pair(pos, Goal{.pos=pos, .val=val}));

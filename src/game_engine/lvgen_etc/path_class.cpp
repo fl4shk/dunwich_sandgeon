@@ -60,7 +60,11 @@ Path& Path::add(const DngnFloor& dngn_floor, PathDir dir) {
 	//--------
 }
 //--------
-size_t Path::fill(const FillFunc& fill_func) const {
+size_t Path::fill(
+	const FillFunc& fill_func
+	//const std::optional<IntVec2>& start_r2_sz2d,
+	//const std::optional<IntVec2>& end_r2_sz2d
+) const {
 	size_t ret;
 	for (ret=0; ret<data().size(); ++ret) {
 		const auto& item = at(ret);

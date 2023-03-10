@@ -38,20 +38,22 @@ namespace dunwich_sandgeon {
 namespace game_engine {
 //--------
 enum class KeyKind: i32 {
-	LeftL,
-	UpL,
-	RightL,
-	DownL,
+	// left side face buttons (or d-pad)
+	LeftD,
+	UpD,
+	RightD,
+	DownD,
 
-	LeftR,
-	UpR,
-	RightR,
-	DownR,
+	// right side face buttons
+	LeftF,
+	UpF,
+	RightF,
+	DownF,
 
-	ShoulderLB,
-	ShoulderLT,
-	ShoulderRB,
-	ShoulderRT,
+	ShoulderLb, // left shoulder bumper (top)
+	ShoulderLt, // left shoulder trigger (bottom)
+	ShoulderRb, // right shoulder bumper (top)
+	ShoulderRt, // right shoulder trigger (bottom)
 
 	Start,
 	Select,

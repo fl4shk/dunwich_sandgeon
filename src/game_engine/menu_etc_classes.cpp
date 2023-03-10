@@ -320,8 +320,8 @@ const std::string& Menu::_inner_next_sel_key(
 	};
 
 	if (
-		key_status.key_just_went_down(KeyKind::UpL)
-		&& key_status.key_up_now(KeyKind::DownL)
+		key_status.key_just_went_down(KeyKind::UpD)
+		&& key_status.key_up_now(KeyKind::DownD)
 	) {
 		if (curr_node.up == Menu::START_NODE_KEY) {
 			return some_sel_key;
@@ -330,8 +330,8 @@ const std::string& Menu::_inner_next_sel_key(
 		}
 	}
 	else if (
-		key_status.key_just_went_down(KeyKind::DownL)
-		&& key_status.key_up_now(KeyKind::UpL)
+		key_status.key_just_went_down(KeyKind::DownD)
+		&& key_status.key_up_now(KeyKind::UpD)
 	) {
 		if (curr_node.down == Menu::END_NODE_KEY) {
 			return some_sel_key;
@@ -357,7 +357,7 @@ void Menu::tick(const EngineKeyStatus& key_status) {
 			exit(1);
 		}
 
-		if (key_status.key_just_went_down(KeyKind::DownR)) {
+		if (key_status.key_just_went_down(KeyKind::DownF)) {
 			std::get<Node::DataActionFunc>(sel_node.data)();
 
 			if (sel_node.on_update_func) {
@@ -374,7 +374,7 @@ void Menu::tick(const EngineKeyStatus& key_status) {
 			exit(1);
 		}
 
-		if (key_status.key_just_went_down(KeyKind::DownR)) {
+		if (key_status.key_just_went_down(KeyKind::DownF)) {
 			auto& data = std::get<bool>(sel_node.data);
 			data = !data;
 
@@ -393,8 +393,8 @@ void Menu::tick(const EngineKeyStatus& key_status) {
 		}
 
 		if (
-			key_status.key_just_went_down(KeyKind::LeftL)
-			&& key_status.key_up_now(KeyKind::RightL)
+			key_status.key_just_went_down(KeyKind::LeftD)
+			&& key_status.key_up_now(KeyKind::RightD)
 		) {
 			auto& value = std::get<Node::DataValue>(sel_node.data);
 			const i32 temp_value = value() - 1;
@@ -408,8 +408,8 @@ void Menu::tick(const EngineKeyStatus& key_status) {
 			}
 		}
 		if (
-			key_status.key_just_went_down(KeyKind::RightL)
-			&& key_status.key_up_now(KeyKind::LeftL)
+			key_status.key_just_went_down(KeyKind::RightD)
+			&& key_status.key_up_now(KeyKind::LeftD)
 		) {
 			auto& value = std::get<Node::DataValue>(sel_node.data);
 			const i32 temp_value = value() + 1;

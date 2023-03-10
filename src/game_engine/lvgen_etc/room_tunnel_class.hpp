@@ -37,6 +37,7 @@ namespace lvgen_etc {
 //--------
 class DngnGen;
 //--------
+// A Room or a Tunnel within the dungeon
 class RoomTunnel final: public WIntBboxBase {
 	#include "dngn_floor_friends.hpp"
 public:		// constants
@@ -115,7 +116,7 @@ public:		// serialized variables
 	//i32 id = -1;
 
 	i32 gen_side = 0;
-	// These are coordinates within pfield-space
+	// These are coordinates within phys pfield-space
 	//std::unordered_map<IntVec2, std::optional<BgTile>>
 	std::unordered_map<IntVec2, BgTile>
 		alt_terrain_umap;

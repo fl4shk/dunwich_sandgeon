@@ -135,6 +135,7 @@ public:		// constants
 		GEN_TYPE_TUNNEL = 0, MIN_GEN_TYPE = GEN_TYPE_TUNNEL,
 		GEN_TYPE_ROOM = 1, MAX_GEN_TYPE = GEN_TYPE_ROOM,
 		//--------
+		// An `enum` could have been used here.
 		GEN_SIDE_L = 0, MIN_GEN_SIDE = GEN_SIDE_L,
 		GEN_SIDE_T = 1,
 		GEN_SIDE_R = 2,

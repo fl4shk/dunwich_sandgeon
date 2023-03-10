@@ -91,7 +91,7 @@ private:		// serialized variables
 	#define MEMB_SER_LIST_LVGEN_ETC_FLOOR_LAYOUT(X) \
 		X(_pos3_z, std::nullopt) \
 		/* X(destroyed_alt_terrain_uset, std::nullopt) */ \
-		X(alt_terrain_state_umap, std::nullopt) \
+		X(alt_terrain_info_umap, std::nullopt) \
 		/* X(gnd_item_umap, std::nullopt) */ \
 
 	i32 _pos3_z = -1;
@@ -99,7 +99,7 @@ public:		// serialized variables
 	//IntVec2Uset
 	//	destroyed_alt_terrain_uset;
 	std::unordered_map<IntVec2, AltTerrainInfo>
-		alt_terrain_state_umap;
+		alt_terrain_info_umap;
 	//std::unordered_map<IntVec2, ecs::EntIdUset> gnd_item_umap;
 public:		// functions
 	//--------
@@ -190,11 +190,11 @@ public:		// functions
 		//double n_layout_noise_pos_offset
 	);
 	// This functions erases non-walkable `BgTile`s along a `Path`. 
-	void 
-		//make_path_walkable
-		erase_alt_terrain_in_path
-	(
+	//void make_path_walkable
+	void erase_alt_terrain_in_path(
 		const IntVec2& start_phys_pos, const IntVec2& end_phys_pos,
+		const std::optional<IntVec2>& start_r2_sz2d,
+		const std::optional<IntVec2>& end_r2_sz2d,
 		const BgTileUset& alt_terrain_to_erase_uset,
 		const BgTileUset& no_pass_uset=RT_BRDR_BG_TILE_USET
 	);

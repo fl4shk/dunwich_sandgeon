@@ -85,108 +85,108 @@ void GmMain::tick(ecs::Engine* ecs_engine) {
 			engine->save_and_return_to_title();
 			//engine->save_and_quit();
 		} else if (
-			engine->key_status.key_down_now(KeyKind::LeftL)
+			engine->key_status.key_down_now(KeyKind::LeftD)
 			&& engine->key_status.key_uset_up_now(std::unordered_set
-				{KeyKind::RightL, KeyKind::UpL, KeyKind::DownL})
+				{KeyKind::RightD, KeyKind::UpD, KeyKind::DownD})
 		) {
 			//action.move_dir = PathDir::Left;
 			action.kind = InputKind::Left;
 		} else if (
-			engine->key_status.key_just_went_down(KeyKind::UpL)
+			engine->key_status.key_just_went_down(KeyKind::UpD)
 			&& engine->key_status.key_uset_up_now(std::unordered_set
-				{KeyKind::DownL, KeyKind::LeftL, KeyKind::RightL})
+				{KeyKind::DownD, KeyKind::LeftD, KeyKind::RightD})
 		) {
 			//action.move_dir = PathDir::Top;
 			action.kind = InputKind::Up;
 		} else if (
-			engine->key_status.key_just_went_down(KeyKind::RightL)
+			engine->key_status.key_just_went_down(KeyKind::RightD)
 			&& engine->key_status.key_uset_up_now(std::unordered_set
-				{KeyKind::LeftL, KeyKind::UpL, KeyKind::DownL})
+				{KeyKind::LeftD, KeyKind::UpD, KeyKind::DownD})
 		) {
 			//action.kind = PathDir::Right;
 			action.kind = InputKind::Right;
 		} else if (
-			engine->key_status.key_just_went_down(KeyKind::DownL)
+			engine->key_status.key_just_went_down(KeyKind::DownD)
 			&& engine->key_status.key_uset_up_now(std::unordered_set
-				{KeyKind::UpL, KeyKind::LeftL, KeyKind::RightL})
+				{KeyKind::UpD, KeyKind::LeftD, KeyKind::RightD})
 		) {
 			//action.move_dir = PathDir::Bottom;
 			action.kind = InputKind::Down;
 		} else if (
 			(
 				(
-					engine->key_status.key_just_went_down(KeyKind::LeftL)
-					&& engine->key_status.key_down_now(KeyKind::UpL)
+					engine->key_status.key_just_went_down(KeyKind::LeftD)
+					&& engine->key_status.key_down_now(KeyKind::UpD)
 				) || (
-					engine->key_status.key_just_went_down(KeyKind::UpL)
-					&& engine->key_status.key_down_now(KeyKind::LeftL)
+					engine->key_status.key_just_went_down(KeyKind::UpD)
+					&& engine->key_status.key_down_now(KeyKind::LeftD)
 				)
 			) 
 			&& engine->key_status.key_uset_up_now(std::unordered_set
-				{KeyKind::RightL, KeyKind::DownL})
+				{KeyKind::RightD, KeyKind::DownD})
 		) {
 			action.kind = InputKind::UpLeft;
 		} else if (
 			(
 				(
-					engine->key_status.key_just_went_down(KeyKind::RightL)
-					&& engine->key_status.key_down_now(KeyKind::UpL)
+					engine->key_status.key_just_went_down(KeyKind::RightD)
+					&& engine->key_status.key_down_now(KeyKind::UpD)
 				) || (
-					engine->key_status.key_just_went_down(KeyKind::UpL)
-					&& engine->key_status.key_down_now(KeyKind::RightL)
+					engine->key_status.key_just_went_down(KeyKind::UpD)
+					&& engine->key_status.key_down_now(KeyKind::RightD)
 				)
 			) 
 			&& engine->key_status.key_uset_up_now(std::unordered_set
-				{KeyKind::LeftL, KeyKind::DownL})
+				{KeyKind::LeftD, KeyKind::DownD})
 		) {
 			action.kind = InputKind::UpRight;
 		} else if (
 			(
 				(
-					engine->key_status.key_just_went_down(KeyKind::RightL)
-					&& engine->key_status.key_down_now(KeyKind::DownL)
+					engine->key_status.key_just_went_down(KeyKind::RightD)
+					&& engine->key_status.key_down_now(KeyKind::DownD)
 				) || (
-					engine->key_status.key_just_went_down(KeyKind::DownL)
-					&& engine->key_status.key_down_now(KeyKind::RightL)
+					engine->key_status.key_just_went_down(KeyKind::DownD)
+					&& engine->key_status.key_down_now(KeyKind::RightD)
 				)
 			) 
 			&& engine->key_status.key_uset_up_now(std::unordered_set
-				{KeyKind::LeftL, KeyKind::UpL})
+				{KeyKind::LeftD, KeyKind::UpD})
 		) {
 			action.kind = InputKind::DownRight;
 		} else if (
 			(
 				(
-					engine->key_status.key_just_went_down(KeyKind::LeftL)
-					&& engine->key_status.key_down_now(KeyKind::DownL)
+					engine->key_status.key_just_went_down(KeyKind::LeftD)
+					&& engine->key_status.key_down_now(KeyKind::DownD)
 				) || (
-					engine->key_status.key_just_went_down(KeyKind::DownL)
-					&& engine->key_status.key_down_now(KeyKind::LeftL)
+					engine->key_status.key_just_went_down(KeyKind::DownD)
+					&& engine->key_status.key_down_now(KeyKind::LeftD)
 				)
 			) 
 			&& engine->key_status.key_uset_up_now(std::unordered_set
-				{KeyKind::RightL, KeyKind::UpL})
+				{KeyKind::RightD, KeyKind::UpD})
 		) {
 			action.kind = InputKind::DownLeft;
 		} else if (
-			engine->key_status.key_just_went_down(KeyKind::LeftR)
+			engine->key_status.key_just_went_down(KeyKind::LeftF)
 			&& engine->key_status.key_uset_up_now(std::unordered_set
-				{KeyKind::UpR, KeyKind::RightR, KeyKind::DownR})
+				{KeyKind::UpF, KeyKind::RightF, KeyKind::DownF})
 		) {
 		} else if (
-			engine->key_status.key_just_went_down(KeyKind::UpR)
+			engine->key_status.key_just_went_down(KeyKind::UpF)
 			&& engine->key_status.key_uset_up_now(std::unordered_set
-				{KeyKind::LeftR, KeyKind::RightR, KeyKind::DownR})
+				{KeyKind::LeftF, KeyKind::RightF, KeyKind::DownF})
 		) {
 		} else if (
-			engine->key_status.key_just_went_down(KeyKind::RightR)
+			engine->key_status.key_just_went_down(KeyKind::RightF)
 			&& engine->key_status.key_uset_up_now(std::unordered_set
-				{KeyKind::LeftR, KeyKind::UpR, KeyKind::DownR})
+				{KeyKind::LeftF, KeyKind::UpF, KeyKind::DownF})
 		) {
 		} else if (
-			engine->key_status.key_just_went_down(KeyKind::DownR)
+			engine->key_status.key_just_went_down(KeyKind::DownF)
 			&& engine->key_status.key_uset_up_now(std::unordered_set
-				{KeyKind::LeftR, KeyKind::UpR, KeyKind::RightR})
+				{KeyKind::LeftF, KeyKind::UpF, KeyKind::RightF})
 		) {
 		}
 		//--------

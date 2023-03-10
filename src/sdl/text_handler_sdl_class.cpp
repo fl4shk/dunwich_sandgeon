@@ -20,7 +20,7 @@
 namespace dunwich_sandgeon {
 namespace io {
 //--------
-const IntVec2 TextHandlerSdl::TILE_SIZE_2D(8, 8);
+//const IntVec2 TextHandlerSdl::TILE_SIZE_2D(8, 8);
 
 //bool TextHandlerSdl::init(sdl::Renderer& s_renderer, i32& s_zoom)
 bool TextHandlerSdl::init(sdl::Renderer& s_renderer) {

@@ -34,7 +34,8 @@ public:		// types
 	using FontColor = game_engine::FontColor;
 	using FgBgColorPair = game_engine::FgBgColorPair;
 public:		// constants
-	static const IntVec2 TILE_SIZE_2D;
+	static constexpr IntVec2
+		TILE_SIZE_2D = {8, 8};
 
 	static constexpr i32
 		//--------
