@@ -69,6 +69,24 @@ RoomTunnel::~RoomTunnel() {}
 //	return ret;
 //}
 //--------
+//std::unordered_map<IntVec2, ecs::EntId>& RoomTunnel::upper_layer_umap(
+//	PfieldLayerPrio priority
+//) {
+//	//switch (priority) {
+//	//case PfieldLayerPrio::ItemsTraps
+//	//}
+//}
+//const std::unordered_map<IntVec2, ecs::EntId>&
+//RoomTunnel::upper_layer_umap(
+//	PfieldLayerPrio priority
+//) const {
+//	//switch (priority) {
+//	////--------
+//	//case PfieldLayerPrio::
+//	////--------
+//	//}
+//}
+//--------
 } // namespace lvgen_etc
 } // namespace game_engine
 } // namespace dunwich_sandgeon

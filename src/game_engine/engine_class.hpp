@@ -101,26 +101,26 @@ public:		// constants
 		//	= 1,
 		//LOWEST_FLOOR = 5, HIGHEST_FLOOR = 1,
 
-		LEVEL_1_FLOOR_MIN = 1,
+		LEVEL_1_FLOOR_MIN = 0,
 			FIRST_FLOOR = LEVEL_1_FLOOR_MIN,
 			HIGHEST_FLOOR = FIRST_FLOOR,
-		LEVEL_1_FLOOR_MAX = 5,
+		LEVEL_1_FLOOR_MAX = 4,
 			LEVEL_1_FLOOR_BOSS = LEVEL_1_FLOOR_MAX,
 
-		LEVEL_2_FLOOR_MIN = 6,
-		LEVEL_2_FLOOR_MAX = 10,
+		LEVEL_2_FLOOR_MIN = 5,
+		LEVEL_2_FLOOR_MAX = 9,
 			LEVEL_2_FLOOR_BOSS = LEVEL_2_FLOOR_MAX,
 
-		LEVEL_3_FLOOR_MIN = 11,
-		LEVEL_3_FLOOR_MAX = 15,
+		LEVEL_3_FLOOR_MIN = 10,
+		LEVEL_3_FLOOR_MAX = 14,
 			LEVEL_3_FLOOR_BOSS = LEVEL_3_FLOOR_MAX,
 
-		LEVEL_4_FLOOR_MIN = 16,
-		LEVEL_4_FLOOR_MAX = 20,
+		LEVEL_4_FLOOR_MIN = 15,
+		LEVEL_4_FLOOR_MAX = 19,
 			LEVEL_4_FLOOR_BOSS = LEVEL_4_FLOOR_MAX,
 
-		LEVEL_5_FLOOR_MIN = 21,
-		LEVEL_5_FLOOR_MAX = 25,
+		LEVEL_5_FLOOR_MIN = 20,
+		LEVEL_5_FLOOR_MAX = 24,
 			LEVEL_5_FLOOR_BOSS = LEVEL_5_FLOOR_MAX,
 			LAST_FLOOR = LEVEL_5_FLOOR_BOSS,
 			LOWEST_FLOOR = LAST_FLOOR,
@@ -816,6 +816,20 @@ public:		// `_non_ecs_ser_data_arr` accessor functions
 	}
 	inline const i32& prev_floor() const {
 		return prev_floor_fn(USE_CURR_FILE_NUM);
+	}
+
+	// The floor number as shown in the HUD
+	inline i32 floor_hud_fn(ecs::FileNum file_num) const {
+		return floor_fn(file_num) + 1;
+	}
+	inline i32 prev_floor_hud_fn(ecs::FileNum file_num) const {
+		return prev_floor_fn(file_num) + 1;
+	}
+	inline i32 floor_hud(ecs::FileNum file_num) const {
+		return floor_hud_fn(USE_CURR_FILE_NUM);
+	}
+	inline i32 prev_floor_hud(ecs::FileNum file_num) const {
+		return prev_floor_hud_fn(USE_CURR_FILE_NUM);
 	}
 	//--------
 	inline i32 level_index_fn(ecs::FileNum file_num) const {

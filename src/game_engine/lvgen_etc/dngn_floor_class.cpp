@@ -243,6 +243,96 @@ std::optional<BgTile> DngnFloor::phys_bg_tile_at(
 	return std::nullopt;
 }
 //--------
+void DngnFloor::_position_ctor_callback(comp::Position* obj) {
+	if (
+		obj->floor() == _pos3_z
+		&& pflprio_is_upper_layer(obj->priority)
+	) {
+		// Don't prevent walking through walls here, so the below
+		// commented-out code should stay commented-out.
+		//const auto& rt_index = phys_pos_to_rt_index(obj->pos2());
+		//if (rt_index) {
+		//	//RoomTunnel& rt = _raw_at(*rt_index);
+		//}
+
+		auto& umap = upper_layer_umap(obj->priority);
+
+		if (umap.contains(obj->pos2())) {
+			throw std::invalid_argument(sconcat
+				("game_engine::lvgen_etc::DngnFloor",
+				"::_position_ctor_callback(): Internal error: ",
+				"(developer note: `umap.contains(obj->pos2())`): ",
+				obj, "\n"));
+		}
+		umap.insert({obj->pos2(), obj->ent_id()});
+	} else if (obj->floor() != _pos3_z) {
+		throw std::invalid_argument(sconcat
+			("game_engine::lvgen_etc::DngnFloor",
+			"::_position_ctor_callback(): Internal error: ",
+			"(developer note: `obj->floor() != _pos3_z`): ",
+			obj, " ", _pos3_z, "\n"));
+	} else { // if (!pflprio_is_upper_layer(obj->priority))
+		throw std::invalid_argument(sconcat
+			("game_engine::lvgen_etc::DngnFloor",
+			"::_position_ctor_callback(): Internal error: ",
+			"(developer note: `!pflprio_is_upper_layer(obj->priority)`): ",
+			obj, " ", "\n"));
+	}
+}
+void DngnFloor::_position_dtor_callback(comp::Position* obj) {
+	if (
+		obj->floor() == _pos3_z
+		&& pflprio_is_upper_layer(obj->priority)
+	) {
+		// Don't prevent walking through walls here, so the below
+		// commented-out code should stay commented-out.
+		//const auto& rt_index = phys_pos_to_rt_index(obj->pos2());
+		//if (rt_index) {
+		//	//RoomTunnel& rt = _raw_at(*rt_index);
+		//} else {
+		//	//throw std::invalid_argument
+		//	//engine->err
+		//}
+
+		auto& umap = upper_layer_umap(obj->priority);
+
+		if (!umap.contains(obj->pos2())) {
+			throw std::invalid_argument(sconcat
+				("game_engine::lvgen_etc::DngnFloor",
+				"::_position_dtor_callback(): Internal error: ",
+				"(developer note: `!umap.contains(obj->pos2())`): ",
+				obj, "\n"));
+		}
+
+		umap.erase(obj->pos2());
+	} else if (obj->floor() != _pos3_z) {
+		throw std::invalid_argument(sconcat
+			("game_engine::lvgen_etc::DngnFloor",
+			"::_position_dtor_callback(): Internal error: ",
+			"(developer note: `obj->floor() != _pos3_z`): ",
+			obj, " ", _pos3_z, "\n"));
+	} else { // if (!pflprio_is_upper_layer(obj->priority))
+		throw std::invalid_argument(sconcat
+			("game_engine::lvgen_etc::DngnFloor",
+			"::_position_dtor_callback(): Internal error: ",
+			"(developer note: `!pflprio_is_upper_layer(obj->priority)`): ",
+			obj, " ", "\n"));
+	}
+}
+//void DngnFloor::_position_set_pos3_callback(
+//	comp::Position* obj, const IntVec3& n_pos3
+//) {
+//	if (
+//		obj->priority == PfieldLayerPrio::ItemsTraps
+//		|| obj->priority == PfieldLayerPrio::CharsMachs
+//	) {
+//		const auto& rt_index = phys_pos_to_rt_index(obj->pos2());
+//		if (rt_index) {
+//			RoomTunnel& rt = _raw_at(rt_index);
+//		}
+//	}
+//}
+//--------
 std::optional<size_t> DngnFloor::phys_pos_to_rt_index(
 	const IntVec2& phys_pos
 ) const {

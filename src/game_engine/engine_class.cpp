@@ -627,6 +627,12 @@ void Engine::position_ctor_callback(comp::Position* obj) {
 	}
 
 	ent_id_uset.insert(obj->ent_id());
+	dngn_floor_arr().at(obj->floor())._position_ctor_callback(obj);
+
+	// Insert this `obj->ent_id()` into the
+	// `game_engine::lvgen_etc::DngnFloor`
+	//switch (obj->priority) {
+
 	//if (obj->ent_kind() == comp::Position::EntKind::Item) {
 	//	auto& the_dngn_floor = dngn_floor_arr().at(obj->pos3().z);
 	//	auto& gnd_item_uset = the_dngn_floor.gnd_item_umap.at(obj->pos2());
@@ -648,11 +654,15 @@ void Engine::position_dtor_callback(comp::Position* obj) {
 	}
 
 	ent_id_uset.erase(obj->ent_id());
+	dngn_floor_arr().at(obj->floor())._position_dtor_callback(obj);
 }
 
 void Engine::position_set_pos3_callback(
 	comp::Position* obj, const IntVec3& n_pos3
 ) {
+	// I'm pretty sure we don't need to have something like
+	// `dngn_floor_arr().at(obj->floor()).position_set_pos3_callback()`
+
 	_err_when_ent_id_is_null(obj, "position_set_pos3_callback");
 
 	position_dtor_callback(obj);

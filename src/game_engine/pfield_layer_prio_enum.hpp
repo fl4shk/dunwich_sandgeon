@@ -30,10 +30,20 @@ enum class PfieldLayerPrio: i32 {
 	//				// and also generated machines (switches, gates, traps,
 	//				// etc.)
 	Bakgnd,
+	//AltTerrain,
 	ItemsTraps,		// traps and items; need to prevent traps from
 					// occupying the same space as items in other logic
 	CharsMachs,		// The player, NPCs, and monsters; machines
+
+	Lim, // last member
 };
+constexpr inline bool pflprio_is_upper_layer(PfieldLayerPrio priority) {
+	return (
+		//priority == PfieldLayerPrio::ItemsTraps
+		//|| priority == PfieldLayerPrio::CharsMachs
+		priority > PfieldLayerPrio::Bakgnd
+	);
+}
 //--------
 } // namespace game_engine
 } // namespace dunwich_sandgeon

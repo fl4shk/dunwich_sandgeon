@@ -47,7 +47,7 @@ const std::vector<std::vector<BgTile>>
 				//20
 				, 
 				BgTile::Spikes
-			}
+			},
 			//SizeAndBgTile(20, BgTile::Spikes)
 			//SizeAndBgTile(3, BgTile::Lava)
 			}),
@@ -1375,11 +1375,17 @@ void DngnGen::GenInnards::_insert_alt_terrain() const {
 	//	//}
 	//}
 
-	if (std::vector<IntRect2> biome_r2_darr; true) {
+	//if (std::vector<IntRect2> biome_r2_darr; true)
+	{
 		const i32
 			num_biome_r2s = engine->layout_rand<i32>
 				(GEN_BIOME_MBALL_MIN_AMOUNT, GEN_BIOME_MBALL_MAX_AMOUNT);
-		while (i32(biome_r2_darr.size()) < num_biome_r2s) {
+		//i32 curr_num_biome_r2s = 0;
+		//while (i32(biome_r2_darr.size()) < num_biome_r2s)
+		for (
+			i32 curr_num_biome_r2s=0;
+			curr_num_biome_r2s<num_biome_r2s;
+		) {
 			const IntRect2
 				//to_push = engine->layout_rand_r2_in_pfnb
 				//	(GEN_BIOME_MBALL_MIN_SIZE_2D,
@@ -1388,20 +1394,35 @@ void DngnGen::GenInnards::_insert_alt_terrain() const {
 					(biome_mballs_bounds_r2,
 					GEN_BIOME_MBALL_MIN_SIZE_2D,
 					GEN_BIOME_MBALL_MAX_SIZE_2D);
+
+			const FltRect2 temp_biome_r2
+				{.pos=FltVec2(to_push.pos),
+				.size_2d=FltVec2(to_push.size_2d)};
 			//if (r2_fits_in_pfnb(IntRect2(to_push)))
-			{
-				biome_r2_darr.push_back(to_push);
+			if (
+				!biome_mballs.ball_umap().contains
+					(temp_biome_r2.cntr_pos())
+			) {
+				//biome_r2_darr.push_back(to_push);
+				biome_mballs.add
+					(temp_biome_r2.cntr_pos(), temp_biome_r2.size_2d);
+				++curr_num_biome_r2s;
 			}
 		}
-		for (const auto& biome_r2: biome_r2_darr) {
-			const FltRect2 temp_biome_r2
-				{.pos=FltVec2(biome_r2.pos),
-				.size_2d=FltVec2(biome_r2.size_2d)};
-			biome_mballs.add
-				(temp_biome_r2.cntr_pos(), temp_biome_r2.size_2d);
-			//biome_mballs.add
-			//	(temp_biome_r2.cntr_pos(), temp_biome_r2.half_size());
-		}
+		//for (const auto& biome_r2: biome_r2_darr) {
+		//	const FltRect2 temp_biome_r2
+		//		{.pos=FltVec2(biome_r2.pos),
+		//		.size_2d=FltVec2(biome_r2.size_2d)};
+		//	//if (
+		//	//	!biome_mballs.ball_umap().contains
+		//	//		(temp_biome_r2.cntr_pos())
+		//	//) {
+		//		biome_mballs.add
+		//			(temp_biome_r2.cntr_pos(), temp_biome_r2.size_2d);
+		//		//biome_mballs.add
+		//		//	(temp_biome_r2.cntr_pos(), temp_biome_r2.half_size());
+		//	//}
+		//}
 	}
 
 	// old code, do not uncomment
@@ -1701,8 +1722,8 @@ void DngnGen::GenInnards::_insert_alt_terrain() const {
 		if (ustairs_pos && dstairs_pos) {
 			engine->dngn_floor().erase_alt_terrain_in_path
 				(*ustairs_pos, *dstairs_pos,
-				IntVec2(4, 4), IntVec2(4, 4),
-				//std::nullopt, std::nullopt,
+				//IntVec2(4, 4), IntVec2(4, 4),
+				std::nullopt, std::nullopt,
 				BASIC_UNSAFE_BG_TILE_USET, RT_BRDR_BG_TILE_USET);
 		}
 	}

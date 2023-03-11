@@ -28,11 +28,18 @@
 //#include "../comp/general_comp_classes.hpp"
 #include "bg_tile_enum.hpp"
 #include "room_tunnel_class.hpp"
+#include "../pfield_layer_prio_enum.hpp"
 
 namespace dunwich_sandgeon {
 namespace game_engine {
 //--------
 class Engine;
+//--------
+namespace comp {
+//--------
+class Position;
+//--------
+} // namespace comp
 //--------
 namespace lvgen_etc {
 //--------
@@ -43,13 +50,14 @@ enum class AltTerrainState: u8 {
 	Destroyed,
 	ShowAlt,
 };
+
 class AltTerrainInfo final {
 public:		// types
 public:		// variables
 	#define MEMB_LIST_LVGEN_ETC_ALT_TERRAIN_STATE(X) \
 		X(state, std::nullopt) \
 		X(alt_bg_tile, std::nullopt) \
-		X(key, std::nullopt) \
+		/* X(key, std::nullopt) */ \
 
 	//bool show = false;
 	//BgTile bg_tile = BgTile::Error;
@@ -58,7 +66,7 @@ public:		// variables
 	//bool show_alt: 1 = false;
 	AltTerrainState state = AltTerrainState::Normal;
 	BgTile alt_bg_tile = BgTile::Error;
-	ecs::EntId key = ecs::ENT_NULL_ID;
+	//ecs::EntId key = ecs::ENT_NULL_ID;
 public:		// functions
 	static AltTerrainInfo from_bv(const binser::Value& bv);
 	operator binser::Value () const;
@@ -92,14 +100,24 @@ private:		// serialized variables
 		X(_pos3_z, std::nullopt) \
 		/* X(destroyed_alt_terrain_uset, std::nullopt) */ \
 		X(alt_terrain_info_umap, std::nullopt) \
+		X(upper_layer_umap_arr, std::nullopt) \
 		/* X(gnd_item_umap, std::nullopt) */ \
 
 	i32 _pos3_z = -1;
 public:		// serialized variables
 	//IntVec2Uset
 	//	destroyed_alt_terrain_uset;
+
+	// For some kinds of alternate terrain, we won't have entries into
+	// `alt_terrain_info_umap`, as some kinds of alt terrain can't be
+	// destroyed/modified.
 	std::unordered_map<IntVec2, AltTerrainInfo>
 		alt_terrain_info_umap;
+	std::array<std::unordered_map<IntVec2, ecs::EntId>,
+		i32(PfieldLayerPrio::Lim)>
+		upper_layer_umap_arr;
+		//items_traps_umap,
+		//chars_machs_umap;
 	//std::unordered_map<IntVec2, ecs::EntIdUset> gnd_item_umap;
 public:		// functions
 	//--------
@@ -132,6 +150,17 @@ public:		// functions
 	//	return phys_bg_tile_at(pos + BOTTOM_OFFSET);
 	//}
 	//--------
+	inline std::unordered_map<IntVec2, ecs::EntId>& upper_layer_umap(
+		PfieldLayerPrio priority
+	) {
+		return upper_layer_umap_arr.at(i32(priority));
+	}
+	inline const std::unordered_map<IntVec2, ecs::EntId>& upper_layer_umap(
+		PfieldLayerPrio priority
+	) const {
+		return upper_layer_umap_arr.at(i32(priority));
+	}
+	//--------
 	inline auto begin() {
 		//return _rt_data.data.begin();
 		return _rt_data.begin();
@@ -150,6 +179,11 @@ public:		// functions
 	}
 	//--------
 private:		// functions
+	void _position_ctor_callback(comp::Position* obj);
+	void _position_dtor_callback(comp::Position* obj);
+	//void _position_set_pos3_callback(
+	//	comp::Position* obj, const IntVec3& n_pos3
+	//);
 	inline RoomTunnel& _raw_at(size_t index) {
 		//return _rt_data.data.at(index);
 		return *_rt_data.at(index);
@@ -206,6 +240,7 @@ public:		// functions
 	CollGridT::DataElPtrUsetT cg_neighbors(const IntVec2& pos) const;
 
 	void draw() const;
+	//--------
 	//--------
 	GEN_GETTER_BY_CON_REF(rt_data);
 	GEN_GETTER_BY_CON_REF(rt_to_id_umap);

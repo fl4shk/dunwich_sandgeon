@@ -210,6 +210,16 @@ public:		// functions
 	//GEN_GETTER_BY_CON_REF(floor);
 };
 
+inline std::ostream& operator << (
+	std::ostream& os, const Position& position
+) {
+	return osprintout(os,
+		"{", "ent_id", position.ent_id(), " ",
+		"pos3", position.pos3(), " ",
+		"prev_pos3", position.prev_pos3(), " "
+		"prev_floor", position.prev_floor(), "}");
+}
+
 //class NonSerPosition final: public ecs::Comp {
 //	friend class dunwich_sandgeon::game_engine::Engine;
 //public:		// constants

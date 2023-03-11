@@ -120,6 +120,8 @@ public:		// serialized variables
 	//std::unordered_map<IntVec2, std::optional<BgTile>>
 	std::unordered_map<IntVec2, BgTile>
 		alt_terrain_umap;
+	//std::unordered_set<ecs::EntId>
+	//	items_traps_uset;
 
 	std::unordered_set<i32> conn_index_uset;
 
