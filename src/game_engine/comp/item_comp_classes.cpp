@@ -15,37 +15,27 @@
 // You should have received a copy of the GNU General Public License along
 // with Dunwich Sandgeon.  If not, see <https://www.gnu.org/licenses/>.
 
-#ifndef src_game_engine_comp_item_comp_classes_hpp
-#define src_game_engine_comp_item_comp_classes_hpp
-
-// src/game_engine/comp/item_comp_classes.hpp
-
-#include "../../misc_includes.hpp"
-#include "../../misc_types.hpp"
+#include "item_comp_classes.hpp"
 
 namespace dunwich_sandgeon {
 namespace game_engine {
 namespace comp {
 //--------
-// A regular key; unlocks most doors
-class ItemKey final: public ecs::Comp {
-public:		// constants
-	static const std::string KIND_STR;
-public:		// variables
-	#define MEMB_LIST_COMP_ITEM_KEY(X)
+const std::string ItemKey::KIND_STR("ItemKey");
+ItemKey::ItemKey(const binser::Value& bv) {
+	MEMB_LIST_COMP_ITEM_KEY(BINSER_MEMB_DESERIALIZE);
+}
+std::string ItemKey::kind_str() const {
+	return KIND_STR;
+}
+ItemKey::operator binser::Value () const {
+	binser::Value ret;
 
-public:		// functions
-	inline ItemKey() = default;
-	ItemKey(const binser::Value& bv);
-	GEN_CM_BOTH_CONSTRUCTORS_AND_ASSIGN(ItemKey);
-	virtual ~ItemKey() = default;
+	MEMB_LIST_COMP_ITEM_KEY(BINSER_MEMB_SERIALIZE);
 
-	virtual std::string kind_str() const;
-	virtual operator binser::Value () const;
-};
+	return ret;
+}
 //--------
 } // namespace comp
 } // namespace game_engine
 } // namespace dunwich_sandgeon
-
-#endif		// src_game_engine_comp_item_comp_classes_hpp

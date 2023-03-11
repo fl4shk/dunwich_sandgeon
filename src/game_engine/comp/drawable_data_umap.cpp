@@ -18,6 +18,7 @@
 #include "drawable_data_umap.hpp"
 #include "../window_class.hpp"
 #include "player_comp_class.hpp"
+#include "item_comp_classes.hpp"
 //#include "block_comp_classes.hpp"
 #include "../lvgen_etc/dngn_floor_class.hpp"
 
@@ -51,6 +52,11 @@ auto drawable_data_umap()
 			//.color_pair=FontColor::LightGray,
 			//.gs_color_pair=FontColor::LightGray
 			.color_pair=FontColor::Brown, .gs_color_pair=FontColor::Gray}},
+
+		// '(', 40
+		{ItemKey::KIND_STR,
+			{.c='(', .color_pair=FontColor::Cyan,
+			.gs_color_pair=FontColor::Gray}},
 
 		// '+', 43
 		{Window::BORDER_CORNER_KIND_STR,

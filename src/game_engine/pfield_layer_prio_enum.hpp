@@ -42,6 +42,7 @@ constexpr inline bool pflprio_is_upper_layer(PfieldLayerPrio priority) {
 		//priority == PfieldLayerPrio::ItemsTraps
 		//|| priority == PfieldLayerPrio::CharsMachs
 		priority > PfieldLayerPrio::Bakgnd
+		&& priority < PfieldLayerPrio::Lim
 	);
 }
 //--------

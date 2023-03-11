@@ -16,6 +16,7 @@
 // with Dunwich Sandgeon.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "../comp/drawable_data_umap.hpp"
+#include "../comp/item_comp_classes.hpp"
 #include "dngn_floor_class.hpp"
 #include "path_class.hpp"
 #include "dijkstra_map_gen_class.hpp"
@@ -606,6 +607,8 @@ const {
 }
 void DngnFloor::draw() const {
 	//bg_tile_map->at({0, 0}) = BgTile::Floor;
+
+	// Draw the background
 	for (size_t i=0; i<size(); ++i) 
 	//for (size_t i=1; i<size(); ++i)
 	{
@@ -633,16 +636,38 @@ void DngnFloor::draw() const {
 								(bg_tile_str_map_at(*bg_tile));
 					}
 				} catch (const std::exception& e) {
-					printerr("game_engine::lvgen_etc::DngnFloor",
-						"::draw(): "
+					printerr("game_engine::lvgen_etc::DngnFloor::draw(): ",
+						"rt: ",
 						"Exception thrown: ", e.what(), "\n");
-					throw std::out_of_range(sconcat(
-						"rt.rect",rt.rect, ", pos", pos, ", ",
+					throw std::out_of_range(sconcat
+						("rt.rect", rt.rect, ", pos", pos, ", ",
 						"rs{", rt.rect.right_x(), "}, ",
 						"bs{", rt.rect.bottom_y(), "}, ",
-						"fp{", rt.fits_in_pfnb(), "}"
-						
-					));
+						"fp{", rt.fits_in_pfnb(), "}"));
+				}
+			}
+		}
+	}
+	for (i32 i=0; i<i32(upper_layer_umap_arr.size()); ++i) {
+		const auto& prio = PfieldLayerPrio(i);
+		if (pflprio_is_upper_layer(prio)) {
+			const auto& umap = upper_layer_umap(prio);
+			for (const auto& item: umap) {
+				try {
+					if (
+						engine->ecs_engine.has_ent_w_comp
+							(item.second, comp::Drawable::KIND_STR)
+					) {
+						engine->pfield_window.drawable_data_at(item.first)
+							= engine->ecs_engine.casted_comp_at
+							<comp::Drawable>(item.second)->data();
+					} 
+				} catch (const std::exception& e) {
+					printerr("game_engine::lvgen_etc::DngnFloor::draw(): ",
+						"ul: ",
+						"Exception thrown: ", e.what(), "\n");
+					throw std::out_of_range(sconcat
+						("pos", item.first, ", ent_id", item.second));
 				}
 			}
 		}
