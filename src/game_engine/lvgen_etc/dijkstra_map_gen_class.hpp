@@ -134,7 +134,7 @@ public:		// functions
 	// Make a `Path` to the first `Goal` we can find.
 	// This is potentially useful when we only have one `Goal`.
 	// It's best not to call this function on 
-	std::optional<Path> make_path(
+	std::pair<bool, Path> make_path(
 		const IntVec2& start_phys_pos, float stop_when_le_val=0.0f
 	) const;
 	//DijkstraMap(IntVec2 s_size_2d);
@@ -188,6 +188,7 @@ public:		// types
 		IntVec2 pos;
 		float val;
 	};
+	using StrKeyUset = ecs::StrKeyUset;
 public:		// constants
 	//static const BgTileUset
 	//	DEFAULT_NO_PASS_USET;
@@ -205,11 +206,32 @@ public:		// functions
 
 	DijkstraMap gen_basic(
 		const DngnFloor& dngn_floor,
-		const BgTileUset& no_pass_uset=BgTileUset()
+		const BgTileUset& no_pass_bg_tile_uset=RT_BRDR_BG_TILE_USET
+		//,
+		//// These two `std::optional`s allow the caller of this function to
+		//// pick between the following options:
+		//// `std::nullopt`: don't check this layer at all
+		//// `size() == 0`: any object in this layer blocks passage
+		//// `size() > 0`: only components listed in the `StrKeyUset` block
+		////				passage
+		//const std::optional<StrKeyUset>& no_pass_items_traps_uset
+		//	=std::nullopt,
+		//const std::optional<StrKeyUset>& no_pass_chars_machs_uset
+		//	=std::nullopt
 	) const;
 	DijkstraMap gen_flipped(
 		const DngnFloor& dngn_floor,
-		const BgTileUset& no_pass_uset=BgTileUset(),
+		const BgTileUset& no_pass_bg_tile_uset=RT_BRDR_BG_TILE_USET,
+		//// These two `std::optional`s allow the caller of this function to
+		//// pick between the following options:
+		//// `std::nullopt`: don't check this layer at all
+		//// `size() == 0`: any object in this layer blocks passage
+		//// `size() > 0`: only components listed in the `StrKeyUset` block
+		////				passage
+		//const std::optional<StrKeyUset>& no_pass_items_traps_uset
+		//	=std::nullopt,
+		//const std::optional<StrKeyUset>& no_pass_chars_machs_uset
+		//	=std::nullopt,
 		float bonus=DijkstraMap::DEFAULT_FLIP_BONUS
 	) const;
 

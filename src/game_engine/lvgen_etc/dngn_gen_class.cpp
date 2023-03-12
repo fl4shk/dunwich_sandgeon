@@ -1720,11 +1720,14 @@ void DngnGen::GenInnards::_insert_alt_terrain() const {
 			& ustairs_pos = engine->dngn_floor().ustairs_pos,
 			& dstairs_pos = engine->dngn_floor().dstairs_pos;
 		if (ustairs_pos && dstairs_pos) {
-			engine->dngn_floor().erase_alt_terrain_in_path
+			engine->dngn_floor().erase_non_walkable_in_path
 				(*ustairs_pos, *dstairs_pos,
-				//IntVec2(4, 4), IntVec2(4, 4),
-				std::nullopt, std::nullopt,
-				BASIC_UNSAFE_BG_TILE_USET, RT_BRDR_BG_TILE_USET);
+				IntVec2(4, 4), IntVec2(4, 4),
+				//std::nullopt, std::nullopt,
+				BASIC_UNSAFE_BG_TILE_USET,
+				std::nullopt,
+				std::nullopt,
+				RT_BRDR_BG_TILE_USET);
 		}
 	}
 }

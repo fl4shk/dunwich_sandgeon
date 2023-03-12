@@ -63,6 +63,8 @@ void GmMain::_init(ecs::Engine* ecs_engine) {
 		}
 	}
 	//--------
+	// temporary debugging code
+	//--------
 }
 void GmMain::tick(ecs::Engine* ecs_engine) {
 	if (

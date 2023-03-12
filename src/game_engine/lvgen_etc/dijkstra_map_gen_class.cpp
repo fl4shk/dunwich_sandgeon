@@ -19,6 +19,7 @@
 #include "path_class.hpp"
 #include "dngn_floor_class.hpp"
 #include "../engine_class.hpp"
+#include "../pfield_layer_prio_enum.hpp"
 
 namespace dunwich_sandgeon {
 namespace game_engine {
@@ -43,11 +44,11 @@ DijkstraMap& DijkstraMap::flip(float bonus) {
 
 	return *this;
 }
-std::optional<Path> DijkstraMap::make_path(
+std::pair<bool, Path> DijkstraMap::make_path(
 	//const DijkstraMap& dmap, //const DngnFloor& dngn_floor,
 	const IntVec2& start_phys_pos, float stop_when_le_val
 ) const {
-	Path ret;
+	std::pair<bool, Path> ret(true, Path());
 	//temp.push_back(start_pos);
 	IntVec2 phys_pos = start_phys_pos;
 
@@ -60,7 +61,7 @@ std::optional<Path> DijkstraMap::make_path(
 			"({", BOUNDS_R2.tl_corner(), " ",
 				BOUNDS_R2.br_corner(), "})"));
 	}
-	ret._data.push_back(phys_pos);
+	ret.second._data.push_back(phys_pos);
 	//while (pos != goal.pos)
 	//for (;;)
 	while (phys_at(phys_pos) > stop_when_le_val) {
@@ -73,11 +74,11 @@ std::optional<Path> DijkstraMap::make_path(
 			if (
 				BOUNDS_R2.intersect(side_phys_pos)
 			) {
-				//ret._data.push_back(side_pos);
+				//ret.second._data.push_back(side_pos);
 				if (phys_at(side_phys_pos) < phys_at(phys_pos)) {
 					// Always go "downhill".
 					phys_pos = side_phys_pos;
-					ret._data.push_back(phys_pos);
+					ret.second._data.push_back(phys_pos);
 					return true;
 				} else {
 					//engine->dbg_log
@@ -104,13 +105,16 @@ std::optional<Path> DijkstraMap::make_path(
 		) {
 			//engine->dbg_log
 			//	("DijkstraMap::make_path(): Failed to find a `Path`\n");
-			//for (const IntVec2& item: ret) {
+			//for (const IntVec2& item: ret.second) {
 			//	engine->dbg_log(item, " ");
 			//}
 			//engine->dbg_log("\n");
 			// This happens when we fail to find a `Path`. I'm about 90%
 			// certain there's *not* an off-by-one error here.
-			return std::nullopt;
+			//return std::nullopt;
+			//return ret;
+			ret.first = false;
+			break;
 		}
 	}
 	//ret.insert(std::pair(goal.pos, std::move(temp)));
@@ -179,7 +183,11 @@ DijkstraMapGen& DijkstraMapGen::add(const IntVec2& pos, float val) {
 }
 //--------
 DijkstraMap DijkstraMapGen::gen_basic(
-	const DngnFloor& dngn_floor, const BgTileUset& no_pass_uset
+	const DngnFloor& dngn_floor,
+	const BgTileUset& no_pass_bg_tile_uset
+	//,
+	//const std::optional<StrKeyUset>& no_pass_items_traps_uset,
+	//const std::optional<StrKeyUset>& no_pass_chars_machs_uset
 ) const {
 	//DijkstraMap ret(PFIELD_PHYS_NO_BRDR_RECT2.size_2d.y,
 	//	std::vector<float>
@@ -214,8 +222,40 @@ DijkstraMap DijkstraMapGen::gen_basic(
 	}
 
 	auto edge_exists_func = [&](const IntVec2& phys_pos) -> bool {
+		//auto upper_layer_func = [&dngn_floor, &phys_pos](
+		//	const std::optional<StrKeyUset>& str_key_uset,
+		//	PfieldLayerPrio prio
+		//) -> bool {
+		//	// `str_key_uset` allows the caller of this function to
+		//	// pick between the following options:
+		//	// `std::nullopt`: don't check this layer at all
+		//	// `size() == 0`: any object in this layer blocks passage
+		//	// `size() > 0`: only the  `kind_str()`s of each `ecs::comp``
+		//	//				listed in the `StrKeyUset` block passage
+		//	if (!str_key_uset) {
+		//		return true;
+		//	} else if (str_key_uset->size() == 0) {
+		//		const auto& ul_umap = dngn_floor.upper_layer_umap(prio);
+		//		return !ul_umap.contains(phys_pos);
+		//	} else {
+		//		const auto& ul_umap = dngn_floor.upper_layer_umap(prio);
+		//		if (ul_umap.contains(phys_pos)) {
+		//			for (const auto& key: *str_key_uset) {
+		//				if (engine->
+		//			}
+		//		}
+		//		return true;
+		//	}
+		//};
+
 		const auto& bg_tile = dngn_floor.phys_bg_tile_at(phys_pos);
-		return bg_tile && !no_pass_uset.contains(*bg_tile);
+		return (
+			bg_tile && !no_pass_bg_tile_uset.contains(*bg_tile)
+			//&& upper_layer_func
+			//	(no_pass_items_traps_uset, PfieldLayerPrio::ItemsTraps)
+			//&& upper_layer_func
+			//	(no_pass_chars_machs_uset, PfieldLayerPrio::CharsMachs)
+		);
 		//return static_cast<bool>(bg_tile);
 	};
 	//{
@@ -247,7 +287,7 @@ DijkstraMap DijkstraMapGen::gen_basic(
 					if (
 						//const auto bg_tile
 						//	= dngn_floor.phys_bg_tile_at(side_phys_pos);
-						//bg_tile && !no_pass_uset.contains(*bg_tile)
+						//bg_tile && !no_pass_bg_tile_uset.contains(*bg_tile)
 						edge_exists_func(side_phys_pos)
 					) {
 						auto& ret_side_item
@@ -261,18 +301,28 @@ DijkstraMap DijkstraMapGen::gen_basic(
 							to_move_deque.push_back({&ret, side_phys_pos});
 							//ret_side_item = ret_item;
 						}
+						//return true;
 					}
 				}
+				//return false;
 			};
-			inner_func(LEFT_OFFSET);
-			inner_func(TOP_OFFSET);
-			inner_func(RIGHT_OFFSET);
-			inner_func(BOTTOM_OFFSET);
+			//return (
+				inner_func(LEFT_OFFSET);
+				//||
+				inner_func(TOP_OFFSET);
+				//||
+				inner_func(RIGHT_OFFSET);
+				//||
+				inner_func(BOTTOM_OFFSET);
+			//);
 		};
 		//const float lowest_val = to_sort_deque.front();
 		while (to_sort_deque.size() > 0) {
 			const Sortable item = to_sort_deque.front();
 			fill_func(item.phys_pos);
+			//if (!fill_func(item.phys_pos)) {
+			//	return std::nullopt;
+			//}
 			to_sort_deque.pop_front();
 		}
 		to_sort_deque = std::move(to_move_deque);
@@ -323,14 +373,26 @@ DijkstraMap DijkstraMapGen::gen_basic(
 	return ret;
 }
 DijkstraMap DijkstraMapGen::gen_flipped(
-	const DngnFloor& dngn_floor, const BgTileUset& no_pass_uset,
+	const DngnFloor& dngn_floor,
+	const BgTileUset& no_pass_bg_tile_uset,
+	//const std::optional<StrKeyUset>& no_pass_items_traps_uset,
+	//const std::optional<StrKeyUset>& no_pass_chars_machs_uset,
 	float bonus
 ) const {
-	DijkstraMap ret = gen_basic(dngn_floor, no_pass_uset);
-	//flip(ret, bonus);
-	//return ret;
-	ret.flip(bonus);
-	return ret;
+	auto ret = gen_basic
+		(dngn_floor,
+		no_pass_bg_tile_uset
+		//,
+		//no_pass_items_traps_uset,
+		//no_pass_chars_machs_uset
+		);
+	//if (ret) {
+		//flip(ret, bonus);
+		//return ret;
+		ret.flip(bonus);
+		return ret;
+	//}
+	//return std::nullopt;
 }
 //--------
 } // namespace lvgen_etc

@@ -350,7 +350,8 @@ void Engine::tick() {
 	// testing
 
 	//printerr("Engine::tick(): Note: **NOT** ticking `ecs_engine`.\n");
-	ecs_engine.tick();
+	ecs_engine.destroy_scheduled();
+	ecs_engine.tick(std::nullopt, std::nullopt);
 
 	//screen_window.draw(pfield_window);
 	//screen_window.draw(log_window);

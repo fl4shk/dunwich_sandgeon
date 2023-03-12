@@ -44,6 +44,7 @@ class Position;
 namespace lvgen_etc {
 //--------
 class DngnGen;
+class Path;
 //--------
 enum class AltTerrainState: u8 {
 	Normal,
@@ -78,6 +79,7 @@ class DngnFloor final {
 	#include "dngn_floor_friends.hpp"
 public:		// constants
 public:		// types
+	using StrKeyUset = ecs::StrKeyUset;
 private:		// variables
 	std::vector<RoomTunnelSptr> _rt_data;
 	std::unordered_map<RoomTunnel*, size_t> _rt_to_id_umap;
@@ -223,14 +225,26 @@ public:		// functions
 		//double n_layout_noise_pos_scale,
 		//double n_layout_noise_pos_offset
 	);
-	// This functions erases non-walkable `BgTile`s along a `Path`. 
+	// This functions erases non-walkable `BgTile`s and entities along a
+	// `Path`. 
 	//void make_path_walkable
-	void erase_alt_terrain_in_path(
+	std::pair<bool, Path> erase_non_walkable_in_path(
 		const IntVec2& start_phys_pos, const IntVec2& end_phys_pos,
 		const std::optional<IntVec2>& start_r2_sz2d,
 		const std::optional<IntVec2>& end_r2_sz2d,
 		const BgTileUset& alt_terrain_to_erase_uset,
-		const BgTileUset& no_pass_uset=RT_BRDR_BG_TILE_USET
+		// These two `std::optional`s allow the caller of this function to
+		// pick between the following options:
+		// `std::nullopt`: don't check this layer at all
+		// `size() == 0`: any object in this layer blocks passage
+		// `size() > 0`: only components listed in the `StrKeyUset` block
+		//				passage
+		const std::optional<StrKeyUset>& items_traps_to_erase_uset
+			//=StrKeyUset(),
+			=std::nullopt,
+		const std::optional<StrKeyUset>& chars_machs_to_erase_uset
+			=std::nullopt,
+		const BgTileUset& no_pass_bg_tile_uset=RT_BRDR_BG_TILE_USET
 	);
 	// Note that this function *DOES* erase elements of
 	// `destroyed_alt_terrain_uset`

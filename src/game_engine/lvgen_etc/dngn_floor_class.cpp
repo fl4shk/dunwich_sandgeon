@@ -249,12 +249,17 @@ void DngnFloor::_position_ctor_callback(comp::Position* obj) {
 		obj->floor() == _pos3_z
 		&& pflprio_is_upper_layer(obj->priority)
 	) {
-		// Don't prevent walking through walls here, so the below
-		// commented-out code should stay commented-out.
-		//const auto& rt_index = phys_pos_to_rt_index(obj->pos2());
-		//if (rt_index) {
-		//	//RoomTunnel& rt = _raw_at(*rt_index);
-		//}
+		// Prevent walking through walls here
+		if (
+			const auto& rt_index = phys_pos_to_rt_index(obj->pos2());
+			!rt_index
+		) {
+			throw std::invalid_argument(sconcat
+				("game_engine::lvgen_etc::DngnFloor",
+				"::_position_ctor_callback(): Internal error: ",
+				"(developer note: `!rt_index)): ",
+				*obj, "\n"));
+		}
 
 		auto& umap = upper_layer_umap(obj->priority);
 
@@ -263,7 +268,7 @@ void DngnFloor::_position_ctor_callback(comp::Position* obj) {
 				("game_engine::lvgen_etc::DngnFloor",
 				"::_position_ctor_callback(): Internal error: ",
 				"(developer note: `umap.contains(obj->pos2())`): ",
-				obj, "\n"));
+				*obj, "\n"));
 		}
 		umap.insert({obj->pos2(), obj->ent_id()});
 	} else if (obj->floor() != _pos3_z) {
@@ -271,13 +276,13 @@ void DngnFloor::_position_ctor_callback(comp::Position* obj) {
 			("game_engine::lvgen_etc::DngnFloor",
 			"::_position_ctor_callback(): Internal error: ",
 			"(developer note: `obj->floor() != _pos3_z`): ",
-			obj, " ", _pos3_z, "\n"));
+			*obj, " ", _pos3_z, "\n"));
 	} else { // if (!pflprio_is_upper_layer(obj->priority))
 		throw std::invalid_argument(sconcat
 			("game_engine::lvgen_etc::DngnFloor",
 			"::_position_ctor_callback(): Internal error: ",
 			"(developer note: `!pflprio_is_upper_layer(obj->priority)`): ",
-			obj, " ", "\n"));
+			*obj, "\n"));
 	}
 }
 void DngnFloor::_position_dtor_callback(comp::Position* obj) {
@@ -285,15 +290,23 @@ void DngnFloor::_position_dtor_callback(comp::Position* obj) {
 		obj->floor() == _pos3_z
 		&& pflprio_is_upper_layer(obj->priority)
 	) {
-		// Don't prevent walking through walls here, so the below
-		// commented-out code should stay commented-out.
-		//const auto& rt_index = phys_pos_to_rt_index(obj->pos2());
+		// Prevent walking through walls here
 		//if (rt_index) {
-		//	//RoomTunnel& rt = _raw_at(*rt_index);
+		//	RoomTunnel& rt = _raw_at(*rt_index);
 		//} else {
 		//	//throw std::invalid_argument
 		//	//engine->err
 		//}
+		if (
+			const auto& rt_index = phys_pos_to_rt_index(obj->pos2());
+			!rt_index
+		) {
+			throw std::invalid_argument(sconcat
+				("game_engine::lvgen_etc::DngnFloor",
+				"::_position_dtor_callback(): Internal error: ",
+				"(developer note: `!rt_index)): ",
+				*obj, "\n"));
+		}
 
 		auto& umap = upper_layer_umap(obj->priority);
 
@@ -302,7 +315,7 @@ void DngnFloor::_position_dtor_callback(comp::Position* obj) {
 				("game_engine::lvgen_etc::DngnFloor",
 				"::_position_dtor_callback(): Internal error: ",
 				"(developer note: `!umap.contains(obj->pos2())`): ",
-				obj, "\n"));
+				*obj, "\n"));
 		}
 
 		umap.erase(obj->pos2());
@@ -311,13 +324,13 @@ void DngnFloor::_position_dtor_callback(comp::Position* obj) {
 			("game_engine::lvgen_etc::DngnFloor",
 			"::_position_dtor_callback(): Internal error: ",
 			"(developer note: `obj->floor() != _pos3_z`): ",
-			obj, " ", _pos3_z, "\n"));
+			*obj, " ", _pos3_z, "\n"));
 	} else { // if (!pflprio_is_upper_layer(obj->priority))
 		throw std::invalid_argument(sconcat
 			("game_engine::lvgen_etc::DngnFloor",
 			"::_position_dtor_callback(): Internal error: ",
 			"(developer note: `!pflprio_is_upper_layer(obj->priority)`): ",
-			obj, " ", "\n"));
+			*obj, "\n"));
 	}
 }
 //void DngnFloor::_position_set_pos3_callback(
@@ -383,17 +396,25 @@ void DngnFloor::clear_before_gen(
 	//_layout_noise_pos_scale = n_layout_noise_pos_scale;
 	//_layout_noise_pos_offset = n_layout_noise_pos_offset;
 }
-void DngnFloor::erase_alt_terrain_in_path(
+std::pair<bool, Path> DngnFloor::erase_non_walkable_in_path(
 	const IntVec2& start_phys_pos, const IntVec2& end_phys_pos,
 	const std::optional<IntVec2>& start_r2_sz2d,
 	const std::optional<IntVec2>& end_r2_sz2d,
 	const BgTileUset& alt_terrain_to_erase_uset,
-	const BgTileUset& no_pass_uset
+	// These two `std::optional`s allow the caller of this function to
+	// pick between the following options:
+	// `std::nullopt`: don't check this layer at all
+	// `size() == 0`: any object in this layer blocks passage
+	// `size() > 0`: only components listed in the `StrKeyUset` block
+	//				passage
+	const std::optional<StrKeyUset>& items_traps_to_erase_uset,
+	const std::optional<StrKeyUset>& chars_machs_to_erase_uset,
+	const BgTileUset& no_pass_bg_tile_uset
 ) {
 	DijkstraMapGen dmap_gen;
 	dmap_gen.add(start_phys_pos);
-	const auto& dmap = dmap_gen.gen_basic(*this, no_pass_uset);
-	const auto& path = dmap.make_path(end_phys_pos);
+	const auto& dmap = dmap_gen.gen_basic(*this, no_pass_bg_tile_uset);
+	auto path = dmap.make_path(end_phys_pos);
 	//engine->dbg_log
 	//	("DngnFloor::erase_alt_terrain_in_path():\n",
 	//	"start_phys_pos: ", start_phys_pos, "\n",
@@ -402,8 +423,8 @@ void DngnFloor::erase_alt_terrain_in_path(
 	//	"bool(path): ", static_cast<bool>(path), "\n",
 	//	"path->size(): ",
 	//		(path ? sconcat(path->size()) : "invalid"), "\n");
-	if (path) {
-		//for (const auto& item: *path) {
+	//if (path.first) {
+		//for (const auto& item: path.second) {
 		//	//engine->dbg_log(item, " ");
 		//	const auto& bg_tile = phys_bg_tile_at(item);
 		//	engine->dbg_log
@@ -423,28 +444,72 @@ void DngnFloor::erase_alt_terrain_in_path(
 			//	phys_pos, "\n");
 			RoomTunnel* rt;
 			const auto& bg_tile = phys_bg_tile_at(phys_pos, &rt);
-			if (
-				bg_tile
-				&& alt_terrain_to_erase_uset.contains(*bg_tile)
-				&& rt->alt_terrain_umap.contains(phys_pos)
-			) {
-				//RoomTunnel
-				//	* rt = _raw_at(phys_pos_to_rt_index(phys_pos));
-				//if (rt->alt_terrain_umap.contains(phys_pos)) {
+			if (bg_tile) {
+				//--------
+				auto upper_layer_func = [this, &phys_pos](
+					const std::optional<StrKeyUset>& str_key_uset,
+					PfieldLayerPrio prio
+				) -> void {
+					// `str_key_uset` allows the caller of this function to
+					// pick between the following options:
+					// `std::nullopt`: don't check this layer at all
+					// `size() == 0`: any object in this layer blocks
+					//				passage
+					// `size() > 0`: only the  `kind_str()`s of each
+					//				`ecs::comp`` listed in the `StrKeyUset`
+					//				block passage
+					if (!str_key_uset) {
+						return;
+					} else if (str_key_uset->size() == 0) {
+						const auto& ul_umap = upper_layer_umap(prio);
+						if (ul_umap.contains(phys_pos)) {
+							engine->ecs_engine.sched_destroy
+								(ul_umap.at(phys_pos));
+						}
+					} else {
+						const auto& ul_umap = upper_layer_umap(prio);
+						if (ul_umap.contains(phys_pos)) {
+							const ecs::EntId id = ul_umap.at(phys_pos);
+							for (const auto& key: *str_key_uset) {
+								if (
+									engine->ecs_engine.has_ent_w_comp
+										(id, key)
+								) {
+									engine->ecs_engine.sched_destroy(id);
+								}
+							}
+						}
+					}
+				};
+				//--------
+				if (
+					alt_terrain_to_erase_uset.contains(*bg_tile)
+					&& rt->alt_terrain_umap.contains(phys_pos)
+				) {
 					//engine->dbg_log("testificate\n");
 					rt->alt_terrain_umap.erase(phys_pos);
 					//rt->alt_terrain_umap[phys_pos] = BgTile::Lava;
-				//}
+				}
+				//--------
+				upper_layer_func
+					(items_traps_to_erase_uset,
+					PfieldLayerPrio::ItemsTraps);
+				upper_layer_func
+					(chars_machs_to_erase_uset,
+					PfieldLayerPrio::CharsMachs);
+				//--------
+				//return true;
+				//--------
 			}
+			//return false;
 			return true;
 		};
-		path->fill(fill_func);
+		path.second.fill(fill_func);
 
 		auto erase_endpt_func = [this, &fill_func](
 			const IntVec2& endpt_phys_pos,
 			const std::optional<IntVec2>& endpt_r2_sz2d
 		) -> bool {
-			
 			if (
 				endpt_r2_sz2d
 				&& endpt_r2_sz2d->x != 0 && endpt_r2_sz2d->y != 0
@@ -510,7 +575,8 @@ void DngnFloor::erase_alt_terrain_in_path(
 		};
 		erase_endpt_func(start_phys_pos, start_r2_sz2d);
 		erase_endpt_func(end_phys_pos, end_r2_sz2d);
-	}
+	//}
+	return path;
 }
 bool DngnFloor::erase_tunnel_during_gen(size_t index) {
 	if (
@@ -648,6 +714,8 @@ void DngnFloor::draw() const {
 			}
 		}
 	}
+	// Other logic must ensure that both sets of stairs cannot be
+	// overwritten.
 	for (i32 i=0; i<i32(upper_layer_umap_arr.size()); ++i) {
 		const auto& prio = PfieldLayerPrio(i);
 		if (pflprio_is_upper_layer(prio)) {
