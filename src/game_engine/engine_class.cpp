@@ -350,8 +350,23 @@ void Engine::tick() {
 	// testing
 
 	//printerr("Engine::tick(): Note: **NOT** ticking `ecs_engine`.\n");
-	ecs_engine.destroy_scheduled();
-	ecs_engine.tick(std::nullopt, std::nullopt);
+	//ecs_engine.destroy_scheduled();
+	switch (game_mode()) {
+	//--------
+	#define X(arg) \
+		case GameMode::arg: \
+			ecs_engine.tick(std::nullopt, sys::Gm##arg::KIND_STR, true); \
+			break;
+	LIST_OF_GAME_MODES(X)
+	#undef X
+	default:
+		fprintf(stderr,
+			"game_engine::Engine::tick(): Internal error!\n");
+		exit(1);
+		break;
+	}
+	//--------
+	//ecs_engine.tick(std::nullopt, std::nullopt);
 
 	//screen_window.draw(pfield_window);
 	//screen_window.draw(log_window);
