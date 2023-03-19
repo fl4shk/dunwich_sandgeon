@@ -21,6 +21,182 @@ namespace dunwich_sandgeon {
 namespace game_engine {
 namespace lvgen_etc {
 //--------
+const std::vector<i32>
+	// Chosen arbitrarily; might need to adjust later
+	RoomTunnel::MIN_NUM_ROOM_TUNNELS_DARR({
+		//--------
+		// Level 1 (index 0)
+		25,
+
+		// Level 2 (index 1)
+		25,
+
+		// Level 3 (index 2)
+		25,
+
+		// Level 4 (index 3)
+		25,
+
+		// Level 5 (index 4)
+		25,
+		//--------
+		////= 3,
+		////= 5,
+		////= 8,
+		////= 10,
+		////= 13,
+		////= 15,
+		////= 20,
+		//= 25,
+		//--------
+	}),
+	RoomTunnel::MAX_NUM_ROOM_TUNNELS_DARR({
+		//--------
+		// Level 1 (index 0)
+		64,
+
+		// Level 2 (index 1)
+		64,
+
+		// Level 3 (index 2)
+		64,
+
+		// Level 4 (index 3)
+		64,
+
+		// Level 5 (index 4)
+		64,
+		//--------
+		////= 3;
+		////= 5;
+		////= 8;
+		////= 15;
+		////= 42;
+		//= 64,
+		//--------
+	}),
+	RoomTunnel::MIN_NUM_ROOMS_DARR({
+		//--------
+		// Level 1 (index 0)
+		10,
+
+		// Level 2 (index 1)
+		10,
+
+		// Level 3 (index 2)
+		10,
+
+		// Level 4 (index 3)
+		10,
+
+		// Level 5 (index 4)
+		10,
+		//--------
+		////= 5;
+		////= 7;
+		//= 10;
+		//--------
+	});
+const std::vector<i32>
+	RoomTunnel::TUNNEL_MIN_LEN_DARR({
+		//--------
+		// Level 1 (index 0)
+		4,
+
+		// Level 2 (index 1)
+		4,
+
+		// Level 3 (index 2)
+		4,
+
+		// Level 4 (index 3)
+		4,
+
+		// Level 5 (index 4)
+		4,
+		//--------
+		////= 2,
+		////= 3,
+		//= 4,
+		////= 5,
+		//--------
+	}),
+	RoomTunnel::TUNNEL_MAX_LEN_DARR({
+		//--------
+		// Level 1 (index 0)
+		12,
+
+		// Level 2 (index 1)
+		12,
+
+		// Level 3 (index 2)
+		12,
+
+		// Level 4 (index 3)
+		12,
+
+		// Level 5 (index 4)
+		12,
+		//--------
+		////= 32;
+		////= 20;
+		////= 15;
+		//= 12;
+		////= 10;
+		////= 8;
+		//--------
+	});
+
+const std::vector<IntVec2>
+	RoomTunnel::ROOM_MIN_SIZE_2D_DARR({
+		//--------
+		// Level 1 (index 0)
+		{5, 5},
+
+		// Level 2 (index 1)
+		{5, 5},
+
+		// Level 3 (index 2)
+		{5, 5},
+
+		// Level 4 (index 3)
+		{5, 5},
+
+		// Level 5 (index 4)
+		{5, 5},
+		//--------
+		////= {3, 3},
+		////= {4, 4},
+		//= {5, 5},
+		//--------
+	}),
+	RoomTunnel::ROOM_MAX_SIZE_2D_DARR({
+		//--------
+		// Level 1 (index 0)
+		{12, 12},
+
+		// Level 2 (index 1)
+		{12, 12},
+
+		// Level 3 (index 2)
+		{12, 12},
+
+		// Level 4 (index 3)
+		{12, 12},
+
+		// Level 5 (index 4)
+		{12, 12},
+		//--------
+		////= {9, 9};
+		////= {10, 10};
+		//= {12, 12};
+		////= {15, 15};
+		//--------
+	});
+
+	//MIN_NUM_TUNNELS = 1,
+	//MAX_NUM_TUNNELS = 64;
+//--------
 RoomTunnel::RoomTunnel() {}
 RoomTunnel::RoomTunnel(const IntRect2& s_rect)
 	: rect(s_rect) {}

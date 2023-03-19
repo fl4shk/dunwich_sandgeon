@@ -26,6 +26,13 @@ namespace dunwich_sandgeon {
 namespace game_engine {
 namespace lvgen_etc {
 //--------
+#define LIST_OF_WALKABLE_NO_ITEMS_TRAPS_BG_TILES(X) \
+	X(Door) \
+	X(LockedDoor) \
+	/* X(BossDoor) */ \
+	X(UpStairs) \
+	X(DownStairs) \
+
 #define LIST_OF_ALT_TERRAIN_BG_TILES(X) \
 	X(Water) \
 	X(Lava) \
@@ -37,16 +44,13 @@ namespace lvgen_etc {
 	X(Error) \
 	\
 	X(Wall) \
-	X(Door) \
-	X(LockedDoor) \
+	LIST_OF_WALKABLE_NO_ITEMS_TRAPS_BG_TILES(X) \
 	\
 	X(RoomFloor) \
 	X(TunnelFloor) \
 	/* X(Floor) */ \
 	LIST_OF_ALT_TERRAIN_BG_TILES(X) \
 	\
-	X(UpStairs) \
-	X(DownStairs) \
 
 enum class BgTile: u8 {
 	#define X(name) \
@@ -60,9 +64,13 @@ extern const BgTileUset
 	RT_BRDR_BG_TILE_USET,
 	BASIC_NO_PASS_BG_TILE_USET,
 	BASIC_UNSAFE_BG_TILE_USET,
+	WALKABLE_NO_ITEMS_TRAPS_BG_TILE_USET,
+	ALT_TERRAIN_BG_TILE_USET,
 	//PLAYER_UNSAFE_BG_TILE_USET,
-	DOOR_BG_TILE_USET,
-	LOCKED_BG_TILE_USET;
+	ANY_DOOR_BG_TILE_USET,
+	LOCK_BG_TILE_USET;
+	//ANY_LOCKED_BG_TILE_USET,
+	//BOSS_LOCKED_BG_TILE_USET;
 //inline bool bg_tile_is_player_unsafe(BgTile bg_tile) {
 //	//return (bg_tile == BgTile::Pit
 //	//	|| bg_tile == BgTile::Lava

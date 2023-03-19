@@ -68,6 +68,9 @@ auto drawable_data_umap()
 		{bg_tile_str_map_at(BgTile::LockedDoor),
 			{.c='+', .color_pair={FontColor::Black, FontColor::White},
 			.gs_color_pair={FontColor::Black, FontColor::White}}},
+		//{bg_tile_str_map_at(BgTile::BossDoor),
+		//	{.c='+', .color_pair={FontColor::Black, FontColor::Red},
+		//	.gs_color_pair={FontColor::Black, FontColor::Gray}}},
 
 		// ',', 44
 		{bg_tile_str_map_at(BgTile::TunnelFloor),

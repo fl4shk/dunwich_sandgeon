@@ -76,6 +76,95 @@ const std::vector<std::vector<BgTile>>
 			({{1, BgTile::Lava},
 			{1, BgTile::Spikes}}),
 	});
+//--------
+i32 DngnGen::level_index() {
+	return engine->level_index();
+}
+//--------
+i32 DngnGen::MIN_NUM_ROOM_TUNNELS() {
+	return RoomTunnel::MIN_NUM_ROOM_TUNNELS_DARR.at(level_index());
+}
+i32 DngnGen::MAX_NUM_ROOM_TUNNELS() {
+	return RoomTunnel::MAX_NUM_ROOM_TUNNELS_DARR.at(level_index());
+}
+i32 DngnGen::MIN_NUM_ROOMS() {
+	return RoomTunnel::MIN_NUM_ROOMS_DARR.at(level_index());
+}
+//--------
+i32 DngnGen::TUNNEL_MIN_LEN() {
+	return RoomTunnel::TUNNEL_MIN_LEN_DARR.at(level_index());
+}
+i32 DngnGen::TUNNEL_MAX_LEN() {
+	return RoomTunnel::TUNNEL_MAX_LEN_DARR.at(level_index());
+}
+
+const IntVec2& DngnGen::ROOM_MIN_SIZE_2D() {
+	return RoomTunnel::ROOM_MIN_SIZE_2D_DARR.at(level_index());
+}
+const IntVec2& DngnGen::ROOM_MAX_SIZE_2D() {
+	return RoomTunnel::ROOM_MAX_SIZE_2D_DARR.at(level_index());
+}
+//--------
+// "TSF" is short for "to shrink from"
+i32 DngnGen::GEN_EXTEND_AMOUNT_TSF() {
+	//--------
+	static const std::vector<i32> DARR = {
+		//--------
+		// Level 1 (index 0)
+		15,
+
+		// Level 2 (index 1)
+		15,
+
+		// Level 3 (index 2)
+		15,
+
+		// Level 4 (index 3)
+		15,
+
+		// Level 5 (index 4)
+		15,
+		//--------
+		////= 5,
+		////= 7,
+		////= 8,
+		////= 10,
+		//= 15,
+		//--------
+	};
+	//--------
+	return DARR.at(level_index());
+	//--------
+}
+i32 DngnGen::GEN_PARALLEL_TUNNEL_MIN_DIST() {
+	//--------
+	static const std::vector<i32> DARR = {
+		//--------
+		// Level 1 (index 0)
+		4,
+
+		// Level 2 (index 1)
+		4,
+
+		// Level 3 (index 2)
+		4,
+
+		// Level 4 (index 3)
+		4,
+
+		// Level 5 (index 4)
+		4,
+		//--------
+		////= 3;
+		//= 4;
+		////= 5;
+		//--------
+	};
+	//--------
+	return DARR.at(level_index());
+	//--------
+}
+//--------
 void DngnGen::clear_before_gen(
 	//ecs::Engine* ecs_engine
 ) {
@@ -86,7 +175,7 @@ void DngnGen::clear_before_gen(
 	//dngn_floor->clear(engine->calc_layout_noise_add_amount());
 	//_stop_gen_early = false;
 	_attempted_num_rt = engine->layout_rand<i32>
-		(i32(MIN_NUM_ROOM_TUNNELS), i32(MAX_NUM_ROOM_TUNNELS));
+		(i32(MIN_NUM_ROOM_TUNNELS()), i32(MAX_NUM_ROOM_TUNNELS()));
 	_stop_gen_early = false;
 	_done_generating = false;
 }
@@ -132,7 +221,7 @@ bool DngnGen::GenInnards::gen_single_rt() {
 	//--------
 	if (engine->dngn_floor().size() == 0) {
 		//_self->_attempted_num_rt = engine->layout_rand<i32>
-		//	(i32(MIN_NUM_ROOM_TUNNELS), i32(MAX_NUM_ROOM_TUNNELS));
+		//	(i32(MIN_NUM_ROOM_TUNNELS()), i32(MAX_NUM_ROOM_TUNNELS()));
 		//_self->_stop_gen_early = false;
 		//_self->_done_generating = false;
 		_self->clear_before_gen(
@@ -149,17 +238,17 @@ bool DngnGen::GenInnards::gen_single_rt() {
 			//--------
 			//to_push_rt.rect.pos.x = engine->layout_rand<i32>
 			//	(PFIELD_PHYS_RECT2.left_x(),
-			//	PFIELD_PHYS_RECT2.right_x() - ROOM_MIN_SIZE_2D.x - 1);
+			//	PFIELD_PHYS_RECT2.right_x() - ROOM_MIN_SIZE_2D().x - 1);
 			//to_push_rt.rect.pos.y = engine->layout_rand<i32>
 			//	(PFIELD_PHYS_RECT2.top_y(),
-			//	PFIELD_PHYS_RECT2.bottom_y() - ROOM_MIN_SIZE_2D.y - 1);
+			//	PFIELD_PHYS_RECT2.bottom_y() - ROOM_MIN_SIZE_2D().y - 1);
 
 			//to_push_rt.rect.size_2d.x = engine->layout_rand<i32>
-			//	(ROOM_MIN_SIZE_2D.x, ROOM_MAX_SIZE_2D.x);
+			//	(ROOM_MIN_SIZE_2D().x, ROOM_MAX_SIZE_2D().x);
 			//to_push_rt.rect.size_2d.y = engine->layout_rand<i32>
-			//	(ROOM_MIN_SIZE_2D.y, ROOM_MAX_SIZE_2D.y);
+			//	(ROOM_MIN_SIZE_2D().y, ROOM_MAX_SIZE_2D().y);
 			to_push_rt.rect = engine->layout_rand_r2_in_pfnb
-				(ROOM_MIN_SIZE_2D, ROOM_MAX_SIZE_2D);
+				(ROOM_MIN_SIZE_2D(), ROOM_MAX_SIZE_2D());
 			//--------
 			//if (to_push_rt.fits_in_pfnb()) {
 			//	_do_push_back(std::move(to_push_rt));
@@ -170,12 +259,12 @@ bool DngnGen::GenInnards::gen_single_rt() {
 			//--------
 		//}
 	}
-	//else if (engine->dngn_floor().size() < MAX_NUM_ROOM_TUNNELS)
+	//else if (engine->dngn_floor().size() < MAX_NUM_ROOM_TUNNELS())
 	else if (
 		i32(engine->dngn_floor().size()) < _self->_attempted_num_rt
 	) {
 		//RoomTunnel to_push_rt;
-		//if (engine->dngn_floor().size() < MIN_NUM_ROOM_TUNNELS) {
+		//if (engine->dngn_floor().size() < MIN_NUM_ROOM_TUNNELS()) {
 		//	for (;;) {
 		//		if (auto opt_rt=_inner_gen_post_first(); opt_rt) {
 		//			_do_push_back(std::move(*opt_rt));
@@ -194,7 +283,9 @@ bool DngnGen::GenInnards::gen_single_rt() {
 			}
 			//_self->_stop_gen_early = tries >= GEN_RT_LIM_TRIES;
 			if (_self->_stop_gen_early) {
-				if (engine->dngn_floor().size() < MIN_NUM_ROOM_TUNNELS) {
+				if (
+					engine->dngn_floor().size() < MIN_NUM_ROOM_TUNNELS()
+				) {
 					redo();
 				} else {
 					// If we failed to find a room that fits in the
@@ -219,17 +310,17 @@ bool DngnGen::GenInnards::gen_single_rt() {
 	if (_self->_done_generating) {
 		i32 num_rooms = 0;
 		for (size_t i=0; i<engine->dngn_floor().size(); ++i) {
-			if (engine->dngn_floor().at(i).is_room()) {
+			if (engine->dngn_floor().at(i).is_room(level_index())) {
 				++num_rooms;
 			}
 		}
-		if (num_rooms < MIN_NUM_ROOMS) {
+		if (num_rooms < MIN_NUM_ROOMS()) {
 			engine->dbg_log
 				("Debug: game_engine::lvgen_etc::DngnGen",
 				"::GenInnards::gen_single_rt(): ",
 				"Didn't generate enough rooms. ",
 				"Generated ", num_rooms, " rooms, but need at least ",
-				MIN_NUM_ROOMS, ".\n");
+				MIN_NUM_ROOMS(), ".\n");
 			redo();
 		}
 	}
@@ -297,8 +388,8 @@ auto DngnGen::GenInnards::_inner_gen_post_first()
 	// game will have fast enough hardware considering the maximum
 	// numbers of rooms/paths.
 	if (!_shrink
-		(_temp_to_push_rt.is_horiz_tunnel(), 
-		_temp_to_push_rt.is_vert_tunnel(),
+		(_temp_to_push_rt.is_horiz_tunnel(level_index()), 
+		_temp_to_push_rt.is_vert_tunnel(level_index()),
 		_temp_to_push_rt, // std::nullopt,
 		[this](RoomTunnel& some_rt) -> bool {
 			return _basic_shrink_extra_test_func(some_rt);
@@ -332,9 +423,9 @@ void DngnGen::GenInnards::_do_push_back(RoomTunnel&& to_push_rt) const {
 	//	//to_push_rt.rect, "; ",
 	//	"to_push_rt.tl:", to_push_rt.rect.tl_corner(), " ",
 	//	"to_push_rt.br:", to_push_rt.rect.br_corner(), "; ",
-	//	to_push_rt.is_horiz_tunnel(), " ",
-	//	to_push_rt.is_vert_tunnel(), " ",
-	//	to_push_rt.is_room(),
+	//	to_push_rt.is_horiz_tunnellevel_index()(), " ",
+	//	to_push_rt.is_vert_tunnellevel_index()(), " ",
+	//	to_push_rt.is_room(level_index()),
 	//	"\n");
 	//#endif		// DEBUG
 
@@ -398,7 +489,9 @@ auto DngnGen::GenInnards::_gen_initial_rt()
 		& prev_rt = engine->dngn_floor().at(prev_rt_index);
 	const i32
 		prev_gen_type
-			= prev_rt.is_tunnel() ? GEN_TYPE_TUNNEL : GEN_TYPE_ROOM;
+			= prev_rt.is_tunnel(level_index())
+			? GEN_TYPE_TUNNEL
+			: GEN_TYPE_ROOM;
 
 	to_push_rt.gen_side = 0;
 	_gen_next_type = 0;
@@ -475,30 +568,33 @@ auto DngnGen::GenInnards::_gen_initial_rt()
 	const auto& conn_rt = engine->dngn_floor().at(_conn_rt_index);
 
 	if (
-		//(conn_rt.is_tunnel() && _gen_type == GEN_TYPE_TUNNEL)
-		//|| (conn_rt.is_room() && _gen_type == GEN_TYPE_ROOM)
+		//(conn_rt.is_tunnel(level_index())
+		//	&& _gen_type == GEN_TYPE_TUNNEL)
+		//|| (conn_rt.is_room(level_index())
+		//	&& _gen_type == GEN_TYPE_ROOM)
 
-		//(conn_rt.is_tunnel() && _gen_type == GEN_TYPE_TUNNEL)
-		//|| conn_rt.is_room()
-		conn_rt.is_tunnel()
+		//(conn_rt.is_tunnel(level_index())
+		//	&& _gen_type == GEN_TYPE_TUNNEL)
+		//|| conn_rt.is_room(level_index())
+		conn_rt.is_tunnel(level_index())
 	) {
 		if (_gen_type == GEN_TYPE_TUNNEL) {
 			to_push_rt.gen_side = engine->layout_rand<i32>
 				(MIN_GEN_SIDE, MAX_GEN_SIDE);
 		} else { // if (_gen_type == GEN_TYPE_ROOM)
-			if (conn_rt.is_horiz_tunnel()) {
+			if (conn_rt.is_horiz_tunnel(level_index())) {
 				to_push_rt.gen_side
 					= engine->layout_rand<i32>(0, 1)
 					? GEN_SIDE_L
 					: GEN_SIDE_R;
-			} else { // if (conn_rt.is_vert_tunnel())
+			} else { // if (conn_rt.is_vert_tunnel(level_index()))
 				to_push_rt.gen_side
 					= engine->layout_rand<i32>(0, 1)
 					? GEN_SIDE_T
 					: GEN_SIDE_B;
 			}
 		}
-	} else { // if (conn_rt.is_room())
+	} else { // if (conn_rt.is_room(level_index()))
 		to_push_rt.gen_side = engine->layout_rand<i32>
 			(MIN_GEN_SIDE, MAX_GEN_SIDE);
 	}
@@ -516,19 +612,20 @@ auto DngnGen::GenInnards::_gen_initial_rt()
 		length
 			//temp_size_2d.y
 			= engine->layout_rand<i32>
-				(TUNNEL_MIN_LEN, TUNNEL_MAX_LEN);
+				(TUNNEL_MIN_LEN(), TUNNEL_MAX_LEN());
 	} else { // if (_gen_type == GEN_TYPE_ROOM)
 		const IntVec2 temp_vec2
 		//temp_size_2d =
 			//{.x=engine->layout_rand<i32>
-			//	(ROOM_MIN_SIZE_2D.x, ROOM_MAX_SIZE_2D.x),
+			//	(ROOM_MIN_SIZE_2D().x, ROOM_MAX_SIZE_2D().x),
 			//.y=engine->layout_rand<i32>
-			//	(ROOM_MIN_SIZE_2D.y, ROOM_MAX_SIZE_2D.y)};
-			= engine->layout_rand_vec2(ROOM_MIN_SIZE_2D, ROOM_MAX_SIZE_2D);
+			//	(ROOM_MIN_SIZE_2D().y, ROOM_MAX_SIZE_2D().y)};
+			= engine->layout_rand_vec2
+				(ROOM_MIN_SIZE_2D(), ROOM_MAX_SIZE_2D());
 		//thickness = engine->layout_rand<i32>
-		//	(ROOM_MIN_SIZE_2D.x, ROOM_MAX_SIZE_2D.x);
+		//	(ROOM_MIN_SIZE_2D().x, ROOM_MAX_SIZE_2D().x);
 		//length = engine->layout_rand<i32>
-		//	(ROOM_MIN_SIZE_2D.y, ROOM_MAX_SIZE_2D.y);
+		//	(ROOM_MIN_SIZE_2D().y, ROOM_MAX_SIZE_2D().y);
 
 		if (to_push_rt.gen_side == GEN_SIDE_L
 			|| to_push_rt.gen_side == GEN_SIDE_R) {
@@ -540,7 +637,7 @@ auto DngnGen::GenInnards::_gen_initial_rt()
 		//)
 		{
 			//thickness = engine->layout_rand<i32>
-			//	(ROOM_MIN_SIZE_2D.x, ROOM_MAX_SIZE_2D.x);
+			//	(ROOM_MIN_SIZE_2D().x, ROOM_MAX_SIZE_2D().x);
 			thickness = temp_vec2.x;
 			length = temp_vec2.y;
 		}
@@ -630,14 +727,14 @@ bool DngnGen::GenInnards::_shrink(
 	//--------
 	//const RoomTunnel& conn_rt = engine->dngn_floor().at(_conn_rt_index);
 	//const bool
-	//	was_horiz_tunnel = some_rt.is_horiz_tunnel(),
-	//	was_vert_tunnel = some_rt.is_vert_tunnel();
-	//	//was_room = some_rt.is_room();
+	//	was_horiz_tunnel = some_rt.is_horiz_tunnel(level_index()),
+	//	was_vert_tunnel = some_rt.is_vert_tunnel(level_index());
+	//	//was_room = some_rt.is_room(level_index());
 	if (was_horiz_tunnel) {
 		const i32
 			SHRINK_NUM_ATTEMPTS = engine->layout_rand<i32>
-				(MIN_GEN_SHRINK_NUM_ATTEMPTS_TUNNEL,
-				MAX_GEN_SHRINK_NUM_ATTEMPTS_TUNNEL);
+				(MIN_GEN_SHRINK_NUM_ATTEMPTS_TUNNEL(),
+				MAX_GEN_SHRINK_NUM_ATTEMPTS_TUNNEL());
 		for (i32 i=0; i<SHRINK_NUM_ATTEMPTS; ++i) {
 			//--------
 			switch (some_rt.gen_side) {
@@ -659,13 +756,13 @@ bool DngnGen::GenInnards::_shrink(
 			}
 			//--------
 			if (
-				some_rt.is_horiz_tunnel()
+				some_rt.is_horiz_tunnel(level_index())
 				&& extra_test_func(
 					some_rt//, index
 				)
 			) {
 				return true;
-			} else if (!some_rt.is_horiz_tunnel()) {
+			} else if (!some_rt.is_horiz_tunnel(level_index())) {
 				return false;
 			}
 			//--------
@@ -673,8 +770,8 @@ bool DngnGen::GenInnards::_shrink(
 	} else if (was_vert_tunnel) {
 		const i32
 			SHRINK_NUM_ATTEMPTS = engine->layout_rand<i32>
-				(MIN_GEN_SHRINK_NUM_ATTEMPTS_TUNNEL,
-				MAX_GEN_SHRINK_NUM_ATTEMPTS_TUNNEL);
+				(MIN_GEN_SHRINK_NUM_ATTEMPTS_TUNNEL(),
+				MAX_GEN_SHRINK_NUM_ATTEMPTS_TUNNEL());
 		for (i32 i=0; i<SHRINK_NUM_ATTEMPTS; ++i) {
 			//--------
 			switch (some_rt.gen_side) {
@@ -696,13 +793,13 @@ bool DngnGen::GenInnards::_shrink(
 			}
 			//--------
 			if (
-				some_rt.is_vert_tunnel()
+				some_rt.is_vert_tunnel(level_index())
 				&& extra_test_func(
 					some_rt//, index
 				)
 			) {
 				return true;
-			} else if (!some_rt.is_vert_tunnel()) {
+			} else if (!some_rt.is_vert_tunnel(level_index())) {
 				return false;
 			}
 			//--------
@@ -710,8 +807,8 @@ bool DngnGen::GenInnards::_shrink(
 	} else { // if (was_room)
 		const i32
 			SHRINK_NUM_ATTEMPTS = engine->layout_rand<i32>
-				(MIN_GEN_SHRINK_NUM_ATTEMPTS_ROOM,
-				MAX_GEN_SHRINK_NUM_ATTEMPTS_ROOM);
+				(MIN_GEN_SHRINK_NUM_ATTEMPTS_ROOM(),
+				MAX_GEN_SHRINK_NUM_ATTEMPTS_ROOM());
 		for (i32 i=0; i<SHRINK_NUM_ATTEMPTS; ++i) {
 			//--------
 			const i32 gen_side = some_rt.gen_side;
@@ -752,13 +849,13 @@ bool DngnGen::GenInnards::_shrink(
 			}
 			//--------
 			if (
-				some_rt.is_room()
+				some_rt.is_room(level_index())
 				&& extra_test_func(
 					some_rt//, index
 				)
 			) {
 				return true;
-			} else if (!some_rt.is_room()) {
+			} else if (!some_rt.is_room(level_index())) {
 				return false;
 			}
 			//--------
@@ -816,8 +913,10 @@ void DngnGen::GenInnards::_connect_by_extending(
 			&& temp <= GEN_YN_CONNECT.yes_max);
 	};
 	const bool
-		was_horiz_tunnel = _temp_to_push_rt.is_horiz_tunnel(),
-		was_vert_tunnel = _temp_to_push_rt.is_vert_tunnel();
+		was_horiz_tunnel
+			= _temp_to_push_rt.is_horiz_tunnel(level_index()),
+		was_vert_tunnel
+			= _temp_to_push_rt.is_vert_tunnel(level_index());
 	auto attempt_extend = [&](
 		const IntVec2& tl_ext, const IntVec2& br_ext
 	) -> void {
@@ -849,44 +948,46 @@ void DngnGen::GenInnards::_connect_by_extending(
 			if (
 				should_gen_connect()
 				&& !was_vert_tunnel
-				&& (_temp_to_push_rt.is_horiz_tunnel()
-				|| _temp_to_push_rt.is_room())
+				&& (_temp_to_push_rt
+					.is_horiz_tunnel(level_index())
+				|| _temp_to_push_rt.is_room(level_index()))
 			){
 				attempt_extend
-					(IntVec2{GEN_EXTEND_AMOUNT_TSF, 0}, IntVec2());
+					(IntVec2{GEN_EXTEND_AMOUNT_TSF(), 0}, IntVec2());
 			}
 			break;
 		case GEN_SIDE_T:
 			if (
 				should_gen_connect()
 				&& !was_horiz_tunnel
-				&& (_temp_to_push_rt.is_vert_tunnel()
-				|| _temp_to_push_rt.is_room())
+				&& (_temp_to_push_rt.is_vert_tunnel(level_index())
+				|| _temp_to_push_rt.is_room(level_index()))
 			) {
 				attempt_extend
-					(IntVec2{0, GEN_EXTEND_AMOUNT_TSF}, IntVec2());
+					(IntVec2{0, GEN_EXTEND_AMOUNT_TSF()}, IntVec2());
 			}
 			break;
 		case GEN_SIDE_R:
 			if (
 				should_gen_connect()
 				&& !was_vert_tunnel
-				&& (_temp_to_push_rt.is_horiz_tunnel()
-				|| _temp_to_push_rt.is_room())
+				&& (_temp_to_push_rt
+					.is_horiz_tunnel(level_index())
+				|| _temp_to_push_rt.is_room(level_index()))
 			) {
 				attempt_extend
-					(IntVec2(), IntVec2{GEN_EXTEND_AMOUNT_TSF, 0});
+					(IntVec2(), IntVec2{GEN_EXTEND_AMOUNT_TSF(), 0});
 			}
 			break;
 		case GEN_SIDE_B:
 			if (
 				should_gen_connect()
 				&& !was_horiz_tunnel
-				&& (_temp_to_push_rt.is_vert_tunnel()
-				|| _temp_to_push_rt.is_room())
+				&& (_temp_to_push_rt.is_vert_tunnel(level_index())
+				|| _temp_to_push_rt.is_room(level_index()))
 			) {
 				attempt_extend
-					(IntVec2(), IntVec2{0, GEN_EXTEND_AMOUNT_TSF});
+					(IntVec2(), IntVec2{0, GEN_EXTEND_AMOUNT_TSF()});
 			}
 			break;
 		default:
@@ -1129,9 +1230,9 @@ void DngnGen::GenInnards::finalize() const {
 			//	RoomTunnel& rt_0, size_t rt_0_index,
 			//	RoomTunnel& rt_1, size_t rt_1_index
 			//) -> void {
-			//	if (rt_0.is_horiz_tunnel()) {
-			//	} else if (rt_0.is_vert_tunnel()) {
-			//	} else { // if (rt_0.is_room())
+			//	if (rt_0.is_horiz_tunnel(level_index())) {
+			//	} else if (rt_0.is_vert_tunnel(level_index())) {
+			//	} else { // if (rt_0.is_room(level_index()))
 			//	}
 			//};
 			//--------
@@ -1146,15 +1247,18 @@ void DngnGen::GenInnards::finalize() const {
 						({some_corner, BgTile::Door});
 				}
 			};
-			if (rt.is_room() && item->is_tunnel()) {
-				if (item->is_horiz_tunnel()) {
+			if (
+				rt.is_room(level_index())
+				&& item->is_tunnel(level_index())
+			) {
+				if (item->is_horiz_tunnel(level_index())) {
 					if (_ls_r2_hit(*item, rt)) {
 						maybe_insert_door(*item, item->rect.tl_corner());
 					}
 					if (_rs_r2_hit(*item, rt)) {
 						maybe_insert_door(*item, item->rect.tr_corner());
 					}
-				} else { // if (item->is_vert_tunnel())
+				} else { // if (item->is_vert_tunnel(level_index()))
 					if (_ts_r2_hit(*item, rt)) {
 						maybe_insert_door(*item, item->rect.tl_corner());
 					}
@@ -1162,15 +1266,18 @@ void DngnGen::GenInnards::finalize() const {
 						maybe_insert_door(*item, item->rect.bl_corner());
 					}
 				}
-			} else if (rt.is_tunnel() && item->is_room()) {
-				if (rt.is_horiz_tunnel()) {
+			} else if (
+				rt.is_tunnel(level_index())
+				&& item->is_room(level_index())
+			) {
+				if (rt.is_horiz_tunnel(level_index())) {
 					if (_ls_r2_hit(rt, *item)) {
 						maybe_insert_door(rt, rt.rect.tl_corner());
 					}
 					if (_rs_r2_hit(rt, *item)) {
 						maybe_insert_door(rt, rt.rect.tr_corner());
 					}
-				} else { // if (rt.is_vert_tunnel())
+				} else { // if (rt.is_vert_tunnel(level_index()))
 					if (_ts_r2_hit(rt, *item)) {
 						maybe_insert_door(rt, rt.rect.tl_corner());
 					}
@@ -1209,7 +1316,10 @@ void DngnGen::GenInnards::_remove_dead_end_tunnels() const {
 			did_rm = false;
 			erase_ret_inv = true;
 			auto& item = engine->dngn_floor()._raw_at(item_index);
-			if (item.is_tunnel() && item.conn_index_uset.size() <= 1) {
+			if (
+				item.is_tunnel(level_index())
+				&& item.conn_index_uset.size() <= 1
+			) {
 				if (
 					GEN_YN_RM_DE_TUNNELS_DO_RM.rng_val_is_yes
 						(GEN_YN_RM_DE_TUNNELS_DO_RM.gen())
@@ -1253,7 +1363,7 @@ void DngnGen::GenInnards::_insert_exits() const {
 				(engine->layout_rand_lt_bound<i32>
 					(engine->dngn_floor().size()));
 
-			if (rt.is_room()) {
+			if (rt.is_room(level_index())) {
 				const IntVec2 stairs_pos
 					= engine->layout_rand_vec2(rt.rect);
 
@@ -1265,7 +1375,7 @@ void DngnGen::GenInnards::_insert_exits() const {
 					const IntRect2& rect = conn_rt.rect;
 					if (
 						(
-							conn_rt.is_horiz_tunnel()
+							conn_rt.is_horiz_tunnel(level_index())
 							&& (
 								(rect.tl_corner() + LEFT_OFFSET
 									== stairs_pos)
@@ -1273,7 +1383,7 @@ void DngnGen::GenInnards::_insert_exits() const {
 									== stairs_pos)
 							)
 						) || (
-							conn_rt.is_vert_tunnel()
+							conn_rt.is_vert_tunnel(level_index())
 							&& (
 								(rect.tl_corner() + TOP_OFFSET
 									== stairs_pos)
@@ -1322,7 +1432,7 @@ void DngnGen::GenInnards::_insert_exits() const {
 void DngnGen::GenInnards::_insert_alt_terrain() const {
 	const auto
 		& allowed_alt_terrain_darr = ALLOWED_ALT_TERRAIN_DA2D
-			.at(engine->level_index());
+			.at(level_index());
 
 	const IntRect2
 		//floor_r2
@@ -1361,14 +1471,14 @@ void DngnGen::GenInnards::_insert_alt_terrain() const {
 	//) {
 	//	const auto& item = engine->dngn_floor()._raw_at(item_index);
 	//	//if (
-	//	//	(item.is_tunnel()
+	//	//	(item.is_tunnel(level_index())
 	//	//		&& (gen_biome_mbins_type == GEN_BIOME_MBINS_TYPE_TUNNEL
 	//	//			|| gen_biome_mbins_type == GEN_BIOME_MBINS_TYPE_BOTH))
-	//	//	|| (item.is_room()
+	//	//	|| (item.is_room(level_index())
 	//	//		&& (gen_biome_mbins_type == GEN_BIOME_MBINS_TYPE_ROOM
 	//	//			|| gen_biome_mbins_type == GEN_BIOME_MBINS_TYPE_BOTH))
 	//	//) {
-	//	//if (item.is_room()) {
+	//	//if (item.is_room(level_index())) {
 	//		biome_mballs.add(item.rect.cntr_pos(),
 	//			FltVec2(item.rect.size_2d));
 	//	//}
@@ -1639,7 +1749,7 @@ void DngnGen::GenInnards::_insert_alt_terrain() const {
 		//	item.alt_terrain_umap.clear();
 		//}
 
-		//if (item.is_tunnel()) {
+		//if (item.is_tunnel(level_index())) {
 		//	continue;
 		//}
 
@@ -1678,12 +1788,12 @@ void DngnGen::GenInnards::_insert_alt_terrain() const {
 				// TODO: incorporate `DijkstraMapGen` and connections
 				// between stairs
 				// NOTE: now the above ^ is done
-				//if (item.is_tunnel()) {
+				//if (item.is_tunnel(level_index())) {
 				//	if (!BASIC_UNSAFE_BG_TILE_USET.contains
 				//		(bg_tile.second)) {
 				//		item.alt_terrain_umap[pos] = bg_tile.second;
 				//	}
-				//} else { // if (item.is_room())
+				//} else { // if (item.is_room(level_index()))
 				//	if (
 				//		!BASIC_UNSAFE_BG_TILE_USET.contains
 				//			(bg_tile.second)
@@ -1694,7 +1804,7 @@ void DngnGen::GenInnards::_insert_alt_terrain() const {
 				//	}
 				//}
 				if (
-					item.is_room()
+					item.is_room(level_index())
 					|| !BASIC_NO_PASS_BG_TILE_USET.contains(bg_tile.second)
 				) {
 					item.alt_terrain_umap.insert
@@ -1732,6 +1842,7 @@ void DngnGen::GenInnards::_insert_alt_terrain() const {
 	}
 }
 void DngnGen::GenInnards::_insert_items_and_locked_doors() const {
+	// insert keys
 }
 //void DngnGen::GenInnards::_fill_in_alt_terrain() const {
 //}

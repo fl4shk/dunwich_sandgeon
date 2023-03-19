@@ -27,7 +27,7 @@
 //#include "path_class.hpp"
 //#include "../comp/general_comp_classes.hpp"
 #include "bg_tile_enum.hpp"
-
+#include "list_of_dngn_floor_friends_define.hpp"
 namespace dunwich_sandgeon {
 namespace game_engine {
 //--------
@@ -39,59 +39,30 @@ class DngnGen;
 //--------
 // A Room or a Tunnel within the dungeon
 class RoomTunnel final: public WIntBboxBase {
-	#include "dngn_floor_friends.hpp"
+	#define X(arg) \
+		friend class arg ;
+	LIST_OF_DNGN_FLOOR_FRIENDS(X)
+	#undef X
 public:		// constants
-	static constexpr i32
+	static const std::vector<i32>
 		// Chosen arbitrarily; might need to adjust later
-		MIN_NUM_ROOM_TUNNELS
-			//= 3,
-			//= 5,
-			//= 8,
-			//= 10,
-			//= 13,
-			//= 15,
-			//= 20,
-			= 25,
-		MAX_NUM_ROOM_TUNNELS
-			//= 3;
-			//= 5;
-			//= 8;
-			//= 15;
-			//= 42;
-			= 64,
-		MIN_NUM_ROOMS
-			//= 5;
-			//= 7;
-			= 10;
+		MIN_NUM_ROOM_TUNNELS_DARR,
+		MAX_NUM_ROOM_TUNNELS_DARR,
+		MIN_NUM_ROOMS_DARR;
 
 		//MIN_NUM_TUNNELS = 1,
 		//MAX_NUM_TUNNELS = 64;
 
 	static constexpr i32
-		TUNNEL_THICKNESS = 1,
-		TUNNEL_MIN_LEN
-			//= 2,
-			//= 3,
-			= 4,
-			//= 5,
-		TUNNEL_MAX_LEN
-			//= 32;
-			//= 20;
-			//= 15;
-			= 12;
-			//= 10;
-			//= 8;
+		TUNNEL_THICKNESS = 1;
 
-	static constexpr IntVec2
-		ROOM_MIN_SIZE_2D
-			//= {3, 3},
-			//= {4, 4},
-			= {5, 5},
-		ROOM_MAX_SIZE_2D
-			//= {9, 9};
-			//= {10, 10};
-			= {12, 12};
-			//= {15, 15};
+	static const std::vector<i32>
+		TUNNEL_MIN_LEN_DARR,
+		TUNNEL_MAX_LEN_DARR;
+
+	static const std::vector<IntVec2>
+		ROOM_MIN_SIZE_2D_DARR,
+		ROOM_MAX_SIZE_2D_DARR;
 public:		// serialized variables
 	#define MEMB_SER_LIST_LVGEN_ETC_FLOOR_LAYOUT_ROOM_TUNNEL(X) \
 		/* X(rect, std::nullopt) */ \
@@ -104,7 +75,7 @@ public:		// serialized variables
 
 	IntRect2 rect
 		{.pos=IntVec2(),
-		.size_2d{.x=TUNNEL_THICKNESS, .y=TUNNEL_MIN_LEN}};
+		.size_2d{.x=TUNNEL_THICKNESS, .y=TUNNEL_MIN_LEN_DARR.at(0)}};
 
 	//std::optional<IntVec2>
 	//	// where the player and other entities start from when entering
@@ -131,25 +102,37 @@ public:		// serialized variables
 	//bool show = false;
 public:		// static functions
 	//--------
-	static constexpr inline bool r2_is_tunnel(const IntRect2& r2) {
-		return r2_is_horiz_tunnel(r2) || r2_is_vert_tunnel(r2);
+	static inline bool r2_is_tunnel(
+		const IntRect2& r2, i32 level_index
+	) {
+		return r2_is_horiz_tunnel(r2, level_index)
+			|| r2_is_vert_tunnel(r2, level_index);
 	}
-	static constexpr inline bool r2_is_horiz_tunnel(const IntRect2& r2) {
-		return (r2.size_2d.x >= TUNNEL_MIN_LEN
+	static inline bool r2_is_horiz_tunnel(
+		const IntRect2& r2, i32 level_index
+	) {
+		return (r2.size_2d.x >= TUNNEL_MIN_LEN_DARR.at(level_index)
 			&& r2.size_2d.y == TUNNEL_THICKNESS);
 	}
-	static constexpr inline bool r2_is_vert_tunnel(const IntRect2& r2) {
+	static inline bool r2_is_vert_tunnel(
+		const IntRect2& r2, i32 level_index
+	) {
 		return (r2.size_2d.x == TUNNEL_THICKNESS
-			&& r2.size_2d.y >= TUNNEL_MIN_LEN);
+			&& r2.size_2d.y >= TUNNEL_MIN_LEN_DARR.at(level_index));
 	}
-	static constexpr inline bool r2_is_room(const IntRect2& r2) {
-		return (r2.size_2d.x >= ROOM_MIN_SIZE_2D.x
-			&& r2.size_2d.x <= ROOM_MAX_SIZE_2D.x
-			&& r2.size_2d.y >= ROOM_MIN_SIZE_2D.y
-			&& r2.size_2d.y <= ROOM_MAX_SIZE_2D.y);
+	static inline bool r2_is_room(
+		const IntRect2& r2, i32 level_index
+	) {
+		return (r2.size_2d.x >= ROOM_MIN_SIZE_2D_DARR.at(level_index).x
+			&& r2.size_2d.x <= ROOM_MAX_SIZE_2D_DARR.at(level_index).x
+			&& r2.size_2d.y >= ROOM_MIN_SIZE_2D_DARR.at(level_index).y
+			&& r2.size_2d.y <= ROOM_MAX_SIZE_2D_DARR.at(level_index).y);
 	}
-	static constexpr inline bool r2_is_valid(const IntRect2& r2) {
-		return r2_is_tunnel(r2) || r2_is_room(r2);
+	static inline bool r2_is_valid(
+		const IntRect2& r2, i32 level_index
+	) {
+		return (r2_is_tunnel(r2, level_index)
+			|| r2_is_room(r2, level_index));
 	}
 	//--------
 public:		// functions
@@ -191,22 +174,22 @@ public:		// functions
 		//return PFIELD_PHYS_RECT2.arg_inside<true>(rect);
 		return r2_fits_in_pfnb(rect);
 	}
-	constexpr inline bool is_tunnel() const {
-		return r2_is_tunnel(rect);
+	inline bool is_tunnel(i32 level_index) const {
+		return r2_is_tunnel(rect, level_index);
 	}
-	constexpr inline bool is_horiz_tunnel() const {
-		return r2_is_horiz_tunnel(rect);
+	inline bool is_horiz_tunnel(i32 level_index) const {
+		return r2_is_horiz_tunnel(rect, level_index);
 	}
-	constexpr inline bool is_vert_tunnel() const {
-		return r2_is_vert_tunnel(rect);
-	}
-
-	constexpr inline bool is_room() const {
-		return r2_is_room(rect);
+	inline bool is_vert_tunnel(i32 level_index) const {
+		return r2_is_vert_tunnel(rect, level_index);
 	}
 
-	constexpr inline bool is_valid() const {
-		return r2_is_valid(rect);
+	inline bool is_room(i32 level_index) const {
+		return r2_is_room(rect, level_index);
+	}
+
+	inline bool is_valid(i32 level_index) const {
+		return r2_is_valid(rect, level_index);
 	}
 	//--------
 };

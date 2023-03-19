@@ -63,13 +63,33 @@ const BgTileUset
 		BgTile::Pit,
 		BgTile::Lava,
 	},
-	DOOR_BG_TILE_USET = {
+	WALKABLE_NO_ITEMS_TRAPS_BG_TILE_USET = {
+		#define X(arg) \
+			BgTile::arg,
+		LIST_OF_WALKABLE_NO_ITEMS_TRAPS_BG_TILES(X)
+		#undef X
+	},
+	ALT_TERRAIN_BG_TILE_USET = {
+		#define X(arg) \
+			BgTile::arg,
+		LIST_OF_ALT_TERRAIN_BG_TILES(X)
+		#undef X
+	},
+	ANY_DOOR_BG_TILE_USET = {
 		BgTile::Door,
 		BgTile::LockedDoor,
+		//BgTile::BossDoor,
 	},
-	LOCKED_BG_TILE_USET = {
+	LOCK_BG_TILE_USET = {
 		BgTile::LockedDoor,
 	};
+	//ANY_LOCKED_BG_TILE_USET = {
+	//	BgTile::LockedDoor,
+	//	BgTile::BossDoor,
+	//},
+	//BOSS_LOCKED_BG_TILE_USET = {
+	//	BgTile::BossDoor,
+	//};
 //--------
 } // namespace lvgen_etc
 } // namespace game_engine

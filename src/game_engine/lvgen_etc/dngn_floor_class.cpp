@@ -45,10 +45,12 @@ AltTerrainInfo::operator binser::Value () const {
 //--------
 DngnFloor::DngnFloor() {}
 DngnFloor::DngnFloor(const binser::Value& bv) {
-	//_rt_data.checked_size = RoomTunnel::MAX_NUM_ROOM_TUNNELS;
+	//_rt_data.checked_size
+	//	= RoomTunnel::MAX_NUM_ROOM_TUNNELS_DARR.at(engine->level_index());
 	//_rt_data.cs_is_max = true;
 	////_rt_data.min_size = 0;
-	//_rt_data.min_size = RoomTunnel::MIN_NUM_ROOM_TUNNELS;
+	//_rt_data.min_size
+	//	= RoomTunnel::MIN_NUM_ROOM_TUNNELS_DARR.at(engine->level_index());
 
 	MEMB_SER_LIST_LVGEN_ETC_FLOOR_LAYOUT(BINSER_MEMB_DESERIALIZE);
 }
@@ -106,7 +108,7 @@ std::optional<BgTile> DngnFloor::bg_tile_at(
 		//		bg_tile = rt.alt_terrain_umap.at(pos);
 		//	} else {
 		//		bg_tile
-		//			= rt.is_tunnel()
+		//			= rt.is_tunnel(engine->level_index())
 		//			? BgTile::TunnelFloor
 		//			: BgTile::RoomFloor;
 		//	}
@@ -235,7 +237,7 @@ std::optional<BgTile> DngnFloor::phys_bg_tile_at(
 			//}
 			else {
 				return
-					rt.is_tunnel()
+					rt.is_tunnel(engine->level_index())
 					? BgTile::TunnelFloor
 					: BgTile::RoomFloor;
 			}
@@ -363,13 +365,18 @@ std::optional<size_t> DngnFloor::phys_pos_to_rt_index(
 	return std::nullopt;
 }
 void DngnFloor::push_back(RoomTunnel&& to_push) {
-	if (size() + 1u > RoomTunnel::MAX_NUM_ROOM_TUNNELS) {
+	if (
+		size() + 1u
+		> RoomTunnel::MAX_NUM_ROOM_TUNNELS_DARR.at(engine->level_index())
+	) {
 		throw std::length_error(sconcat
 			("game_engine::lvgen_etc::DngnFloor::push_back(): ",
 			"`_rt_data.data` cannot increase in size: ",
 			//_rt_data.data.size(),
 			_rt_data.size(),
-			" ", RoomTunnel::MAX_NUM_ROOM_TUNNELS));
+			" ", engine->level_index(),
+			" ", RoomTunnel::MAX_NUM_ROOM_TUNNELS_DARR
+				.at(engine->level_index())));
 	}
 	//to_push.id = i32(size());
 	//_rt_data.data.push_back(std::move(to_push));
@@ -580,8 +587,9 @@ std::pair<bool, Path> DngnFloor::erase_non_walkable_in_path(
 }
 bool DngnFloor::erase_tunnel_during_gen(size_t index) {
 	if (
-		size() > RoomTunnel::MIN_NUM_ROOM_TUNNELS
-		&& _rt_data.at(index)->is_tunnel()
+		size() > RoomTunnel::MIN_NUM_ROOM_TUNNELS_DARR.at
+			(engine->level_index())
+		&& _rt_data.at(index)->is_tunnel(engine->level_index())
 	) {
 		//for (size_t i=0; i<size(); ++i) {
 		//	if (i == index) {

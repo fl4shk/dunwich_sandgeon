@@ -114,19 +114,20 @@ public:		// constants
 	//--------
 public:		// constants
 	//--------
-	static constexpr i32
-		MIN_NUM_ROOM_TUNNELS = RoomTunnel::MIN_NUM_ROOM_TUNNELS,
-		MAX_NUM_ROOM_TUNNELS = RoomTunnel::MAX_NUM_ROOM_TUNNELS,
-		MIN_NUM_ROOMS = RoomTunnel::MIN_NUM_ROOMS;
+	static i32 level_index();
+	//--------
+	static i32 MIN_NUM_ROOM_TUNNELS();
+	static i32 MAX_NUM_ROOM_TUNNELS();
+	static i32 MIN_NUM_ROOMS();
 	//--------
 	static constexpr i32
-		TUNNEL_THICKNESS = RoomTunnel::TUNNEL_THICKNESS,
-		TUNNEL_MIN_LEN = RoomTunnel::TUNNEL_MIN_LEN,
-		TUNNEL_MAX_LEN = RoomTunnel::TUNNEL_MAX_LEN;
+		TUNNEL_THICKNESS = RoomTunnel::TUNNEL_THICKNESS;
 
-	static constexpr IntVec2
-		ROOM_MIN_SIZE_2D = RoomTunnel::ROOM_MIN_SIZE_2D,
-		ROOM_MAX_SIZE_2D = RoomTunnel::ROOM_MAX_SIZE_2D;
+	static i32 TUNNEL_MIN_LEN();
+	static i32 TUNNEL_MAX_LEN();
+
+	static const IntVec2& ROOM_MIN_SIZE_2D();
+	static const IntVec2& ROOM_MAX_SIZE_2D();
 	//--------
 	static constexpr i32
 		//--------
@@ -139,30 +140,37 @@ public:		// constants
 		GEN_SIDE_L = 0, MIN_GEN_SIDE = GEN_SIDE_L,
 		GEN_SIDE_T = 1,
 		GEN_SIDE_R = 2,
-		GEN_SIDE_B = 3, MAX_GEN_SIDE = GEN_SIDE_B,
+		GEN_SIDE_B = 3, MAX_GEN_SIDE = GEN_SIDE_B;
 		//--------
-		MIN_GEN_SHRINK_NUM_ATTEMPTS_TUNNEL
-			= (TUNNEL_MIN_LEN + TUNNEL_MAX_LEN) / 2,
-		MAX_GEN_SHRINK_NUM_ATTEMPTS_TUNNEL = TUNNEL_MAX_LEN,
+	static i32 MIN_GEN_SHRINK_NUM_ATTEMPTS_TUNNEL() {
+		return (TUNNEL_MIN_LEN() + TUNNEL_MAX_LEN()) / 2;
+	}
+	static inline i32 MAX_GEN_SHRINK_NUM_ATTEMPTS_TUNNEL() {
+		return TUNNEL_MAX_LEN();
+	}
 
-		MIN_GEN_SHRINK_NUM_ATTEMPTS_ROOM
-			= (math::max_va(ROOM_MIN_SIZE_2D.x, ROOM_MIN_SIZE_2D.y)
-				+ math::max_va(ROOM_MAX_SIZE_2D.x, ROOM_MAX_SIZE_2D.y))
-				/ 2,
-		MAX_GEN_SHRINK_NUM_ATTEMPTS_ROOM
-			= math::max_va(ROOM_MAX_SIZE_2D.x, ROOM_MAX_SIZE_2D.y) * 2,
+	static i32 MIN_GEN_SHRINK_NUM_ATTEMPTS_ROOM() {
+		return (math::max_va(ROOM_MIN_SIZE_2D().x, ROOM_MIN_SIZE_2D().y)
+			+ math::max_va(ROOM_MAX_SIZE_2D().x, ROOM_MAX_SIZE_2D().y))
+			/ 2;
+	}
+	static i32 MAX_GEN_SHRINK_NUM_ATTEMPTS_ROOM() {
+		return math::max_va(ROOM_MAX_SIZE_2D().x, ROOM_MAX_SIZE_2D().y)
+			* 2;
+	}
+
+	// "TSF" is short for "to shrink from"
+	static i32 GEN_EXTEND_AMOUNT_TSF();
 		//--------
-		// "TSF" is short for "to shrink from"
-		GEN_EXTEND_AMOUNT_TSF
-			//= 5,
-			//= 7,
-			//= 8,
-			//= 10,
-			= 15,
-		GEN_PARALLEL_TUNNEL_MIN_DIST
-			//= 3;
-			= 4;
-			//= 5;
+		////= 5,
+		////= 7,
+		////= 8,
+		////= 10,
+		//= 15,
+	static i32 GEN_PARALLEL_TUNNEL_MIN_DIST();
+		////= 3;
+		//= 4;
+		////= 5;
 		//--------
 	//--------
 	static constexpr float
@@ -569,72 +577,82 @@ private:		// types
 				|| _rs_r2_hit(rt_0, rt_1)
 				|| _bs_r2_hit(rt_0, rt_1));
 		}
-		static constexpr inline bool _tunnel_sides_hit_wrongly(
+		static inline bool _tunnel_sides_hit_wrongly(
 			const RoomTunnel& rt_0, const RoomTunnel& rt_1
 		) {
 			return (
 				(
-					rt_0.is_horiz_tunnel()
-					&& (rt_1.is_horiz_tunnel() || rt_1.is_room())
+					rt_0.is_horiz_tunnel(level_index())
+					&& (rt_1.is_horiz_tunnel(level_index())
+						|| rt_1.is_room(level_index()))
 					&& (_ts_r2_hit(rt_0, rt_1)
 						|| _bs_r2_hit(rt_0, rt_1))
 				) || (
-					rt_0.is_vert_tunnel()
-					&& (rt_1.is_vert_tunnel() || rt_1.is_room())
+					rt_0.is_vert_tunnel(level_index())
+					&& (rt_1.is_vert_tunnel(level_index())
+						|| rt_1.is_room(level_index()))
 					&& (_ls_r2_hit(rt_0, rt_1)
 						|| _rs_r2_hit(rt_0, rt_1))
 				) || (
-					rt_1.is_horiz_tunnel()
-					&& (rt_0.is_horiz_tunnel() || rt_0.is_room())
+					rt_1.is_horiz_tunnel(level_index())
+					&& (rt_0.is_horiz_tunnel(level_index())
+						|| rt_0.is_room(level_index()))
 					&& (_ts_r2_hit(rt_1, rt_0)
 						|| _bs_r2_hit(rt_1, rt_0))
 				) || (
-					rt_1.is_vert_tunnel()
-					&& (rt_0.is_vert_tunnel() || rt_0.is_room())
+					rt_1.is_vert_tunnel(level_index())
+					&& (rt_0.is_vert_tunnel(level_index())
+						|| rt_0.is_room(level_index()))
 					&& (_ls_r2_hit(rt_1, rt_0)
 						|| _rs_r2_hit(rt_1, rt_0))
 				)
 			);
 		}
-		static constexpr inline bool _parallel_tunnels_too_close(
+		static inline bool _parallel_tunnels_too_close(
 			const RoomTunnel& rt_0, const RoomTunnel& rt_1
 		) {
-			if (rt_0.is_horiz_tunnel() && rt_1.is_horiz_tunnel()) {
+			if (
+				rt_0.is_horiz_tunnel(level_index())
+				&& rt_1.is_horiz_tunnel(level_index())
+			) {
 				return (
 					rt_0.rect.build_in_grid_inflated_lim
-						(IntVec2{0, GEN_PARALLEL_TUNNEL_MIN_DIST},
+						(IntVec2{0, GEN_PARALLEL_TUNNEL_MIN_DIST()},
 						IntVec2(),
 						PFIELD_PHYS_NO_BRDR_RECT2).intersect(rt_1.rect)
 					|| rt_1.rect.build_in_grid_inflated_lim
-						(IntVec2{0, GEN_PARALLEL_TUNNEL_MIN_DIST},
+						(IntVec2{0, GEN_PARALLEL_TUNNEL_MIN_DIST()},
 						IntVec2(),
 						PFIELD_PHYS_NO_BRDR_RECT2).intersect(rt_0.rect)
 					|| rt_0.rect.build_in_grid_inflated_lim
 						(IntVec2(),
-						IntVec2{0, GEN_PARALLEL_TUNNEL_MIN_DIST},
+						IntVec2{0, GEN_PARALLEL_TUNNEL_MIN_DIST()},
 						PFIELD_PHYS_NO_BRDR_RECT2).intersect(rt_1.rect)
 					|| rt_1.rect.build_in_grid_inflated_lim
 						(IntVec2(),
-						IntVec2{0, GEN_PARALLEL_TUNNEL_MIN_DIST},
+						IntVec2{0, GEN_PARALLEL_TUNNEL_MIN_DIST()},
 						PFIELD_PHYS_NO_BRDR_RECT2).intersect(rt_0.rect)
 				);
-			} else if (rt_0.is_vert_tunnel() && rt_1.is_vert_tunnel()) {
+			} else if (
+				rt_0.is_vert_tunnel(level_index())
+				&& rt_1.is_vert_tunnel(level_index())
+			) {
 				return (
 					rt_0.rect.build_in_grid_inflated_lim
-						(IntVec2{GEN_PARALLEL_TUNNEL_MIN_DIST, 0},
+						(IntVec2{GEN_PARALLEL_TUNNEL_MIN_DIST(), 0},
 						IntVec2(),
 						PFIELD_PHYS_NO_BRDR_RECT2).intersect(rt_1.rect)
 					|| rt_1.rect.build_in_grid_inflated_lim
-						(IntVec2{GEN_PARALLEL_TUNNEL_MIN_DIST, 0},
+						(IntVec2{GEN_PARALLEL_TUNNEL_MIN_DIST(), 0},
 						IntVec2(),
 						PFIELD_PHYS_NO_BRDR_RECT2).intersect(rt_0.rect)
 					|| rt_0.rect.build_in_grid_inflated_lim
 						(IntVec2(),
-						IntVec2{GEN_PARALLEL_TUNNEL_MIN_DIST, 0},
+						IntVec2{GEN_PARALLEL_TUNNEL_MIN_DIST(), 0},
 						PFIELD_PHYS_NO_BRDR_RECT2).intersect(rt_1.rect)
 					|| rt_1.rect.build_in_grid_inflated_lim
 						(IntVec2(),
-						IntVec2{GEN_PARALLEL_TUNNEL_MIN_DIST, 0},
+						IntVec2{GEN_PARALLEL_TUNNEL_MIN_DIST(), 0},
 						PFIELD_PHYS_NO_BRDR_RECT2).intersect(rt_0.rect)
 				);
 			} else {

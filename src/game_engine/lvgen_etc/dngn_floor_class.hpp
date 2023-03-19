@@ -76,7 +76,10 @@ public:		// functions
 // The dungeon while it's either being generated has finished generating.
 // This includes generated items on the floor.
 class DngnFloor final {
-	#include "dngn_floor_friends.hpp"
+	#define X(arg) \
+		friend class arg ;
+	LIST_OF_DNGN_FLOOR_FRIENDS(X)
+	#undef X
 public:		// constants
 public:		// types
 	using StrKeyUset = ecs::StrKeyUset;
@@ -89,12 +92,18 @@ private:		// variables
 	//	_layout_noise_pos_scale = 0.0d,
 	//	_layout_noise_pos_offset = 0.0d;
 	//bool _dbg_did_show = false;
+public:		// constants
+	static constexpr size_t
+		MIN_NUM_FAKE_STAIRS_POSITIONS = 0,
+		MAX_NUM_FAKE_STAIRS_POSITIONS = 3;
 public:		// variables
 	//IntVec2
 	//	ustairs_pos;
 	std::optional<IntVec2>
 		ustairs_pos = std::nullopt,
 		dstairs_pos = std::nullopt;
+	std::vector<IntVec2>
+		fake_stairs_position_darr;
 	//std::vector<std::optional<IntVec2>>
 	//	extra_target_pos_darr;
 private:		// serialized variables

@@ -15,5 +15,13 @@
 // You should have received a copy of the GNU General Public License along
 // with Dunwich Sandgeon.  If not, see <https://www.gnu.org/licenses/>.
 
-friend class dunwich_sandgeon::game_engine::Engine;
-friend class dunwich_sandgeon::game_engine::lvgen_etc::DngnGen;
+#ifndef src_game_engine_lvgen_etc_list_of_dngn_floor_friends_define_hpp
+#define src_game_engine_lvgen_etc_list_of_dngn_floor_friends_define_hpp
+
+// src/game_engine/lvgen_etc/list_of_dngn_floor_friends_define.hpp
+
+#define LIST_OF_DNGN_FLOOR_FRIENDS(X) \
+	X(dunwich_sandgeon::game_engine::Engine) \
+	X(dunwich_sandgeon::game_engine::lvgen_etc::DngnGen) \
+
+#endif		// src_game_engine_lvgen_etc_list_of_dngn_floor_friends_define_hpp
