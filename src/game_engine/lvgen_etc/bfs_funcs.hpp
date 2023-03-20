@@ -23,10 +23,14 @@
 #include "../../misc_includes.hpp"
 #include "../../misc_types.hpp"
 //#include "dngn_floor_class.hpp"
+#include "bg_tile_enum.hpp"
 
 namespace dunwich_sandgeon {
 namespace game_engine {
 namespace lvgen_etc {
+//--------
+class Path;
+class DngnFloor;
 //--------
 // Breadth-first search
 using BfsAtFunc = std::function<bool(
@@ -53,16 +57,50 @@ inline void bfs_fill(
 bool bfs_reachable(
 	IntVec2Uset& explored_uset,
 	const IntVec2& start_pos, const IntVec2& end_pos,
-	const BfsAtFunc& edge_exists_func, const BfsAtFunc& extra_test_func
+	const BfsAtFunc& edge_exists_func//, const BfsAtFunc& extra_test_func
 );
 inline bool bfs_reachable(
 	const IntVec2& start_pos, const IntVec2& end_pos,
-	const BfsAtFunc& edge_exists_func, const BfsAtFunc& extra_test_func
+	const BfsAtFunc& edge_exists_func//, const BfsAtFunc& extra_test_func
 ) {
 	IntVec2Uset explored_uset;
-	return bfs_reachable(explored_uset, start_pos, start_pos,
-		edge_exists_func, extra_test_func);
+	return bfs_reachable(explored_uset, start_pos, end_pos,
+		edge_exists_func//, extra_test_func
+		);
 }
+
+//class BfsTree {
+//public:		// variables
+//	BfsTree* parent = nullptr;
+//	IntVec2 pos;
+//	//PathDir dir;
+//	std::vector<std::shared_ptr<BfsTree>> child_darr;
+//public:		// functions
+//	Path make_path_to_root() const;
+//};
+std::pair<bool, Path> bfs_pathfind(
+	IntVec2Uset& explored_uset,
+	const IntVec2& start_pos, const IntVec2& end_pos,
+	const BfsAtFunc& edge_exists_func
+);
+std::pair<bool, Path> bfs_pathfind(
+	const IntVec2& start_pos, const IntVec2& end_pos,
+	const BfsAtFunc& edge_exists_func
+);
+
+std::pair<bool, Path> bfs_pathfind(
+	IntVec2Uset& explored_uset,
+	const IntVec2& start_pos, const IntVec2& end_pos,
+	const DngnFloor& dngn_floor,
+	const BgTileUset& no_pass_bg_tile_uset,
+	const IntVec2Uset& forced_walkable_pos2_uset=IntVec2Uset()
+);
+std::pair<bool, Path> bfs_pathfind(
+	const IntVec2& start_pos, const IntVec2& end_pos,
+	const DngnFloor& dngn_floor,
+	const BgTileUset& no_pass_bg_tile_uset,
+	const IntVec2Uset& forced_walkable_pos2_uset=IntVec2Uset()
+);
 //inline void bfs_fill(
 //	const IntVec2& start_pos,
 //	const BfsAtFunc& edge_exists_func, const BfsVoidAtFunc& fill_func

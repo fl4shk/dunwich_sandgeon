@@ -104,13 +104,14 @@ public:		// types
 public:		// constants
 	static constexpr BgTile
 		ALT_TERRAIN_NONE = BgTile::Error;
-	static const std::vector<std::vector<BgTile>>
-		ALLOWED_ALT_TERRAIN_DA2D;
-		//LEVEL_1_ALT_TERRAIN_VEC,
-		//LEVEL_2_ALT_TERRAIN_VEC,
-		//LEVEL_3_ALT_TERRAIN_VEC,
-		//LEVEL_4_ALT_TERRAIN_VEC,
-		//LEVEL_5_ALT_TERRAIN_VEC;
+	//static const std::vector<std::vector<BgTile>>
+	//	ALLOWED_ALT_TERRAIN_DA2D;
+	//	//LEVEL_1_ALT_TERRAIN_VEC,
+	//	//LEVEL_2_ALT_TERRAIN_VEC,
+	//	//LEVEL_3_ALT_TERRAIN_VEC,
+	//	//LEVEL_4_ALT_TERRAIN_VEC,
+	//	//LEVEL_5_ALT_TERRAIN_VEC;
+	static const std::vector<BgTile>& ALLOWED_ALT_TERRAIN_DARR();
 	//--------
 public:		// constants
 	//--------
@@ -119,6 +120,8 @@ public:		// constants
 	static i32 MIN_NUM_ROOM_TUNNELS();
 	static i32 MAX_NUM_ROOM_TUNNELS();
 	static i32 MIN_NUM_ROOMS();
+	static i32 MIN_NUM_LOCKS();
+	static i32 MAX_NUM_LOCKS();
 	//--------
 	static constexpr i32
 		TUNNEL_THICKNESS = RoomTunnel::TUNNEL_THICKNESS;
@@ -158,7 +161,7 @@ public:		// constants
 		return math::max_va(ROOM_MAX_SIZE_2D().x, ROOM_MAX_SIZE_2D().y)
 			* 2;
 	}
-
+	//--------
 	// "TSF" is short for "to shrink from"
 	static i32 GEN_EXTEND_AMOUNT_TSF();
 		//--------
@@ -508,7 +511,8 @@ private:		// types
 		void _insert_exits() const;
 		void _insert_alt_terrain() const;
 		//void _fill_in_alt_terrain() const;
-		void _insert_items_and_locked_doors() const;
+		void _insert_keys_and_locked_doors() const;
+		void _insert_non_key_items() const;
 		//--------
 	private:		// static functions
 		//--------

@@ -34,8 +34,8 @@ i32 DngnGen::GenYesNo::gen() const {
 	return engine->layout_rand<i32>(full_min(), full_max());
 }
 //--------
-const std::vector<std::vector<BgTile>>
-	DngnGen::ALLOWED_ALT_TERRAIN_DA2D({
+const std::vector<BgTile>& DngnGen::ALLOWED_ALT_TERRAIN_DARR() {
+	static const std::vector<std::vector<BgTile>> DA2D({
 		// Level 1 (index 0)
 		build_bg_tile_darr
 			({
@@ -76,6 +76,8 @@ const std::vector<std::vector<BgTile>>
 			({{1, BgTile::Lava},
 			{1, BgTile::Spikes}}),
 	});
+	return DA2D.at(level_index());
+}
 //--------
 i32 DngnGen::level_index() {
 	return engine->level_index();
@@ -89,6 +91,13 @@ i32 DngnGen::MAX_NUM_ROOM_TUNNELS() {
 }
 i32 DngnGen::MIN_NUM_ROOMS() {
 	return RoomTunnel::MIN_NUM_ROOMS_DARR.at(level_index());
+}
+
+i32 DngnGen::MIN_NUM_LOCKS() {
+	return RoomTunnel::MIN_NUM_LOCKS_DARR.at(level_index());
+}
+i32 DngnGen::MAX_NUM_LOCKS() {
+	return RoomTunnel::MAX_NUM_LOCKS_DARR.at(level_index());
 }
 //--------
 i32 DngnGen::TUNNEL_MIN_LEN() {
@@ -108,7 +117,7 @@ const IntVec2& DngnGen::ROOM_MAX_SIZE_2D() {
 // "TSF" is short for "to shrink from"
 i32 DngnGen::GEN_EXTEND_AMOUNT_TSF() {
 	//--------
-	static const std::vector<i32> DARR = {
+	static const std::vector<i32> DARR({
 		//--------
 		// Level 1 (index 0)
 		15,
@@ -131,7 +140,7 @@ i32 DngnGen::GEN_EXTEND_AMOUNT_TSF() {
 		////= 10,
 		//= 15,
 		//--------
-	};
+	});
 	//--------
 	return DARR.at(level_index());
 	//--------
@@ -1245,6 +1254,7 @@ void DngnGen::GenInnards::finalize() const {
 					//some_rt.door_umap.insert({some_corner, std::nullopt});
 					some_rt.alt_terrain_umap.insert
 						({some_corner, BgTile::Door});
+					some_rt.door_pt_uset.insert(some_corner);
 				}
 			};
 			if (
@@ -1301,7 +1311,8 @@ void DngnGen::GenInnards::finalize() const {
 	_remove_dead_end_tunnels();
 	_insert_exits();
 	_insert_alt_terrain();
-	_insert_items_and_locked_doors();
+	_insert_keys_and_locked_doors();
+	_insert_non_key_items();
 }
 void DngnGen::GenInnards::_remove_dead_end_tunnels() const {
 	for (;;) {
@@ -1431,8 +1442,7 @@ void DngnGen::GenInnards::_insert_exits() const {
 }
 void DngnGen::GenInnards::_insert_alt_terrain() const {
 	const auto
-		& allowed_alt_terrain_darr = ALLOWED_ALT_TERRAIN_DA2D
-			.at(level_index());
+		& allowed_alt_terrain_darr = ALLOWED_ALT_TERRAIN_DARR();
 
 	const IntRect2
 		//floor_r2
@@ -1825,6 +1835,7 @@ void DngnGen::GenInnards::_insert_alt_terrain() const {
 			}
 		}
 	}
+	//--------
 	{
 		const auto
 			& ustairs_pos = engine->dngn_floor().ustairs_pos,
@@ -1840,12 +1851,24 @@ void DngnGen::GenInnards::_insert_alt_terrain() const {
 				RT_BRDR_BG_TILE_USET);
 		}
 	}
-}
-void DngnGen::GenInnards::_insert_items_and_locked_doors() const {
-	// insert keys
+	//--------
 }
 //void DngnGen::GenInnards::_fill_in_alt_terrain() const {
 //}
+void DngnGen::GenInnards::_insert_keys_and_locked_doors() const {
+	//--------
+	//// Convert doors to locked doors
+	//const i32
+	//	gen_num_locks = engine->layout_rand<i32>
+	//		(MIN_NUM_LOCKS(), MAX_NUM_LOCKS());
+	//engine->dbg_log
+	//	("game_engine::lvgen_etc::DngnGen::GenInnards",
+	//	"::_insert_keys_and_locked_doors(): ",
+	//	"Selected `gen_num_locks`: ", gen_num_locks, "\n");
+	//--------
+}
+void DngnGen::GenInnards::_insert_non_key_items() const {
+}
 //--------
 } // namespace lvgen_etc
 } // namespace game_engine

@@ -58,6 +58,9 @@ public:		// functions
 
 	Path& add(const DngnFloor& dngn_floor, PathDir dir);
 	//Path& add(const DijkstraMapGen::Dmap& dmap, PathDir dir);
+	Path& unchecked_add(PathDir dir);
+	Path& unchecked_add(const IntVec2& pos);
+	//Path& pop_back();
 	//--------
 	inline const IntVec2& front() const {
 		return data().front();

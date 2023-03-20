@@ -130,6 +130,8 @@ public:		// serialized variables
 		//items_traps_umap,
 		//chars_machs_umap;
 	//std::unordered_map<IntVec2, ecs::EntIdUset> gnd_item_umap;
+public:		// static functions
+	static i32 level_index();
 public:		// functions
 	//--------
 	DngnFloor();

@@ -20,6 +20,7 @@
 #include "dngn_floor_class.hpp"
 #include "path_class.hpp"
 #include "dijkstra_map_gen_class.hpp"
+#include "bfs_funcs.hpp"
 #include "../engine_class.hpp"
 #include "../global_shape_constants_etc.hpp"
 #include "../engine_class.hpp"
@@ -43,14 +44,18 @@ AltTerrainInfo::operator binser::Value () const {
 	return ret;
 }
 //--------
+i32 DngnFloor::level_index() {
+	return engine->level_index();
+}
+//--------
 DngnFloor::DngnFloor() {}
 DngnFloor::DngnFloor(const binser::Value& bv) {
 	//_rt_data.checked_size
-	//	= RoomTunnel::MAX_NUM_ROOM_TUNNELS_DARR.at(engine->level_index());
+	//	= RoomTunnel::MAX_NUM_ROOM_TUNNELS_DARR.at(level_index());
 	//_rt_data.cs_is_max = true;
 	////_rt_data.min_size = 0;
 	//_rt_data.min_size
-	//	= RoomTunnel::MIN_NUM_ROOM_TUNNELS_DARR.at(engine->level_index());
+	//	= RoomTunnel::MIN_NUM_ROOM_TUNNELS_DARR.at(level_index());
 
 	MEMB_SER_LIST_LVGEN_ETC_FLOOR_LAYOUT(BINSER_MEMB_DESERIALIZE);
 }
@@ -108,7 +113,7 @@ std::optional<BgTile> DngnFloor::bg_tile_at(
 		//		bg_tile = rt.alt_terrain_umap.at(pos);
 		//	} else {
 		//		bg_tile
-		//			= rt.is_tunnel(engine->level_index())
+		//			= rt.is_tunnel(level_index())
 		//			? BgTile::TunnelFloor
 		//			: BgTile::RoomFloor;
 		//	}
@@ -237,7 +242,7 @@ std::optional<BgTile> DngnFloor::phys_bg_tile_at(
 			//}
 			else {
 				return
-					rt.is_tunnel(engine->level_index())
+					rt.is_tunnel(level_index())
 					? BgTile::TunnelFloor
 					: BgTile::RoomFloor;
 			}
@@ -367,16 +372,16 @@ std::optional<size_t> DngnFloor::phys_pos_to_rt_index(
 void DngnFloor::push_back(RoomTunnel&& to_push) {
 	if (
 		size() + 1u
-		> RoomTunnel::MAX_NUM_ROOM_TUNNELS_DARR.at(engine->level_index())
+		> RoomTunnel::MAX_NUM_ROOM_TUNNELS_DARR.at(level_index())
 	) {
 		throw std::length_error(sconcat
 			("game_engine::lvgen_etc::DngnFloor::push_back(): ",
 			"`_rt_data.data` cannot increase in size: ",
 			//_rt_data.data.size(),
 			_rt_data.size(),
-			" ", engine->level_index(),
+			" ", level_index(),
 			" ", RoomTunnel::MAX_NUM_ROOM_TUNNELS_DARR
-				.at(engine->level_index())));
+				.at(level_index())));
 	}
 	//to_push.id = i32(size());
 	//_rt_data.data.push_back(std::move(to_push));
@@ -418,10 +423,13 @@ std::pair<bool, Path> DngnFloor::erase_non_walkable_in_path(
 	const std::optional<StrKeyUset>& chars_machs_to_erase_uset,
 	const BgTileUset& no_pass_bg_tile_uset
 ) {
-	DijkstraMapGen dmap_gen;
-	dmap_gen.add(start_phys_pos);
-	const auto& dmap = dmap_gen.gen_basic(*this, no_pass_bg_tile_uset);
-	auto path = dmap.make_path(end_phys_pos);
+	//DijkstraMapGen dmap_gen;
+	//dmap_gen.add(start_phys_pos);
+	//const auto& dmap = dmap_gen.gen_basic(*this, no_pass_bg_tile_uset);
+	//auto path = dmap.make_path(end_phys_pos);
+	auto path = bfs_pathfind(start_phys_pos, end_phys_pos,
+		*this,
+		no_pass_bg_tile_uset);
 	//engine->dbg_log
 	//	("DngnFloor::erase_alt_terrain_in_path():\n",
 	//	"start_phys_pos: ", start_phys_pos, "\n",
@@ -587,9 +595,8 @@ std::pair<bool, Path> DngnFloor::erase_non_walkable_in_path(
 }
 bool DngnFloor::erase_tunnel_during_gen(size_t index) {
 	if (
-		size() > RoomTunnel::MIN_NUM_ROOM_TUNNELS_DARR.at
-			(engine->level_index())
-		&& _rt_data.at(index)->is_tunnel(engine->level_index())
+		size() > RoomTunnel::MIN_NUM_ROOM_TUNNELS_DARR.at(level_index())
+		&& _rt_data.at(index)->is_tunnel(level_index())
 	) {
 		//for (size_t i=0; i<size(); ++i) {
 		//	if (i == index) {

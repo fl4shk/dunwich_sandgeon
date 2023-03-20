@@ -59,6 +59,28 @@ Path& Path::add(const DngnFloor& dngn_floor, PathDir dir) {
 	return *this;
 	//--------
 }
+Path& Path::unchecked_add(PathDir dir) {
+	//--------
+	_data.push_back(path_dir_to_side_pos(back(), dir));
+	//--------
+	return *this;
+	//--------
+}
+Path& Path::unchecked_add(const IntVec2& pos) {
+	//--------
+	_data.push_back(pos);
+	//--------
+	return *this;
+	//--------
+}
+
+//Path& Path::pop_back() {
+//	//--------
+//	_data.pop_back();
+//	//--------
+//	return *this;
+//	//--------
+//}
 //--------
 size_t Path::fill(
 	const FillFunc& fill_func

@@ -145,7 +145,47 @@ const std::vector<i32>
 		////= 10;
 		////= 8;
 		//--------
+	}),
+
+	RoomTunnel::MIN_NUM_LOCKS_DARR({
+		//--------
+		// Level 1 (index 0)
+		3,
+
+		// Level 2 (index 1)
+		3,
+
+		// Level 3 (index 2)
+		3,
+
+		// Level 4 (index 3)
+		3,
+
+		// Level 5 (index 4)
+		3,
+		//--------
+	}),
+	RoomTunnel::MAX_NUM_LOCKS_DARR({
+		//--------
+		// Level 1 (index 0)
+		5,
+
+		// Level 2 (index 1)
+		5,
+
+		// Level 3 (index 2)
+		5,
+
+		// Level 4 (index 3)
+		5,
+
+		// Level 5 (index 4)
+		5,
+		//--------
 	});
+
+	//MIN_NUM_TUNNELS = 1,
+	//MAX_NUM_TUNNELS = 64;
 
 const std::vector<IntVec2>
 	RoomTunnel::ROOM_MIN_SIZE_2D_DARR({
@@ -193,9 +233,6 @@ const std::vector<IntVec2>
 		////= {15, 15};
 		//--------
 	});
-
-	//MIN_NUM_TUNNELS = 1,
-	//MAX_NUM_TUNNELS = 64;
 //--------
 RoomTunnel::RoomTunnel() {}
 RoomTunnel::RoomTunnel(const IntRect2& s_rect)

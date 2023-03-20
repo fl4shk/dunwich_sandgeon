@@ -206,7 +206,8 @@ public:		// functions
 
 	DijkstraMap gen_basic(
 		const DngnFloor& dngn_floor,
-		const BgTileUset& no_pass_bg_tile_uset=RT_BRDR_BG_TILE_USET
+		const BgTileUset& no_pass_bg_tile_uset=RT_BRDR_BG_TILE_USET,
+		const IntVec2Uset& forced_walkable_pos2_uset=IntVec2Uset()
 		//,
 		//// These two `std::optional`s allow the caller of this function to
 		//// pick between the following options:
@@ -222,6 +223,7 @@ public:		// functions
 	DijkstraMap gen_flipped(
 		const DngnFloor& dngn_floor,
 		const BgTileUset& no_pass_bg_tile_uset=RT_BRDR_BG_TILE_USET,
+		const IntVec2Uset& forced_walkable_pos2_uset=IntVec2Uset(),
 		//// These two `std::optional`s allow the caller of this function to
 		//// pick between the following options:
 		//// `std::nullopt`: don't check this layer at all

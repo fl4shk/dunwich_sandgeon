@@ -48,7 +48,10 @@ public:		// constants
 		// Chosen arbitrarily; might need to adjust later
 		MIN_NUM_ROOM_TUNNELS_DARR,
 		MAX_NUM_ROOM_TUNNELS_DARR,
-		MIN_NUM_ROOMS_DARR;
+		MIN_NUM_ROOMS_DARR,
+
+		MIN_NUM_LOCKS_DARR,
+		MAX_NUM_LOCKS_DARR;
 
 		//MIN_NUM_TUNNELS = 1,
 		//MAX_NUM_TUNNELS = 64;
@@ -91,6 +94,8 @@ public:		// serialized variables
 	//std::unordered_map<IntVec2, std::optional<BgTile>>
 	std::unordered_map<IntVec2, BgTile>
 		alt_terrain_umap;
+	std::unordered_set<IntVec2>
+		door_pt_uset;
 	//std::unordered_set<ecs::EntId>
 	//	items_traps_uset;
 

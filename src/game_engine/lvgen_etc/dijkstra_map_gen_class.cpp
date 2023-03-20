@@ -184,7 +184,8 @@ DijkstraMapGen& DijkstraMapGen::add(const IntVec2& pos, float val) {
 //--------
 DijkstraMap DijkstraMapGen::gen_basic(
 	const DngnFloor& dngn_floor,
-	const BgTileUset& no_pass_bg_tile_uset
+	const BgTileUset& no_pass_bg_tile_uset,
+	const IntVec2Uset& forced_walkable_pos2_uset
 	//,
 	//const std::optional<StrKeyUset>& no_pass_items_traps_uset,
 	//const std::optional<StrKeyUset>& no_pass_chars_machs_uset
@@ -250,7 +251,10 @@ DijkstraMap DijkstraMapGen::gen_basic(
 
 		const auto& bg_tile = dngn_floor.phys_bg_tile_at(phys_pos);
 		return (
-			bg_tile && !no_pass_bg_tile_uset.contains(*bg_tile)
+			bg_tile && (
+				forced_walkable_pos2_uset.contains(phys_pos)
+				|| !no_pass_bg_tile_uset.contains(*bg_tile)
+			)
 			//&& upper_layer_func
 			//	(no_pass_items_traps_uset, PfieldLayerPrio::ItemsTraps)
 			//&& upper_layer_func
@@ -375,13 +379,15 @@ DijkstraMap DijkstraMapGen::gen_basic(
 DijkstraMap DijkstraMapGen::gen_flipped(
 	const DngnFloor& dngn_floor,
 	const BgTileUset& no_pass_bg_tile_uset,
+	const IntVec2Uset& forced_walkable_pos2_uset,
 	//const std::optional<StrKeyUset>& no_pass_items_traps_uset,
 	//const std::optional<StrKeyUset>& no_pass_chars_machs_uset,
 	float bonus
 ) const {
 	auto ret = gen_basic
 		(dngn_floor,
-		no_pass_bg_tile_uset
+		no_pass_bg_tile_uset,
+		forced_walkable_pos2_uset
 		//,
 		//no_pass_items_traps_uset,
 		//no_pass_chars_machs_uset
